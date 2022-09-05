@@ -9,6 +9,7 @@ app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
+    logger.error("information log");
 });
 
 app.listen(port, () => {

@@ -1,7 +1,5 @@
-// const { createLogger, format, transports } = require("winston");
 import winston, { createLogger, format, transports } from "winston";
 import "dotenv/config";
-// import
 const { combine, timestamp, json } = format;
 
 const productionLogger = () => {
@@ -9,8 +7,8 @@ const productionLogger = () => {
         level: "error",
         format: combine(
             winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-            json(),
-            winston.format.prettyPrint()
+            json()
+            // winston.format.prettyPrint()
         ),
         defaultMeta: { service: "user-service" },
         transports: [
