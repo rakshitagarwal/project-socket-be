@@ -1,9 +1,11 @@
 {
+    "root": true,
     "env": {
         "browser": true,
         "es2021": true
     },
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended","prettier","plugin:node/recommended"],
+    "typeof": true,
     "overrides": [
     ],
     "parserOptions": {
@@ -26,7 +28,6 @@
         "semi": [
             "error",
             "always"
-        ],
-        "typeof": true
+        ]
     }
 }

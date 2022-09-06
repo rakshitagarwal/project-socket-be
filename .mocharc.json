@@ -1,0 +1,6 @@
+{
+    "spec": "src/**/*-tests.js",
+    "extension": ["js"],
+    "timeout": 3000,
+    "exclude": ["src/index.js"] 
+}
