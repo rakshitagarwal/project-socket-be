@@ -1,6 +1,6 @@
-import helpers from "../helper/helpers.js";
+import { helpers } from "../helper/helpers.js";
 
-const createResponse = (statusCode, data) => {
+export const createResponse = (statusCode, data) => {
   const success = statusCode < helpers.StatusCodes.BAD_REQUEST;
   if (success) {
     const response = { success: success, data: data };
@@ -9,9 +9,3 @@ const createResponse = (statusCode, data) => {
   const response = { success: success, error: data };
   return { statusCode, response };
 };
-
-const Response = {
-  createResponse,
-};
-
-export default Response;

@@ -116,9 +116,7 @@ const StatusMessages = {
   MISDIRECTED_REQUEST: "Misdirected Request",
 };
 
-const helpers = {
+export const helpers = {
   StatusMessages,
   StatusCodes,
 };
-
-export default helpers;

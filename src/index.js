@@ -3,10 +3,10 @@ import express from "express";
 import { serve, setup } from "swagger-ui-express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-import helpers from "./helper/helpers.js";
+import { helpers } from "./helper/helpers.js";
 import cors from "cors";
 import fs from "fs";
-import Response from "./common/createResponses.js";
+import { createResponse } from "./common/utilies.js";
 import logger from "./config/logger.js";
 import env from "./config/env.js";
 import connectDB from "./config/db.js";
@@ -32,12 +32,9 @@ app.use(
 );
 
 app.use("/", (req, res) => {
-  const { statusCode, response } = Response.createResponse(
-    helpers.StatusCodes.OK,
-    {
-      "/docs": "Gateway to BigDeal-API Swagger",
-    }
-  );
+  const { statusCode, response } = createResponse(helpers.StatusCodes.OK, {
+    "/docs": "Gateway to BigDeal-API Swagger",
+  });
   res.status(statusCode).json(response);
 });
 
@@ -53,8 +50,4 @@ app.use(function (err, req, res) {
 app.listen(port, () => {
   connectDB();
   console.log(`listening on http://localhost:${port}`);
-  logger.info({
-    level: "Info",
-    message: `Listening on http://localhost:${port}`,
-  });
 });
