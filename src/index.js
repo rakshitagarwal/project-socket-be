@@ -9,6 +9,7 @@ import fs from "fs";
 import Response from "./common/createResponses.js";
 import logger from "./config/logger.js";
 import env from "./config/env.js";
+import connectDB from "./config/db.js";
 
 const app = express();
 const port = env.PORT;
@@ -50,6 +51,7 @@ app.use(function (err, req, res) {
 });
 
 app.listen(port, () => {
+  connectDB();
   console.log(`listening on http://localhost:${port}`);
   logger.info({
     level: "Info",
