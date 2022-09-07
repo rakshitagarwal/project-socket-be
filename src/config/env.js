@@ -1,13 +1,15 @@
 import "dotenv/config";
 
 const PORT = process.env.PORT;
+const DATBASE_URL = process.env.DATABASE_URL;
 const LOG_ENV = process.env.LOG_ENV;
-const DB_URL = process.env.DB_URL + "/" + process.env.DB_NAME;
+const ALGORITHM = process.env.ALGORITHM;
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN;
 
-const env = {
+export const env = {
   PORT,
-  DB_URL,
+  DATBASE_URL,
   LOG_ENV,
+  ALGORITHM,
+  ACCESS_TOKEN_EXPIRES_IN,
 };
-
-export default env;
