@@ -1,0 +1,21 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BigDeal AdminPanel API",
+    "version": "1.0.0",
+    "description": "BigDeal API",
+    "contact": {
+      "email": "bigdeal@globalvoxinc.com",
+      "name": "Bigdeal"
+    },
+    "termsOfService": "Can be used by anyone"
+  },
+  "tags": [{ "name": "user", "description": "User operations" }],
+  "servers": [
+    {
+      "url": "http://localhost:3300",
+      "description": "Local Server"
+    }
+  ],
+  "paths": {}
+}
