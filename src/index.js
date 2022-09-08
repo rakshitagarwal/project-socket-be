@@ -31,26 +31,26 @@ i18next
   .init({
     fallbackLng: "en",
     backend: {
-      loadPath: process.cwd() + "/locales/{{lng}}/translation.json",
+      loadPath: process.cwd() + "/assets/locales/{{lng}}.json",
     },
   });
 
-app.use(
-  "/docs",
-  serve,
-  setup(swaggerDoc, {
-    swaggerOptions: { filter: "", persistAuthorization: true },
-    customSiteTitle: "BigDeal Admin-Panel Swagger",
-    explorer: true,
-  })
-);
+// app.use(
+//   "/docs",
+//   serve,
+//   setup(swaggerDoc, {
+//     swaggerOptions: { filter: "", persistAuthorization: true },
+//     customSiteTitle: "BigDeal Admin-Panel Swagger",
+//     explorer: true,
+//   })
+// );
 
-app.use("/", (req, res) => {
-  const { statusCode, response } = createResponse(helpers.StatusCodes.OK, {
-    "/docs": "Gateway to BigDeal-API Swagger",
-  });
-  res.status(statusCode).json(response);
-});
+// app.use("/", (req, res) => {
+//   const { statusCode, response } = createResponse(helpers.StatusCodes.OK, {
+//     "/docs": "Gateway to BigDeal-API Swagger",
+//   });
+//   res.status(statusCode).json(response);
+// });
 
 app.use(function (err, req, res, next) {
   res.status(helpers.StatusCodes.INTERNAL_SERVER_ERROR);
@@ -59,8 +59,9 @@ app.use(function (err, req, res, next) {
 });
 
 app.get("/user", (req, res) => {
-  res.send({ message: req.t("testing_master") });
+  res.send({ message: req.t("user_create_success") });
 });
+
 app.listen(env.PORT, () => {
   connectDB();
   console.log(`listening on http://localhost:${env.PORT}`);
