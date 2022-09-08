@@ -7,20 +7,34 @@ import { helpers } from "./helper/helpers.js";
 import cors from "cors";
 import fs from "fs";
 import { createResponse } from "./common/utilies.js";
-import logger from "./config/logger.js";
-import env from "./config/env.js";
+import { env } from "./config/env.js";
 import connectDB from "./config/db.js";
-
+import i18next from "i18next";
+import Backend from "i18next-fs-backend";
+import middlerware18 from "i18next-http-middleware";
+import cookieParser from "cookie-parser";
 const app = express();
-const port = env.PORT;
-const LOG_ENV = env.LOG_ENV;
 
 const swaggerDoc = JSON.parse(fs.readFileSync("./openapi.json", "utf8"));
 
-app.use(morgan(LOG_ENV));
+app.use(morgan(env.LOG_ENV));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(cookieParser());
+app.use(middlerware18.handle(i18next));
+app.use(express.json());
+
+i18next
+  .use(Backend)
+  .use(middlerware18.LanguageDetector)
+  .init({
+    fallbackLng: "en",
+    backend: {
+      loadPath: process.cwd() + "/assets/locales/{{lng}}.json",
+    },
+  });
+
 app.use(
   "/docs",
   serve,
@@ -38,16 +52,17 @@ app.use("/", (req, res) => {
   res.status(statusCode).json(response);
 });
 
-app.use(function (req, res, next) {
-  next(createError(helpers.StatusCodes.NOT_FOUND));
-});
-
-app.use(function (err, req, res) {
-  res.status(helpers.statusCodes.INTERNAL_SERVER_ERROR);
+app.use(function (err, req, res, next) {
+  res.status(helpers.StatusCodes.INTERNAL_SERVER_ERROR);
   res.send(err);
+  next();
 });
 
-app.listen(port, () => {
+app.get("/user", (req, res) => {
+  res.send({ message: req.t("user_create_success") });
+});
+
+app.listen(env.PORT, () => {
   connectDB();
-  console.log(`listening on http://localhost:${port}`);
+  console.log(`listening on http://localhost:${env.PORT}`);
 });
