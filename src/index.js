@@ -35,7 +35,9 @@ i18next
   .init({
     fallbackLng: "en",
     backend: {
-      loadPath: process.cwd() + "/assets/locales/{{lng}}.json",
+      loadPath(lng, ns) {
+        return `./assets/locales/${lng}.json`;
+      },
     },
   });
 
@@ -72,7 +74,7 @@ app.use(function (err, req, res) {
 
 const server = app.listen(PORT, () => {
   console.log(`listening on http://localhost:${PORT}`);
-  connectDB();
+  // connectDB();
 });
 
 process.on("uncaughtException", (err) => {
