@@ -1,41 +1,6 @@
 import "dotenv/config";
-import Joi from "joi";
 import logger from "../config/logger.js";
-
-const envSchema = Joi.object({
-  PORT: Joi.number().not().exist().messages({
-    required_error: "PORT must be present in environment variables",
-    invalid_type_error: "Invalid PORT in environment variables",
-  }),
-  DATABASE_URL: Joi.string().not().empty().messages({
-    required_error: "DATABASE_URL must be present in environment variables",
-  }),
-  LOG_ENV: Joi.string().not().empty().messages({
-    required_error: "LOG_ENV must be present in environment variables",
-  }),
-  ALGORITHM: Joi.string().not().empty().messages({
-    required_error: "ALGORITHM must be present in environment variables",
-  }),
-  ACCESS_TOKEN_EXPIRES_IN: Joi.string().not().empty().messages({
-    required_error:
-      "ACCESS_TOKEN_EXPIRES_IN must be present in environment variables",
-  }),
-  FROM_EMAIL: Joi.string().not().empty().messages({
-    required_error: "FROM_EMAIL must be present in environment variables",
-  }),
-  EMAIL_USERNAME: Joi.string().not().empty().messages({
-    required_error: "EMAIL_USERNAME must be present in environment variables",
-  }),
-  EMAIL_PASSWORD: Joi.string().not().empty().messages({
-    required_error: "EMAIL_PASSWORD must be present in environment variables",
-  }),
-  EMAIL_PORT: Joi.string().not().empty().messages({
-    required_error: "EMAIL_PORT must be present in environment variables",
-  }),
-  EMAIL_HOST: Joi.string().not().empty().messages({
-    required_error: "EMAIL_HOST must be present in environment variables",
-  }),
-});
+import { envSchema } from "../common/validationSchemas.js";
 
 const { error, value } = Object.freeze(
   envSchema.validate({
@@ -59,6 +24,28 @@ if (error) {
   });
 }
 
+const {
+  PORT,
+  DATABASE_URL,
+  LOG_ENV,
+  ALGORITHM,
+  ACCESS_TOKEN_EXPIRES_IN,
+  EMAIL_USERNAME,
+  EMAIL_PASSWORD,
+  EMAIL_PORT,
+  EMAIL_HOST,
+  FROM_EMAIL,
+} = value;
+
 export const env = {
-  value,
+  PORT,
+  DATABASE_URL,
+  LOG_ENV,
+  ALGORITHM,
+  ACCESS_TOKEN_EXPIRES_IN,
+  EMAIL_USERNAME,
+  EMAIL_PASSWORD,
+  EMAIL_PORT,
+  EMAIL_HOST,
+  FROM_EMAIL,
 };

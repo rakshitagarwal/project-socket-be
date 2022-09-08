@@ -13,8 +13,8 @@ import { connectDB } from "./config/db.js";
 import logger from "./config/logger.js";
 
 const app = express();
-const port = env.value.PORT;
-const LOG_ENV = env.value.LOG_ENV;
+const port = env.PORT;
+const LOG_ENV = env.LOG_ENV;
 
 const swaggerDoc = JSON.parse(fs.readFileSync("./openapi.json", "utf8"));
 

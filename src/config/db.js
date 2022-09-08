@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { env } from "./env.js";
 import logger from "./logger.js";
 
-const URL = env.value.DATABASE_URL;
+const URL = env.DATABASE_URL;
 
 const options = {
   useNewUrlParser: true,

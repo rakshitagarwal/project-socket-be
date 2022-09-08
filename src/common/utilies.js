@@ -9,8 +9,8 @@ const { compile } = handlebars;
 import logger from "../config/logger.js";
 
 const jwtOptions = {
-  expiresIn: env.value.ACCESS_TOKEN_EXPIRES_IN,
-  algorithm: env.value.ALGORITHM,
+  expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
+  algorithm: env.ALGORITHM,
 };
 
 /**
@@ -46,7 +46,8 @@ export const generateAccessToken = (payload) => {
   const jwtToken = jwt.sign(payload, KEY.privateKey, jwtOptions);
 
   return {
-    accestoken: jwtToken,
+    accesToken: jwtToken,
+    publicKey: KEY.publicKey,
   };
 };
 
@@ -55,8 +56,8 @@ export const generateAccessToken = (payload) => {
  * @param {String} token - User's JWTToken from headers
  * @returns Object
  */
-export const verifyJwtToken = (token) => {
-  // TODO:take public key from database by comparing the JWT_TOKEN
+export const verifyJwtToken = (token, publicKey) => {
+  // TODO: take public key from database by comparing the JWT_TOKEN
   const data = jwt.verify(token, publicKey, jwtOptions);
   return data;
 };
@@ -66,12 +67,13 @@ export const verifyJwtToken = (token) => {
  *
  * @param {Object} payload - email template details, whom to send mail
  */
-export const sendEmail = (payload) => {
-  const verificationHTML = readFileSync("assets/templates/email.html", {
-    encoding: "utf8",
-  });
-
-  console.log(process.cwd());
+export const sendEmail = (payload, eventName) => {
+  const verificationHTML = readFileSync(
+    `assets/templates/${eventName}}/index.html`,
+    {
+      encoding: "utf8",
+    }
+  );
 
   const verificationTemplate = compile(verificationHTML);
 
@@ -82,17 +84,17 @@ export const sendEmail = (payload) => {
   };
 
   const transport = nodemailer.createTransport({
-    host: env.value.EMAIL_HOST,
-    port: env.value.EMAIL_PORT,
+    host: env.EMAIL_HOST,
+    port: env.EMAIL_PORT,
     auth: {
-      pass: env.value.EMAIL_PASSWORD,
-      user: env.value.EMAIL_USERNAME,
+      pass: env.EMAIL_PASSWORD,
+      user: env.EMAIL_USERNAME,
     },
   });
 
   transport
     .sendMail({
-      from: env.value.FROM_EMAIL,
+      from: env.FROM_EMAIL,
       to: payload.email,
       subject: payload.subject,
       html: verificationTemplate(templateVariable),
