@@ -1,10 +1,14 @@
-# Admin-Panel BigDeal Backend
+# Node: Admin-Panel BigDeal Backend
 
 ## Folder Structure (src/)
 
-| Directory | Description                                                  |
-| --------- | ------------------------------------------------------------ |
-| `/users`  | User related logic (e.g. Login, User Profile, Register etc.) |
+| Directory      | Description                                                                       |
+| -------------- | --------------------------------------------------------------------------------- |
+| `/common`      | cosntants and utilities (e.g. Routing Paths, commonResponses, sendEmail)          |
+| `/config`      | Database Setup, environment variables, logger (e.g. connectDB, logger)            |
+| `/helpers`     | Different HTTP Ports adn messages (e.g. StatuCodes, StatusMessage)                |
+| `/middlewares` | JWTToken setup (e.g. Authentication, )                                            |
+| `/user`        | User Module (e.g. handlers, routing, queries, models,validationschema, services ) |
 
 ### Requirements
 
@@ -18,6 +22,15 @@ There are some environment variables that you need to define inside `.env` file 
 
 ```
 PORT=PORT
+LOG_ENV=LOG_ENV
+DATABASE_URL=DATABASE_URL
+ACCESS_TOKEN_EXPIRES_IN=ACCESS_TOKEN_EXPIRES_IN
+ALGORITHM=ALGORITHM
+FROM_EMAI=FROM_EMAIL
+EMAIL_USERNAME=EMAIL_USERNAME
+EMAIL_PASSWORD=EMAIL_PASSWORD
+EMAIL_PORT=EMAIL_PORT
+EMAIL_HOST=EMAIL_HOST
 ```
 
 ### Commands

@@ -1,14 +1,18 @@
 import winston, { createLogger, format, transports } from "winston";
 import "dotenv/config";
-const { combine, timestamp, json } = format;
+const { combine, json } = format;
 
+/**
+ * winston configuration for logger
+ * @returns Object
+ */
 const productionLogger = () => {
   return createLogger({
     level: "info",
     format: combine(
       winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
       json(),
-      winston.format.prettyPrint()
+      winston.format.json()
     ),
     defaultMeta: { service: "user-service" },
     transports: [
