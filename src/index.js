@@ -6,15 +6,15 @@ import bodyParser from "body-parser";
 import { helpers } from "./helper/helpers.js";
 import cors from "cors";
 import fs from "fs";
-import { createResponse } from "./common/utilies.js";
+import { createResponse, sendEmail } from "./common/utilies.js";
 import { userRouter } from "./user/user-routers.js";
 import { env } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import logger from "./config/logger.js";
 
 const app = express();
-const port = env.PORT;
-const LOG_ENV = env.LOG_ENV;
+const port = env.value.PORT;
+const LOG_ENV = env.value.LOG_ENV;
 
 const swaggerDoc = JSON.parse(fs.readFileSync("./openapi.json", "utf8"));
 

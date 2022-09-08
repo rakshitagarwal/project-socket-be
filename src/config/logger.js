@@ -12,7 +12,7 @@ const productionLogger = () => {
     format: combine(
       winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
       json(),
-      winston.format.prettyPrint()
+      winston.format.json()
     ),
     defaultMeta: { service: "user-service" },
     transports: [
