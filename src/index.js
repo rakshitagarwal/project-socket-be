@@ -35,22 +35,22 @@ i18next
     },
   });
 
-// app.use(
-//   "/docs",
-//   serve,
-//   setup(swaggerDoc, {
-//     swaggerOptions: { filter: "", persistAuthorization: true },
-//     customSiteTitle: "BigDeal Admin-Panel Swagger",
-//     explorer: true,
-//   })
-// );
+app.use(
+  "/docs",
+  serve,
+  setup(swaggerDoc, {
+    swaggerOptions: { filter: "", persistAuthorization: true },
+    customSiteTitle: "BigDeal Admin-Panel Swagger",
+    explorer: true,
+  })
+);
 
-// app.use("/", (req, res) => {
-//   const { statusCode, response } = createResponse(helpers.StatusCodes.OK, {
-//     "/docs": "Gateway to BigDeal-API Swagger",
-//   });
-//   res.status(statusCode).json(response);
-// });
+app.use("/", (req, res) => {
+  const { statusCode, response } = createResponse(helpers.StatusCodes.OK, {
+    "/docs": "Gateway to BigDeal-API Swagger",
+  });
+  res.status(statusCode).json(response);
+});
 
 app.use(function (err, req, res, next) {
   res.status(helpers.StatusCodes.INTERNAL_SERVER_ERROR);
