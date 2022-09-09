@@ -196,18 +196,22 @@ const productSchema = new Schema(
     purchasePrice: {
       type: Number,
       require: true,
+      default: 0,
     },
     sellingPrice: {
       type: Number,
       require: true,
+      default: 0,
     },
     overHeadCost: {
       type: Number,
       require: true,
+      default: 0,
     },
     quantity: {
       type: Number,
       require: true,
+      default: 0,
     },
     status: {
       type: Boolean,
@@ -235,14 +239,17 @@ const auctionSchema = new Schema(
     noOfPlayConsumed: {
       type: Number,
       require: true,
+      default: 0,
     },
     bidIncrement: {
       type: Number,
       require: true,
+      default: 0,
     },
     OpeningPrice: {
       type: Number,
       require: true,
+      default: 0,
     },
     startTime: {
       type: Number,
@@ -255,9 +262,11 @@ const auctionSchema = new Schema(
     quantity: {
       type: Number,
       require: true,
+      default: 0,
     },
     noNewBidderLimit: {
       type: Number,
+      default: 0,
     },
     status: {
       type: String,
@@ -290,10 +299,12 @@ const auctionPreRegisterSchema = new Schema(
     participantCount: {
       type: Number,
       require: true,
+      default: 0,
     },
     participantFees: {
       type: Number,
       require: true,
+      default: 0,
     },
     status: {
       type: Boolean,
@@ -316,22 +327,27 @@ const auctionReultScehma = new Schema(
     noOfTimePreRegistered: {
       type: Number,
       require: true,
+      default: 0,
     },
     noOfTimeAuctionNotPlayed: {
       type: Number,
       require: true,
+      default: 0,
     },
     noOfAuctionPlayed: {
       type: Number,
       require: true,
+      default: 0,
     },
     noOfTimePostRegistered: {
       type: Number,
       require: true,
+      default: 0,
     },
     totalPlaysAbsrob: {
       type: Number,
       require: true,
+      default: 0,
     },
     User: {
       type: Schema.Types.ObjectId,
@@ -358,6 +374,7 @@ const walletSchema = new Schema(
     walletBalance: {
       type: Number,
       require: true,
+      default: 0,
     },
     walletAddress: {
       type: String,
@@ -391,6 +408,7 @@ const transactionSchema = new Schema({
   playConsumend: {
     type: Number,
     require: true,
+    default: 0,
   },
   status: {
     type: Boolean,
