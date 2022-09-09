@@ -7,7 +7,8 @@ import nodemailer from "nodemailer";
 import handlebars from "handlebars";
 const { compile } = handlebars;
 import logger from "../config/logger.js";
-
+import { generateKeyPair } from "crypto";
+import util from "util";
 const jwtOptions = {
   expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
   algorithm: env.ALGORITHM,
@@ -35,19 +36,23 @@ export const createResponse = (statusCode, data) => {
  * @param {Object} payload - user details
  * @returns {String} jwtToken
  */
-export const generateAccessToken = (payload) => {
-  // It will return PRIVATE_KEY and PUBLIC_KEY
-  const KEY = forge.pki.rsa.generateKeyPair({
-    bits: 256,
-    workers: 2,
+export const generateAccessToken = async (payload) => {
+  const gen = util.promisify(generateKeyPair);
+  const res = await gen("dsa", {
+    modulusLength: 2048,
+    publicKeyEncoding: {
+      type: "spki",
+      format: "pem",
+    },
+    privateKeyEncoding: {
+      type: "pkcs8",
+      format: "pem",
+    },
   });
-
-  // TODO: store the JWT_Token in the database
-  const jwtToken = jwt.sign(payload, KEY.privateKey, jwtOptions);
-
+  const jwtToken = jwt.sign(payload, res.privateKey, jwtOptions);
   return {
     accesToken: jwtToken,
-    publicKey: KEY.publicKey,
+    publicKey: res.publicKey,
   };
 };
 
