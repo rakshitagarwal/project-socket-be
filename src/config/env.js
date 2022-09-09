@@ -2,7 +2,7 @@ import "dotenv/config";
 import logger from "../config/logger.js";
 import { envSchema } from "../common/validationSchemas.js";
 
-const { error, value } = Object.freeze(
+const { error, value: env } = Object.freeze(
   envSchema.validate({
     PORT: process.env.PORT,
     DATABASE_URL: process.env.DATABASE_URL,
@@ -24,28 +24,4 @@ if (error) {
   });
 }
 
-const {
-  PORT,
-  DATABASE_URL,
-  LOG_ENV,
-  ALGORITHM,
-  ACCESS_TOKEN_EXPIRES_IN,
-  EMAIL_USERNAME,
-  EMAIL_PASSWORD,
-  EMAIL_PORT,
-  EMAIL_HOST,
-  FROM_EMAIL,
-} = value;
-
-export const env = {
-  PORT,
-  DATABASE_URL,
-  LOG_ENV,
-  ALGORITHM,
-  ACCESS_TOKEN_EXPIRES_IN,
-  EMAIL_USERNAME,
-  EMAIL_PASSWORD,
-  EMAIL_PORT,
-  EMAIL_HOST,
-  FROM_EMAIL,
-};
+export default env;
