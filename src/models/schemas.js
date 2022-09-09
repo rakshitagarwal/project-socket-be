@@ -256,7 +256,7 @@ const auctionSchema = new Schema(
       type: Number,
       require: true,
     },
-    NoNewBidderLimit: {
+    noNewBidderLimit: {
       type: Number,
     },
     status: {
@@ -325,7 +325,7 @@ const auctionReultScehma = new Schema(
       type: Number,
       require: true,
     },
-    NoOfTimePostRegistered: {
+    noOfTimePostRegistered: {
       type: Number,
       require: true,
     },
@@ -360,7 +360,7 @@ const walletSchema = new Schema(
       require: true,
     },
     walletAddress: {
-      type: Number,
+      type: String,
       require: true,
     },
     networkType: {
@@ -368,7 +368,7 @@ const walletSchema = new Schema(
       require: true,
     },
     chainID: {
-      type: String,
+      type: Number,
       require: true,
     },
     status: {
