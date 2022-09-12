@@ -8,7 +8,8 @@
     "start": "nodemon src/index.js",
     "dev": "NODE_ENV=production nodemon src/index.js",
     "test": "mocha",
-    "lint": "eslint --fix src/*.js"
+    "lint": "eslint --fix src/*.js",
+    "seed":"node src/seeds/authrization.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "handlebars": "^4.7.7",
@@ -40,6 +42,7 @@
     "nodemailer": "^6.7.8",
     "nodemon": "^2.0.19",
     "swagger-ui-express": "^4.5.0",
+    "util": "^0.12.4",
     "winston": "^3.8.1"
   },
   "devDependencies": {

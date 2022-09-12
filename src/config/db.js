@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { env } from "./env.js";
+import env from "./env.js";
 import logger from "./logger.js";
 
 const URL = env.DATABASE_URL;
@@ -15,7 +15,7 @@ const options = {
 export const connectDB = () => {
   mongoose.connect(URL, options, (err) => {
     if (err) {
-      logger.error({ type: "error", message: err.message });
+      logger.error({ type: "error", message: err });
     } else {
       mongoose.connection.on("connected", () => {});
       mongoose.connection.on("error", (err) => {
@@ -25,7 +25,7 @@ export const connectDB = () => {
         logger.log({ type: "error", message: "disconnected}" })
       );
       logger.info({
-        level: "Info",
+        level: "info",
         message: "Database Connected",
       });
     }

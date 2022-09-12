@@ -116,7 +116,12 @@ const StatusMessages = {
   MISDIRECTED_REQUEST: "Misdirected Request",
 };
 
+const privilage = ["ADD", "DELETE", "VIEW", "UPDATE"];
+const roles = [{ name: "Vendor" }, { name: "Admin" }];
+
 export const helpers = {
   StatusMessages,
   StatusCodes,
+  privilage,
+  roles,
 };
