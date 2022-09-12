@@ -146,10 +146,19 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
+    publicKey: {
+      type: String,
+      require: true,
+    },
     status: {
       type: Boolean,
       require: true,
       default: false,
+    },
+    rolePrivilage: {
+      type: Schema.Types.ObjectId,
+      require: true,
+      ref: "rolePrivilage",
     },
     rolePrivilage: {
       type: Schema.Types.ObjectId,
