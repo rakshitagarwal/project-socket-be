@@ -10,12 +10,87 @@
     },
     "termsOfService": "Can be used by anyone"
   },
-  "tags": [{ "name": "user", "description": "User operations" }],
+  "tags": [
+    { "name": "Users", "description": "User operations" },
+    { "name": "Products", "description": "Product operations" }
+  ],
   "servers": [
     {
-      "url": "http://localhost:3300",
-      "description": "Local Server"
+      "url": "http:localhost:3300",
+      "description": "Main Server",
+      "variables": { "basePath": { "default": "/v1", "enum": ["v1"] } }
     }
   ],
-  "paths": {}
+  "paths": {
+    "/product": {
+      "post": {
+        "tags": ["Products"],
+        "description": "Add a new product",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "descirption": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": false
+                  },
+                  "purchasePrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "sellingPrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "overHeadCost": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "status": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "default": false,
+                    "nullable": false
+                  },
+                  "ProductCategory": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
 }
