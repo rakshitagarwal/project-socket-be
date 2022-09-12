@@ -1,9 +1,10 @@
 // routing prefixs
-const USER_PREFIX = "/users";
-const PRODUCT_PREFIX = "/products";
-const AUCTION_PREFIX = "/auctions";
-const ROLE_PREFIX = "/roles";
-const ID_POSTFIX = ":id";
+export const USER_PREFIX = "/users";
+export const PRODUCT_PREFIX = "/products";
+export const AUCTION_PREFIX = "/auctions";
+export const ROLE_PREFIX = "/roles";
+export const ID_POSTFIX = ":id";
+export const PREFIX_VERSION = "v1";
 
 // user paths
 const USER_REGISTER = USER_PREFIX + "/register";

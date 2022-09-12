@@ -5,11 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon src/index.js",
-    "dev": "NODE_ENV=production nodemon src/index.js",
+    "start": "nodemon index.js",
+    "dev": "NODE_ENV=production nodemon index.js",
     "test": "mocha",
     "lint": "eslint --fix src/*.js",
-    "seed":"node src/seeds/authrization.js"
+    "seed": "node src/seeds/authrization.js"
   },
   "repository": {
     "type": "git",
@@ -53,6 +53,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "mocha": "^10.0.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "supertest": "^6.2.4"
   }
 }

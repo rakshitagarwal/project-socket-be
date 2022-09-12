@@ -5,9 +5,9 @@ const { Schema } = mongoose;
  * commong Schema configuration
  */
 const schemaOptions = {
+  versionKey: false,
+  autoIndex: true,
   timestamps: {
-    versionKey: false,
-    autoIndex: true,
     createdAt: {
       type: Date,
       default: new Date().toUTCString(),
@@ -27,148 +27,135 @@ const auctionCategory = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     description: {
       type: String,
-      require: true,
+      required: true,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const productCategory = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     description: {
       type: String,
-      require: true,
+      required: true,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const privilageSchema = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     description: {
       type: String,
-      require: true,
+      required: true,
+    },
+    accessNumber: {
+      type: Number,
+      required: true,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const roleSchema = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const rolePrivilage = new Schema(
   {
     Role: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "Role",
     },
     module: [
       {
         name: {
           type: String,
-          require: true,
+          required: true,
         },
         privilageNumber: {
           type: Number,
-          require: true,
+          required: true,
         },
       },
     ],
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const userSchema = new Schema(
   {
     fullName: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
-      require: true,
+      required: true,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
     publicKey: {
       type: String,
-      require: true,
+      required: true,
     },
     publicKey: {
       type: String,
-      require: true,
+      required: true,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
-    rolePrivilage: {
+    RolePrivilage: {
       type: Schema.Types.ObjectId,
-      require: true,
-      ref: "rolePrivilage",
-    },
-    rolePrivilage: {
-      type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "rolePrivilage",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const userProfile = new Schema(
@@ -190,65 +177,66 @@ const userProfile = new Schema(
     },
     User: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "User",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
-const productSchema = new Schema(
+export const productSchema = new Schema(
   {
     title: {
       type: String,
-      require: true,
+      required: true,
     },
     descirption: {
       type: String,
-      require: true,
+      required: true,
     },
     image: {
       type: String,
-      require: true,
+      required: true,
     },
     purchasePrice: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     sellingPrice: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     overHeadCost: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     quantity: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
+    ProductCategory: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "ProductCategory",
+    },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const auctionSchema = new Schema(
   {
     title: {
       type: String,
-      require: true,
+      required: true,
     },
     bannerImage: {
       type: String,
@@ -258,30 +246,30 @@ const auctionSchema = new Schema(
     },
     noOfPlayConsumed: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     bidIncrement: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     OpeningPrice: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     startTime: {
       type: Number,
-      require: true,
+      required: true,
     },
     endTime: {
       type: Number,
-      require: true,
+      required: true,
     },
     quantity: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     noNewBidderLimit: {
@@ -290,164 +278,159 @@ const auctionSchema = new Schema(
     },
     status: {
       type: String,
-      require: true,
+      required: true,
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
     },
     Product: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "Product",
     },
     AuctionCategory: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "AuctionCategory",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const auctionPreRegisterSchema = new Schema(
   {
     startDate: {
       type: Date,
-      require: true,
+      required: true,
     },
     participantCount: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     participantFees: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
     Auction: {
       type: Schema.Types.ObjectId,
       ref: "Auction",
-      require: true,
+      required: true,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const auctionReultScehma = new Schema(
   {
     noOfTimePreRegistered: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     noOfTimeAuctionNotPlayed: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     noOfAuctionPlayed: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     noOfTimePostRegistered: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     totalPlaysAbsrob: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     User: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "User",
     },
     Auction: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "Auction",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const walletSchema = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     walletBalance: {
       type: Number,
-      require: true,
+      required: true,
       default: 0,
     },
     walletAddress: {
       type: String,
-      require: true,
+      required: true,
     },
     networkType: {
       type: String,
-      require: true,
+      required: true,
     },
     chainID: {
       type: Number,
-      require: true,
+      required: true,
     },
     status: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
     User: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: "User",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
-const transactionSchema = new Schema({
-  playConsumend: {
-    type: Number,
-    require: true,
-    default: 0,
+const transactionSchema = new Schema(
+  {
+    playConsumend: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    User: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    Wallet: {
+      type: Schema.Types.ObjectId,
+      ref: "Wallet",
+      required: true,
+    },
   },
-  status: {
-    type: Boolean,
-    require: true,
-    default: false,
-  },
-  User: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    require: true,
-  },
-  Wallet: {
-    type: Schema.Types.ObjectId,
-    ref: "Wallet",
-    require: true,
-  },
-});
+  schemaOptions
+);
 
-export default model = {
+export const model = {
   roleSchema,
   privilageSchema,
   rolePrivilage,

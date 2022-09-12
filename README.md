@@ -39,8 +39,11 @@ EMAIL_HOST=EMAIL_HOST
 # install dependencies for backend
 $ npm install
 
-# run backend
+# run backend- for run in production
 $ npm run dev
+
+# run backend - for run in development
+$ npm run start
 
 # run test
 $ npm run test
