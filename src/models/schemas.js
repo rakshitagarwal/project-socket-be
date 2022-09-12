@@ -97,11 +97,6 @@ const roleSchema = new Schema(
       require: true,
       default: false,
     },
-    Privilage: {
-      type: Schema.Types.ObjectId,
-      require: true,
-      ref: "Privilage",
-    },
   },
   {
     schemaOptions,
@@ -115,11 +110,18 @@ const rolePrivilage = new Schema(
       require: true,
       ref: "Role",
     },
-    Privilage: {
-      type: Schema.Types.ObjectId,
-      require: true,
-      ref: "Privilage",
-    },
+    module: [
+      {
+        name: {
+          type: String,
+          require: true,
+        },
+        privilageNumber: {
+          type: Number,
+          require: true,
+        },
+      },
+    ],
   },
   {
     schemaOptions,
@@ -140,10 +142,19 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
+    publicKey: {
+      type: String,
+      require: true,
+    },
     status: {
       type: Boolean,
       require: true,
       default: false,
+    },
+    rolePrivilage: {
+      type: Schema.Types.ObjectId,
+      require: true,
+      ref: "rolePrivilage",
     },
   },
   {
@@ -426,3 +437,9 @@ const transactionSchema = new Schema({
     require: true,
   },
 });
+
+export default model = {
+  roleSchema,
+  privilageSchema,
+  rolePrivilage,
+};

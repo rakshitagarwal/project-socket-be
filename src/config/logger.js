@@ -1,5 +1,6 @@
 import winston, { createLogger, format, transports } from "winston";
 import "dotenv/config";
+import "winston-daily-rotate-file";
 const { combine, json } = format;
 
 /**
@@ -7,6 +8,21 @@ const { combine, json } = format;
  * @returns Object
  */
 const productionLogger = () => {
+  const combineFileTransport = new winston.transports.DailyRotateFile({
+    dirname: "log/combined",
+    filename: "%DATE%.log",
+    datePattern: "YYYY-MM-DD",
+    maxSize: "100m",
+  });
+
+  const errorFileTransport = new winston.transports.DailyRotateFile({
+    dirname: "log/error",
+    filename: "%DATE%.log",
+    datePattern: "YYYY-MM-DD",
+    maxSize: "100m",
+    level: "error",
+  });
+
   return createLogger({
     level: "info",
     format: combine(
@@ -17,15 +33,8 @@ const productionLogger = () => {
     defaultMeta: { service: "user-service" },
     transports: [
       new transports.Console(),
-      new transports.File({
-        dirname: "log/combined",
-        filename: "combined.log",
-      }),
-      new transports.File({
-        dirname: "log/errors",
-        filename: "error.log",
-        level: "error",
-      }),
+      combineFileTransport,
+      errorFileTransport,
     ],
   });
 };
