@@ -8,7 +8,8 @@
     "start": "nodemon src/index.js",
     "dev": "NODE_ENV=production nodemon src/index.js",
     "test": "mocha",
-    "lint": "eslint --fix src/*.js"
+    "lint": "eslint --fix src/*.js",
+    "seed":"node src/seeds/authrization.js"
   },
   "repository": {
     "type": "git",

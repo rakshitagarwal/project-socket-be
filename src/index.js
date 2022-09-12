@@ -7,7 +7,7 @@ import cors from "cors";
 import fs from "fs";
 import { createResponse, sendEmail } from "./common/utilies.js";
 import { userRouter } from "./user/user-routers.js";
-import { env } from "./config/env.js";
+import env from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import logger from "./config/logger.js";
 import i18next from "i18next";
@@ -74,7 +74,7 @@ app.use(function (err, req, res) {
 
 const server = app.listen(PORT, () => {
   console.log(`listening on http://localhost:${PORT}`);
-  // connectDB();
+  connectDB();
 });
 
 process.on("uncaughtException", (err) => {

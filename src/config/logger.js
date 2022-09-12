@@ -6,34 +6,35 @@ const { combine, json } = format;
  * winston configuration for logger
  * @returns Object
  */
-const productionLogger = () => {
-  return createLogger({
-    level: "info",
-    format: combine(
-      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-      json(),
-      winston.format.json()
-    ),
-    defaultMeta: { service: "user-service" },
-    transports: [
-      new transports.Console(),
-      new transports.File({
-        dirname: "log/combined",
-        filename: "combined.log",
-      }),
-      new transports.File({
-        dirname: "log/errors",
-        filename: "error.log",
-        level: "error",
-      }),
-    ],
-  });
-};
+const logger = createLogger({
+  level: "info",
+  format: combine(
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    json(),
+    winston.format.json()
+  ),
+  defaultMeta: { service: "user-service" },
+  transports: [
+    new transports.Console(),
+    new transports.File({
+      dirname: "log/combined",
+      filename: "combined.log",
+    }),
+    new transports.File({
+      dirname: "log/errors",
+      filename: "error.log",
+      level: "error",
+    }),
+  ],
+});
 
-let logger = null;
-
-if (process.env.NODE_ENV === "production") {
-  logger = productionLogger();
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
+  // logger = productionLogger();
 }
 
 export default logger;

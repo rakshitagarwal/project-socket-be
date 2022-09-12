@@ -1,8 +1,7 @@
 import { readFileSync } from "fs";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
-import forge from "node-forge";
-import { env } from "../config/env.js";
+import  env  from "../config/env.js";
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
 const { compile } = handlebars;
