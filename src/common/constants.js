@@ -1,20 +1,21 @@
 // routing prefixs
-export const USER_PREFIX = "/users";
-export const PRODUCT_PREFIX = "/products";
-export const AUCTION_PREFIX = "/auctions";
-export const ROLE_PREFIX = "/roles";
+export const USER_PATHNAME = "/users";
+export const PRODUCT_PATHNAME = "/products";
+export const AUCTION_PATHNAME = "/auctions";
+export const ROLE_PATHNAME = "/roles";
 export const ID_POSTFIX = ":id";
 export const PREFIX_VERSION = "v1";
 
 // user paths
-const USER_REGISTER = USER_PREFIX + "/register";
-const FETCH_USER_EMAIL = USER_PREFIX + "/:email";
-const FETCH_USER_ID = USER_PREFIX + ID_POSTFIX;
-const CHANGE_USER_STATUS = USER_PREFIX + "/status";
+export const USER_LOGIN = USER_PATHNAME + "/login";
+const USER_REGISTER = USER_PATHNAME + "/register";
+const FETCH_USER_EMAIL = USER_PATHNAME + "/:email";
+const FETCH_USER_ID = USER_PATHNAME + ID_POSTFIX;
+const CHANGE_USER_STATUS = USER_PATHNAME + "/status";
 
 // product paths
-const FETCH_PRODUCT_DETAILS_ID = PRODUCT_PREFIX + ID_POSTFIX;
-const CHANGE_PRODUCT_STATUS = PRODUCT_PREFIX + "/status";
+const FETCH_PRODUCT_DETAILS_ID = PRODUCT_PATHNAME + ID_POSTFIX;
+const CHANGE_PRODUCT_STATUS = PRODUCT_PATHNAME + "/status";
 
 // auction paths
 const FETCH_AUCTION_DETAILS_ID = AUCTION_PREFIX + ID_POSTFIX;
@@ -23,27 +24,3 @@ const CHANGE_AUCTION_STATUS = AUCTION_PREFIX + "/status";
 // role paths
 const FETCH_ROLE_DETAILS_ID = ROLE_PREFIX + ID_POSTFIX;
 const CHANGE_ROLE_STATUS = ROLE_PREFIX + "/status";
-
-export const ADMIN_PATH = {
-  USER_PREFIX,
-  PRODUCT_PREFIX,
-  AUCTION_PREFIX,
-  ROLE_PREFIX,
-  USER_REGISTER,
-  FETCH_USER_EMAIL,
-  USER_REGISTER,
-  FETCH_USER_EMAIL,
-  FETCH_USER_ID,
-  CHANGE_USER_STATUS,
-  FETCH_PRODUCT_DETAILS_ID,
-  CHANGE_PRODUCT_STATUS,
-  FETCH_AUCTION_DETAILS_ID,
-  CHANGE_AUCTION_STATUS,
-  FETCH_ROLE_DETAILS_ID,
-  CHANGE_ROLE_STATUS,
-};
-
-export const VENDOR_PATH = {
-  PRODUCT_PREFIX,
-  FETCH_PRODUCT_DETAILS_ID,
-};

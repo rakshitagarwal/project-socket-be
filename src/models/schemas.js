@@ -122,7 +122,7 @@ const rolePrivilage = new Schema(
   schemaOptions
 );
 
-const userSchema = new Schema(
+export const userSchema = new Schema(
   {
     fullName: {
       type: String,
@@ -434,4 +434,5 @@ export const model = {
   roleSchema,
   privilageSchema,
   rolePrivilage,
+  userSchema
 };

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Joi from "joi";
-import { ADMIN_PATH, VENDOR_PATH } from "../common/constants.js";
 import logger from "../config/logger.js";
 import { createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
