@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=production nodemon index.js",
     "test": "mocha",
     "lint": "eslint --fix src/*.js",
-    "seed": "node src/seeds/authrization.js"
+    "seed":"node src/seeds/authorization.js"
   },
   "repository": {
     "type": "git",

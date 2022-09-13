@@ -47,4 +47,7 @@ $ npm run start
 
 # run test
 $ npm run test
+
+# run seed - for run seed
+$ npm run seed
 ```
