@@ -63,7 +63,7 @@ const privilageSchema = new Schema(
       required: true,
     },
     accessNumber: {
-      type: String,
+      type: Number,
       required: true,
     },
     status: {
