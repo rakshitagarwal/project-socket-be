@@ -44,7 +44,7 @@ const privilage = async () => {
     }
     process.exit();
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
