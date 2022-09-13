@@ -126,7 +126,7 @@ const userSchema = new Schema(
     },
     publicKey: {
       type: String,
-      requiredd: true,
+      required: true,
     },
     publicKey: {
       type: String,
