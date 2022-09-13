@@ -5,7 +5,7 @@ import logger from "./logger.js";
 const URL = env.DATABASE_URL;
 
 const options = {
-  dbName : env.DB_NAME,
+  dbName: env.DB_NAME,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
