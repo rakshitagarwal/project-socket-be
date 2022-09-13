@@ -7,10 +7,18 @@ export const create = async (product) => {
 
 export const update = async (id, product) => {
   const updatedProduct = await productModel.findByIdAndUpdate(id, product);
+
   return updatedProduct;
 };
 
 export const getProductById = async (id) => {
   const productMeta = await productModel.findById(id);
+  return productMeta;
+};
+
+export const removeProduct = async (id) => {
+  const productMeta = await productModel.findByIdAndUpdate(id, {
+    status: true,
+  });
   return productMeta;
 };

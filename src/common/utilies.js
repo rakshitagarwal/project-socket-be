@@ -113,10 +113,10 @@ export const sendEmail = (payload, eventName) => {
     });
 };
 
-const FILE_SIZE = 25000000;
+const FILE_SIZE = 5000000; // 5mb
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "src/upload/");
+    cb(null, "assets/upload/");
   },
   filename: function (req, file, cb) {
     cb(null, new Date().toISOString() + file.originalname);

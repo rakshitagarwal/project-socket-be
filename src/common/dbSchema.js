@@ -7,16 +7,7 @@ const { Schema } = mongoose;
 const schemaOptions = {
   versionKey: false,
   autoIndex: true,
-  timestamps: {
-    createdAt: {
-      type: Date,
-      default: new Date().toUTCString(),
-    },
-    updatedAt: {
-      type: Date,
-      default: new Date().toUTCString(),
-    },
-  },
+  timestamps: true,
 };
 
 /**
@@ -190,7 +181,7 @@ export const productSchema = new Schema(
       type: String,
       required: true,
     },
-    descirption: {
+    description: {
       type: String,
       required: true,
     },

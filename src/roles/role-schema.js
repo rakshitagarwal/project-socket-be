@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { model } from "../models/schemas.js";
+import { model } from "../common/dbSchema.js";
 
 const roleSchema = mongoose.model("Role", model.roleSchema);
 const privilageSchema = mongoose.model("Privilage", model.privilageSchema);
