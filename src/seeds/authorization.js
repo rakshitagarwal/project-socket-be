@@ -21,7 +21,7 @@ import logger from "../config/logger.js";
     }
   };
 
-  const privilageSchema = async (data) => {
+  const privilageSchema = async () => {
     await authSchemas.privilageSchema.deleteMany({});
 
     const privilageData = await authSchemas.privilageSchema.insertMany(
