@@ -5,9 +5,9 @@ const { Schema } = mongoose;
  * commong Schema configuration
  */
 const schemaOptions = {
+  versionKey: false,
+  autoIndex: true,
   timestamps: {
-    versionKey: false,
-    autoIndex: true,
     createdAt: {
       type: Date,
       default: new Date().toUTCString(),
@@ -39,9 +39,7 @@ const auctionCategory = new Schema(
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const productCategory = new Schema(
@@ -60,9 +58,7 @@ const productCategory = new Schema(
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const privilageSchema = new Schema(
@@ -85,9 +81,7 @@ const privilageSchema = new Schema(
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const roleSchema = new Schema(
@@ -102,9 +96,7 @@ const roleSchema = new Schema(
       default: false,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const rolePrivilage = new Schema({
@@ -143,6 +135,10 @@ const userSchema = new Schema(
     },
     publicKey: {
       type: String,
+      requiredd: true,
+    },
+    publicKey: {
+      type: String,
       required: true,
     },
     status: {
@@ -150,15 +146,13 @@ const userSchema = new Schema(
       required: true,
       default: false,
     },
-    rolePrivilage: {
+    RolePrivilage: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: "rolePrivilage",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const userProfile = new Schema(
@@ -184,12 +178,10 @@ const userProfile = new Schema(
       ref: "User",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
-const productSchema = new Schema(
+export const productSchema = new Schema(
   {
     title: {
       type: String,
@@ -228,10 +220,13 @@ const productSchema = new Schema(
       required: true,
       default: false,
     },
+    ProductCategory: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "ProductCategory",
+    },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const auctionSchema = new Schema(
@@ -295,9 +290,7 @@ const auctionSchema = new Schema(
       ref: "AuctionCategory",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const auctionPreRegisterSchema = new Schema(
@@ -327,9 +320,7 @@ const auctionPreRegisterSchema = new Schema(
       required: true,
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const auctionReultScehma = new Schema(
@@ -370,9 +361,7 @@ const auctionReultScehma = new Schema(
       ref: "Auction",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
 const walletSchema = new Schema(
@@ -409,36 +398,37 @@ const walletSchema = new Schema(
       ref: "User",
     },
   },
-  {
-    schemaOptions,
-  }
+  schemaOptions
 );
 
-const transactionSchema = new Schema({
-  playConsumend: {
-    type: Number,
-    required: true,
-    default: 0,
+const transactionSchema = new Schema(
+  {
+    playConsumend: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    User: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    Wallet: {
+      type: Schema.Types.ObjectId,
+      ref: "Wallet",
+      required: true,
+    },
   },
-  status: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  User: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  Wallet: {
-    type: Schema.Types.ObjectId,
-    ref: "Wallet",
-    required: true,
-  },
-});
+  schemaOptions
+);
 
 export const model = {
   roleSchema,
-  rolePrivilage,
   privilageSchema,
+  rolePrivilage,
 };

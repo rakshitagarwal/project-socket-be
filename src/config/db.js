@@ -5,6 +5,7 @@ import logger from "./logger.js";
 const URL = env.DATABASE_URL;
 
 const options = {
+  dbName : env.DB_NAME,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
@@ -17,7 +18,9 @@ export const connectDB = () => {
     if (err) {
       logger.error({ type: "error", message: err });
     } else {
-      mongoose.connection.on("connected", () => {});
+      mongoose.connection.on("connected", () => {
+        console.log("Connected to database...");
+      });
       mongoose.connection.on("error", (err) => {
         logger.error({ type: "error", message: err.message });
       });
