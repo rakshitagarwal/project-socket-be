@@ -36,4 +36,7 @@ export const envSchema = Joi.object({
   EMAIL_HOST: Joi.string().not().empty().messages({
     required_error: "EMAIL_HOST must be present in environment variables",
   }),
+  DB_NAME: Joi.string().not().empty().messages({
+    required_error: "DB_NAME must be present in environment variables"
+  })
 });
