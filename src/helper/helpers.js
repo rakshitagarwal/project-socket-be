@@ -116,12 +116,58 @@ const StatusMessages = {
   MISDIRECTED_REQUEST: "Misdirected Request",
 };
 
-const privilage = ["ADD", "DELETE", "VIEW", "UPDATE"];
-const roles = [{ name: "Vendor" }, { name: "Admin" }];
+const privilage = [
+  {
+    name: "READ",
+    description: "only for read permission",
+    accessNumber: 1,
+  },
+  {
+    name: "ADD",
+    description: "only for created permission",
+    accessNumber: 2,
+  },
+  {
+    name: "UPDATE",
+    description: "only for update permission",
+    accessNumber: 4,
+  },
+  {
+    name: "DELETE",
+    description: "only for delete permission",
+    accessNumber: 8,
+  },
+];
+const privilageRole = [
+  {
+    role: "63200f08d12673c6d843e18b",
+    module: [
+      {
+        name: "product",
+        privilageNumber: 7,
+      },
+      {
+        name: "acution",
+        privilageNumber: 7,
+      },
+      {
+        name: "role",
+        privilageNumber: 7,
+      },
+      {
+        name: "user",
+        privilageNumber: 7,
+      },
+    ],
+  },
+];
+
+const roles = [{ name: "Admin" }, { name: "Vendor" }];
 
 export const helpers = {
   StatusMessages,
   StatusCodes,
   privilage,
   roles,
+  privilageRole,
 };
