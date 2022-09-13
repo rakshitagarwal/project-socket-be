@@ -7,16 +7,7 @@ const { Schema } = mongoose;
 const schemaOptions = {
   versionKey: false,
   autoIndex: true,
-  timestamps: {
-    createdAt: {
-      type: Date,
-      default: new Date().toUTCString(),
-    },
-    updatedAt: {
-      type: Date,
-      default: new Date().toUTCString(),
-    },
-  },
+  timestamps: true,
 };
 
 /**
@@ -99,28 +90,25 @@ const roleSchema = new Schema(
   schemaOptions
 );
 
-const rolePrivilage = new Schema(
-  {
-    Role: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Role",
-    },
-    module: [
-      {
-        name: {
-          type: String,
-          required: true,
-        },
-        privilageNumber: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
+const rolePrivilage = new Schema({
+  role: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "Role",
   },
-  schemaOptions
-);
+  module: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      privilageNumber: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+});
 
 const userSchema = new Schema(
   {
@@ -404,31 +392,28 @@ const walletSchema = new Schema(
   schemaOptions
 );
 
-const transactionSchema = new Schema(
-  {
-    playConsumend: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    status: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    User: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    Wallet: {
-      type: Schema.Types.ObjectId,
-      ref: "Wallet",
-      required: true,
-    },
+const transactionSchema = new Schema({
+  playConsumend: {
+    type: Number,
+    require: true,
+    default: 0,
   },
-  schemaOptions
-);
+  status: {
+    type: Boolean,
+    require: true,
+    default: false,
+  },
+  User: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: true,
+  },
+  Wallet: {
+    type: Schema.Types.ObjectId,
+    ref: "Wallet",
+    require: true,
+  },
+});
 
 export const model = {
   roleSchema,
