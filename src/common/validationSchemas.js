@@ -40,3 +40,10 @@ export const envSchema = Joi.object({
     required_error: "DB_NAME must be present in environment variables",
   }),
 });
+
+export const registers = Joi.object({
+  fullName: Joi.string().required(),
+  email: Joi.string().required(),
+  password: Joi.string().required(),
+  Role: Joi.string().required(),
+});

@@ -9,7 +9,7 @@ import {
 
 export const createProduct = async (product) => {
   const productMeta = await create(product);
-
+    
   if (productMeta !== undefined) {
     return createResponse(helpers.StatusCodes.CREATED, {
       message: `Product ${productMeta.title} Added`,
