@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 import env from "../config/env.js";
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
@@ -111,3 +112,29 @@ export const sendEmail = (payload, eventName) => {
       console.log(error);
     });
 };
+
+const FILE_SIZE = 5000000; // 5mb
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "assets/upload/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
+});
+
+const fileFilter = (_req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+export const uploadFile = multer({
+  storage: storage,
+  limits: {
+    fileSize: FILE_SIZE,
+  },
+  fileFilter: fileFilter,
+});

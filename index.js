@@ -29,9 +29,6 @@ app.use(cors());
 app.use(cookieParser());
 app.use(middlerware18.handle(i18next));
 
-// Version Routers
-app.use(PREFIX_VERSION, v1Router);
-
 // language configurations
 i18next
   .use(Backend)
@@ -44,6 +41,14 @@ i18next
       },
     },
   });
+
+app.get("/", (req, res) => {
+  res.json({ Welcome: "BiG Deal Server", docs: "/docs" });
+});
+
+// Version Routers
+app.use(PREFIX_VERSION, v1Router);
+
 app.use(
   "/docs",
   serve,
@@ -54,16 +59,13 @@ app.use(
   })
 );
 
-app.use("/", (req, res) => {
-  const { statusCode, response } = createResponse(helpers.StatusCodes.OK, {
-    "/docs": "Gateway to BigDeal-API Swagger",
-  });
+app.use((err, req, res, next) => {
+  logger.error(err.stack);
+  const { response, statusCode } = createResponse(
+    helpers.StatusCodes.INTERNAL_SERVER_ERROR,
+    err
+  );
   res.status(statusCode).json(response);
-});
-
-app.use(function (err, req, res) {
-  res.status(helpers.StatusCodes.INTERNAL_SERVER_ERROR);
-  res.send(err);
 });
 
 const server = app.listen(PORT, () => {

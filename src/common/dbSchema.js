@@ -33,7 +33,7 @@ const auctionCategory = new Schema(
   schemaOptions
 );
 
-const productCategory = new Schema(
+export const productCategory = new Schema(
   {
     name: {
       type: String,
@@ -178,7 +178,7 @@ export const productSchema = new Schema(
       type: String,
       required: true,
     },
-    descirption: {
+    description: {
       type: String,
       required: true,
     },
@@ -419,4 +419,5 @@ export const model = {
   roleSchema,
   privilageSchema,
   rolePrivilage,
+  productCategory,
 };

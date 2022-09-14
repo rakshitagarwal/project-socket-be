@@ -14,7 +14,7 @@ const { error, value: env } = Object.freeze(
     EMAIL_PORT: process.env.EMAIL_PORT,
     EMAIL_HOST: process.env.EMAIL_HOST,
     FROM_EMAIL: process.env.FROM_EMAIL,
-    DB_NAME : process.env.DB_NAME
+    DB_NAME: process.env.DB_NAME,
   })
 );
 

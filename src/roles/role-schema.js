@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { model } from "../models/schemas.js";
+import { model } from "../common/dbSchema.js";
 import logger from "../config/logger.js";
 
 let roleSchema, privilageSchema, rolePrivilage;
