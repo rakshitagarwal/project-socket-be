@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 import env from "../config/env.js";
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
@@ -112,21 +113,52 @@ export const sendEmail = (payload, eventName) => {
     });
 };
 
+const FILE_SIZE = 5000000; // 5mb
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "assets/upload/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
+});
+
+const fileFilter = (_req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+export const uploadFile = multer({
+  storage: storage,
+  limits: {
+    fileSize: FILE_SIZE,
+  },
+  fileFilter: fileFilter,
+});
+
 /**
- * @description calculate privilages
+ * @description calculate previlages based on provided number
  * @param {Number} previlageNum 
+ * @returns 
  */
 export const calculatePrivilages = (previlageNum) => {
-  const myPrevillages = [];
-  const sumToOp = [
-    'GET',
-    'POST',
-    'PUT | PATCH',
-    'DELETE'
-  ];
-  for(let i = (sumToOp.length-1); 0 <= i; i--){
-    if(previlageNum <= (2 ** i)) {
-      myPrevillages.push(sumToOp[i]);
-    }
+  if(previlageNum > 0){
+      const myPrevillages = [];
+      const sumToOp = [
+          'GET',
+          'POST',
+          'PATCH | PUT',
+          'DELETE'
+      ];
+      for(let i = (sumToOp.length-1); 0 <= i; i--){
+          if(previlageNum >= (2 ** i)) {
+            myPrevillages.push(sumToOp[i]);
+            previlageNum = previlageNum - (2**i);
+          }
+      }
+      return myPrevillages;
   }
 }

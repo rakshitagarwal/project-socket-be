@@ -4,7 +4,7 @@ export const PRODUCT_PATHNAME = "/products";
 export const AUCTION_PATHNAME = "/auctions";
 export const ROLE_PATHNAME = "/roles";
 export const ID_POSTFIX = ":id";
-export const PREFIX_VERSION = "v1";
+export const PREFIX_VERSION = "/v1";
 
 // user paths
 export const USER_LOGIN = USER_PATHNAME + "/login";
@@ -18,9 +18,9 @@ const FETCH_PRODUCT_DETAILS_ID = PRODUCT_PATHNAME + ID_POSTFIX;
 const CHANGE_PRODUCT_STATUS = PRODUCT_PATHNAME + "/status";
 
 // auction paths
-const FETCH_AUCTION_DETAILS_ID = AUCTION_PREFIX + ID_POSTFIX;
-const CHANGE_AUCTION_STATUS = AUCTION_PREFIX + "/status";
+const FETCH_AUCTION_DETAILS_ID = AUCTION_PATHNAME + ID_POSTFIX;
+const CHANGE_AUCTION_STATUS = AUCTION_PATHNAME + "/status";
 
 // role paths
-const FETCH_ROLE_DETAILS_ID = ROLE_PREFIX + ID_POSTFIX;
-const CHANGE_ROLE_STATUS = ROLE_PREFIX + "/status";
+const FETCH_ROLE_DETAILS_ID = ROLE_PATHNAME + ID_POSTFIX;
+const CHANGE_ROLE_STATUS = ROLE_PATHNAME + "/status";

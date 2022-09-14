@@ -2,13 +2,13 @@
 
 ## Folder Structure (src/)
 
-| Directory      | Description                                                                       |
-| -------------- | --------------------------------------------------------------------------------- |
-| `/common`      | cosntants and utilities (e.g. Routing Paths, commonResponses, sendEmail)          |
-| `/config`      | Database Setup, environment variables, logger (e.g. connectDB, logger)            |
-| `/helpers`     | Different HTTP Ports adn messages (e.g. StatuCodes, StatusMessage)                |
-| `/middlewares` | JWTToken setup (e.g. Authentication, )                                            |
-| `/user`        | User Module (e.g. handlers, routing, queries, models,validationschema, services ) |
+| Directory      | Description                                                                         |
+| -------------- | ----------------------------------------------------------------------------------- |
+| `/common`      | cosntants and utilities (e.g. Routing Paths, commonResponses, sendEmail)            |
+| `/config`      | Database Setup, environment variables, logger (e.g. connectDB, logger)              |
+| `/helpers`     | Different HTTP Ports adn messages (e.g. StatuCodes, StatusMessage)                  |
+| `/middlewares` | JWTToken setup (e.g. Authentication, )                                              |
+| `/user`        | User Module (e.g. handlers, routing, queries, dbschema,validationschema, services ) |
 
 ### Requirements
 
@@ -47,4 +47,7 @@ $ npm run start
 
 # run test
 $ npm run test
+
+# run seed - for run seed
+$ npm run seed
 ```

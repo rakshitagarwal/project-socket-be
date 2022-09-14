@@ -1,5 +1,5 @@
 import { helpers } from "./../helper/helpers.js";
-import { createResponse } from "./../common/utilies";
+import { createResponse } from "./../common/utilies.js";
 import { isExist } from "./user-queries.js";
 export const checkCredentials = async function (user) {
     const queryResult = await isExist(user.emailAddress, user.passwordHash);

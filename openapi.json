@@ -16,13 +16,13 @@
   ],
   "servers": [
     {
-      "url": "http:localhost:3300",
+      "url": "{basePath}",
       "description": "Main Server",
       "variables": { "basePath": { "default": "/v1", "enum": ["v1"] } }
     }
   ],
   "paths": {
-    "/product": {
+    "/products": {
       "post": {
         "tags": ["Products"],
         "description": "Add a new product",
@@ -72,8 +72,7 @@
                   "status": {
                     "type": "boolean",
                     "format": "boolean",
-                    "default": false,
-                    "nullable": false
+                    "default": false
                   },
                   "ProductCategory": {
                     "type": "string",
