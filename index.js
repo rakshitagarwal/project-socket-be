@@ -73,17 +73,17 @@ const server = app.listen(PORT, () => {
   connectDB();
 });
 
-// process.on("uncaughtException", (err) => {
-//   if (err) logger.error(err.stack);
-//   server.close(() => {
-//     console.log("Stopped server due to uncaughtException");
-//     console.log(err);
-//   });
-// });
+process.on("uncaughtException", (err) => {
+  if (err) logger.error(err.stack);
+  server.close(() => {
+    console.log("Stopped server due to uncaughtException");
+    console.log(err);
+  });
+});
 
-// process.on("SIGTERM", () => {
-//   console.log("SIGTERM signal recieved, Stopping server");
-//   server.close(() => {
-//     console.log("Stopped server");
-//   });
-// });
+process.on("SIGTERM", () => {
+  console.log("SIGTERM signal recieved, Stopping server");
+  server.close(() => {
+    console.log("Stopped server");
+  });
+});
