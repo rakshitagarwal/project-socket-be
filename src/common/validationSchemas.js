@@ -40,3 +40,38 @@ export const envSchema = Joi.object({
     required_error: "DB_NAME must be present in environment variables",
   }),
 });
+
+export const productSchema = Joi.object({
+  title: Joi.string().required().messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  description: Joi.string().required().messages({
+    required_error: "description must be present in responses",
+    validate_error: "description must be a string in responses",
+  }),
+  image: Joi.string().required().messages({
+    required_error: "image must be present in responses",
+    validate_error: "image must be a string in responses",
+  }),
+  purchasePrice: Joi.number().required().messages({
+    required_error: "purchasePrice must be present in responses",
+    validate_error: "purchasePrice must be a number in responses",
+  }),
+  sellingPrice: Joi.number().required().messages({
+    required_error: "sellingPrice must be present in responses",
+    validate_error: "sellingPrice must be a number in responses",
+  }),
+  overHeadCost: Joi.number().required().messages({
+    required_error: "overHeadCost must be present in responses",
+    validate_error: "overHeadCost must be a number in responses",
+  }),
+  quantity: Joi.number().required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a number in responses",
+  }),
+  ProductCategory: Joi.string().required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a string in responses",
+  }),
+});

@@ -21,14 +21,13 @@ export const isAuthenticated = (req, res, next) => {
     return;
   }
 
-  const [type, token] = req.headers.authorization.split(" ");
+  const [type, jwtToken] = req.headers.authorization.split(" ");
   if (!token || type !== "Bearer") {
     res.status(statusCode).json(response);
     return;
   }
 
-  // TODO: check db for token, if exists then, extract `Public_Key` from the db
-  const userData = verifyJwtToken(token);
+  const userData = verifyJwtToken(jwtToken);
   res.locals = userData;
   next();
 };

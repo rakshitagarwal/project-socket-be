@@ -128,10 +128,6 @@ export const userSchema = new Schema(
       type: String,
       required: true,
     },
-    publicKey: {
-      type: String,
-      required: true,
-    },
     status: {
       type: Boolean,
       required: true,
@@ -420,5 +416,5 @@ export const model = {
   privilageSchema,
   rolePrivilage,
   productCategory,
-  userSchema
+  userSchema,
 };

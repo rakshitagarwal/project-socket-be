@@ -1,7 +1,10 @@
 import { createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { calculatePrivilages } from "./../common/utilies.js";
-import { getPrivilagesForRole } from "./../roles/role-queries.js";
+import {
+  getAdminRoleId,
+  getPrivilagesForRole,
+} from "./../roles/role-queries.js";
 
 export const checkAccess = async (req, res, next) => {
   const { statusCode, response } = createResponse(
@@ -10,19 +13,30 @@ export const checkAccess = async (req, res, next) => {
       message: helpers.StatusMessages.UNAUTHORIZED,
     }
   );
-  // TODO: add roleid from jwt auth 
-  const { module } = await getPrivilagesForRole("63215df22a813f616e9ba177");
+
+  // TODO: add roleid from jwt auth
+  const admin = await getAdminRoleId();
+  if (!admin) {
+    res.status(statusCode).json(response);
+  }
+  const { module } = await getPrivilagesForRole(admin._id);
+
   const moduleName = req._parsedUrl.pathname.split("/")[1];
-  const requestedModule = module.find(m => moduleName.indexOf(m.name) != -1);
-  if(requestedModule) {
-    const methodsToAccess = calculatePrivilages(requestedModule[0].privilageNumber);
-    const hasAccess = methodsToAccess.find(method => method.includes(req.method) ? true : false);
-    if(hasAccess) {
-      // TODO: proceed
+  const requestedModule = module.find((m) => moduleName.indexOf(m.name) != -1);
+
+  if (requestedModule) {
+    const methodsToAccess = calculatePrivilages(
+      requestedModule.privilageNumber
+    );
+    const hasAccess = methodsToAccess.find((method) =>
+      method.includes(req.method) ? true : false
+    );
+    if (hasAccess) {
+      next();
     } else {
-      // TODO: Unauthorized
+      res.status(statusCode).json(response);
     }
   } else {
-    // TODO: Unauthorized
+    res.status(statusCode).json(response);
   }
 };

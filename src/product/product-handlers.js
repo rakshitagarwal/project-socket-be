@@ -1,21 +1,42 @@
-import { createProduct, deleteProduct } from "./product-services.js";
+import {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+  fetchProduct,
+  getProduct,
+} from "./product-services.js";
 
 export const add = async (req, res) => {
-  const data = { ...req?.body, image: req?.file?.path };
-  const { statusCode, response } = await createProduct(data);
+  const { statusCode, response } = await createProduct(req.body);
   res.status(statusCode).json(response);
 };
 
 export const remove = async (req, res) => {
-  const { statusCode, response } = await deleteProduct(req.query.id);
+  const { statusCode, response } = await deleteProduct(req.params.id);
   res.status(statusCode).json(response);
 };
 
 export const update = async (req, res) => {
-  const { statusCode, response } = await updateProduct(req.params.id, req.body);
+  let updateProductData = req.body;
+  if (req?.file) {
+    updateProductData = { ...req?.body, image: req?.file?.path };
+  }
+  const { statusCode, response } = await updateProduct(
+    req.params.id,
+    updateProductData
+  );
   res.status(statusCode).json(response);
 };
 
-export const fetchProduct = (req, res) => {
-  console.log(req.params.id);
+export const select = async (req, res) => {
+  const { statusCode, response } = await fetchProduct(
+    parseInt(req?.query?.page),
+    parseInt(req?.query?.limit)
+  );
+  res.status(statusCode).json(response);
+};
+
+export const selectProduct = async (req, res) => {
+  const { statusCode, response } = await getProduct(req.params.id);
+  res.status(statusCode).json(response);
 };
