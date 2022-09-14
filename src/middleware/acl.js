@@ -1,37 +1,28 @@
-import mongoose from "mongoose";
-import Joi from "joi";
-import { ADMIN_PATH, VENDOR_PATH } from "../common/constants.js";
-import logger from "../config/logger.js";
 import { createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
+import { calculatePrivilages } from "./../common/utilies.js";
+import { getPrivilagesForRole } from "./../roles/role-queries.js";
 
-const checkAccess = (req, res, next) => {
+export const checkAccess = async (req, res, next) => {
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
     {
       message: helpers.StatusMessages.UNAUTHORIZED,
     }
   );
-  const role = ["Admin", "Vendor"];
-  const user = req.user;
-
-  //   TODO: extract role ,privilages List from user's request
-
-  switch (role) {
-    case "Admin":
-      next();
-      break;
-
-    case "Vendor":
-      next();
-      break;
-
-    default:
-      res.status(statusCode).json(response);
-      logger.error({
-        type: "error",
-        message: "UnAuthorized",
-      });
-      break;
+  // TODO: add roleid from jwt auth 
+  const { module } = await getPrivilagesForRole("63215df22a813f616e9ba177");
+  const moduleName = req._parsedUrl.pathname.split("/")[1];
+  const requestedModule = module.find(m => moduleName.indexOf(m.name) != -1);
+  if(requestedModule) {
+    const methodsToAccess = calculatePrivilages(requestedModule[0].privilageNumber);
+    const hasAccess = methodsToAccess.find(method => method.includes(req.method) ? true : false);
+    if(hasAccess) {
+      // TODO: proceed
+    } else {
+      // TODO: Unauthorized
+    }
+  } else {
+    // TODO: Unauthorized
   }
 };

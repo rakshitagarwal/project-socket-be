@@ -1,16 +1,10 @@
 import mongoose from "mongoose";
 import { model } from "../common/dbSchema.js";
-import logger from "../config/logger.js";
 
-let roleSchema, privilageSchema, rolePrivilage;
 
-try {
-  roleSchema = mongoose.model("Role", model.roleSchema);
-  privilageSchema = mongoose.model("Privilage", model.privilageSchema);
-  rolePrivilage = mongoose.model("RolePrivilage", model.rolePrivilage);
-} catch (error) {
-  logger.error(error);
-}
+const roleSchema = mongoose.model("Role", model.roleSchema);
+const privilageSchema = mongoose.model("Privilage", model.privilageSchema);
+const rolePrivilage = mongoose.model("RolePrivilage", model.rolePrivilage);
 
 export const authSchemas = {
   roleSchema,

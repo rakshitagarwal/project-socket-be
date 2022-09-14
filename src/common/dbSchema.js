@@ -110,7 +110,7 @@ const rolePrivilage = new Schema({
   ],
 });
 
-const userSchema = new Schema(
+export const userSchema = new Schema(
   {
     fullName: {
       type: String,
@@ -420,4 +420,5 @@ export const model = {
   privilageSchema,
   rolePrivilage,
   productCategory,
+  userSchema
 };

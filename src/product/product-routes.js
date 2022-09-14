@@ -7,5 +7,5 @@ import { checkImageExists } from "../middleware/validate.js";
 export const productRouter = Router();
 
 productRouter
-  .post("", [uploadFile.single("image"), checkImageExists], add)
-  .delete("", remove);
+  .post("/", [uploadFile.single("image"), checkImageExists], add)
+  .delete("/", remove);
