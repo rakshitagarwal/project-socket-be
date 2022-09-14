@@ -111,3 +111,22 @@ export const sendEmail = (payload, eventName) => {
       console.log(error);
     });
 };
+
+/**
+ * @description calculate privilages
+ * @param {Number} previlageNum 
+ */
+export const calculatePrivilages = (previlageNum) => {
+  const myPrevillages = [];
+  const sumToOp = [
+    'GET',
+    'POST',
+    'PUT | PATCH',
+    'DELETE'
+  ];
+  for(let i = (sumToOp.length-1); 0 <= i; i--){
+    if(previlageNum <= (2 ** i)) {
+      myPrevillages.push(sumToOp[i]);
+    }
+  }
+}
