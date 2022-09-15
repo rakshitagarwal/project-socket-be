@@ -111,7 +111,6 @@ export const sendEmail = (payload, eventName) => {
         type: "error",
         message: error.stack,
       });
-      console.log(error);
     });
 };
 
