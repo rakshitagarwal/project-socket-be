@@ -5,7 +5,8 @@ export const AUCTION_PATHNAME = "/auctions";
 export const ROLE_PATHNAME = "/roles";
 export const ID_POSTFIX = "/:id";
 export const PREFIX_VERSION = "/v1";
-
+export const USER_PATH = "/";
+export const USER_PATH_ALLID = "/*/";
 // user paths
 export const USER_LOGIN = USER_PATHNAME + "/login";
 export const USER_REGISTER = "/register";
