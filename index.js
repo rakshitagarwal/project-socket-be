@@ -63,7 +63,10 @@ app.use((err, req, res, next) => {
   logger.error(err.stack);
   const { response, statusCode } = createResponse(
     helpers.StatusCodes.INTERNAL_SERVER_ERROR,
-    err
+    err.message,
+    {
+      error: err.stack,
+    }
   );
   res.status(statusCode).json(response);
 });

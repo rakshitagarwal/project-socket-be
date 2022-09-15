@@ -142,19 +142,19 @@ const privilageRole = [
   {
     module: [
       {
-        name: "product",
+        name: "products",
         privilageNumber: 15,
       },
       {
-        name: "acution",
+        name: "acutions",
         privilageNumber: 15,
       },
       {
-        name: "role",
+        name: "roles",
         privilageNumber: 15,
       },
       {
-        name: "user",
+        name: "users",
         privilageNumber: 15,
       },
     ],
@@ -164,19 +164,19 @@ const privilageRoleVan = [
   {
     module: [
       {
-        name: "product",
+        name: "products",
         privilageNumber: 7,
       },
       {
-        name: "acution",
+        name: "acutions",
         privilageNumber: 7,
       },
       {
-        name: "role",
+        name: "roles",
         privilageNumber: 7,
       },
       {
-        name: "user",
+        name: "users",
         privilageNumber: 7,
       },
     ],

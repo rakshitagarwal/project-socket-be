@@ -412,5 +412,5 @@ export const model = {
   privilageSchema,
   rolePrivilage,
   productCategory,
-  userSchema
+  userSchema,
 };

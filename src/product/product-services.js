@@ -5,6 +5,7 @@ import {
   getProductById,
   update,
   removeProduct,
+  getProducts,
 } from "./product-queries.js";
 
 export const createProduct = async (product) => {
@@ -12,7 +13,7 @@ export const createProduct = async (product) => {
     
   if (productMeta !== undefined) {
     return createResponse(helpers.StatusCodes.CREATED, {
-      message: `Product ${productMeta.title} Added`,
+      message: `Product Added`,
     });
   }
 
@@ -29,9 +30,13 @@ export const deleteProduct = async (id) => {
 
     if (metaData) {
       return createResponse(helpers.StatusCodes.OK, {
-        message: `Product Deleted ${metaData.title}`,
+        message: `Product Deleted`,
       });
     }
+
+    return createResponse(helpers.StatusCodes.BAD_REQUEST, {
+      message: helpers.StatusMessages.BAD_REQUEST,
+    });
   }
 
   return createResponse(helpers.StatusCodes.NOT_FOUND, {
@@ -40,19 +45,49 @@ export const deleteProduct = async (id) => {
 };
 
 export const updateProduct = async (id, product) => {
-  // TODO: it will get specific product on basis of ID
   const productMeta = await getProductById(id);
 
-  if (productMeta.length > 0 && typeof productMeta !== undefined) {
+  if (productMeta) {
     const updateProduct = await update(id, product);
-    if (updateProduct > 0 && typeof updateProduct !== undefined) {
+    if (updateProduct) {
       return createResponse(helpers.StatusCodes.OK, {
-        message: `Product ${productMeta.name} updated`,
+        message: `Product Updated`,
       });
     }
+    return createResponse(helpers.StatusCodes.BAD_REQUEST, {
+      message: helpers.StatusMessages.BAD_REQUEST,
+    });
   }
 
-  return createResponse(helpers.StatusCodes.BAD_REQUEST, {
-    message: helpers.StatusMessages.BAD_REQUEST,
+  return createResponse(helpers.StatusCodes.NOT_FOUND, {
+    message: helpers.StatusMessages.NOT_FOUND,
+  });
+};
+
+export const fetchProduct = async (pages, limit) => {
+  const productMeta = await getProducts(pages, limit);
+
+  if (productMeta) {
+    return createResponse(helpers.StatusCodes.OK, productMeta.products, {
+      limit: productMeta.limit,
+      currentPage: productMeta.currentPage,
+      totalPages: productMeta.pages,
+    });
+  }
+
+  return createResponse(helpers.StatusCodes.NOT_FOUND, {
+    message: helpers.StatusMessages.NOT_FOUND,
+  });
+};
+
+export const getProduct = async (id) => {
+  const products = await getProductById(id);
+
+  if (products) {
+    return createResponse(helpers.StatusCodes.OK, products);
+  }
+
+  return createResponse(helpers.StatusCodes.NOT_FOUND, {
+    message: helpers.StatusMessages.NOT_FOUND,
   });
 };

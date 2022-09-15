@@ -9,6 +9,8 @@ const { compile } = handlebars;
 import logger from "../config/logger.js";
 import { generateKeyPair } from "crypto";
 import util from "util";
+import mongoose from "mongoose";
+
 const jwtOptions = {
   expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
   algorithm: env.ALGORITHM,
@@ -20,13 +22,13 @@ const jwtOptions = {
  * @param {Object} data
  * @returns statusCode and response
  */
-export const createResponse = (statusCode, data) => {
+export const createResponse = (statusCode, data, metaData = {}) => {
   const success = statusCode < helpers.StatusCodes.BAD_REQUEST;
   if (success) {
-    const response = { success: success, data: data };
+    const response = { success: success, data: data, metadata: metaData };
     return { statusCode, response };
   }
-  const response = { success: success, error: data };
+  const response = { success: success, data: data, metadata: metaData };
   return { statusCode, response };
 };
 
@@ -113,13 +115,13 @@ export const sendEmail = (payload, eventName) => {
     });
 };
 
-const FILE_SIZE = 5000000; // 5mb
+const FILE_SIZE = env.FILE_ALLOWED_SIZE; // 5mb
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "assets/upload/");
+    cb(null, env.FILE_STORAGE_PATH);
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname);
+    cb(null, new Date().toISOString() + "-" + file.originalname);
   },
 });
 
@@ -156,4 +158,14 @@ export const calculatePrivilages = (previlageNum) => {
     }
     return myPrevillages;
   }
+};
+
+/**
+ * @description validate the objectId
+ * @param {String} productId
+ * @returns {boolean} valid
+ */
+export const validateObjectId = (objectId) => {
+  const valid = mongoose.Types.ObjectId.isValid(objectId);
+  return valid;
 };
