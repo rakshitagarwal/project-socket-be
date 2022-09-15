@@ -114,10 +114,14 @@ export const paginationSchema = Joi.object({
     invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
   }),
 });
+const fullName = Joi.string();
+const email = Joi.string();
+const password = Joi.string();
+const role = Joi.string();
 
 export const registers = Joi.object({
-  fullName: Joi.string().required(),
-  email: Joi.string().required(),
-  password: Joi.string().required(),
-  Role: Joi.string().required(),
+  fullName: fullName.required(),
+  email: email.required(),
+  password: password.required(),
+  Role: role.required(),
 });

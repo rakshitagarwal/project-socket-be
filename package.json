@@ -24,7 +24,6 @@
   "homepage": "https://bitbucket.org/GlobalVox/bdl_backend#readme",
   "dependencies": {
     "assert": "^2.0.0",
-    "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
