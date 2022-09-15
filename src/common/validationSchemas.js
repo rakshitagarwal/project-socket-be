@@ -1,10 +1,14 @@
 import Joi from "joi";
 
+const price = Joi.number();
+const title = Joi.string();
+const description = Joi.string();
+
 /**
  * @description schemas for checking envariment varibales
  */
 export const envSchema = Joi.object({
-  PORT: Joi.number().not().exist().messages({
+  PORT: Joi.number().required().messages({
     required_error: "PORT must be present in environment variables",
     invalid_type_error: "Invalid PORT in environment variables",
   }),
@@ -65,11 +69,11 @@ export const envSchema = Joi.object({
  * @description schemas for checking the product request and response
  */
 export const productSchema = Joi.object({
-  title: Joi.string().required().messages({
+  title: title.required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  description: Joi.string().required().messages({
+  description: description.required().messages({
     required_error: "description must be present in responses",
     validate_error: "description must be a string in responses",
   }),
@@ -77,24 +81,36 @@ export const productSchema = Joi.object({
     required_error: "image must be present in responses",
     validate_error: "image must be a string in responses",
   }),
-  purchasePrice: Joi.number().required().messages({
+  purchasePrice: price.required().messages({
     required_error: "purchasePrice must be present in responses",
     validate_error: "purchasePrice must be a number in responses",
   }),
-  sellingPrice: Joi.number().required().messages({
+  sellingPrice: price.required().messages({
     required_error: "sellingPrice must be present in responses",
     validate_error: "sellingPrice must be a number in responses",
   }),
-  overHeadCost: Joi.number().required().messages({
+  overHeadCost: price.required().messages({
     required_error: "overHeadCost must be present in responses",
     validate_error: "overHeadCost must be a number in responses",
   }),
-  quantity: Joi.number().required().messages({
+  quantity: price.required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),
   ProductCategory: Joi.string().required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
+  }),
+});
+
+/**
+ * @description scheams for checking the query parmas for pagination
+ */
+export const paginationSchema = Joi.object({
+  page: Joi.number().messages({
+    invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
+  }),
+  limit: Joi.number().messages({
+    invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
   }),
 });

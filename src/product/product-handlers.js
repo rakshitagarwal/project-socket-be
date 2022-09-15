@@ -30,9 +30,10 @@ export const update = async (req, res) => {
 
 export const select = async (req, res) => {
   const { statusCode, response } = await fetchProduct(
-    parseInt(req?.query?.page),
-    parseInt(req?.query?.limit)
+    parseInt(req?.query?.page || 0),
+    parseInt(req?.query?.limit || 0)
   );
+
   res.status(statusCode).json(response);
 };
 
