@@ -5,10 +5,11 @@ import {
   ID_POSTFIX,
 } from "./../common/constants.js";
 import { login, register, remove } from "./user-handlers.js";
+import { validate } from "../middleware/validate.js";
+import { registers } from "./../common/validationSchemas.js";
 
 export const userRouter = Router();
-import { checkBody } from "../middleware/validate.js";
 userRouter
   .post(USER_LOGIN, login)
-  .post(USER_REGISTER, checkBody, register)
+  .post(USER_REGISTER, validate.requestBody(registers), register)
   .delete(ID_POSTFIX, remove);
