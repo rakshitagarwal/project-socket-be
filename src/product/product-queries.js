@@ -28,9 +28,14 @@ export const productCount = async () => {
   return count.length;
 };
 
-export const getProducts = async (pages = 0, limit = 10) => {
+export const getProducts = async (pages, limit) => {
   const count = await productCount();
-  const totalPages = parseInt(count / limit);
+  let totalPages;
+  if (count > limit) {
+    totalPages = 1;
+  } else {
+    totalPages = count / limit;
+  }
 
   const products = await productModel
     .find({ status: false })
@@ -43,4 +48,14 @@ export const getProducts = async (pages = 0, limit = 10) => {
     currentPage: pages,
     limit: limit,
   };
+};
+
+export const getProductByTitle = async (title) => {
+  const product = await productModel.findOne({ title: title, status: false });
+  return product._id;
+};
+
+export const inActiveProductByTitle = async (title) => {
+  const product = await productModel.findOne({ title: title, status: true });
+  return product._id;
 };

@@ -67,7 +67,7 @@ export const updateProduct = async (id, product) => {
 export const fetchProduct = async (pages, limit) => {
   const productMeta = await getProducts(pages, limit);
 
-  if (productMeta) {
+  if (productMeta.products.length > 0) {
     return createResponse(helpers.StatusCodes.OK, productMeta.products, {
       limit: productMeta.limit,
       currentPage: productMeta.currentPage,

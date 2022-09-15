@@ -6,7 +6,10 @@ import {
   update,
   selectProduct,
 } from "./product-handlers.js";
-import { productSchema } from "./../common/validationSchemas.js";
+import {
+  paginationSchema,
+  productSchema,
+} from "./../common/validationSchemas.js";
 import { uploadFile } from "../common/utilies.js";
 import { validate } from "../middleware/validate.js";
 
@@ -24,7 +27,7 @@ productRouter
   )
   .delete("/:id", validate.requestParams, remove)
   .put(
-    "/put/:id",
+    "/:id",
     [
       validate.requestParams,
       uploadFile.single("image"),
@@ -33,5 +36,5 @@ productRouter
     ],
     update
   )
-  .get("/single/:id", validate.requestParams, selectProduct)
-  .get("/all", select);
+  .get("/:id", validate.requestParams, selectProduct)
+  .get("/", validate.requestQueryParams(paginationSchema), select);
