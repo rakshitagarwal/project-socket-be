@@ -10,6 +10,7 @@ import logger from "../config/logger.js";
 import { generateKeyPair } from "crypto";
 import util from "util";
 import mongoose from "mongoose";
+
 const jwtOptions = {
   expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
   algorithm: env.ALGORITHM,
@@ -114,10 +115,10 @@ export const sendEmail = (payload, eventName) => {
     });
 };
 
-const FILE_SIZE = 5000000; // 5mb
+const FILE_SIZE = env.FILE_ALLOWED_SIZE; // 5mb
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "assets/uploads/");
+    cb(null, env.FILE_STORAGE_PATH);
   },
   filename: function (req, file, cb) {
     cb(null, new Date().toISOString() + "-" + file.originalname);
