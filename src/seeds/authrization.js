@@ -11,4 +11,3 @@ const roles = async () => {
 };
 
 roles();
-console.log("worked");

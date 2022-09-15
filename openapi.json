@@ -21,8 +21,244 @@
       "variables": { "basePath": { "default": "/v1", "enum": ["v1"] } }
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "404": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "pattern": "Not Found",
+                      "maxLength": 9
+                    }
+                  }
+                },
+                "metdata": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "context": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "value": { "type": "string" },
+                              "key": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "pattern": "Not Found",
+                      "maxLength": 9
+                    }
+                  }
+                },
+                "metdata": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "context": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "value": { "type": "string" },
+                              "key": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "pattern": "Internal Server Error",
+                      "maxLength": 21
+                    }
+                  }
+                },
+                "metdata": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": { "type": "array" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Unauthorized",
+                      "maxLength": 12
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "product": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "purchasePrice": {
+            "type": "number"
+          },
+          "sellingPrice": {
+            "type": "number"
+          },
+          "overHeadCost": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "status": {
+            "type": "number"
+          },
+          "ProductCategory": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
   "paths": {
-    "/products": {
+    "/products/": {
       "post": {
         "tags": ["Products"],
         "description": "Add a new product",
@@ -39,7 +275,7 @@
                     "format": "string",
                     "nullable": false
                   },
-                  "descirption": {
+                  "description": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -69,10 +305,214 @@
                     "format": "number",
                     "nullable": false
                   },
-                  "status": {
-                    "type": "boolean",
-                    "format": "boolean",
-                    "default": false
+                  "ProductCategory": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Product Added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "get": {
+        "description": "fetch All products",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "delete": {
+        "description": "Disbale the specific product",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disable Product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "put": {
+        "description": "Update the specific product",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "description": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": false
+                  },
+                  "purchasePrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "sellingPrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "overHeadCost": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
                   },
                   "ProductCategory": {
                     "type": "string",
@@ -86,7 +526,84 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Update Product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "get": {
+        "description": "get single product",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Single Product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "$ref": "#/components/schemas/product"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
           }
         }
       }
