@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 /**
- * schemas for checking envariment varibales
+ * @description schemas for checking envariment varibales
  */
 export const envSchema = Joi.object({
   PORT: Joi.number().not().exist().messages({
@@ -41,6 +41,9 @@ export const envSchema = Joi.object({
   }),
 });
 
+/**
+ * @description schemas for checking the product request and response
+ */
 export const productSchema = Joi.object({
   title: Joi.string().required().messages({
     required_error: "title must be present in responses",

@@ -1,10 +1,7 @@
 import { createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { calculatePrivilages } from "./../common/utilies.js";
-import {
-  getAdminRoleId,
-  getPrivilagesForRole,
-} from "./../roles/role-queries.js";
+import { getRoleById, getPrivilagesForRole } from "./../roles/role-queries.js";
 
 export const checkAccess = async (req, res, next) => {
   const { statusCode, response } = createResponse(
@@ -15,11 +12,12 @@ export const checkAccess = async (req, res, next) => {
   );
 
   // TODO: add roleid from jwt auth
-  const admin = await getAdminRoleId();
-  if (!admin) {
+
+  const role = await getRoleById("Admin");
+  if (!role) {
     res.status(statusCode).json(response);
   }
-  const { module } = await getPrivilagesForRole(admin._id);
+  const { module } = await getPrivilagesForRole(role._id);
 
   const moduleName = req._parsedUrl.pathname.split("/")[1];
   const requestedModule = module.find((m) => moduleName.indexOf(m.name) != -1);

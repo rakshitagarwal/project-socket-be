@@ -15,9 +15,9 @@ export const getPrivilagesForRole = async function (roleId) {
   return queryResult;
 };
 
-export const getAdminRoleId = async () => {
+export const getRoleById = async (role) => {
   const id = await authSchemas.roleSchema
-    .findOne({ name: "Admin" })
+    .findOne({ name: role })
     .select({ _id: 1, name: 0, status: 0 })
     .lean();
 

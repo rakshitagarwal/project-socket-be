@@ -22,7 +22,7 @@ export const isAuthenticated = (req, res, next) => {
   }
 
   const [type, jwtToken] = req.headers.authorization.split(" ");
-  if (!token || type !== "Bearer") {
+  if (!jwtToken || type !== "Bearer") {
     res.status(statusCode).json(response);
     return;
   }

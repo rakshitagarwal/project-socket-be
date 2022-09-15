@@ -164,7 +164,7 @@ export const calculatePrivilages = (previlageNum) => {
  * @param {String} productId
  * @returns {boolean} valid
  */
-export const checkObjectId = (objectId) => {
+export const validateObjectId = (objectId) => {
   const valid = mongoose.Types.ObjectId.isValid(objectId);
   return valid;
 };

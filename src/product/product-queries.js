@@ -22,8 +22,14 @@ export const removeProduct = async (id) => {
   return productMeta;
 };
 
+// all active products count
+export const productCount = async () => {
+  const count = await productModel.countDocuments({ status: false });
+  return count;
+};
+
 export const getProducts = async (pages = 0, limit = 10) => {
-  const count = await productModel.countDocuments({});
+  const count = await productCount();
   const totalPages = parseInt(count / limit);
 
   const products = await productModel

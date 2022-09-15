@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { ID_POSTFIX } from "../common/constants.js";
 import {
   add,
   select,
@@ -7,22 +6,32 @@ import {
   update,
   selectProduct,
 } from "./product-handlers.js";
+import { productSchema } from "./../common/validationSchemas.js";
 import { uploadFile } from "../common/utilies.js";
-import {
-  checkBody,
-  checkImageExists,
-  checkParams,
-} from "../middleware/validate.js";
+import { validate } from "../middleware/validate.js";
 
 export const productRouter = Router();
 
 productRouter
-  .post("/", [uploadFile.single("image"), checkImageExists, checkBody], add)
-  .delete("/:id", checkParams, remove)
+  .post(
+    "/",
+    [
+      uploadFile.single("image"),
+      validate.imageExists,
+      validate.requestBody(productSchema),
+    ],
+    add
+  )
+  .delete("/:id", validate.requestParams, remove)
   .put(
     "/:id",
-    [checkParams, checkBody, uploadFile.single("image"), checkImageExists],
+    [
+      validate.requestParams,
+      validate.requestBody(productSchema),
+      uploadFile.single("image"),
+      validate.imageExists,
+    ],
     update
   )
-  .get("/:id", checkParams, selectProduct)
+  .get("/:id", validate.requestParams, selectProduct)
   .get("/", select);
