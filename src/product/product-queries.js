@@ -37,7 +37,6 @@ export const getProducts = async (pages = 0, limit = 10) => {
     .limit(limit)
     .skip(limit * pages);
 
-  console.log(totalPages, pages, limit);
   return {
     products: products,
     pages: totalPages,
