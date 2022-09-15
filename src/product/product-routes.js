@@ -24,14 +24,14 @@ productRouter
   )
   .delete("/:id", validate.requestParams, remove)
   .put(
-    "/:id",
+    "/put/:id",
     [
       validate.requestParams,
-      validate.requestBody(productSchema),
       uploadFile.single("image"),
       validate.imageExists,
+      validate.requestBody(productSchema),
     ],
     update
   )
-  .get("/:id", validate.requestParams, selectProduct)
-  .get("/", select);
+  .get("/single/:id", validate.requestParams, selectProduct)
+  .get("/all", select);

@@ -24,8 +24,8 @@ export const removeProduct = async (id) => {
 
 // all active products count
 export const productCount = async () => {
-  const count = await productModel.countDocuments({ status: false });
-  return count;
+  const count = await productModel.find({ status: false });
+  return count.length;
 };
 
 export const getProducts = async (pages = 0, limit = 10) => {
@@ -33,10 +33,11 @@ export const getProducts = async (pages = 0, limit = 10) => {
   const totalPages = parseInt(count / limit);
 
   const products = await productModel
-    .find({})
+    .find({ status: false })
     .limit(limit)
     .skip(limit * pages);
 
+  console.log(totalPages, pages, limit);
   return {
     products: products,
     pages: totalPages,

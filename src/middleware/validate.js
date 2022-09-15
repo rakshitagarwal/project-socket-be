@@ -44,8 +44,8 @@ const requestBody = (schema) => (req, res, next) => {
 
 const requestParams = (req, res, next) => {
   const { statusCode, response } = createResponse(
-    helpers.StatusCodes.UNAUTHORIZED,
-    { mesage: helpers.StatusMessages.UNAUTHORIZED }
+    helpers.StatusCodes.BAD_REQUEST,
+    { mesage: helpers.StatusMessages.BAD_REQUEST }
   );
 
   if (!req?.params?.id) {
@@ -54,7 +54,7 @@ const requestParams = (req, res, next) => {
 
   const valid = validateObjectId(req?.params?.id);
   if (!valid) {
-    res.status(statusCode).response(response);
+    res.status(statusCode).json(response);
   }
   next();
 };
