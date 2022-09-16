@@ -19,9 +19,9 @@ productRouter
   .post(
     "/",
     [
+      validate.requestBody(productSchema),
       uploadFile.single("image"),
       validate.imageExists,
-      validate.requestBody(productSchema),
     ],
     add
   )
@@ -30,9 +30,9 @@ productRouter
     "/:id",
     [
       validate.requestParams,
+      validate.requestBody(productSchema),
       uploadFile.single("image"),
       validate.imageExists,
-      validate.requestBody(productSchema),
     ],
     update
   )
