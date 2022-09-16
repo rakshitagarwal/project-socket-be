@@ -6,6 +6,8 @@ import {
   update,
   removeProduct,
   getProducts,
+  fetchAllCategory,
+  getCategoryById,
 } from "./product-queries.js";
 
 export const createProduct = async (product) => {
@@ -74,10 +76,17 @@ export const fetchProduct = async (pages, limit) => {
       totalPages: productMeta.pages,
     });
   }
-
-  return createResponse(helpers.StatusCodes.NOT_FOUND, {
-    message: helpers.StatusMessages.NOT_FOUND,
-  });
+  const { limit: limits, currentPage, pages: page } = productMeta;
+  return createResponse(
+    helpers.StatusCodes.NOT_FOUND,
+    { message: helpers.StatusMessages.NOT_FOUND },
+    {
+      message: helpers.StatusMessages.NOT_FOUND,
+      limits,
+      currentPage,
+      page,
+    }
+  );
 };
 
 export const getProduct = async (id) => {
@@ -85,6 +94,32 @@ export const getProduct = async (id) => {
 
   if (products) {
     return createResponse(helpers.StatusCodes.OK, products);
+  }
+
+  return createResponse(helpers.StatusCodes.NOT_FOUND, {
+    message: helpers.StatusMessages.NOT_FOUND,
+  });
+};
+
+export const getCategories = async () => {
+  const category = await fetchAllCategory();
+  if (category) {
+    return createResponse(helpers.StatusCodes.OK, {
+      category,
+    });
+  }
+
+  return createResponse(helpers.StatusCodes.NOT_FOUND, {
+    message: helpers.StatusMessages.NOT_FOUND,
+  });
+};
+
+export const getCategory = async (id) => {
+  const category = await getCategoryById(id);
+  if (category) {
+    return createResponse(helpers.StatusCodes.OK, {
+      category,
+    });
   }
 
   return createResponse(helpers.StatusCodes.NOT_FOUND, {

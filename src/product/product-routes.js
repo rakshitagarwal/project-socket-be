@@ -5,13 +5,16 @@ import {
   remove,
   update,
   selectProduct,
+  selectCategory,
+  selectCategories,
 } from "./product-handlers.js";
 import {
+  idSchema,
   paginationSchema,
   productSchema,
 } from "./../common/validationSchemas.js";
 import { uploadFile } from "../common/utilies.js";
-import { validate } from "../middleware/validate.js";
+import { validateSchema } from "../middleware/validate.js";
 
 export const productRouter = Router();
 
@@ -19,22 +22,29 @@ productRouter
   .post(
     "/",
     [
-      validate.requestBody(productSchema),
+      uploadFile.none(),
+      validateSchema.body(productSchema),
       uploadFile.single("image"),
-      validate.imageExists,
+      validateSchema.file,
     ],
     add
   )
-  .delete("/:id", validate.requestParams, remove)
+  .delete("/:id", validateSchema.params(idSchema), remove)
   .put(
     "/:id",
     [
-      validate.requestParams,
-      validate.requestBody(productSchema),
+      validateSchema.params(idSchema),
+      uploadFile.none(validateSchema.body(productSchema)),
       uploadFile.single("image"),
-      validate.imageExists,
+      validateSchema.file,
     ],
     update
   )
-  .get("/:id", validate.requestParams, selectProduct)
-  .get("/", validate.requestQueryParams(paginationSchema), select);
+  .get("/:id", validateSchema.params(idSchema), selectProduct)
+  .get("/", validateSchema.query(paginationSchema), select)
+  .get("/catgeory", selectCategories)
+  .get(
+    "/category/:id",
+    validateSchema.params(paginationSchema),
+    selectCategory
+  );

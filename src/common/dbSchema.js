@@ -244,11 +244,11 @@ const auctionSchema = new Schema(
       default: 0,
     },
     startTime: {
-      type: Number,
+      type: Date,
       required: true,
     },
     endTime: {
-      type: Number,
+      type: Date,
       required: true,
     },
     quantity: {
