@@ -187,17 +187,7 @@ const privilageRoleVan = [
 ];
 
 const roles = [{ name: "Admin" }, { name: "Vendor" }];
-const auctionCategory = [
-  {
-    name: "samsung",
-    description:
-      "Samsung helps you discover a wide range of home electronics with cutting-edge technology including smartphones, tablets, TVs, home appliances and more..",
-  },
-  {
-    name: "huawei",
-    description: "This list contains 275 Huawei Mobile Phones in India.",
-  },
-];
+
 const productCategory = [
   {
     name: "mobile",
@@ -210,7 +200,17 @@ const productCategory = [
       "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
   },
 ];
-
+const auctionCategory = [
+  {
+    name: "Apple",
+    description:
+      "The iPhone 14 and iPhone 14 Plus are smartphones designed, developed, and marketed by Apple Inc. They are the sixteenth generation.",
+  },
+  {
+    name: "huawei",
+    description: "This list contains 275 Huawei Mobile Phones in India.",
+  },
+];
 export const helpers = {
   StatusMessages,
   StatusCodes,
@@ -218,6 +218,6 @@ export const helpers = {
   roles,
   privilageRole,
   privilageRoleVan,
-  auctionCategory,
   productCategory,
+  auctionCategory,
 };

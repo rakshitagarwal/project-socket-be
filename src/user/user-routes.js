@@ -7,14 +7,13 @@ import {
   USER_PATH_ALLID,
 } from "./../common/constants.js";
 import { login, register, remove, update, get } from "./user-handlers.js";
-import { validate } from "../middleware/validate.js";
+import { validateSchema } from "../middleware/validate.js";
 import { registers } from "./../common/validationSchemas.js";
 
 export const userRouter = Router();
 userRouter
   .post(USER_LOGIN, login)
-  .post(USER_REGISTER, validate.requestBody(registers), register)
+  .post(USER_REGISTER, validateSchema.body(registers), register)
   .delete(ID_POSTFIX, remove)
   .put(ID_POSTFIX, update)
   .get(USER_PATH_ALLID, get);
-  

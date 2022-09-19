@@ -4,6 +4,7 @@ import { connectDB } from "../config/db.js";
 import logger from "../config/logger.js";
 import { productRoleSchema } from "../roles/product-schema.js";
 import { auctionRole } from "../roles/auction-schema.js";
+
 (async () => {
   connectDB();
 

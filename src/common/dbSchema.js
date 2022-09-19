@@ -414,11 +414,4 @@ export const model = {
   productCategory,
   auctionCategory,
   userSchema,
-  productSchema,
-  auctionSchema,
-  auctionPreRegisterSchema,
-  userProfile,
-  auctionResultSchema,
-  walletSchema,
-  transactionSchema,
 };
