@@ -114,6 +114,9 @@ const StatusMessages = {
   UNSUPPORTED_MEDIA_TYPE: "Unsupported Media Type",
   USE_PROXY: "Use Proxy",
   MISDIRECTED_REQUEST: "Misdirected Request",
+  EMAIL_ALREADY: "you have already registered this ",
+  USER_CREATE:"User Created Successefully",
+  USER_DELETE:"User Deleted Successefully"
 };
 
 const privilage = [
@@ -184,7 +187,91 @@ const privilageRoleVan = [
 ];
 
 const roles = [{ name: "Admin" }, { name: "Vendor" }];
+const auctionCategory = [
+  {
+    name: "Apple",
+    description:
+      "The iPhone 14 and iPhone 14 Plus are smartphones designed, developed, and marketed by Apple Inc. They are the sixteenth generation.",
+  },
+  {
+    name: "huawei",
+    description: "This list contains 275 Huawei Mobile Phones in India.",
+  },
+];
+const productCategory = [
+  {
+    name: "mobile",
+    description:
+      "three categories of mobile phones: basic phones, feature phones, and smartphones.",
+  },
+  {
+    name: "car",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+];
+const productSchema = [
+  {
+    title: "apple 14",
+    description: "The iPhone 14 and iPhone 14 Plus are smartphones.",
+    image: "https://picsum.photos/id/237/200/300",
+    purchasePrice: 65000,
+    sellingPrice: 79000,
+    overHeadCost: 6500,
+    quantity: 2,
+  },
+];
+const auctionSchema = [
+  {
+    title: "Mobile Auction",
+    bannerImage:
+      "https://www.flexclip.com/share/170270383a4e17b65da31a39697e71dfdd6ecbe.html",
+    noOfPlayConsumed: 10,
+    bidIncrement: 1,
+    OpeningPrice: 500,
+    quantity: 1,
+    noNewBidderLimit: 100,
+  },
+];
 
+const auctionPreRegisterSchema = [
+  {
+    participantCount: 1000,
+    participantFees: 500,
+  },
+];
+const userSchema = [
+  {
+    fullName: "Rishi",
+    email: "rishibot@gmail.com",
+  },
+];
+const userProfile = [
+  {
+    location: "US",
+    address: "Mr John Smith. 132, My Street, Kingston, New York 12401",
+    avatar: "avatar user",
+    gender: "male",
+  },
+];
+const auctionResultSchema = [
+  {
+    noOfTimePreRegistered: 1,
+    noOfTimeAuctionNotPlayed: 15,
+    noOfAuctionPlayed: 50,
+    noOfTimePostRegistered: 10,
+    totalPlaysAbsrob: 100,
+  },
+];
+const walletSchema = [
+  {
+    name: "johan",
+    walletBalance: 56000,
+    walletAddress: "US",
+    networkType: "http sever",
+    chainID: 1,
+  },
+];
 export const helpers = {
   StatusMessages,
   StatusCodes,
@@ -192,4 +279,13 @@ export const helpers = {
   roles,
   privilageRole,
   privilageRoleVan,
+  auctionCategory,
+  productCategory,
+  productSchema,
+  auctionSchema,
+  auctionPreRegisterSchema,
+  userSchema,
+  userProfile,
+  auctionResultSchema,
+  walletSchema,
 };

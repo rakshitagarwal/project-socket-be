@@ -4,6 +4,13 @@ const price = Joi.number();
 const title = Joi.string();
 const description = Joi.string();
 
+export const idSchema = Joi.object({
+  id: Joi.string().required().messages({
+    required_error: "ID must be present in responses",
+    validate_error: "ID must be a string in responses",
+  }),
+});
+
 /**
  * @description schemas for checking envariment varibales
  */
@@ -69,17 +76,13 @@ export const envSchema = Joi.object({
  * @description schemas for checking the product request and response
  */
 export const productSchema = Joi.object({
-  title: title.required().messages({
+  title: Joi.required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  description: description.required().messages({
+  description: Joi.required().messages({
     required_error: "description must be present in responses",
     validate_error: "description must be a string in responses",
-  }),
-  image: Joi.string().required().messages({
-    required_error: "image must be present in responses",
-    validate_error: "image must be a string in responses",
   }),
   purchasePrice: price.required().messages({
     required_error: "purchasePrice must be present in responses",

@@ -143,7 +143,7 @@ const userProfile = new Schema(
     location: {
       type: String,
     },
-    addreess: {
+    address: {
       type: String,
     },
     dateOfBirth: {
@@ -240,11 +240,11 @@ const auctionSchema = new Schema(
       default: 0,
     },
     startTime: {
-      type: Number,
+      type: Date,
       required: true,
     },
     endTime: {
-      type: Number,
+      type: Date,
       required: true,
     },
     quantity: {
@@ -306,7 +306,7 @@ const auctionPreRegisterSchema = new Schema(
   schemaOptions
 );
 
-const auctionReultScehma = new Schema(
+const auctionResultSchema = new Schema(
   {
     noOfTimePreRegistered: {
       type: Number,
@@ -413,4 +413,13 @@ export const model = {
   rolePrivilage,
   productCategory,
   userSchema,
+  auctionCategory,
+  productSchema,
+  auctionSchema,
+  auctionPreRegisterSchema,
+  userProfile,
+  auctionResultSchema,
+  walletSchema,
+  transactionSchema
+  
 };

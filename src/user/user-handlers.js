@@ -1,5 +1,10 @@
 import cr from "crypto-js";
-import { checkCredentials, createUser, deleteUser, getUser } from "./user-services.js";
+import {
+  checkCredentials,
+  createUser,
+  deleteUser,
+  getUser,
+} from "./user-services.js";
 export const login = async function (req, res) {
   const { statusCode, response } = await checkCredentials(req.body);
   res.status(statusCode).json(response);
@@ -10,7 +15,7 @@ export const register = async function (req, res) {
 };
 
 export const remove = async (req, res) => {
-  const { statusCode, response } = await deleteUser(req.query.id);
+  const { statusCode, response } = await deleteUser(req.params.id);
   res.status(statusCode).json(response);
 };
 export const update = async (req, res) => {

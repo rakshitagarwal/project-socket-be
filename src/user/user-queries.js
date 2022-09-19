@@ -5,8 +5,14 @@ export const isExist = async function (emailAddress, passwordHash = null) {
 };
 
 export const create = async (user) => {
+  console.log("::::::", user.email);
   const userMeta = await UserModel.create(user);
   return userMeta;
+};
+export const getEmailUser = async (user) => {
+  const email = user.email;
+  const emailUser = await UserModel.findOne({ email: email });
+  return emailUser;
 };
 export const getRoleUser = async (user) => {
   const roleId = await UseRole.findOne({ name: "Admin" }).select({
