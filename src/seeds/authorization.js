@@ -2,6 +2,8 @@ import { authSchemas } from "../roles/role-schema.js";
 import { helpers } from "../helper/helpers.js";
 import { connectDB } from "../config/db.js";
 import logger from "../config/logger.js";
+import { productRoleSchema } from "../roles/product-schema.js";
+import { auctionRole } from "../roles/auction-schema.js";
 
 (async () => {
   connectDB();
@@ -44,30 +46,57 @@ import logger from "../config/logger.js";
         .findOne({ name: "Vendor" })
         .select({ _id: 1 });
 
-      const data = helpers.privilageRole;
-      const datas = helpers.privilageRoleVan;
+      const vandorData = helpers.privilageRole;
+      const adminData = helpers.privilageRoleVan;
       await authSchemas.rolePrivilage.deleteMany({});
       const PrvilageRoleAdmin = await authSchemas.rolePrivilage.insertMany({
         role: adminRoleId,
-        module: data[0].module,
+        module: vandorData[0].module,
       });
       const PrvilageRoleVandor = await authSchemas.rolePrivilage.insertMany({
         role: vendorRoleId,
-        module: datas[0].module,
+        module: adminData[0].module,
       });
-      if (PrvilageRole > 0) {
+      if (PrvilageRole.length > 0) {
         logger.info({
           type: "info",
           message: "Privilage checked in Role",
         });
       }
-      process.exit();
     } catch (error) {
       logger.error(error);
+    }
+  };
+  const auctionCategorySchema = async () => {
+    await auctionRole.auctionCategory.deleteMany({});
+    const auctionCategory = await auctionRole.auctionCategory.insertMany({
+      name: "English",
+      description: "This is an english acution",
+    });
+
+    if (auctionCategory.length > 0) {
+      logger.info({
+        type: "info",
+        message: "Auction Category add",
+      });
+    }
+  };
+  const productCategorySchema = async () => {
+    await productRoleSchema.productCategory.deleteMany({});
+    const productCategory = await productRoleSchema.productCategory.insertMany(
+      helpers.productCategory
+    );
+    if (productCategory.length > 0) {
+      logger.info({
+        type: "info",
+        message: "Product Category add",
+      });
     }
   };
 
   await rolesSchema();
   privilageSchema();
   privilage();
+  productCategorySchema();
+  auctionCategorySchema();
 })();

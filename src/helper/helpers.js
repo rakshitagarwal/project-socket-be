@@ -114,6 +114,9 @@ const StatusMessages = {
   UNSUPPORTED_MEDIA_TYPE: "Unsupported Media Type",
   USE_PROXY: "Use Proxy",
   MISDIRECTED_REQUEST: "Misdirected Request",
+  EMAIL_ALREADY: "you have already registered this ",
+  USER_CREATE: "User Created Successefully",
+  USER_DELETE: "User Deleted Successefully",
 };
 
 const privilage = [
@@ -185,6 +188,19 @@ const privilageRoleVan = [
 
 const roles = [{ name: "Admin" }, { name: "Vendor" }];
 
+const productCategory = [
+  {
+    name: "mobile",
+    description:
+      "three categories of mobile phones: basic phones, feature phones, and smartphones.",
+  },
+  {
+    name: "car",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+];
+
 export const helpers = {
   StatusMessages,
   StatusCodes,
@@ -192,4 +208,5 @@ export const helpers = {
   roles,
   privilageRole,
   privilageRoleVan,
+  productCategory,
 };
