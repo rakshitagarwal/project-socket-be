@@ -200,17 +200,7 @@ const productCategory = [
       "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
   },
 ];
-const auctionCategory = [
-  {
-    name: "Apple",
-    description:
-      "The iPhone 14 and iPhone 14 Plus are smartphones designed, developed, and marketed by Apple Inc. They are the sixteenth generation.",
-  },
-  {
-    name: "huawei",
-    description: "This list contains 275 Huawei Mobile Phones in India.",
-  },
-];
+
 export const helpers = {
   StatusMessages,
   StatusCodes,
@@ -219,5 +209,4 @@ export const helpers = {
   privilageRole,
   privilageRoleVan,
   productCategory,
-  auctionCategory,
 };

@@ -69,9 +69,11 @@ import { auctionRole } from "../roles/auction-schema.js";
   };
   const auctionCategorySchema = async () => {
     await auctionRole.auctionCategory.deleteMany({});
-    const auctionCategory = await auctionRole.auctionCategory.insertMany(
-      helpers.auctionCategory
-    );
+    const auctionCategory = await auctionRole.auctionCategory.insertMany({
+      name: "English",
+      description: "This is an english acution",
+    });
+
     if (auctionCategory.length > 0) {
       logger.info({
         type: "info",
