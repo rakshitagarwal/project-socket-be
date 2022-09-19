@@ -55,14 +55,11 @@ export const deleteUser = async (id) => {
 };
 
 export const updateUser = async (id, userdata) => {
-  const userMeta = await getUserById(id);
-  if (userMeta && typeof userMeta === "object") {
-    const updateUser = await update(id, userdata);
-    if (updateUser && typeof updateUser === "object") {
-      return createResponse(helpers.StatusCodes.OK, {
-        message: `User name ${userMeta.fullName} updated `,
-      });
-    }
+  const updateUser = await update(id, userdata);
+  if (updateUser && typeof updateUser === "object") {
+    return createResponse(helpers.StatusCodes.OK, {
+      message: `User name ${updateUser.fullName} updated `,
+    });
   }
   return notFound();
 };
