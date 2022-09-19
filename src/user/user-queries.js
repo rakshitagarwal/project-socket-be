@@ -14,7 +14,7 @@ export const getEmailUser = async (user) => {
   return emailUser;
 };
 export const getRoleUser = async (user) => {
-  const roleId = await UseRole.findOne({ name: "Admin" }).select({
+  const roleId = await UseRole.findOne({ name: user }).select({
     _id: 1,
   });
   return roleId._id;

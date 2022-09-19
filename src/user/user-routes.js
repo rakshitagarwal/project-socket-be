@@ -13,7 +13,7 @@ import { registers,idSchema } from "./../common/validationSchemas.js";
 export const userRouter = Router();
 userRouter
   .post(USER_LOGIN, login)
-  .post(USER_REGISTER, validateSchema.body(registers), register)
+  .post(USER_REGISTER, register)
   .delete(ID_POSTFIX,validateSchema.params(idSchema), remove)
   .put(ID_POSTFIX, update)
   .get(USER_PATH_ALLID, get);

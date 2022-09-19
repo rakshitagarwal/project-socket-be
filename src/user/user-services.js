@@ -32,10 +32,10 @@ export const createUser = async (user) => {
   } else {
     const hashDigest = cr.SHA256(user.password).toString();
     user.password = hashDigest;
-    const userRoleId = await getRoleUser();
+    const userRoleId = await getRoleUser(user.Role);
     user.Role = userRoleId;
     const usersMeta = await create(user);
-    if (usersMeta && usersMeta !== undefined) {
+    if (usersMeta) {
       return createResponse(helpers.StatusCodes.CREATED, {
         message: helpers.StatusMessages.USER_CREATE,
         usersMeta,
@@ -46,7 +46,7 @@ export const createUser = async (user) => {
 };
 export const deleteUser = async (id) => {
   const metaData = await removeUser(id);
-  if (metaData && typeof meta === "object") {
+  if (metaData) {
     return createResponse(helpers.StatusCodes.OK, {
       message: helpers.StatusMessages.USER_DELETE,
     });
@@ -56,9 +56,11 @@ export const deleteUser = async (id) => {
 
 export const updateUser = async (id, userdata) => {
   const updateUser = await update(id, userdata);
-  if (updateUser && typeof updateUser === "object") {
+  const getuser = await getUserById(id);
+  if (updateUser) {
     return createResponse(helpers.StatusCodes.OK, {
-      message: `User name ${updateUser.fullName} updated `,
+      message: `User ${getuser.fullName} successfully `,
+      getuser,
     });
   }
   return notFound();
@@ -69,7 +71,7 @@ export const getUser = async (page, limit, userid) => {
     userid.length > 0
       ? await getUserById(userid)
       : await getAllUser(page, limit);
-  if (userMeta && typeof userMeta === "object") {
+  if (userMeta) {
     return createResponse(helpers.StatusCodes.OK, userMeta, {
       limit: userMeta.limit,
       currentPage: userMeta.currentPage,
