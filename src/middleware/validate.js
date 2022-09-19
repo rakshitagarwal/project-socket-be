@@ -1,6 +1,7 @@
 import { helpers } from "../helper/helpers.js";
 import { validateObjectId, createResponse } from "../common/utilies.js";
 import logger from "../config/logger.js";
+import { registers } from "../common/validationSchemas.js";
 
 const validate = (schema, data, res, next) => {
   const parsed = schema.validate(data);

@@ -22,10 +22,9 @@ productRouter
   .post(
     "/",
     [
-      uploadFile.none(),
-      validateSchema.body(productSchema),
       uploadFile.single("image"),
       validateSchema.file,
+      validateSchema.body(productSchema),
     ],
     add
   )
@@ -33,10 +32,10 @@ productRouter
   .put(
     "/:id",
     [
-      validateSchema.params(idSchema),
-      uploadFile.none(validateSchema.body(productSchema)),
       uploadFile.single("image"),
       validateSchema.file,
+      validateSchema.params(idSchema),
+      validateSchema.body(productSchema),
     ],
     update
   )

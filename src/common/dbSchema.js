@@ -75,7 +75,7 @@ const privilageSchema = new Schema(
   schemaOptions
 );
 
-const roleSchema = new Schema(
+export const roleSchema = new Schema(
   {
     name: {
       type: String,
@@ -90,7 +90,7 @@ const roleSchema = new Schema(
   schemaOptions
 );
 
-const rolePrivilage = new Schema({
+export const rolePrivilage = new Schema({
   role: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -124,19 +124,15 @@ export const userSchema = new Schema(
       type: String,
       required: true,
     },
-    publicKey: {
-      type: String,
-      required: true,
-    },
     status: {
       type: Boolean,
       required: true,
       default: false,
     },
-    RolePrivilage: {
+    Role: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "rolePrivilage",
+      ref: "Role",
     },
   },
   schemaOptions
@@ -147,7 +143,7 @@ const userProfile = new Schema(
     location: {
       type: String,
     },
-    addreess: {
+    address: {
       type: String,
     },
     dateOfBirth: {
@@ -310,7 +306,7 @@ const auctionPreRegisterSchema = new Schema(
   schemaOptions
 );
 
-const auctionReultScehma = new Schema(
+const auctionResultSchema = new Schema(
   {
     noOfTimePreRegistered: {
       type: Number,
@@ -416,5 +412,6 @@ export const model = {
   privilageSchema,
   rolePrivilage,
   productCategory,
+  auctionCategory,
   userSchema,
 };
