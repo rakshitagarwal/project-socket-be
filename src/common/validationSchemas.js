@@ -1,9 +1,34 @@
 import Joi from "joi";
 
 const price = Joi.number();
-const title = Joi.string();
-const description = Joi.string();
+const module = Joi.string();
+const path = Joi.string();
 
+/**
+ * @description moudleName scheams for checking the moduleName from query parmas
+ */
+export const moduleNameSchema = Joi.object({
+  moduleName: module.required(),
+});
+
+/**
+ * @description moudleName scheams for checking the moduleName from query parmas
+ */
+export const fileName = Joi.object({
+  path: path.required(),
+});
+
+/**
+ * @description scheams for chekcing both moduelName and path form query params
+ */
+export const queryParams = Joi.object({
+  moduleName: module.required(),
+  path: path.required(),
+});
+
+/**
+ * @description schema for checking the ObjectIf from the Path params
+ */
 export const idSchema = Joi.object({
   id: Joi.string().required().messages({
     required_error: "ID must be present in responses",

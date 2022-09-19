@@ -115,9 +115,13 @@ export const sendEmail = (payload, eventName) => {
 };
 
 const FILE_SIZE = env.FILE_ALLOWED_SIZE; // 5mb
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, env.FILE_STORAGE_PATH);
+    if (!req.query.moduleName) {
+      cb(null, "query parameter not found in URL parameters");
+    }
+    cb(null, env.FILE_STORAGE_PATH + req?.query?.moduleName);
   },
   filename: function (req, file, cb) {
     cb(null, new Date().toISOString() + "-" + file.originalname);

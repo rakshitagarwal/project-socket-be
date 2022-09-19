@@ -2,6 +2,7 @@
 export const USER_PATHNAME = "/users";
 export const PRODUCT_PATHNAME = "/products";
 export const AUCTION_PATHNAME = "/auctions";
+export const UPLOAD_PATHNAME = "/uploads";
 export const ROLE_PATHNAME = "/roles";
 export const ID_POSTFIX = ":id";
 export const PREFIX_VERSION = "/v1";
