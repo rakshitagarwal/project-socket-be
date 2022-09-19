@@ -251,7 +251,8 @@
             "type": "number"
           },
           "ProductCategory": {
-            "type": "number"
+            "type": "string",
+            "title": "you have to pass ID"
           }
         }
       }
@@ -273,41 +274,49 @@
                   "title": {
                     "type": "string",
                     "format": "string",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "name of the product you want in auctions"
                   },
                   "description": {
                     "type": "string",
                     "format": "string",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "description of produnct in details"
                   },
                   "image": {
                     "type": "string",
                     "format": "binary",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "Image in number"
                   },
                   "purchasePrice": {
                     "type": "number",
                     "format": "number",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "Purchase price in number"
                   },
                   "sellingPrice": {
                     "type": "number",
                     "format": "number",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "Selling price in number"
                   },
                   "overHeadCost": {
                     "type": "number",
                     "format": "number",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "total overHead Cost"
                   },
                   "quantity": {
                     "type": "number",
                     "format": "number",
-                    "nullable": false
+                    "nullable": false,
+                    "description": "number of quantity"
                   },
                   "ProductCategory": {
                     "type": "string",
-                    "format": "string",
+                    "format": "number",
+                    "description": "ProductCategory ID",
                     "nullable": false
                   }
                 }

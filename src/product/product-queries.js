@@ -1,4 +1,4 @@
-import { productModel } from "./product-schemas.js";
+import { productModel, productCategoryModel } from "./product-schemas.js";
 
 export const create = async (product) => {
   const productMeta = await productModel.create(product);
@@ -31,10 +31,10 @@ export const productCount = async () => {
 export const getProducts = async (pages, limit) => {
   const count = await productCount();
   let totalPages;
-  if (count > limit) {
+  if (count < limit) {
     totalPages = 1;
   } else {
-    totalPages = count / limit;
+    totalPages = parseInt(count / limit);
   }
 
   const products = await productModel
@@ -58,4 +58,21 @@ export const getProductByTitle = async (title) => {
 export const inActiveProductByTitle = async (title) => {
   const product = await productModel.findOne({ title: title, status: true });
   return product._id;
+};
+
+export const fetchAllCategory = async () => {
+  const categories = await productCategoryModel
+    .find({ status: false })
+    .select({ _id: 1, name: 1 })
+    .lean();
+
+  return categories;
+};
+
+export const getCategoryById = async (_id) => {
+  const category = await productCategoryModel
+    .find({ _id: id, status: false })
+    .lean();
+
+  return category;
 };

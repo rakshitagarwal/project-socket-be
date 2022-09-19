@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=production nodemon index.js",
     "test": "mocha",
     "lint": "eslint --fix src/*.js",
-    "seed":"node src/seeds/authorization.js"
+    "seed": "node src/seeds/authorization.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "datadog-winston": "^1.5.1",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "handlebars": "^4.7.7",

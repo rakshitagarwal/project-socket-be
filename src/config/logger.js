@@ -1,6 +1,7 @@
 import winston, { createLogger, format, transports } from "winston";
 import "dotenv/config";
 import "winston-daily-rotate-file";
+import DatadogWinston from "datadog-winston";
 const { combine, json } = format;
 
 /**
@@ -23,6 +24,14 @@ const errorFileTransport = new winston.transports.DailyRotateFile({
   level: "error",
 });
 
+const dataDog = new DatadogWinston({
+  apiKey: "02f96169ba0f37159e887f7cf288db37",
+  hostname:
+    (process.env.NODE_ENV !== "production" ? "Test" : "Production") + " Server",
+  service: "BigDeal_AdminPanel_API",
+  ddsource: "nodejs",
+});
+
 const logger = createLogger({
   level: "info",
   format: combine(
@@ -31,7 +40,7 @@ const logger = createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: "user-service" },
-  transports: [combineFileTransport, errorFileTransport],
+  transports: [combineFileTransport, errorFileTransport, dataDog],
 });
 
 if (process.env.NODE_ENV !== "production") {
