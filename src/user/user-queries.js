@@ -5,7 +5,6 @@ export const isExist = async function (emailAddress, passwordHash = null) {
 };
 
 export const create = async (user) => {
-  console.log("::::::", user.email);
   const userMeta = await UserModel.create(user);
   return userMeta;
 };
