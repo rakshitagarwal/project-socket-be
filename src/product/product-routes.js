@@ -5,7 +5,6 @@ import {
   remove,
   update,
   selectProduct,
-  selectCategory,
   selectCategories,
 } from "./product-handlers.js";
 import {
@@ -41,9 +40,4 @@ productRouter
   )
   .get("/:id", validateSchema.params(idSchema), selectProduct)
   .get("/", validateSchema.query(paginationSchema), select)
-  .get("/catgeory", selectCategories)
-  .get(
-    "/category/:id",
-    validateSchema.params(paginationSchema),
-    selectCategory
-  );
+  .get("/catgeory", selectCategories);

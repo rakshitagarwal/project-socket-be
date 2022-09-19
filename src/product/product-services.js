@@ -7,12 +7,11 @@ import {
   removeProduct,
   getProducts,
   fetchAllCategory,
-  getCategoryById,
 } from "./product-queries.js";
 
 export const createProduct = async (product) => {
   const productMeta = await create(product);
-    
+
   if (productMeta !== undefined) {
     return createResponse(helpers.StatusCodes.CREATED, {
       message: `Product Added`,
@@ -103,23 +102,9 @@ export const getProduct = async (id) => {
 
 export const getCategories = async () => {
   const category = await fetchAllCategory();
+  console.log(category);
   if (category) {
-    return createResponse(helpers.StatusCodes.OK, {
-      category,
-    });
-  }
-
-  return createResponse(helpers.StatusCodes.NOT_FOUND, {
-    message: helpers.StatusMessages.NOT_FOUND,
-  });
-};
-
-export const getCategory = async (id) => {
-  const category = await getCategoryById(id);
-  if (category) {
-    return createResponse(helpers.StatusCodes.OK, {
-      category,
-    });
+    return createResponse(helpers.StatusCodes.OK, category);
   }
 
   return createResponse(helpers.StatusCodes.NOT_FOUND, {
