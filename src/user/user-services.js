@@ -56,7 +56,6 @@ export const deleteUser = async (id) => {
 
 export const updateUser = async (id, userdata) => {
   const userMeta = await getUserById(id);
-  console.log(userMeta);
   if (userMeta && typeof userMeta === "object") {
     const updateUser = await update(id, userdata);
     if (updateUser && typeof updateUser === "object") {
