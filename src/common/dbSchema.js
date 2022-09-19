@@ -412,14 +412,13 @@ export const model = {
   privilageSchema,
   rolePrivilage,
   productCategory,
-  userSchema,
   auctionCategory,
+  userSchema,
   productSchema,
   auctionSchema,
   auctionPreRegisterSchema,
   userProfile,
   auctionResultSchema,
   walletSchema,
-  transactionSchema
-  
+  transactionSchema,
 };
