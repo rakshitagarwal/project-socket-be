@@ -7,21 +7,45 @@ import {
   update,
   getAllUser,
   getEmailUser,
+  persistence,
 } from "./user-queries.js";
+import { hassPassword } from "../common/utilies.js";
+import env from "../config/env.js";
 import cr from "crypto-js";
+import crypto from "crypto";
 import { helpers } from "../helper/helpers.js";
-import { createResponse } from "../common/utilies.js";
-export const checkCredentials = async function (user) {
-  const queryResult = await isExist(user.emailAddress, user.passwordHash);
-  return createResponse(helpers.StatusCodes.OK, {
-    message: `User authenticated`,
-  });
-};
+import { createResponse, generateAccessToken } from "../common/utilies.js";
 
 const notFound = () =>
   createResponse(helpers.StatusCodes.NOT_FOUND, {
     message: helpers.StatusMessages.NOT_FOUND,
   });
+
+export const checkCredentials = async function (user) {
+  const emailCheck = await getEmailUser(user);
+
+  if (!emailCheck) {
+    return createResponse(helpers.StatusCodes.ACCEPTED, {
+      message: helpers.StatusMessages.EMAIL_UNREGISTER + ` ${user.email}`,
+    });
+  } else {
+    const hassData = hassPassword(user.password);
+    const { password, ...usersMeta } = emailCheck;
+    if (emailCheck.password === hassData) {
+      const genratAccToken = await generateAccessToken(usersMeta);
+      const token = await persistence(genratAccToken);
+      const accessToken = token.accessToken;
+      return createResponse(helpers.StatusCodes.CREATED, {
+        message: helpers.StatusMessages.USER_LOGIN,
+        usersMeta,
+        accessToken,
+      });
+    }
+    return createResponse(helpers.StatusCodes.BAD_REQUEST, {
+      message: helpers.StatusMessages.UNAUTHORIZED,
+    });
+  }
+};
 
 export const createUser = async (user) => {
   const emailCheck = await getEmailUser(user);
@@ -30,8 +54,8 @@ export const createUser = async (user) => {
       message: helpers.StatusMessages.EMAIL_ALREADY + `${user.email}`,
     });
   } else {
-    const hashDigest = cr.SHA256(user.password).toString();
-    user.password = hashDigest;
+    const hassData = hassPassword(user.password);
+    user.password = hassData;
     const userRoleId = await getRoleUser(user.Role);
     user.Role = userRoleId;
     const usersMeta = await create(user);
