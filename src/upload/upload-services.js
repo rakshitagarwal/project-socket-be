@@ -2,11 +2,11 @@ import { createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import fs from "fs";
 
-export const add = async (body, moduleName, file) => {
+export const add = async (origin, body, moduleName, file) => {
   if (body.image) {
     return createResponse(helpers.StatusCodes.OK, {
       message: `Image Uploaded ${helpers.StatusMessages.OK}`,
-      path: file.path,
+      path: origin + "/" + file.path,
       fileName: file.filename,
     });
   }
@@ -45,7 +45,7 @@ export const remove = async (query, path) => {
   }
 };
 
-export const update = async (query, body, file) => {
+export const update = async (origin, query, body, file) => {
   let fileRemovePromise = new Promise((resolve, reject) => {
     fs.unlink("./" + query.path, function (err) {
       if (err && err.code == "ENOENT") {
@@ -87,7 +87,7 @@ export const update = async (query, body, file) => {
     if (body?.image) {
       return createResponse(helpers.StatusCodes.OK, {
         message: `Image Updated ${helpers.StatusMessages.OK}`,
-        path: file.path,
+        path: origin + "/" + file.path,
         fileName: file.filename,
       });
     }
