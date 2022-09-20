@@ -16,10 +16,16 @@ after(async () => {
 });
 
 describe("Product Test /v1/products", function () {
+  it("Get all product category", function () {
+    return request(app)
+      .get("/v1/products/catgeory/")
+      .expect(helpers.StatusCodes.OK);
+  });
+
   it("Add Product wihtout errors", function () {
     return request(app)
       .post("/v1/products/")
-      .set("Content-Type", "multipart/form-data")
+      .set("Content-Type", "application/json")
       .field({
         title: "MacBookAirM2",
         description: "MAcbook AIr M2, 16gb Ram, 1TB SSD, Retina Display",
@@ -28,8 +34,8 @@ describe("Product Test /v1/products", function () {
         overHeadCost: "1500",
         quantity: "20",
         ProductCategory: "507f1f77bcf86cd799439011",
+        image: "/assets/uploads/products/Iphone14Pro.jpg",
       })
-      .attach("image", "/home/globalvox/Downloads/Iphone14Pro.jpg")
       .expect(helpers.StatusCodes.CREATED);
   });
 
@@ -45,22 +51,7 @@ describe("Product Test /v1/products", function () {
         overHeadCost: "1500",
         quantity: "20",
         ProductCategory: "507f1f77bcf86cd799439011",
-      })
-      .attach("image", "/home/globalvox/Downloads/Iphone14Pro.jpg")
-      .expect(helpers.StatusCodes.NOT_FOUND);
-  });
-
-  it("Add Product with no field upload", function () {
-    return request(app)
-      .post("/v1/products/")
-      .set({
-        title: "MacBook Air M2",
-        description: "Macbook Air M2, 16gb Ram, 1TB SSD, Retina Display",
-        purchasePrice: "165000",
-        sellingPrice: "145000",
-        overHeadCost: "1500",
-        quantity: "20",
-        ProductCategory: "507f1f77bcf86cd799439011",
+        image: "/assets/uploads/products/Iphone14Pro.jpg",
       })
       .expect(helpers.StatusCodes.NOT_FOUND);
   });
@@ -79,8 +70,8 @@ describe("Product Test /v1/products", function () {
         overHeadCost: "5500",
         quantity: "20",
         ProductCategory: "507f1f77bcf86cd799439011",
+        image: "/assets/uploads/products/Iphone14Pro.jpg",
       })
-      .attach("image", "/home/globalvox/Downloads/Iphone14Pro.jpg")
       .expect(helpers.StatusCodes.OK);
   });
 
@@ -96,8 +87,8 @@ describe("Product Test /v1/products", function () {
         purchasePrice: "250000",
         sellingPrice: "245000",
         ProductCategory: "507f1f77bcf86cd799439011",
+        image: "/assets/uploads/products/Iphone14Pro.jpg",
       })
-      .attach("image", "/home/globalvox/Downloads/Iphone14Pro.jpg")
       .expect(helpers.StatusCodes.NOT_FOUND);
   });
 
@@ -111,8 +102,8 @@ describe("Product Test /v1/products", function () {
         purchasePrice: "250000",
         sellingPrice: "245000",
         ProductCategory: "507f1f77bcf86cd799439011",
+        image: "/assets/uploads/products/Iphone14Pro.jpg",
       })
-      .attach("image", "/home/globalvox/Downloads/Iphone14Pro.jpg")
       .expect(helpers.StatusCodes.BAD_REQUEST);
   });
 

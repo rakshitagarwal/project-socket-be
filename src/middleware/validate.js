@@ -9,9 +9,7 @@ const validate = (schema, data, res, next) => {
   if (parsed.error) {
     const { statusCode, response } = createResponse(
       helpers.StatusCodes.NOT_FOUND,
-      {
-        message: parsed.error.message,
-      },
+      parsed.error.message,
       {
         error: parsed.error.details,
       }
@@ -27,12 +25,11 @@ const validate = (schema, data, res, next) => {
 };
 
 const file = (req, res, next) => {
+  console.log(req.file);
   if (!req.file) {
     const { statusCode, response } = createResponse(
       helpers.StatusCodes.NOT_FOUND,
-      {
-        message: "Image" + helpers.StatusMessages.NOT_FOUND,
-      }
+      "Image" + helpers.StatusMessages.NOT_FOUND
     );
     res.status(statusCode).json(response);
     logger.error({

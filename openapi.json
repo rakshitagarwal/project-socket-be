@@ -43,16 +43,10 @@
                   "type": "boolean",
                   "default": false
                 },
-                "data": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "pattern": "Not Found",
-                      "maxLength": 9
-                    }
-                  }
+                "message": {
+                  "type": "string",
+                  "pattern": "Not Found",
+                  "maxLength": 9
                 },
                 "metdata": {
                   "type": "object",
@@ -105,16 +99,9 @@
                   "type": "boolean",
                   "default": false
                 },
-                "data": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "pattern": "Not Found",
-                      "maxLength": 9
-                    }
-                  }
+                "message": {
+                  "type": "string",
+                  "pattern": "Bad Request"
                 },
                 "metdata": {
                   "type": "object",
@@ -167,16 +154,10 @@
                   "type": "boolean",
                   "default": false
                 },
-                "data": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "pattern": "Internal Server Error",
-                      "maxLength": 21
-                    }
-                  }
+                "message": {
+                  "type": "string",
+                  "pattern": "Internal Server Error",
+                  "maxLength": 21
                 },
                 "metdata": {
                   "type": "object",
@@ -202,16 +183,10 @@
                   "type": "boolean",
                   "default": false
                 },
-                "data": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "default": "Unauthorized",
-                      "maxLength": 12
-                    }
-                  }
+                "message": {
+                  "type": "string",
+                  "default": "Unauthorized",
+                  "maxLength": 12
                 }
               }
             }
@@ -284,7 +259,7 @@
     }
   },
   "paths": {
-    "/products/catgeory/": {
+    "/products/category/": {
       "get": {
         "description": "get single product",
         "tags": ["Products"],
@@ -300,11 +275,18 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/ProductCategory"
                       }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
                     }
                   }
                 }
@@ -398,12 +380,10 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
-                    "data": {
+                    "message": { "type": "string" },
+                    "metdata": {
                       "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "message": { "type": "string" }
-                      }
+                      "additionalProperties": false
                     }
                   }
                 }
@@ -456,10 +436,22 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/product"
+                      }
+                    },
+                    "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number" },
+                        "totalPages": { "type": "number" },
+                        "recordCount": { "type": "number" }
                       }
                     }
                   }
@@ -503,14 +495,12 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
-                    "data": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "metdata": {
                       "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      }
+                      "additionalProperties": false
                     }
                   }
                 }
@@ -607,14 +597,10 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
-                    "data": {
+                    "message": { "type": "string" },
+                    "metdata": {
                       "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      }
+                      "additionalProperties": false
                     }
                   }
                 }
@@ -658,8 +644,13 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
+                    "message": { "type": "string" },
                     "data": {
                       "$ref": "#/components/schemas/product"
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
                     }
                   }
                 }
@@ -727,14 +718,14 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "message": {
+                      "type": "string",
+                      "format": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
                       "properties": {
-                        "message": {
-                          "type": "string",
-                          "format": "string"
-                        },
                         "path": {
                           "type": "string",
                           "format": "string"
@@ -820,14 +811,14 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "message": {
+                      "type": "string",
+                      "format": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
                       "properties": {
-                        "message": {
-                          "type": "string",
-                          "format": "string"
-                        },
                         "path": {
                           "type": "string",
                           "format": "string"
@@ -905,15 +896,9 @@
                       "type": "boolean",
                       "default": true
                     },
-                    "data": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "format": "string"
-                        }
-                      }
+                    "message": {
+                      "type": "string",
+                      "format": "string"
                     },
                     "metdata": {
                       "type": "object",

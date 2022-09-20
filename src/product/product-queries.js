@@ -47,6 +47,7 @@ export const getProducts = async (pages, limit) => {
     pages: totalPages,
     currentPage: pages,
     limit: limit,
+    recordCount: count,
   };
 };
 

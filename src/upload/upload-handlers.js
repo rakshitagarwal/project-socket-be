@@ -2,6 +2,7 @@ import { add, remove, update } from "./upload-services.js";
 
 export const createImage = async (req, res) => {
   const { statusCode, response } = await add(
+    req.headers.origin,
     req.body,
     req.query.moduleName,
     req.file
@@ -10,7 +11,12 @@ export const createImage = async (req, res) => {
 };
 
 export const updateImage = async (req, res) => {
-  const { statusCode, response } = await update(req.query, req.body, req.file);
+  const { statusCode, response } = await update(
+    req.headers.origin,
+    req.query,
+    req.body,
+    req.file
+  );
   res.status(statusCode).json(response);
 };
 
