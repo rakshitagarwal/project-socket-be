@@ -19,15 +19,7 @@ export const productRouter = Router();
 
 productRouter
   .get("/catgeory/", selectCategories)
-  .post(
-    "/",
-    [
-      uploadFile.single("image"),
-      validateSchema.file,
-      validateSchema.body(productSchema),
-    ],
-    add
-  )
+  .post("/", [validateSchema.body(productSchema)], add)
   .delete("/:id", validateSchema.params(idSchema), remove)
   .put(
     "/:id",
