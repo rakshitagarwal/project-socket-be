@@ -118,9 +118,9 @@ const StatusMessages = {
   EMAIL_UNREGISTER: "please register your account this",
   USER_CREATE: "User Created Successefully",
   USER_DELETE: "User Deleted Successefully",
-  USER_LOGIN:"User login",
-  UNAUTHORIZED: "User Unauthorized",
+  USER_LOGIN: "User login",
 };
+
 
 const privilage = [
   {

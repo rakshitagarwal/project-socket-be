@@ -30,14 +30,14 @@ export const checkCredentials = async function (user) {
     });
   } else {
     const hassData = hassPassword(user.password);
-    const { password, ...usersMeta } = emailCheck;
+    const { password, ...getUser } = emailCheck;
     if (emailCheck.password === hassData) {
-      const genratAccToken = await generateAccessToken(usersMeta);
+      const genratAccToken = await generateAccessToken(getUser);
       const token = await persistence(genratAccToken);
       const accessToken = token.accessToken;
       return createResponse(helpers.StatusCodes.CREATED, {
         message: helpers.StatusMessages.USER_LOGIN,
-        usersMeta,
+        getUser,
         accessToken,
       });
     }
