@@ -10,6 +10,8 @@ import logger from "../config/logger.js";
 import { generateKeyPair } from "crypto";
 import util from "util";
 import mongoose from "mongoose";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
 const jwtOptions = {
   expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,

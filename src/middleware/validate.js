@@ -27,6 +27,7 @@ const validate = (schema, data, res, next) => {
 };
 
 const file = (req, res, next) => {
+  console.log(req.file);
   if (!req.file) {
     const { statusCode, response } = createResponse(
       helpers.StatusCodes.NOT_FOUND,
