@@ -15,6 +15,9 @@ import i18next from "i18next";
 import Backend from "i18next-fs-backend";
 import middlerware18 from "i18next-http-middleware";
 import cookieParser from "cookie-parser";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const app = express();
 const PORT = env.PORT;
@@ -28,6 +31,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
 app.use(middlerware18.handle(i18next));
+app.use("/assets", express.static(__dirname + "/assets"));
 
 // language configurations
 i18next
@@ -42,6 +46,7 @@ i18next
     },
   });
 
+// Main Routes
 app.get("/", (req, res) => {
   res.json({ Welcome: "BiG Deal Server", docs: "/docs" });
 });

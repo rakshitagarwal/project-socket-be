@@ -10,6 +10,8 @@ import logger from "../config/logger.js";
 import { generateKeyPair, createHash } from "crypto";
 import util from "util";
 import mongoose from "mongoose";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
 const jwtOptions = {
   expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
@@ -22,7 +24,12 @@ const jwtOptions = {
  * @param {Object} data
  * @returns statusCode and response
  */
-export const createResponse = (statusCode, message, data, metaData = {}) => {
+export const createResponse = (
+  statusCode,
+  message = "",
+  data = {},
+  metaData = {}
+) => {
   const success = statusCode < helpers.StatusCodes.BAD_REQUEST;
   if (success) {
     const response = {
@@ -35,7 +42,7 @@ export const createResponse = (statusCode, message, data, metaData = {}) => {
   }
   const response = {
     success: success,
-    message: message,
+    message: message || "",
     data: data,
     metadata: metaData,
   };

@@ -18,7 +18,7 @@ import { validateSchema } from "../middleware/validate.js";
 export const productRouter = Router();
 
 productRouter
-  .get("/catgeory/", selectCategories)
+  .get("/category/", selectCategories)
   .post("/", [validateSchema.body(productSchema)], add)
   .delete("/:id", validateSchema.params(idSchema), remove)
   .put(
