@@ -67,6 +67,7 @@ import { auctionRole } from "../roles/auction-schema.js";
       logger.error(error);
     }
   };
+
   const auctionCategorySchema = async () => {
     await auctionRole.auctionCategory.deleteMany({});
     const auctionCategory = await auctionRole.auctionCategory.insertMany({
@@ -81,6 +82,7 @@ import { auctionRole } from "../roles/auction-schema.js";
       });
     }
   };
+
   const productCategorySchema = async () => {
     await productRoleSchema.productCategory.deleteMany({});
     const productCategory = await productRoleSchema.productCategory.insertMany(

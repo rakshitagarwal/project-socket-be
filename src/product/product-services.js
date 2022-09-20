@@ -102,8 +102,8 @@ export const getProduct = async (id) => {
 
 export const getCategories = async () => {
   const category = await fetchAllCategory();
-  console.log(category);
-  if (category) {
+
+  if (category.length > 0) {
     return createResponse(helpers.StatusCodes.OK, category);
   }
 

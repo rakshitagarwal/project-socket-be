@@ -18,6 +18,7 @@ import { validateSchema } from "../middleware/validate.js";
 export const productRouter = Router();
 
 productRouter
+  .get("/catgeory/", selectCategories)
   .post(
     "/",
     [
@@ -39,5 +40,4 @@ productRouter
     update
   )
   .get("/:id", validateSchema.params(idSchema), selectProduct)
-  .get("/", validateSchema.query(paginationSchema), select)
-  .get("/catgeory", selectCategories);
+  .get("/", validateSchema.query(paginationSchema), select);

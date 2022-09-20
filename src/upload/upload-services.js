@@ -19,39 +19,30 @@ export const remove = async (query, path) => {
   let fileRemovePromise = new Promise((resolve, reject) => {
     fs.unlink("./" + path, function (err) {
       if (err && err.code == "ENOENT") {
-        reject(
-          createResponse(
-            helpers.StatusCodes.NOT_FOUND,
-            {
-              message: err.message,
-            },
-            {
-              stack: err.stack,
-            }
-          )
-        );
+        reject({
+          code: helpers.StatusCodes.NOT_FOUND,
+          message: helpers.StatusMessages.NOT_FOUND,
+          stack: err.stack,
+        });
       } else if (err) {
-        reject(
-          createResponse(
-            helpers.StatusCodes.BAD_REQUEST,
-            {
-              message: "Error occurred while trying to remove file",
-            },
-            {
-              stack: err.stack,
-            }
-          )
-        );
+        reject({
+          code: helpers.StatusCodes.BAD_REQUEST,
+          message: helpers.StatusMessages.BAD_REQUEST,
+          stack: err.stack,
+        });
       }
-      resolve(
-        createResponse(helpers.StatusCodes.OK, {
-          message: "File Deleted",
-        })
-      );
+      resolve({
+        code: helpers.StatusCodes.OK,
+        message: "Files Deleted",
+      });
     });
   });
-  const response = await fileRemovePromise;
-  return response;
+  try {
+    const response = await fileRemovePromise;
+    return createResponse(response.code, response.message);
+  } catch (error) {
+    return createResponse(error.code, error.message, error.stack);
+  }
 };
 
 export const update = async (query, body, file) => {

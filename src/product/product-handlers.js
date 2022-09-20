@@ -39,6 +39,7 @@ export const select = async (req, res) => {
 };
 
 export const selectProduct = async (req, res) => {
+  console.log(">>>>>>HERE<<<<<<<");
   const { statusCode, response } = await getProduct(req?.params?.id);
   res.status(statusCode).json(response);
 };
