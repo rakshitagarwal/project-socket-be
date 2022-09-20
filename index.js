@@ -46,6 +46,7 @@ i18next
     },
   });
 
+// Main Routes
 app.get("/", (req, res) => {
   res.json({ Welcome: "BiG Deal Server", docs: "/docs" });
 });
