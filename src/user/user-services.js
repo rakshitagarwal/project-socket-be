@@ -72,30 +72,6 @@ export const createUser = async (user) => {
   }
   return notFound();
 };
-export const createUserSSS = async (user) => {
-  // const data = await validCheckUser(user);
-  const emailCheck = await getEmailUser(user);
-  if (emailCheck) {
-    return createResponse(
-      helpers.StatusCodes.ACCEPTED,
-      helpers.StatusMessages.EMAIL_ALREADY + `${user.email}`
-    );
-  } else {
-    const hassData = hassPassword(user.password);
-    user.password = hassData;
-    const userRoleId = await getRoleUser(user.Role);
-    user.Role = userRoleId;
-    const usersMeta = await create(user);
-    if (usersMeta) {
-      return createResponse(
-        helpers.StatusCodes.CREATED,
-        "User Created Successefully",
-        usersMeta
-      );
-    }
-  }
-  return notFound();
-};
 
 export const deleteUser = async (id) => {
   const metaData = await removeUser(id);
