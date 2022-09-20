@@ -1,4 +1,3 @@
-import cr from "crypto-js";
 import {
   checkCredentials,
   createUser,

@@ -757,11 +757,11 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
+                    "message": { "type": "string" },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
                       "properties": {
-                        "message": { "type": "string" }
                       }
                     }
                   }
@@ -815,6 +815,7 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "message": { "type": "string" },
                     "data": {
                       "type": "array",
                       "items": {
@@ -862,6 +863,7 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
+                    "message": { "type": "string" },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -913,6 +915,7 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
+                    "message": { "type": "string" },
                     "data": {
                       "$ref": "#/components/schemas/user"
                     }
@@ -986,6 +989,7 @@
                   "additionalProperties": false,
                   "properties": {
                     "success": { "type": "boolean" },
+                    "message": { "type": "string" },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1011,6 +1015,69 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
+          }
+        }
+      }
+    },
+    "/users/login":{
+      "post": { 
+        "tags": ["Users"],
+        "description": "User Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " email of the user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " password of the user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful User Login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
           }
         }
       }
@@ -1061,6 +1128,7 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "message": { "type": "string" },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,

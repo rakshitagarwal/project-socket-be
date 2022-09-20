@@ -116,9 +116,6 @@ const StatusMessages = {
   MISDIRECTED_REQUEST: "Misdirected Request",
   EMAIL_ALREADY: "you have already registered this ",
   EMAIL_UNREGISTER: "please register your account this",
-  USER_CREATE: "User Created Successefully",
-  USER_DELETE: "User Deleted Successefully",
-  USER_LOGIN: "User login",
 };
 
 
