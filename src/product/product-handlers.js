@@ -4,7 +4,6 @@ import {
   updateProduct,
   fetchProduct,
   getProduct,
-  getCategory,
   getCategories,
 } from "./product-services.js";
 
@@ -40,16 +39,12 @@ export const select = async (req, res) => {
 };
 
 export const selectProduct = async (req, res) => {
+  console.log(">>>>>>HERE<<<<<<<");
   const { statusCode, response } = await getProduct(req?.params?.id);
   res.status(statusCode).json(response);
 };
 
 export const selectCategories = async (req, res) => {
   const { statusCode, response } = await getCategories();
-  res.status(statusCode).json(response);
-};
-
-export const selectCategory = async (req, res) => {
-  const { statusCode, response } = await getCategory(req?.params?.id);
   res.status(statusCode).json(response);
 };

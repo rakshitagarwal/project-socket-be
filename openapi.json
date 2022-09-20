@@ -12,7 +12,8 @@
   },
   "tags": [
     { "name": "Users", "description": "User operations" },
-    { "name": "Products", "description": "Product operations" }
+    { "name": "Products", "description": "Product operations" },
+    { "name": "Uploads", "description": "Upload Operations" }
   ],
   "servers": [
     {
@@ -255,10 +256,73 @@
             "title": "you have to pass ID"
           }
         }
+      },
+      "ProductCategory": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
       }
     }
   },
   "paths": {
+    "/products/catgeory/": {
+      "get": {
+        "description": "get single product",
+        "tags": ["Products"],
+        "responses": {
+          "200": {
+            "description": "get all category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProductCategory"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
     "/products/": {
       "post": {
         "tags": ["Products"],
@@ -287,7 +351,7 @@
                     "type": "string",
                     "format": "binary",
                     "nullable": false,
-                    "description": "Image in number"
+                    "description": "Image in binary"
                   },
                   "purchasePrice": {
                     "type": "number",
@@ -613,6 +677,264 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
+          }
+        }
+      }
+    },
+    "/uploads/": {
+      "post": {
+        "tags": ["Uploads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["auctions", "products", "users"]
+            }
+          }
+        ],
+        "description": "Upload a file",
+        "requestBody": {
+          "description": "valid product body",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": false,
+                    "description": "Image in binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uploaded File",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "format": "string"
+                        },
+                        "path": {
+                          "type": "string",
+                          "format": "string"
+                        },
+                        "fileName": {
+                          "type": "string",
+                          "format": "string"
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Uploads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["auctions", "products", "users"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Update Upload a file",
+        "requestBody": {
+          "description": "valid product body",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": false,
+                    "description": "Image in binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uploaded File",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "format": "string"
+                        },
+                        "path": {
+                          "type": "string",
+                          "format": "string"
+                        },
+                        "fileName": {
+                          "type": "string",
+                          "format": "string"
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Uploads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["auctions", "products", "users"]
+            }
+          }
+        ],
+        "description": "Delete Upload file",
+        "requestBody": {
+          "description": "valid product body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "nullable": false,
+                    "description": "Path in string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uploaded File",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "format": "string"
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }

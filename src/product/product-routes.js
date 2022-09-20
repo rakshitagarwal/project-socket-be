@@ -5,7 +5,6 @@ import {
   remove,
   update,
   selectProduct,
-  selectCategory,
   selectCategories,
 } from "./product-handlers.js";
 import {
@@ -19,6 +18,7 @@ import { validateSchema } from "../middleware/validate.js";
 export const productRouter = Router();
 
 productRouter
+  .get("/catgeory/", selectCategories)
   .post(
     "/",
     [
@@ -40,10 +40,4 @@ productRouter
     update
   )
   .get("/:id", validateSchema.params(idSchema), selectProduct)
-  .get("/", validateSchema.query(paginationSchema), select)
-  .get("/catgeory", selectCategories)
-  .get(
-    "/category/:id",
-    validateSchema.params(paginationSchema),
-    selectCategory
-  );
+  .get("/", validateSchema.query(paginationSchema), select);
