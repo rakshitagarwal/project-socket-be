@@ -23,12 +23,7 @@ productRouter
   .delete("/:id", validateSchema.params(idSchema), remove)
   .put(
     "/:id",
-    [
-      uploadFile.single("image"),
-      validateSchema.file,
-      validateSchema.params(idSchema),
-      validateSchema.body(productSchema),
-    ],
+    [validateSchema.params(idSchema), validateSchema.body(productSchema)],
     update
   )
   .get("/:id", validateSchema.params(idSchema), selectProduct)
