@@ -4,15 +4,19 @@ import fs from "fs";
 
 export const add = async (origin, body, moduleName, file) => {
   if (body.image) {
-    return createResponse(helpers.StatusCodes.OK, {
-      message: `Image Uploaded ${helpers.StatusMessages.OK}`,
-      path: origin + "/" + file.path,
-      fileName: file.filename,
-    });
+    return createResponse(
+      helpers.StatusCodes.OK,
+      `Image Uploaded ${helpers.StatusMessages.OK}`,
+      {
+        path: origin + "/" + file.path,
+        fileName: file.filename,
+      }
+    );
   }
-  return createResponse(helpers.StatusCodes.BAD_REQUEST, {
-    message: helpers.StatusMessages.BAD_REQUEST,
-  });
+  return createResponse(
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.StatusMessages.BAD_REQUEST
+  );
 };
 
 export const remove = async (query, path) => {
@@ -39,9 +43,9 @@ export const remove = async (query, path) => {
   });
   try {
     const response = await fileRemovePromise;
-    return createResponse(response.code, response.message);
+    return createResponse(response.code, response.message, {});
   } catch (error) {
-    return createResponse(error.code, error.message, error.stack);
+    return createResponse(error.code, error.message, {}, error.stack);
   }
 };
 
@@ -52,9 +56,8 @@ export const update = async (origin, query, body, file) => {
         reject(
           createResponse(
             helpers.StatusCodes.NOT_FOUND,
-            {
-              message: err.message,
-            },
+            err.message,
+            {},
             {
               stack: err.stack,
             }
@@ -64,20 +67,15 @@ export const update = async (origin, query, body, file) => {
         reject(
           createResponse(
             helpers.StatusCodes.BAD_REQUEST,
-            {
-              message: "Error occurred while trying to remove file",
-            },
+            "Error occurred while trying to remove file",
+            {},
             {
               stack: err.stack,
             }
           )
         );
       }
-      resolve(
-        createResponse(helpers.StatusCodes.OK, {
-          message: "File Deleted",
-        })
-      );
+      resolve(createResponse(helpers.StatusCodes.OK, "File Deleted"));
     });
   });
 
@@ -85,15 +83,19 @@ export const update = async (origin, query, body, file) => {
 
   if (response?.statusCode) {
     if (body?.image) {
-      return createResponse(helpers.StatusCodes.OK, {
-        message: `Image Updated ${helpers.StatusMessages.OK}`,
-        path: origin + "/" + file.path,
-        fileName: file.filename,
-      });
+      return createResponse(
+        helpers.StatusCodes.OK,
+        `Image Updated ${helpers.StatusMessages.OK}`,
+        {
+          path: origin + "/" + file.path,
+          fileName: file.filename,
+        }
+      );
     }
-    return createResponse(helpers.StatusCodes.BAD_REQUEST, {
-      message: helpers.StatusMessages.BAD_REQUEST,
-    });
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST
+    );
   }
 
   return response;

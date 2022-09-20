@@ -24,13 +24,28 @@ const jwtOptions = {
  * @param {Object} data
  * @returns statusCode and response
  */
-export const createResponse = (statusCode, data, metaData = {}) => {
+export const createResponse = (
+  statusCode,
+  message = "",
+  data = {},
+  metaData = {}
+) => {
   const success = statusCode < helpers.StatusCodes.BAD_REQUEST;
   if (success) {
-    const response = { success: success, data: data, metadata: metaData };
+    const response = {
+      success: success,
+      message: message,
+      data: data,
+      metadata: metaData,
+    };
     return { statusCode, response };
   }
-  const response = { success: success, data: data, metadata: metaData };
+  const response = {
+    success: success,
+    message: message || "",
+    data: data,
+    metadata: metaData,
+  };
   return { statusCode, response };
 };
 
