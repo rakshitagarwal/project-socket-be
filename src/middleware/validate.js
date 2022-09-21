@@ -5,7 +5,6 @@ import { uploadFile } from "../common/utilies.js";
 
 const validate = (schema, data, res, next) => {
   const parsed = schema.validate(data);
-
   if (parsed.error) {
     const { statusCode, response } = createResponse(
       helpers.StatusCodes.NOT_FOUND,
@@ -48,7 +47,6 @@ const file = (req, res, next) => {
         "Image " + helpers.StatusMessages.NOT_FOUND
       );
       res.status(statusCode).json(response);
-
       logger.error({
         type: "Error",
         message: "Image Not Found",

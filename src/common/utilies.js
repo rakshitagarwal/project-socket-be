@@ -10,6 +10,7 @@ import logger from "../config/logger.js";
 import { generateKeyPair, createHash } from "crypto";
 import util from "util";
 import mongoose from "mongoose";
+import fs from "node:fs";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { v2 as cloudinary } from "cloudinary";
 import path from "path";
@@ -136,6 +137,9 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (!req.query.moduleName) {
       cb("query parameter not found in URL");
+    }
+    if (!fs.existsSync(env.FILE_STORAGE_PATH + req.query.moduleName)) {
+      fs.mkdirSync(env.FILE_STORAGE_PATH + req.query.moduleName);
     }
     cb(null, env.FILE_STORAGE_PATH + req?.query?.moduleName);
   },
