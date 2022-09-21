@@ -36,3 +36,13 @@ export const removeImage = async (req, res) => {
   );
   res.status(statusCode).json(response);
 };
+
+export const createVideo = async (req, res) => {
+  const { statusCode, response } = await add(
+    req.headers.origin,
+    req.body,
+    req.query.moduleName,
+    req.file
+  );
+  res.status(statusCode).json(response);
+};

@@ -8,7 +8,7 @@ export const add = async (origin, body, moduleName, file) => {
       helpers.StatusCodes.OK,
       `Image Uploaded ${helpers.StatusMessages.OK}`,
       {
-        path: origin + "/" + file.path,
+        path: file.path,
         fileName: file.filename,
       }
     );
@@ -58,9 +58,7 @@ export const update = async (origin, query, body, file) => {
             helpers.StatusCodes.NOT_FOUND,
             err.message,
             {},
-            {
-              stack: err.stack,
-            }
+            err.stack
           )
         );
       } else if (err) {
@@ -69,9 +67,7 @@ export const update = async (origin, query, body, file) => {
             helpers.StatusCodes.BAD_REQUEST,
             "Error occurred while trying to remove file",
             {},
-            {
-              stack: err.stack,
-            }
+            err.stack
           )
         );
       }
@@ -87,7 +83,7 @@ export const update = async (origin, query, body, file) => {
         helpers.StatusCodes.OK,
         `Image Updated ${helpers.StatusMessages.OK}`,
         {
-          path: origin + "/" + file.path,
+          path: file.path,
           fileName: file.filename,
         }
       );

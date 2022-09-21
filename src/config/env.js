@@ -17,6 +17,7 @@ const { error, value: env } = Object.freeze(
     DB_NAME: process.env.DB_NAME,
     FILE_STORAGE_PATH: process.env.FILE_STORAGE_PATH,
     FILE_ALLOWED_SIZE: process.env.FILE_ALLOWED_SIZE,
+    VIDEO_ALLOWED_SIZE: process.env.VIDEO_ALLOWED_SIZE,
   })
 );
 

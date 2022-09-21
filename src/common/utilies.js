@@ -12,6 +12,7 @@ import util from "util";
 import mongoose from "mongoose";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { v2 as cloudinary } from "cloudinary";
+import path from "path";
 
 const jwtOptions = {
   expiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
@@ -131,32 +132,47 @@ export const sendEmail = (payload, eventName) => {
     });
 };
 
-const FILE_SIZE = env.FILE_ALLOWED_SIZE; // 5mb
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (!req.query.moduleName) {
-      cb(null, "query parameter not found in URL parameters");
+      cb("query parameter not found in URL");
     }
     cb(null, env.FILE_STORAGE_PATH + req?.query?.moduleName);
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
+    cb(null, new Date().getTime() / 1000 + "_" + file.originalname);
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
+  let fileExts = [".png", ".jpeg", ".jpg", ".mp4", ".gif", ".mkv"];
+
+  let isAllowedExt = fileExts.includes(
+    path.extname(file.originalname.toLowerCase())
+  );
+
+  if (!isAllowedExt) {
+    cb(
+      "File extension is not proper allowed are {.png & .jpeg} you have sent the ",
+      file.originalname
+    );
+    return;
   }
+
+  let isAllowedMimeType =
+    file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/");
+
+  if (!isAllowedMimeType) {
+    cb("File type should be image or video, you have sent the ", file.mimetype);
+    return;
+  }
+  cb(null, true);
 };
 
 export const uploadFile = multer({
   storage: storage,
   limits: {
-    fileSize: FILE_SIZE,
+    fileSize: env.FILE_ALLOWED_SIZE,
   },
   fileFilter: fileFilter,
 });
