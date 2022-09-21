@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 import handlebars from "handlebars";
 const { compile } = handlebars;
 import logger from "../config/logger.js";
-import { generateKeyPair } from "crypto";
+import { generateKeyPair, createHash } from "crypto";
 import util from "util";
 import mongoose from "mongoose";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
@@ -70,7 +70,7 @@ export const generateAccessToken = async (payload) => {
   });
   const jwtToken = jwt.sign(payload, res.privateKey, jwtOptions);
   return {
-    accesToken: jwtToken,
+    accessToken: jwtToken,
     publicKey: res.publicKey,
   };
 };
@@ -188,4 +188,10 @@ export const calculatePrivilages = (previlageNum) => {
 export const validateObjectId = (objectId) => {
   const valid = mongoose.Types.ObjectId.isValid(objectId);
   return valid;
+};
+
+export const hassPassword = (data) => {
+  const buf = Buffer.from(data, "utf8");
+  const hasData = createHash("sha256").update(buf).digest("hex");
+  return hasData;
 };

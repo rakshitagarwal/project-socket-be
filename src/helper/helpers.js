@@ -115,9 +115,9 @@ const StatusMessages = {
   USE_PROXY: "Use Proxy",
   MISDIRECTED_REQUEST: "Misdirected Request",
   EMAIL_ALREADY: "you have already registered this ",
-  USER_CREATE: "User Created Successefully",
-  USER_DELETE: "User Deleted Successefully",
+  EMAIL_UNREGISTER: "please register your account this",
 };
+
 
 const privilage = [
   {

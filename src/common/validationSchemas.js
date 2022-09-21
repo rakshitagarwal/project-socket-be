@@ -95,6 +95,7 @@ export const envSchema = Joi.object({
       "FILE_ALLOWED_SIZE must be present in environment variables",
     invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
   }),
+ 
 });
 
 /**
