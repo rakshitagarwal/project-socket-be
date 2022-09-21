@@ -38,10 +38,10 @@ i18next
   .use(Backend)
   .use(middlerware18.LanguageDetector)
   .init({
-    fallbackLng: "en",
+    fallbackLng: env.DEFAULT_LANGUAGE,
     backend: {
       loadPath(lng, ns) {
-        return `./assets/locales/${lng}.json`;
+        return `./${env.LANGUAGE_PATH}${lng}.json`;
       },
     },
   });

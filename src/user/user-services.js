@@ -9,11 +9,10 @@ import {
   getEmailUser,
   persistence,
 } from "./user-queries.js";
-import { hassPassword } from "../common/utilies.js";
-import cr from "crypto-js";
-import crypto from "crypto";
+import { calculatePrivilages, hassPassword } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { createResponse, generateAccessToken } from "../common/utilies.js";
+import { getPrivilagesForRole } from "../roles/role-queries.js";
 
 const notFound = () =>
   createResponse(
@@ -21,7 +20,7 @@ const notFound = () =>
     helpers.StatusMessages.NOT_FOUND
   );
 
-export const checkCredentials = async function (user) {
+export const checkCredentials = async function (user, req) {
   const emailCheck = await getEmailUser(user);
 
   if (!emailCheck) {
@@ -30,20 +29,29 @@ export const checkCredentials = async function (user) {
       helpers.StatusMessages.EMAIL_UNREGISTER + ` ${user.email}`
     );
   } else {
-    const hassData = hassPassword(user.password);
     const { password, ...getUser } = emailCheck;
-    if (emailCheck.password === hassData) {
+    const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
+    let PrivilageRole = [];
+    getPrivilageRole.module.forEach((element) => {
+      const calPrivilage = calculatePrivilages(element.privilageNumber);
+      element.ActionRole = calPrivilage;
+      delete element._id;
+      delete element.privilageNumber;
+      PrivilageRole.push(element);
+    });
+    const PermissionData = Object.assign({}, PrivilageRole);
+    if (emailCheck.password === hassPassword(user.password)) {
       const genratAccToken = await generateAccessToken(getUser);
       genratAccToken.User = getUser._id;
       const token = await persistence(genratAccToken);
       const accessToken = token.accessToken;
-      return createResponse(
-        helpers.StatusCodes.CREATED,
-        "User login",
-        getUser,
-        { accessToken: accessToken }
-      );
+      return createResponse(helpers.StatusCodes.CREATED, {
+        UserInfo: getUser,
+        accessToken: accessToken,
+        Permission: PermissionData,
+      });
     }
+
     return createResponse(helpers.StatusCodes.BAD_REQUEST, {
       message: helpers.StatusMessages.UNAUTHORIZED,
     });
@@ -58,8 +66,7 @@ export const createUser = async (user) => {
       helpers.StatusMessages.EMAIL_ALREADY + `${user.email}`
     );
   } else {
-    const hassData = hassPassword(user.password);
-    user.password = hassData;
+    user.password = hassPassword(user.password);
     const userRoleId = await getRoleUser(user.Role);
     user.Role = userRoleId;
     const usersMeta = await create(user);
