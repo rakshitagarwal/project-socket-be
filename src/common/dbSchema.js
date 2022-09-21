@@ -416,6 +416,11 @@ export const persistence = new Schema({
     type: String,
     require: true,
   },
+  User: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
 });
 
 export const model = {

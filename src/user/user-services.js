@@ -34,6 +34,7 @@ export const checkCredentials = async function (user) {
     const { password, ...getUser } = emailCheck;
     if (emailCheck.password === hassData) {
       const genratAccToken = await generateAccessToken(getUser);
+      genratAccToken.User = getUser._id;
       const token = await persistence(genratAccToken);
       const accessToken = token.accessToken;
       return createResponse(

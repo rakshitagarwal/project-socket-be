@@ -10,7 +10,10 @@ export const create = async (user) => {
 };
 export const getEmailUser = async (user) => {
   const email = user.email;
-  const emailUser = await UserModel.findOne({ email: email }).lean();
+  const emailUser = await UserModel.findOne({
+    email: email,
+    status: false,
+  }).lean();
   return emailUser;
 };
 export const getRoleUser = async (user) => {
@@ -47,7 +50,7 @@ export const getAllUser = async (pages = 0, limit = 10) => {
     limit: limit,
   };
 };
-export const persistence = async (user) => {
-  const userMeta = await Persistence.create(user);
+export const persistence = async (genToken) => {
+  const userMeta = await Persistence.create(genToken);
   return userMeta;
 };
