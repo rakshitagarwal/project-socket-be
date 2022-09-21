@@ -38,3 +38,12 @@ export const checkAccess = async (req, res, next) => {
     res.status(statusCode).json(response);
   }
 };
+
+export const userAccess = async (req, res, next) => {
+  const { statusCode, response } = createResponse(
+    helpers.StatusCodes.UNAUTHORIZED,
+    {
+      message: helpers.StatusMessages.UNAUTHORIZED,
+    }
+  );
+};

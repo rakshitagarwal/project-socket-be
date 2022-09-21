@@ -1,4 +1,4 @@
-import { UserModel, UseRole } from "./user-schemas.js";
+import { UserModel, UseRole, Persistence } from "./user-schemas.js";
 
 export const isExist = async function (emailAddress, passwordHash = null) {
   // TO-DO get user details from the db based by user's email address and password hash
@@ -10,7 +10,10 @@ export const create = async (user) => {
 };
 export const getEmailUser = async (user) => {
   const email = user.email;
-  const emailUser = await UserModel.findOne({ email: email });
+  const emailUser = await UserModel.findOne({
+    email: email,
+    status: false,
+  }).lean();
   return emailUser;
 };
 export const getRoleUser = async (user) => {
@@ -46,4 +49,8 @@ export const getAllUser = async (pages = 0, limit = 10) => {
     currentPage: pages,
     limit: limit,
   };
+};
+export const persistence = async (genToken) => {
+  const userMeta = await Persistence.create(genToken);
+  return userMeta;
 };

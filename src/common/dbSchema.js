@@ -407,6 +407,22 @@ const transactionSchema = new Schema({
   },
 });
 
+export const persistence = new Schema({
+  publicKey: {
+    type: String,
+    require: true,
+  },
+  accessToken: {
+    type: String,
+    require: true,
+  },
+  User: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
+});
+
 export const model = {
   roleSchema,
   privilageSchema,
@@ -414,4 +430,5 @@ export const model = {
   productCategory,
   auctionCategory,
   userSchema,
+  persistence,
 };
