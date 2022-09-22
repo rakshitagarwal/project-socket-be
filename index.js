@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
 app.use(middlerware18.handle(i18next));
-app.use("/assets", express.static(__dirname + "/assets"));
+app.use(express.static(env.FILE_STORAGE_PATH));
 
 // language configurations
 i18next
@@ -68,7 +68,8 @@ app.use((err, req, res, next) => {
   logger.error(err.stack);
   const { response, statusCode } = createResponse(
     helpers.StatusCodes.INTERNAL_SERVER_ERROR,
-    { message: err.message },
+    err.message,
+    {},
     {
       error: err.stack,
     }

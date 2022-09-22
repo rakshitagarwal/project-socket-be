@@ -1096,7 +1096,7 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "image": {
+                  "file": {
                     "type": "string",
                     "format": "binary",
                     "nullable": false,
@@ -1186,7 +1186,7 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "image": {
+                  "file": {
                     "type": "string",
                     "format": "binary",
                     "nullable": false,
@@ -1297,6 +1297,94 @@
                     "message": {
                       "type": "string",
                       "format": "string"
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/uploads/video/": {
+      "post": {
+        "tags": ["Uploads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["auctions", "products", "users"]
+            }
+          }
+        ],
+        "description": "Upload a video file",
+        "requestBody": {
+          "description": "valid product body",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": false,
+                    "description": "Video in binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uploaded Video File",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "format": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "format": "string"
+                        },
+                        "fileName": {
+                          "type": "string",
+                          "format": "string"
+                        }
+                      }
                     },
                     "metdata": {
                       "type": "object",
