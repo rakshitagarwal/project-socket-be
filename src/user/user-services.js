@@ -45,7 +45,7 @@ export const checkCredentials = async function (user, req) {
       genratAccToken.User = getUser._id;
       const token = await persistence(genratAccToken);
       const accessToken = token.accessToken;
-      return createResponse(helpers.StatusCodes.CREATED, {
+      return createResponse(helpers.StatusCodes.CREATED, "login user", {
         UserInfo: getUser,
         accessToken: accessToken,
         Permission: PermissionData,
