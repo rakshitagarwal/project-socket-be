@@ -223,6 +223,9 @@
           "quantity": {
             "type": "number"
           },
+          "vendor": {
+            "type": "string"
+          },
           "status": {
             "type": "number"
           },
@@ -369,6 +372,12 @@
                     "nullable": false,
                     "description": "total overHead Cost"
                   },
+                  "vendor": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "description of produnct in details"
+                  },
                   "quantity": {
                     "type": "number",
                     "format": "number",
@@ -377,7 +386,7 @@
                   },
                   "ProductCategory": {
                     "type": "string",
-                    "format": "number",
+                    "format": "string",
                     "description": "ProductCategory ID",
                     "nullable": false
                   }

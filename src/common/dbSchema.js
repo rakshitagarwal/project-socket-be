@@ -202,6 +202,10 @@ export const productSchema = new Schema(
       required: true,
       default: 0,
     },
+    vendor: {
+      type: String,
+      required: true,
+    },
     status: {
       type: Boolean,
       required: true,

@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { SUPPORTED_EXTENSION_FILE } from "./../config/settings.js";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
 import multer from "multer";
@@ -149,7 +150,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  let fileExts = [".png", ".jpeg", ".jpg", ".mp4", ".gif", ".mkv"];
+  let fileExts = SUPPORTED_EXTENSION_FILE;
 
   let isAllowedExt = fileExts.includes(
     path.extname(file.originalname.toLowerCase())
