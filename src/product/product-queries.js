@@ -40,7 +40,9 @@ export const getProducts = async (pages, limit) => {
   const products = await productModel
     .find({ status: false })
     .limit(limit)
-    .skip(limit * pages);
+    .skip(limit * pages)
+    .populate("ProductCategory", { name: 1, _id: 0 })
+    .lean();
 
   return {
     products: products,
