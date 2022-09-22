@@ -12,7 +12,6 @@ import {
   paginationSchema,
   productSchema,
 } from "./../common/validationSchemas.js";
-import { uploadFile } from "../common/utilies.js";
 import { validateSchema } from "../middleware/validate.js";
 
 export const productRouter = Router();

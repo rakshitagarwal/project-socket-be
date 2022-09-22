@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
 app.use(middlerware18.handle(i18next));
-app.use(express.static(env.FILE_STORAGE_PATH));
+app.use("/assets/uploads", express.static(env.FILE_STORAGE_PATH));
 
 // language configurations
 i18next
