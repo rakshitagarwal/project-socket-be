@@ -9,7 +9,7 @@ import {
   getEmailUser,
   persistence,
 } from "./user-queries.js";
-import { calculatePrivilages, hassPassword } from "../common/utilies.js";
+import { calculatePrivilages, hasPassword } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { createResponse, generateAccessToken } from "../common/utilies.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
@@ -40,18 +40,17 @@ export const checkCredentials = async function (user, req) {
       PrivilageRole.push(element);
     });
     const PermissionData = Object.assign({}, PrivilageRole);
-    if (emailCheck.password === hassPassword(user.password)) {
+    if (emailCheck.password === hasPassword(user.password)) {
       const genratAccToken = await generateAccessToken(getUser);
       genratAccToken.User = getUser._id;
       const token = await persistence(genratAccToken);
       const accessToken = token.accessToken;
       return createResponse(helpers.StatusCodes.CREATED, "login user", {
-        UserInfo: getUser,
+        userInfo: getUser,
         accessToken: accessToken,
-        Permission: PermissionData,
+        permission: PermissionData,
       });
     }
-
     return createResponse(helpers.StatusCodes.BAD_REQUEST, {
       message: helpers.StatusMessages.UNAUTHORIZED,
     });
@@ -66,7 +65,7 @@ export const createUser = async (user) => {
       helpers.StatusMessages.EMAIL_ALREADY + `${user.email}`
     );
   } else {
-    user.password = hassPassword(user.password);
+    user.password = hasPassword(user.password);
     const userRoleId = await getRoleUser(user.Role);
     user.Role = userRoleId;
     const usersMeta = await create(user);
@@ -92,29 +91,43 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   const updateUser = await update(id, userdata);
   const getuser = await getUserById(id);
+  const { password, email, Role, ...userData } = getuser;
   if (updateUser) {
     return createResponse(
       helpers.StatusCodes.OK,
-      `User ${getuser.fullName} successfully`,
-      getuser
+      `${getuser.fullName} updated successfully`,
+      userData
     );
   }
   return notFound();
 };
 
 export const getUser = async (page, limit, userid) => {
+  const userInfo = [];
   const userMeta =
     userid.length > 0
       ? await getUserById(userid)
       : await getAllUser(page, limit);
-  userMeta.limit = userMeta.limit;
-  userMeta.currentPage = userMeta.currentPage;
-  userMeta.totalPages = userMeta.totalPages;
-  if (userMeta) {
+
+  !userid
+    ? userMeta.users.forEach((element) => {
+        delete element.Role;
+        delete element.password;
+        userInfo.push(element);
+      })
+    : userInfo.push(userMeta);
+
+  if (userInfo) {
     return createResponse(
       helpers.StatusCodes.OK,
       !userid ? "All user Show" : "user get by Id",
-      userMeta
+      {
+        userInfo,
+        limit: userMeta.limit,
+        currentPage: userMeta.currentPage,
+        totalPages: userMeta.pages,
+        count: userMeta.count,
+      }
     );
   }
   return notFound();
