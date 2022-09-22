@@ -106,7 +106,7 @@ export const envSchema = Joi.object({
  * @description schemas for checking the product request and response
  */
 export const productSchema = Joi.object({
-  title: Joi.string().required().messages({
+  title: Joi.string().max(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
@@ -114,23 +114,23 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  description: Joi.string().required().messages({
+  description: Joi.string().max(1000).required().messages({
     required_error: "description must be present in responses",
     validate_error: "description must be a string in responses",
   }),
-  purchasePrice: price.integer().required().messages({
+  purchasePrice: price.integer().max(20).required().messages({
     required_error: "purchasePrice must be present in responses",
     validate_error: "purchasePrice must be a number in responses",
   }),
-  sellingPrice: price.integer().required().messages({
+  sellingPrice: price.integer().max(20).required().messages({
     required_error: "sellingPrice must be present in responses",
     validate_error: "sellingPrice must be a number in responses",
   }),
-  overHeadCost: price.integer().required().messages({
+  overHeadCost: price.integer().max(20).required().messages({
     required_error: "overHeadCost must be present in responses",
     validate_error: "overHeadCost must be a number in responses",
   }),
-  quantity: price.integer().required().messages({
+  quantity: price.integer().max(20).required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),

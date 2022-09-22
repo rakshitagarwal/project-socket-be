@@ -118,7 +118,6 @@ const StatusMessages = {
   EMAIL_UNREGISTER: "please register your account this",
 };
 
-
 const privilage = [
   {
     name: "READ",
@@ -141,6 +140,7 @@ const privilage = [
     accessNumber: 8,
   },
 ];
+
 const privilageRole = [
   {
     module: [
@@ -163,6 +163,7 @@ const privilageRole = [
     ],
   },
 ];
+
 const privilageRoleVan = [
   {
     module: [
@@ -188,14 +189,38 @@ const privilageRoleVan = [
 
 const roles = [{ name: "Admin" }, { name: "Vendor" }];
 
+/**
+ * @description Product Category Master with all fields
+ *
+ */
 const productCategory = [
   {
-    name: "mobile",
+    name: "Appliances",
+    type: "Physical",
     description:
       "three categories of mobile phones: basic phones, feature phones, and smartphones.",
   },
   {
-    name: "car",
+    name: "Cell Phones & Accessories",
+    type: "Digital",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+  {
+    name: "Handmade",
+    type: "Physical",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+  {
+    name: "Musical Instrument",
+    type: "Physical",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+  {
+    name: "Jewelry",
+    type: "Physical",
     description:
       "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
   },

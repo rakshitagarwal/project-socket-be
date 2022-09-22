@@ -62,6 +62,13 @@ export const inActiveProductByTitle = async (title) => {
 };
 
 export const fetchAllCategory = async () => {
-  const categories = await productCategoryModel.find({ status: false }).lean();
+  const categories = await productCategoryModel
+    .find({ status: false })
+    .select({
+      _id: 1,
+      type: 1,
+      name: 1,
+    })
+    .lean();
   return categories;
 };

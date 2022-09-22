@@ -114,7 +114,11 @@ export const getCategories = async () => {
   const category = await fetchAllCategory();
 
   if (category.length > 0) {
-    return createResponse(helpers.StatusCodes.OK, category);
+    return createResponse(
+      helpers.StatusCodes.OK,
+      "Fetch All Categories with types",
+      category
+    );
   }
 
   return createResponse(

@@ -232,7 +232,7 @@
           }
         }
       },
-      "user":{
+      "user": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -264,19 +264,10 @@
           "_id": {
             "type": "string"
           },
+          "type": {
+            "type": "string"
+          },
           "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "status": {
-            "type": "boolean"
-          },
-          "createdAt": {
-            "type": "string"
-          },
-          "updatedAt": {
             "type": "string"
           }
         }
@@ -646,7 +637,7 @@
           }
         }
       },
-"get": {
+      "get": {
         "description": "get single product",
         "tags": ["Products"],
         "parameters": [
@@ -697,8 +688,8 @@
         }
       }
     },
-    "/users/":{
-      "post": { 
+    "/users/": {
+      "post": {
         "tags": ["Users"],
         "description": "Add a new user",
         "requestBody": {
@@ -752,8 +743,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
@@ -830,7 +820,7 @@
         }
       }
     },
-    "/users/{id}":{
+    "/users/{id}": {
       "delete": {
         "description": "Disbale the specific users",
         "tags": ["Users"],
@@ -1010,8 +1000,8 @@
         }
       }
     },
-    "/users/login":{
-      "post": { 
+    "/users/login": {
+      "post": {
         "tags": ["Users"],
         "description": "User Login",
         "requestBody": {
@@ -1053,8 +1043,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
