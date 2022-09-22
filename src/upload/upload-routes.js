@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { uploadFile } from "../common/utilies.js";
-import { createImage, removeImage, updateImage } from "./upload-handlers.js";
+
+import {
+  createImage,
+  createVideo,
+  removeImage,
+  updateImage,
+} from "./upload-handlers.js";
 import { validateSchema } from "./../middleware/validate.js";
 import {
   fileName,
@@ -12,12 +17,13 @@ export const uploadRouter = Router();
 
 uploadRouter
   .post(
+    "/video/",
+    [validateSchema.query(moduleNameSchema), validateSchema.file],
+    createVideo
+  )
+  .post(
     "/",
-    [
-      uploadFile.single("image"),
-      validateSchema.file,
-      validateSchema.query(moduleNameSchema),
-    ],
+    [validateSchema.query(moduleNameSchema), validateSchema.file],
     createImage
   )
   .delete(
@@ -27,10 +33,6 @@ uploadRouter
   )
   .put(
     "/",
-    [
-      uploadFile.single("image"),
-      validateSchema.file,
-      validateSchema.query(queryParams),
-    ],
+    [validateSchema.query(queryParams), validateSchema.file],
     updateImage
   );

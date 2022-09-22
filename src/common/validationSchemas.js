@@ -95,7 +95,11 @@ export const envSchema = Joi.object({
       "FILE_ALLOWED_SIZE must be present in environment variables",
     invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
   }),
- 
+  VIDEO_ALLOWED_SIZE: Joi.string().required().messages({
+    required_error:
+      "VIDEO_ALLOWED_SIZE must be present in environment variables",
+    invalid_type_error: "Invalid VIDEO_ALLOWED_SIZE in environment variables",
+  }),
 });
 
 /**
