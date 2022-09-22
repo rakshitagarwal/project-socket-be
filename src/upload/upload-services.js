@@ -96,3 +96,24 @@ export const update = async (origin, query, body, file) => {
 
   return response;
 };
+
+export const multiple = async (moduleName, files) => {
+  const path = [];
+  const filename = [];
+
+  for (let index = 0; index < files.length; index++) {
+    path.push(files[index].path);
+    filename.push(files[index].filename);
+  }
+
+  if (!path || !filename) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST
+    );
+  }
+  return createResponse(helpers.StatusCodes.OK, "Multiple Images uploaded", {
+    path: path,
+    filenName: filename,
+  });
+};

@@ -5,6 +5,7 @@ import {
   createVideo,
   removeImage,
   updateImage,
+  uploadMultipleVideo,
 } from "./upload-handlers.js";
 import { validateSchema } from "./../middleware/validate.js";
 import {
@@ -20,6 +21,11 @@ uploadRouter
     "/video/",
     [validateSchema.query(moduleNameSchema), validateSchema.file],
     createVideo
+  )
+  .post(
+    "/multiple/",
+    [validateSchema.query(moduleNameSchema), validateSchema.multipleFile],
+    uploadMultipleVideo
   )
   .post(
     "/",

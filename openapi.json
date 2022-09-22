@@ -1407,6 +1407,95 @@
           }
         }
       }
+    },
+    "/uploads/multiple/": {
+      "post": {
+        "tags": ["Uploads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["auctions", "products", "users"]
+            }
+          }
+        ],
+        "description": "Upload a file",
+        "requestBody": {
+          "description": "valid product body",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "file": {
+                    "type": "array",
+                    "nullable": false,
+                    "description": "Images in binary",
+                    "items": {
+                      "type": "string",
+                      "format": "binary",
+                      "minLength": 4
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload multiple Files",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "path": {
+                          "type": "array",
+                          "format": "string"
+                        },
+                        "fileName": {
+                          "type": "array",
+                          "format": "string"
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
     }
   }
 }

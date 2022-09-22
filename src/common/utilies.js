@@ -27,19 +27,14 @@ const jwtOptions = {
  * @param {Object} data
  * @returns statusCode and response
  */
-export const createResponse = (
-  statusCode,
-  message = "",
-  data = {},
-  metaData = {}
-) => {
+export const createResponse = (statusCode, message, data, metaData) => {
   const success = statusCode < helpers.StatusCodes.BAD_REQUEST;
   if (success) {
     const response = {
       success: success,
-      message: message,
-      data: data,
-      metadata: metaData,
+      message: message || "",
+      data: data || {},
+      metadata: metaData || {},
     };
     return { statusCode, response };
   }
@@ -181,6 +176,64 @@ export const uploadFile = multer({
   },
   fileFilter: fileFilter,
 });
+
+/**
+ * @desription store multiple files
+ */
+export const storeMultipleFiles = () => {
+  const multipleStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      if (!req.query.moduleName) {
+        cb("query parameter not found in URL");
+      }
+      if (!fs.existsSync(env.FILE_STORAGE_PATH + req.query.moduleName)) {
+        fs.mkdirSync(env.FILE_STORAGE_PATH + req.query.moduleName);
+      }
+      cb(null, env.FILE_STORAGE_PATH + req?.query?.moduleName);
+    },
+    filename: function (req, file, cb) {
+      cb(null, new Date().getTime() / 1000 + "_" + file.originalname);
+    },
+  });
+
+  const multiplefileFilter = (req, file, cb) => {
+    let fileExts = SUPPORTED_EXTENSION_FILE;
+
+    let isAllowedExt = fileExts.includes(
+      path.extname(file.originalname.toLowerCase())
+    );
+
+    if (!isAllowedExt) {
+      cb(
+        "File extension is not proper allowed are {.png & .jpeg} you have sent the ",
+        file.originalname
+      );
+      return;
+    }
+
+    let isAllowedMimeType =
+      file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/");
+
+    if (!isAllowedMimeType) {
+      cb(
+        "File type should be image or video, you have sent the ",
+        file.mimetype
+      );
+      return;
+    }
+    cb(null, true);
+  };
+
+  const uploadFile = multer({
+    storage: multipleStorage,
+    limits: {
+      fileSize: env.FILE_ALLOWED_SIZE,
+    },
+    fileFilter: multiplefileFilter,
+  });
+
+  return uploadFile;
+};
 
 /**
  * @description calculate previlages based on provided number

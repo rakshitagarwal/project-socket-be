@@ -1,4 +1,4 @@
-import { add, remove, update } from "./upload-services.js";
+import { add, remove, update, multiple } from "./upload-services.js";
 
 export const createImage = async (req, res) => {
   const { statusCode, response } = await add(
@@ -45,4 +45,12 @@ export const createVideo = async (req, res) => {
     req.file
   );
   res.status(statusCode).json(response);
+};
+
+export const uploadMultipleVideo = async (req, res) => {
+  const { statusCode, response } = await multiple(
+    req.query.moduleName,
+    req.files
+  );
+  return res.status(statusCode).json(response);
 };
