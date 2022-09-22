@@ -23,7 +23,7 @@ export const getRoleUser = async (user) => {
   return roleId._id;
 };
 export const getUserById = async (id) => {
-  const userMeta = await UserModel.findById(id);
+  const userMeta = await UserModel.findById(id).lean();
   return userMeta;
 };
 export const removeUser = async (id) => {
@@ -37,9 +37,10 @@ export const update = async (id, userdata) => {
   return updatedUser;
 };
 export const getAllUser = async (pages = 0, limit = 10) => {
-  const counts = await UserModel.find({ status: false });
+  const counts = await UserModel.find({ status: false }).lean();
   const totalPages = Math.ceil(counts.length / limit);
   const users = await UserModel.find({ status: false })
+    .lean()
     .limit(limit)
     .skip(limit * pages);
   return {

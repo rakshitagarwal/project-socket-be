@@ -210,7 +210,7 @@ export const validateObjectId = (objectId) => {
   return valid;
 };
 
-export const hassPassword = (data) => {
+export const hasPassword = (data) => {
   const buf = Buffer.from(data, "utf8");
   const hasData = createHash("sha256").update(buf).digest("hex");
   return hasData;
