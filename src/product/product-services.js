@@ -8,6 +8,7 @@ import {
   getProducts,
   fetchAllCategory,
 } from "./product-queries.js";
+import { validateObjectId } from "./../common/utilies.js";
 
 export const createProduct = async (product) => {
   const productMeta = await create(product);
@@ -23,6 +24,16 @@ export const createProduct = async (product) => {
 };
 
 export const deleteProduct = async (id) => {
+  if (!validateObjectId(id)) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST,
+      {
+        err: `Not Valid ObjectId you have sent ${id}`,
+      }
+    );
+  }
+
   const productMeta = await getProductById(id);
 
   if (productMeta) {
@@ -45,6 +56,16 @@ export const deleteProduct = async (id) => {
 };
 
 export const updateProduct = async (id, product) => {
+  if (!validateObjectId(id)) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST,
+      {
+        err: `Not Valid ObjectId you have sent ${id}`,
+      }
+    );
+  }
+
   const productMeta = await getProductById(id);
 
   if (productMeta) {
@@ -94,6 +115,16 @@ export const fetchProduct = async (pages, limit) => {
 };
 
 export const getProduct = async (id) => {
+  if (!validateObjectId(id)) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST,
+      {
+        err: `Not Valid ObjectId you have sent ${id}`,
+      }
+    );
+  }
+
   const products = await getProductById(id);
 
   if (products) {
