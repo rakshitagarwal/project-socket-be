@@ -320,6 +320,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -697,6 +700,92 @@
         }
       }
     },
+    "/products/search/": {
+      "get": {
+        "description": "Search the product with name",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 5
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "searchText",
+            "schema": {
+              "type": "string",
+              "format": "Int32",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get the search result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": ""
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/product"
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number", "default": 0 },
+                        "totalPages": { "type": "number", "default": 5 },
+                        "recordCount": { "type": "number", "default": 0 },
+                        "searchText": { "type": "string", "default": "" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/users/": {
       "post": {
         "tags": ["Users"],
@@ -818,7 +907,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/500"
+            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"

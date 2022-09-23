@@ -3,6 +3,12 @@ import Joi from "joi";
 const price = Joi.number();
 const module = Joi.string();
 const path = Joi.string();
+const fullName = Joi.string();
+const email = Joi.string();
+const password = Joi.string();
+const role = Joi.string();
+const page = Joi.number();
+const limit = Joi.number();
 
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
@@ -134,7 +140,7 @@ export const productSchema = Joi.object({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),
-  vendor: Joi.string().min(20).required().messages({
+  vendor: Joi.string().max(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
@@ -148,17 +154,28 @@ export const productSchema = Joi.object({
  * @description scheams for checking the query parmas for pagination
  */
 export const paginationSchema = Joi.object({
-  page: Joi.number().messages({
-    invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
+  page: page.messages({
+    invalid_type_error: "Invalid page number not allowed in params",
   }),
-  limit: Joi.number().messages({
-    invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
+  limit: limit.messages({
+    invalid_type_error: "Invalid limits number not allowed in params",
   }),
 });
-const fullName = Joi.string();
-const email = Joi.string();
-const password = Joi.string();
-const role = Joi.string();
+
+/**
+ * @description schemas for checking the query params for searching
+ */
+export const searchSchema = Joi.object({
+  page: page.messages({
+    invalid_type_error: "Invalid page number not allowed in params",
+  }),
+  limit: page.messages({
+    invalid_type_error: "Invalid limit number not allowed in params",
+  }),
+  searchText: Joi.string().max(20).messages({
+    invalid_type_error: "Character Limit excceded",
+  }),
+});
 
 export const registers = Joi.object({
   fullName: fullName.required(),

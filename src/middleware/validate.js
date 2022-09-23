@@ -73,7 +73,7 @@ const multipleFile = (req, res, next) => {
       res.status(statusCode).json(response);
       return;
     }
-    console.log(req.files.length);
+
     if (req.files.length !== 4) {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.BAD_REQUEST,

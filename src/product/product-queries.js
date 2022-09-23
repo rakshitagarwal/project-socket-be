@@ -47,10 +47,43 @@ export const getProducts = async (pages, limit) => {
   return {
     products: products,
     pages: totalPages,
-    currentPage: pages,
     limit: limit,
+    currentPage: pages,
     recordCount: count,
   };
+};
+
+export const search = async (pages, limit, searchText) => {
+  const count = await productCount();
+  let totalPages;
+  if (count < limit) {
+    totalPages = 1;
+  } else {
+    totalPages = parseInt(count / limit);
+  }
+
+  if (searchText === "") {
+    const product = await getProducts(pages, limit);
+    return product;
+  } else {
+    const product = await productModel
+      .find({
+        title: { $regex: `^${searchText}`, $options: "i" },
+      })
+      .limit(limit)
+      .skip(limit * pages)
+      .populate("ProductCategory", { name: 1, _id: 0 })
+      .lean();
+
+    return {
+      products: product,
+      pages: totalPages,
+      limit: limit,
+      currentPage: pages,
+      recordCount: count,
+      searchText: searchText,
+    };
+  }
 };
 
 export const getProductByTitle = async (title) => {

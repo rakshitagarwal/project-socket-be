@@ -7,6 +7,7 @@ import {
   removeProduct,
   getProducts,
   fetchAllCategory,
+  search,
 } from "./product-queries.js";
 import { validateObjectId } from "./../common/utilies.js";
 
@@ -155,5 +156,41 @@ export const getCategories = async () => {
   return createResponse(
     helpers.StatusCodes.NOT_FOUND,
     helpers.StatusMessages.NOT_FOUND
+  );
+};
+
+export const findProduct = async (query) => {
+  const page = parseInt(query.page) || 0;
+  const limit = parseInt(query.limit) || 5;
+  const searchText = query.searchText || "";
+
+  const searched = await search(page, limit, searchText);
+
+  if (searched.products.length > 0) {
+    return createResponse(
+      helpers.StatusCodes.OK,
+      "Searched Appeared",
+      searched.products,
+      {
+        limit: searched.limit,
+        currentPage: searched.currentPage,
+        searchText: searched.searchText || "",
+        recordCount: searched.recordCount,
+        pages: searched.totalPage,
+      }
+    );
+  }
+
+  return createResponse(
+    helpers.StatusCodes.NOT_FOUND,
+    helpers.StatusMessages.NOT_FOUND,
+    {},
+    {
+      limit: searched.limit,
+      currentPage: searched.currentPage,
+      searchText: searched.searchText || "",
+      recordCount: searched.recordCount,
+      pages: searched.totalPage,
+    }
   );
 };

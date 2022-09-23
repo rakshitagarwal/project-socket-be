@@ -5,6 +5,7 @@ import {
   fetchProduct,
   getProduct,
   getCategories,
+  findProduct,
 } from "./product-services.js";
 
 export const add = async (req, res) => {
@@ -45,5 +46,10 @@ export const selectProduct = async (req, res) => {
 
 export const selectCategories = async (req, res) => {
   const { statusCode, response } = await getCategories();
+  res.status(statusCode).json(response);
+};
+
+export const searchProduct = async (req, res) => {
+  const { statusCode, response } = await findProduct(req.query);
   res.status(statusCode).json(response);
 };
