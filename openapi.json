@@ -701,6 +701,16 @@
       "post": { 
         "tags": ["Users"],
         "description": "Add a new user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "type": "string",
+            "enum": "[en, fr ,de]",
+            "description":"fetch in some Language [ en, fr ,de ]",
+            "default" :"en"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -792,6 +802,14 @@
               "format": "Int32",
               "default": 0
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "type": "string",
+            "enum": "[en, fr ,de]",
+            "description":"fetch in some Language [ en, fr ,de ]",
+            "default" :"en"
           }
         ],
         "responses": {
@@ -842,6 +860,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "type": "string",
+            "enum": "[en, fr ,de]",
+            "description":"fetch in some Language [ en, fr ,de ]",
+            "default" :"en"
           }
         ],
         "responses": {
@@ -894,6 +920,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "type": "string",
+            "enum": "[en, fr ,de]",
+            "description":"fetch in some Language [ en, fr ,de ]",
+            "default" :"en"
           }
         ],
         "responses": {
@@ -940,6 +974,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "type": "string",
+            "enum": "[en, fr ,de]",
+            "description":"fetch in some Language [ en, fr ,de ]",
+            "default" :"en"
           }
         ],
         "requestBody": {
@@ -956,11 +998,6 @@
                     "nullable": false
                   },
                   "email": {
-                    "type": "string",
-                    "format": "string",
-                    "nullable": false
-                  },
-                  "password": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -1014,6 +1051,16 @@
       "post": { 
         "tags": ["Users"],
         "description": "User Login",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "type": "string",
+            "enum": "[en, fr ,de]",
+            "description":"fetch in some Language [ en, fr ,de ]",
+            "default" :"en"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {

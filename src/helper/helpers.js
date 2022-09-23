@@ -73,7 +73,7 @@ const StatusMessages = {
   IM_A_TEAPOT: "I'm a teapot",
   INSUFFICIENT_SPACE_ON_RESOURCE: "Insufficient Space on Resource",
   INSUFFICIENT_STORAGE: "Insufficient Storage",
-  INTERNAL_SERVER_ERROR: "Internal Server Error",
+  INTERNAL_SERVER_ERROR: "Internal.Server.Error",
   LENGTH_REQUIRED: "Length Required",
   LOCKED: "Locked",
   METHOD_FAILURE: "Method Failure",
@@ -86,7 +86,7 @@ const StatusMessages = {
   NO_CONTENT: "No Content",
   NON_AUTHORITATIVE_INFORMATION: "Non Authoritative Information",
   NOT_ACCEPTABLE: "Not Acceptable",
-  NOT_FOUND: "Not Found",
+  NOT_FOUND: "Not.Found",
   NOT_IMPLEMENTED: "Not Implemented",
   NOT_MODIFIED: "Not Modified",
   OK: "OK",
@@ -114,11 +114,20 @@ const StatusMessages = {
   UNSUPPORTED_MEDIA_TYPE: "Unsupported Media Type",
   USE_PROXY: "Use Proxy",
   MISDIRECTED_REQUEST: "Misdirected Request",
-  EMAIL_ALREADY: "you have already registered this ",
   EMAIL_UNREGISTER: "please register your account this",
 };
-
-
+const responseMessages = {
+  USER_LOGIN: "user.login.successfully",
+  LOGIN_WRONG_CREDENTIALS: "login.wrong.credentials",
+  LOGIN_USER_ALREADY_EXIST: "please.register.your.account.on.email",
+  REGISTRATION_USER_ALREADY_EXIST: "registration.already.exist.email",
+  USER_REGISTER_CREATED_SUCC: "register.created.successfully",
+  USER_REGISTER_ROLE_NOT_EXIST: "user.register.role.not.exist",
+  USER_DELETE_SUCC: "user.deleted.successfully",
+  USER_UPDATE_SUCC: "user.update.successfully",
+  USER_GET_ID:"fetched.single.user",
+  USER_GET_ALL:"all.user.show"
+};
 const privilage = [
   {
     name: "READ",
@@ -202,6 +211,7 @@ const productCategory = [
 ];
 
 export const helpers = {
+  responseMessages,
   StatusMessages,
   StatusCodes,
   privilage,

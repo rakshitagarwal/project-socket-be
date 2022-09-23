@@ -210,8 +210,23 @@ export const validateObjectId = (objectId) => {
   return valid;
 };
 
-export const hasPassword = (data) => {
+/**
+ * @param data user password then hash256 password
+ */
+export const hashPassword = (data) => {
   const buf = Buffer.from(data, "utf8");
   const hasData = createHash("sha256").update(buf).digest("hex");
   return hasData;
+};
+
+/**
+ *
+ * @param data user details
+ * @param res i18n object pass
+ * @returns  return data
+ */
+export const convertToSpecificLang = function (data, res) {
+  if (typeof data.response.message === "string")
+    data.response.message = res.__(data.response.message);
+  return data;
 };

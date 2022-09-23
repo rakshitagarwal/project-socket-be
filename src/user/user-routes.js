@@ -3,7 +3,6 @@ import {
   USER_LOGIN,
   USER_REGISTER,
   ID_POSTFIX,
-  USER_PATH,
   USER_PATH_ALLID,
 } from "./../common/constants.js";
 import { login, register, remove, update, get } from "./user-handlers.js";

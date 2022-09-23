@@ -1,0 +1,13 @@
+{
+	"user.login.successfully": "gebruiker succesvol inloggen",
+	"login.wrong.credentials": "Verkeerde inloggegevens",
+	"registration.already.exist.email": "je hebt deze e-mail al geregistreerd",
+	"please.register.your.account.on.email": "Registreer uw account op e-mail",
+	"register.created.successfully": "Registreer succesvol aangemaakt",
+	"user.register.role.not.exist": "Het komt niet overeen met uw rol, dus selecteer Beheerder of Leverancier.",
+	"user.deleted.successfully": "gebruiker succesvol verwijderd",
+	"Not.Found":"niet gevonden",
+	"user.update.successfully":"gebruiker succesvol geüpdatet",
+	"fetched.single.user":"enkele gebruiker opgehaald",
+	"all.user.show":"Alle gebruikers Tonen"
+}
