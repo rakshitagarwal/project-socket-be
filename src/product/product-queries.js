@@ -69,6 +69,10 @@ export const search = async (pages, limit, searchText) => {
     const product = await productModel
       .find({
         title: { $regex: `^${searchText}`, $options: "i" },
+        createdAt: {
+          $lte: new Date().toISOString(),
+        },
+        status: false,
       })
       .limit(limit)
       .skip(limit * pages)
