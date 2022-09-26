@@ -11,12 +11,10 @@ import env from "./src/config/env.js";
 import { connectDB } from "./src/config/db.js";
 import logger from "./src/config/logger.js";
 import { PREFIX_VERSION } from "./src/common/constants.js";
-import i18next from "i18next";
-import Backend from "i18next-fs-backend";
-import middlerware18 from "i18next-http-middleware";
 import cookieParser from "cookie-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import i18n from "i18n";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const app = express();
@@ -34,17 +32,12 @@ app.use(middlerware18.handle(i18next));
 app.use("/assets/uploads", express.static(env.FILE_STORAGE_PATH));
 
 // language configurations
-i18next
-  .use(Backend)
-  .use(middlerware18.LanguageDetector)
-  .init({
-    fallbackLng: "en",
-    backend: {
-      loadPath(lng, ns) {
-        return `./assets/locales/${lng}.json`;
-      },
-    },
-  });
+i18n.configure({
+  locales: ["en", "fr", "nl"],
+  directory: process.cwd() + "/assets/locales",
+  header: "accept-language",
+  defaultLocale: "en",
+});
 
 // Main Routes
 app.get("/", (req, res) => {
@@ -52,7 +45,7 @@ app.get("/", (req, res) => {
 });
 
 // Version Routers
-app.use(PREFIX_VERSION, v1Router);
+app.use(PREFIX_VERSION, i18n.init, v1Router);
 
 app.use(
   "/docs",

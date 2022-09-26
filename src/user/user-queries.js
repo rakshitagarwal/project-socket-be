@@ -1,9 +1,5 @@
 import { UserModel, UseRole, Persistence } from "./user-schemas.js";
 
-export const isExist = async function (emailAddress, passwordHash = null) {
-  // TO-DO get user details from the db based by user's email address and password hash
-};
-
 export const create = async (user) => {
   const userMeta = await UserModel.create(user);
   return userMeta;
@@ -20,6 +16,9 @@ export const getRoleUser = async (user) => {
   const roleId = await UseRole.findOne({ name: user }).select({
     _id: 1,
   });
+  if (roleId === null) {
+    return false;
+  }
   return roleId._id;
 };
 export const getUserById = async (id) => {
@@ -29,7 +28,7 @@ export const getUserById = async (id) => {
 export const removeUser = async (id) => {
   const userMeta = await UserModel.findByIdAndUpdate(id, {
     status: true,
-  });
+  }).lean();
   return userMeta;
 };
 export const update = async (id, userdata) => {
@@ -37,9 +36,10 @@ export const update = async (id, userdata) => {
   return updatedUser;
 };
 export const getAllUser = async (pages = 0, limit = 10) => {
-  const counts = await UserModel.find({ status: false });
+  const counts = await UserModel.find({ status: false }).lean();
   const totalPages = Math.ceil(counts.length / limit);
   const users = await UserModel.find({ status: false })
+    .lean()
     .limit(limit)
     .skip(limit * pages);
   return {

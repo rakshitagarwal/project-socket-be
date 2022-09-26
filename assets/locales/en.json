@@ -1,3 +1,13 @@
 {
-    "user_create_success": "How are you?"
+	"user.login.successfully": "User Login Successfully ",
+	"login.wrong.credentials": "Wrong credentials",
+	"please.register.your.account.on.email": "Please register your account on email",
+	"registration.already.exist.email": "you have already registered this email",
+	"register.created.successfully": "Register Created Successfully",
+	"user.register.role.not.exist": "It doesn't match your role so please select Admin or Vendor.",
+	"user.deleted.successfully": "User Deleted Successfully",
+	"Not.Found": "Not Found",
+	"user.update.successfully": "user updated successfully",
+	"fetched.single.user": "fetched single User",
+	"all.user.show": "All User Show"
 }
