@@ -230,8 +230,15 @@
             "type": "number"
           },
           "ProductCategory": {
-            "type": "string",
-            "title": "you have to pass ID"
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -598,6 +605,12 @@
                   "overHeadCost": {
                     "type": "number",
                     "format": "number",
+                    "nullable": false
+                  },
+                  "status": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "default": false,
                     "nullable": false
                   },
                   "quantity": {
