@@ -2,9 +2,8 @@ import { authSchemas } from "../roles/role-schema.js";
 import { helpers } from "../helper/helpers.js";
 import { connectDB } from "../config/db.js";
 import logger from "../config/logger.js";
-import { productRoleSchema } from "../roles/product-schema.js";
-import { auctionRole } from "../roles/auction-schema.js";
-
+import { auctionRole } from "../auction/auction-schemas.js";
+import { productCategoryModel } from "../product/product-schemas.js";
 (async () => {
   connectDB();
 
@@ -84,8 +83,8 @@ import { auctionRole } from "../roles/auction-schema.js";
   };
 
   const productCategorySchema = async () => {
-    await productRoleSchema.productCategory.deleteMany({});
-    const productCategory = await productRoleSchema.productCategory.insertMany(
+    await productCategoryModel.deleteMany({});
+    const productCategory = await productCategoryModel.insertMany(
       helpers.productCategory
     );
     if (productCategory.length > 0) {

@@ -5,30 +5,60 @@ import {
   getUser,
   updateUser,
 } from "./user-services.js";
+import { convertToSpecificLang } from "../common/utilies.js";
+
+/**
+ * @description handles post request for login service
+ * @param req { Request } user's request object
+ * @param res { Response } user's request's response object
+ */
 export const login = async function (req, res) {
-  const { statusCode, response } = await checkCredentials(req.body);
-  res.status(statusCode).json(response);
+  checkCredentials(req.body).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
 };
+
+/**
+ * @description handles user registration
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
 export const register = async function (req, res) {
-  const { statusCode, response } = await createUser(req.body);
-  res.status(statusCode).json(response);
+  createUser(req.body).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
 };
 
+/**
+ * @description handles  user remove data
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
 export const remove = async (req, res) => {
-  const { statusCode, response } = await deleteUser(req.params.id);
-  res.status(statusCode).json(response);
-};
-export const update = async (req, res) => {
-  const { statusCode, response } = await updateUser(req.params.id, req.body);
-  res.status(statusCode).json(response);
+  deleteUser(req.params.id).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
 };
 
+/**
+ * @description handles  user update data
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
+export const update = async (req, res) => {
+  updateUser(req.params.id, req.body).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
+};
+
+/**
+ * @description handles  user get data
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
 export const get = async (req, res) => {
   const data = req.params[0];
-  const { statusCode, response } = await getUser(
-    parseInt(req?.query?.page),
-    parseInt(req?.query?.limit),
-    data
+  getUser(parseInt(req?.query?.page), parseInt(req?.query?.limit), data).then(
+    (data) => res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
-  res.status(statusCode).json(response);
 };

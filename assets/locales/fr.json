@@ -1,3 +1,13 @@
 {
-    "user_create_success": "Comment vas-tu?"
+	"user.login.successfully": "l'utilisateur s'est connecté avec succès",
+	"login.wrong.credentials": "Mauvais identifiants",
+	"registration.already.exist.email": "vous avez déjà enregistré cet email",
+	"please.register.your.account.on.email": "Veuillez enregistrer votre compte par e-mail",
+	"register.created.successfully": "Registre créé avec succès",
+	"user.register.role.not.exist": "Cela ne correspond pas à votre rôle, veuillez donc sélectionner Admin ou Vendor.",
+	"user.deleted.successfully": "utilisateur supprimé avec succès",
+	"Not.Found": "pas trouvé",
+	"user.update.successfully": "utilisateur mis à jour avec succès",
+	"fetched.single.user":"Utilisateur unique récupéré",
+	"all.user.show":"Tous les utilisateurs Afficher"
 }
