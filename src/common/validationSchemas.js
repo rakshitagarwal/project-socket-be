@@ -99,7 +99,7 @@ export const envSchema = Joi.object({
     required_error:
       "VIDEO_ALLOWED_SIZE must be present in environment variables",
     invalid_type_error: "Invalid VIDEO_ALLOWED_SIZE in environment variables",
-  }), 
+  }),
   LANGUAGE_PATH: Joi.string().required().messages({
     required_error: "LANGUAGE_PATH must be present in environment variables",
     invalid_type_error: "Invalid LANGUAGE_PATH in environment variables",
@@ -164,9 +164,14 @@ const email = Joi.string();
 const password = Joi.string();
 const role = Joi.string();
 
-export const registers = Joi.object({
+export const registerSchema = Joi.object({
   fullName: fullName.required(),
   email: email.required(),
   password: password.required(),
   Role: role.required(),
+});
+
+export const loginSchema = Joi.object({
+  email: Joi.required(),
+  password: Joi.required(),
 });

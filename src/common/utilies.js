@@ -230,3 +230,7 @@ export const convertToSpecificLang = function (data, res) {
     data.response.message = res.__(data.response.message);
   return data;
 };
+
+export const idCheck = (id) => {
+  return id.match(/^[0-9a-fA-F]{24}$/);
+};

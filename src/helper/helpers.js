@@ -125,8 +125,8 @@ const responseMessages = {
   USER_REGISTER_ROLE_NOT_EXIST: "user.register.role.not.exist",
   USER_DELETE_SUCC: "user.deleted.successfully",
   USER_UPDATE_SUCC: "user.update.successfully",
-  USER_GET_ID:"fetched.single.user",
-  USER_GET_ALL:"all.user.show"
+  USER_GET_ID: "fetched.single.user",
+  USER_GET_ALL: "all.user.show",
 };
 const privilage = [
   {

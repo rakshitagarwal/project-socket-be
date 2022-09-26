@@ -22,13 +22,13 @@ export const getRoleUser = async (user) => {
   return roleId._id;
 };
 export const getUserById = async (id) => {
-  const userMeta = await UserModel.findById(id).lean();
+  const userMeta = await UserModel.findById(id);
   return userMeta;
 };
 export const removeUser = async (id) => {
   const userMeta = await UserModel.findByIdAndUpdate(id, {
     status: true,
-  });
+  }).lean();
   return userMeta;
 };
 export const update = async (id, userdata) => {

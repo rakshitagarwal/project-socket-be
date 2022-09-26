@@ -8,9 +8,14 @@ import {
   getEmailUser,
   persistence,
 } from "./user-queries.js";
-import { calculatePrivilages, hashPassword } from "../common/utilies.js";
+import {
+  calculatePrivilages,
+  hashPassword,
+  createResponse,
+  generateAccessToken,
+  idCheck,
+} from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
-import { createResponse, generateAccessToken } from "../common/utilies.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
 
 /**
@@ -38,9 +43,9 @@ export const checkCredentials = async function (user) {
   const PermissionData = Object.assign({}, PrivilageRole);
   //compare password into hash password
   if (emailCheck.password === hashPassword(user.password)) {
-    const genratAccToken = await generateAccessToken(getUser);
-    genratAccToken.User = getUser._id;
-    const token = await persistence(genratAccToken);
+    const getAccessToken = await generateAccessToken(getUser);
+    getAccessToken.User = getUser._id;
+    const token = await persistence(getAccessToken);
     const accessToken = token.accessToken;
     return createResponse(
       helpers.StatusCodes.CREATED,
@@ -63,35 +68,32 @@ export const checkCredentials = async function (user) {
  * @param user - user registration's request body
  */
 export const createUser = async (user) => {
-  try {
-    const emailCheck = await getEmailUser(user);
-    if (emailCheck) {
-      return createResponse(
-        helpers.StatusCodes.ACCEPTED,
-        helpers.responseMessages.REGISTRATION_USER_ALREADY_EXIST
-      );
-    } else {
-      user.password = hashPassword(user.password);
-      const userRoleId = await getRoleUser(user.Role);
-      if (userRoleId) {
-        user.Role = userRoleId;
-        const usersMeta = await create(user);
-        if (usersMeta) {
-          return createResponse(
-            helpers.StatusCodes.CREATED,
-            helpers.responseMessages.USER_REGISTER_CREATED_SUCC,
-            usersMeta
-          );
-        }
-      } else {
+  const emailCheck = await getEmailUser(user);
+  user.password = hashPassword(user.password);
+  if (emailCheck) {
+    return createResponse(
+      helpers.StatusCodes.ACCEPTED,
+      helpers.responseMessages.REGISTRATION_USER_ALREADY_EXIST
+    );
+  } else {
+    // user.password = hashPassword(user.password);
+    const userRoleId = await getRoleUser(user.Role);
+    if (userRoleId) {
+      user.Role = userRoleId;
+      const usersMeta = await create(user);
+      if (usersMeta) {
         return createResponse(
-          helpers.StatusCodes.BAD_REQUEST,
-          helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+          helpers.StatusCodes.CREATED,
+          helpers.responseMessages.USER_REGISTER_CREATED_SUCC,
+          usersMeta
         );
       }
+    } else {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+      );
     }
-  } catch (error) {
-    return notFound();
   }
 };
 
@@ -100,7 +102,9 @@ export const createUser = async (user) => {
  * @param id -  user id request body
  */
 export const deleteUser = async (id) => {
-  try {
+  const userId = await idCheck(id);
+  if (userId) {
+    // Yes, it's a valid ObjectId, proceed with `findById` call.
     const metaData = await removeUser(id);
     if (metaData) {
       return createResponse(
@@ -108,9 +112,8 @@ export const deleteUser = async (id) => {
         helpers.responseMessages.USER_DELETE_SUCC
       );
     }
-  } catch (error) {
-    return notFound();
   }
+  return notFound();
 };
 
 /**
@@ -119,7 +122,8 @@ export const deleteUser = async (id) => {
  * @param - user into database
  */
 export const updateUser = async (id, userdata) => {
-  try {
+  const userId = await idCheck(id);
+  if (userId) {
     const updateUser = await update(id, userdata);
     const getuser = await getUserById(id);
     const { password, email, Role, ...userData } = getuser;
@@ -130,9 +134,8 @@ export const updateUser = async (id, userdata) => {
         userData
       );
     }
-  } catch (error) {
-    return notFound();
   }
+  return notFound();
 };
 
 /**
@@ -142,39 +145,36 @@ export const updateUser = async (id, userdata) => {
  * @param  userid -  user update's request body
  */
 export const getUser = async (page, limit, userid) => {
-  try {
-    const userInfo = [];
-    const userMeta =
-      userid.length > 0
-        ? await getUserById(userid)
-        : await getAllUser(page, limit);
+  const userCheck = await idCheck(userid);
+  const userInfo = [];
+  const userMeta =
+    userid.length > 0
+      ? await getUserById(userCheck)
+      : await getAllUser(page, limit);
 
-    !userid
-      ? userMeta.users.forEach((element) => {
-          delete element.Role;
-          delete element.password;
-          userInfo.push(element);
-        })
-      : userInfo.push(userMeta);
-
-    if (userInfo) {
-      return createResponse(
-        helpers.StatusCodes.OK,
-        !userid
-          ? helpers.responseMessages.USER_GET_ALL
-          : helpers.responseMessages.USER_GET_ID,
-        {
-          userInfo,
-          limit: userMeta.limit,
-          currentPage: userMeta.currentPage,
-          totalPages: userMeta.pages,
-          count: userMeta.count,
-        }
-      );
-    }
-  } catch (error) {
-    return notFound();
+  !userid
+    ? userMeta.users.forEach((element) => {
+        delete element.Role;
+        delete element.password;
+        userInfo.push(element);
+      })
+    : userInfo.push(userMeta);
+  if (userInfo && userMeta !== null) {
+    return createResponse(
+      helpers.StatusCodes.OK,
+      !userid
+        ? helpers.responseMessages.USER_GET_ALL
+        : helpers.responseMessages.USER_GET_ID,
+      {
+        userInfo,
+        limit: userMeta.limit,
+        currentPage: userMeta.currentPage,
+        totalPages: userMeta.pages,
+        count: userMeta.count,
+      }
+    );
   }
+  return notFound();
 };
 /**
  * @description page not found.
