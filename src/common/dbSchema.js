@@ -439,4 +439,5 @@ export const model = {
   auctionCategory,
   userSchema,
   persistence,
+  auctionSchema,
 };
