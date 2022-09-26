@@ -8,9 +8,6 @@ export const create = async (data) => {
   if (data.registerationStatus) {
     let { auctionPreRegister, auctionPostRegister, ...auction } = data;
 
-    console.log(auctionPreRegister);
-    console.log(auctionPostRegister);
-
     let auctionData = await auctionModel.create(auction);
     let auctionPreData = await auctionPreModel.create({
       ...auctionPreRegister,
