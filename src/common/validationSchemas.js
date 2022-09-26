@@ -114,6 +114,14 @@ export const envSchema = Joi.object({
     required_error: "DEFAULT_LANGUAGE must be present in environment variables",
     invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
+  LANGUAGE_PATH: Joi.string().required().messages({
+    required_error: "LANGUAGE_PATH must be present in environment variables",
+    invalid_type_error: "Invalid LANGUAGE_PATH in environment variables",
+  }),
+  DEFAULT_LANGUAGE: Joi.string().required().messages({
+    required_error: "DEFAULT_LANGUAGE must be present in environment variables",
+    invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
+  }),
 });
 
 /**
