@@ -13,6 +13,7 @@ import {
   paginationSchema,
   productSchema,
   searchSchema,
+  updateProductSchema,
 } from "./../common/validationSchemas.js";
 import { validateSchema } from "../middleware/validate.js";
 
@@ -25,7 +26,7 @@ productRouter
   .delete("/:id", validateSchema.params(idSchema), remove)
   .put(
     "/:id",
-    [validateSchema.params(idSchema), validateSchema.body(productSchema)],
+    [validateSchema.params(idSchema), validateSchema.body(updateProductSchema)],
     update
   )
   .get("/:id", validateSchema.params(idSchema), selectProduct)

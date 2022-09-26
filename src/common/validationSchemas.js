@@ -150,6 +150,49 @@ export const productSchema = Joi.object({
   }),
 });
 
+export const updateProductSchema = Joi.object({
+  title: Joi.string().max(20).required().messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  image: Joi.string().required().messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  description: Joi.string().max(1000).required().messages({
+    required_error: "description must be present in responses",
+    validate_error: "description must be a string in responses",
+  }),
+  purchasePrice: price.integer().min(20).required().messages({
+    required_error: "purchasePrice must be present in responses",
+    validate_error: "purchasePrice must be a number in responses",
+  }),
+  sellingPrice: price.integer().min(20).required().messages({
+    required_error: "sellingPrice must be present in responses",
+    validate_error: "sellingPrice must be a number in responses",
+  }),
+  overHeadCost: price.integer().min(20).required().messages({
+    required_error: "overHeadCost must be present in responses",
+    validate_error: "overHeadCost must be a number in responses",
+  }),
+  quantity: price.integer().max(20).required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a number in responses",
+  }),
+  vendor: Joi.string().max(20).required().messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  status: Joi.boolean().required().default(false).messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  ProductCategory: Joi.string().required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a string in responses",
+  }),
+});
+
 /**
  * @description scheams for checking the query parmas for pagination
  */
