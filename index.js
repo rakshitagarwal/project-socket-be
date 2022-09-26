@@ -28,7 +28,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
-app.use(middlerware18.handle(i18next));
 app.use("/assets/uploads", express.static(env.FILE_STORAGE_PATH));
 
 // language configurations

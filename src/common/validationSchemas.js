@@ -114,6 +114,14 @@ export const envSchema = Joi.object({
     required_error: "DEFAULT_LANGUAGE must be present in environment variables",
     invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
+  LANGUAGE_PATH: Joi.string().required().messages({
+    required_error: "LANGUAGE_PATH must be present in environment variables",
+    invalid_type_error: "Invalid LANGUAGE_PATH in environment variables",
+  }),
+  DEFAULT_LANGUAGE: Joi.string().required().messages({
+    required_error: "DEFAULT_LANGUAGE must be present in environment variables",
+    invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
+  }),
 });
 
 /**
@@ -238,4 +246,106 @@ export const registerSchema = Joi.object({
 export const loginSchema = Joi.object({
   email: Joi.required(),
   password: Joi.required(),
+});
+
+export const auctionPreRegister = Joi.object({
+  startDate: Joi.date().required().messages({
+    required_error: "startDate must be present in responses",
+    validate_error: "startDate must be a string in responses",
+  }),
+  endDate: Joi.date().required().messages({
+    required_error: "endDate must be present in responses",
+    validate_error: "endDate must be a string in responses",
+  }),
+  participantCount: Joi.number().required().messages({
+    required_error: "participantCount must be present in responses",
+    validate_error: "participantCount must be a string in responses",
+  }),
+  participantFees: Joi.number().required().messages({
+    required_error: "participantFees must be present in responses",
+    validate_error: "participantFees must be a string in responses",
+  }),
+});
+
+export const auctionPostRegister = Joi.object({
+  participantFees: Joi.number().required().messages({
+    required_error: "participantFees must be present in responses",
+    validate_error: "participantFees must be a string in responses",
+  }),
+});
+
+export const auctionSchema = Joi.object({
+  title: Joi.string().min(20).messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  bannerImage: Joi.string().required({
+    required_error: "bannerImage must be present in responses",
+    validate_error: "bannerImage must be a string in responses",
+  }),
+  bannerVideo: Joi.string().messages({
+    required_error: "bannerVideo must be present in responses",
+    validate_error: "bannerVideo must be a string in responses",
+  }),
+  quantity: Joi.number().default(1).required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a string in responses",
+  }),
+  openingPrice: Joi.number().default(0).required().messages({
+    required_error: "openingPrice must be present in responses",
+    validate_error: "openingPrice must be a string in responses",
+  }),
+  bot: Joi.boolean().required().messages({
+    required_error: "bot must be present in responses",
+    validate_error: "bot must be a boolean in responses",
+  }),
+  botMaxPrice: Joi.number().default(0).required().messages({
+    required_error: "botMaxPrice must be present in responses",
+    validate_error: "botMaxPrice must be a number in responses",
+  }),
+  noOfPlayConsumed: Joi.number().required().messages({
+    required_error: "noOfPlayConsumed must be present in responses",
+    validate_error: "noOfPlayConsumed must be a number in responses",
+  }),
+  bidIncrement: Joi.number().required().messages({
+    required_error: "bidIncrement must be present in responses",
+    validate_error: "bidIncrement must be a number in responses",
+  }),
+  noNewBidderLimit: Joi.number().required().messages({
+    required_error: "noNewBidderLimit must be present in responses",
+    validate_error: "noNewBidderLimit must be a number in responses",
+  }),
+  autoStart: Joi.boolean().required().messages({
+    required_error: "autoStart must be present in responses",
+    validate_error: "autoStart must be a number in responses",
+  }),
+  startDate: Joi.date().required().messages({
+    required_error: "startDate must be present in responses",
+    validate_error: "startDate must be a string in responses",
+  }),
+  endDate: Joi.date().required().messages({
+    required_error: "endDate must be present in responses",
+    validate_error: "endDate must be a string in responses",
+  }),
+  registerationStatus: Joi.boolean().required().messages({
+    required_error: "registerationStatus must be present in responses",
+    validate_error: "registerationStatus must be a number in responses",
+  }),
+  auctionPreRegister: auctionPreRegister,
+  auctionPostRegister: auctionPostRegister,
+  status: Joi.boolean()
+    .required()
+    .valid("Active", "Publish", "Cancel", "Closed")
+    .messages({
+      required_error: "status must be present in responses",
+      validate_error: "status must be a boolean in responses",
+    }),
+  Product: Joi.string().required().messages({
+    required_error: "Product must be present in responses",
+    validate_error: "Product must be a string in responses",
+  }),
+  AuctionCategory: Joi.string().required().messages({
+    required_error: "AuctionCategory must be present in responses",
+    validate_error: "AuctionCategory must be a string in responses",
+  }),
 });
