@@ -106,12 +106,6 @@ export const multiple = async (moduleName, files) => {
     filename.push(files[index].filename);
   }
 
-  if (!path || !filename) {
-    return createResponse(
-      helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST
-    );
-  }
   return createResponse(helpers.StatusCodes.OK, "Multiple Images uploaded", {
     path: path,
     filenName: filename,

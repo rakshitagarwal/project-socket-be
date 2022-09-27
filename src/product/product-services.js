@@ -165,18 +165,25 @@ export const findProduct = async (query) => {
   const searchText = query.searchText || "";
 
   const searched = await search(page, limit, searchText);
-
+  let {
+    currentPage,
+    limit: limits,
+    pages,
+    products,
+    recordCount,
+    searchText: text,
+  } = searched;
   if (searched.products.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
       "Searched Appeared",
-      searched.products,
+      products,
       {
-        limit: searched.limit,
-        currentPage: searched.currentPage,
-        searchText: searched.searchText || "",
-        recordCount: searched.recordCount,
-        pages: searched.totalPage,
+        limits,
+        pages,
+        currentPage,
+        recordCount,
+        text,
       }
     );
   }
@@ -186,11 +193,11 @@ export const findProduct = async (query) => {
     helpers.StatusMessages.NOT_FOUND,
     {},
     {
-      limit: searched.limit,
-      currentPage: searched.currentPage,
-      searchText: searched.searchText || "",
-      recordCount: searched.recordCount,
-      pages: searched.totalPage,
+      limits,
+      currentPage,
+      text,
+      recordCount,
+      pages,
     }
   );
 };
