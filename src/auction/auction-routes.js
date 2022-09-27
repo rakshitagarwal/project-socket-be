@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateSchema } from "./../middleware/validate.js";
-import { auctionSchema } from "./../common/validationSchemas.js";
+import { auctionSchema, idSchema } from "./../common/validationSchemas.js";
 import {
   add,
   fetchAll,
@@ -14,4 +14,8 @@ auctionRouter
   .get("/category/", fetchCategories)
   .post("/", [validateSchema.body(auctionSchema)], add)
   .get("/", fetchAll)
-  .put("/:id", update);
+  .put(
+    "/:id",
+    [validateSchema.params(idSchema), validateSchema.body(auctionSchema)],
+    update
+  );

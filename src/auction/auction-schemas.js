@@ -10,7 +10,7 @@ export const auctionPostModel = mongoose.model(
   "AuctionPostRegister",
   model.auctionPostRegisterSchema
 );
-const auctionCategory = mongoose.model(
+export const auctionCategory = mongoose.model(
   "AuctionCategory",
   model.auctionCategory
 );

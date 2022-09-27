@@ -10,8 +10,8 @@ export const add = async (req, res) => {
   res.status(statusCode).json(response);
 };
 
-export const update = async () => {
-  const { statusCode, response } = await updateAuction(req.body);
+export const update = async (req, res) => {
+  const { statusCode, response } = await updateAuction(req.params.id, req.body);
   res.status(statusCode).json(response);
 };
 
@@ -20,7 +20,7 @@ export const fetchAll = async (req, res) => {
   res.status(statusCode).json(response);
 };
 
-export const fetchCategories = async () => {
+export const fetchCategories = async (req, res) => {
   const { statusCode, response } = await getCategory();
   res.status(statusCode).json(response);
 };

@@ -167,7 +167,7 @@ export const productSchema = Joi.object({
 });
 
 export const updateProductSchema = Joi.object({
-  title: Joi.string().max(20).required().messages({
+  title: Joi.string().min(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
@@ -275,7 +275,7 @@ export const auctionPostRegister = Joi.object({
 });
 
 export const auctionSchema = Joi.object({
-  title: Joi.string().min(20).messages({
+  title: Joi.string().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
