@@ -192,13 +192,7 @@ export const resetPassword = async (user) => {
     );
   }
   const encrypted = hashPassword(randomPasscode, user.email);
-  console.log("::::", encrypted);
   const data = await setUserPasscode(userData._id, encrypted);
-
-  // await sendEmail(userData, "user-created", randomPasscode);
-  // return createResponse(helpers.StatusCodes.OK, "email sent sucessfully");
-
-  // await setUserPasscode(userData._id, hasData);
 };
 
 /**
