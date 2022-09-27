@@ -236,6 +236,24 @@ export const searchSchema = Joi.object({
   }),
 });
 
+export const auctionSearchSchema = Joi.object({
+  page: page.messages({
+    invalid_type_error: "Invalid page number not allowed in params",
+  }),
+  limit: limit.messages({
+    invalid_type_error: "Invalid page number not allowed in params",
+  }),
+  state: Joi.string().required().messages({
+    invalid_type_error: "Invalid state number not allowed in params",
+  }),
+  status: Joi.boolean().required().messages({
+    invalid_type_error: "Invalid status number not allowed in params",
+  }),
+  type: Joi.string().required().messages({
+    invalid_type_error: "Invalid type number not allowed in params",
+  }),
+});
+
 export const registerSchema = Joi.object({
   fullName: fullName.required(),
   email: email.required(),
@@ -287,7 +305,7 @@ export const auctionSchema = Joi.object({
     required_error: "bannerVideo must be present in responses",
     validate_error: "bannerVideo must be a string in responses",
   }),
-  quantity: Joi.number().default(1).required().messages({
+  quantity: Joi.number().greater(0).required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
   }),
@@ -333,13 +351,17 @@ export const auctionSchema = Joi.object({
   }),
   auctionPreRegister: auctionPreRegister,
   auctionPostRegister: auctionPostRegister,
-  status: Joi.boolean()
+  state: Joi.boolean()
     .required()
     .valid("Active", "Publish", "Cancel", "Closed")
     .messages({
-      required_error: "status must be present in responses",
-      validate_error: "status must be a boolean in responses",
+      required_error: "state must be present in responses",
+      validate_error: "state must be a boolean in responses",
     }),
+  status: Joi.boolean().required().messages({
+    required_error: "status must be present in responses",
+    validate_error: "status must be a boolean in responses",
+  }),
   Product: Joi.string().required().messages({
     required_error: "Product must be present in responses",
     validate_error: "Product must be a string in responses",

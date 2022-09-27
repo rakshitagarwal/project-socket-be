@@ -23,11 +23,23 @@ productRouter
   .get("/category/", selectCategories)
   .get("/search/", validateSchema.query(searchSchema), searchProduct)
   .post("/", [validateSchema.body(productSchema)], add)
-  .delete("/:id", validateSchema.params(idSchema), remove)
+  .delete(
+    "/:id",
+    [validateSchema.objectId, validateSchema.params(idSchema)],
+    remove
+  )
   .put(
     "/:id",
-    [validateSchema.params(idSchema), validateSchema.body(updateProductSchema)],
+    [
+      validateSchema.objectId,
+      validateSchema.params(idSchema),
+      validateSchema.body(updateProductSchema),
+    ],
     update
   )
-  .get("/:id", validateSchema.params(idSchema), selectProduct)
+  .get(
+    "/:id",
+    [validateSchema.objectId, validateSchema.params(idSchema)],
+    selectProduct
+  )
   .get("/", validateSchema.query(paginationSchema), select);

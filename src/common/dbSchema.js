@@ -282,11 +282,16 @@ const auctionSchema = new Schema(
       type: Number,
       default: 0,
     },
-    status: {
+    state: {
       type: String,
       required: true,
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
+    },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     Product: {
       type: Schema.Types.ObjectId,

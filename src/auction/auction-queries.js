@@ -27,42 +27,70 @@ export const create = async (data) => {
     });
     return auctionData;
   }
+
   const auctionData = await auctionModel.insertMany(auction);
   return auctionData;
 };
 
-export const fetchAuction = async () => {
+export const fetchAuction = async (page, limit) => {
   let auctionData = [];
+  const count = await auctionModel.find({ status: false }).countDocuments();
+  let totalPages;
+  if (count < limit) {
+    totalPages = 1;
+  } else {
+    totalPages = parseInt(count / limit);
+  }
+
   const auctions = await auctionModel
-    .find({ status: "Active" })
+    .find({ status: false })
+    .limit(limit)
+    .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })
     .populate("AuctionCategory", { _id: 1, name: 1 })
     .lean();
 
   for (let i = 0; i < auctions.length; i++) {
     let id = auctions[i]._id;
-    const preData = await auctionPreModel.find({ Auction: id });
-    const postData = await auctionPostModel.find({ Auction: id });
+    const auctionPreRegister = await auctionPreModel
+      .findOne({ Auction: id })
+      .select({
+        startDate: 1,
+        endDate: 1,
+        participantCount: 1,
+        participantFees: 1,
+      })
+      .lean();
+    const auctionPostRegister = await auctionPostModel
+      .findOne({ Auction: id })
+      .select({ participantFees: 1 })
+      .lean();
     auctionData.push({
       ...auctions[i],
-      preData,
-      postData,
+      auctionPreRegister,
+      auctionPostRegister,
     });
   }
 
-  return auctionData;
+  return {
+    auctionData,
+    page: totalPages,
+    limit: limit,
+    currentPage: page,
+    recordCount: count,
+  };
 };
 
 export const getAuctionById = async (id) => {
   const auction = await auctionModel
-    .findById(id)
+    .find({ _id: id, status: false })
     .populate("Product", { _id: 1, title: 1 })
     .populate("AuctionCategory", { _id: 1, name: 1 })
     .lean();
 
   const auctionPreRegister = await auctionPreModel
     .findOne({
-      Auction: auction._id,
+      Auction: auction[0]._id,
     })
     .select({
       startDate: 1,
@@ -75,15 +103,19 @@ export const getAuctionById = async (id) => {
 
   const auctionPostRegister = await auctionPostModel
     .findOne({
-      Auction: auction._id,
+      Auction: auction[0]._id,
     })
     .select({ participantFees: 1, _id: 0 });
 
-  return {
-    ...auction,
-    auctionPreRegister,
-    auctionPostRegister,
-  };
+  if (auctionPreRegister && auctionPostRegister) {
+    return {
+      ...auction,
+      auctionPreRegister,
+      auctionPostRegister,
+    };
+  }
+
+  return auction;
 };
 
 export const putAuction = async (id, auction, pre, post) => {
@@ -106,5 +138,39 @@ export const putAuction = async (id, auction, pre, post) => {
     ...updatedAuction,
     preAuction,
     postAuction,
+  };
+};
+
+export const softDelete = async (id) => {
+  const auction = await auctionModel.findByIdAndUpdate(id, { status: true });
+  await auctionPostModel.findOneAndUpdate({ Auction: id }, { status: true });
+  await auctionPreModel.findOneAndUpdate({ Auction: id }, { status: true });
+
+  return auction;
+};
+
+export const filterAuction = async (page, limit, state, status, type) => {
+  const count = await auctionModel.find({ status: false }).countDocuments();
+  let totalPages;
+  if (count < limit) {
+    totalPages = 1;
+  } else {
+    totalPages = parseInt(count / limit);
+  }
+
+  const auctions = await auctionModel
+    .find({ state: state, status: status })
+    .limit(limit)
+    .skip(limit * page)
+    .populate("Product", { _id: 1, title: 1 })
+    .populate("AuctionCategory", { _id: 1, name: 1 }, { name: type })
+    .lean();
+
+  return {
+    auctions,
+    page: totalPages,
+    limit: limit,
+    currentPage: page,
+    recordCount: count,
   };
 };
