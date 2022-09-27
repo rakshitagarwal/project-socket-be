@@ -12,7 +12,9 @@ import {
   remove,
   update,
   get,
+  user_permission,
   user_reset,
+  reset_password,
 } from "./user-handlers.js";
 import { validateSchema } from "../middleware/validate.js";
 import {
@@ -20,7 +22,7 @@ import {
   idSchema,
   loginSchema,
 } from "./../common/validationSchemas.js";
-
+import { isAuthenticated } from "../middleware/auth.js";
 export const userRouter = Router();
 userRouter
   .post(USER_LOGIN, validateSchema.body(loginSchema), login)
@@ -28,4 +30,6 @@ userRouter
   .delete(ID_POSTFIX, validateSchema.params(idSchema), remove)
   .put(ID_POSTFIX, update)
   .get(USER_PATH_ALLID, get)
-  .post(USER_RESET, user_reset);
+  .post("/user-permission", user_permission)
+  .post(USER_RESET, user_reset)
+  .post("/:userId/:token", reset_password);
