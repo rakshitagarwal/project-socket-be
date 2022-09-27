@@ -43,7 +43,6 @@ export const checkCredentials = async function (user) {
     delete element.privilageNumber;
     PrivilageRole.push(element);
   });
-  const PermissionData = Object.assign({}, PrivilageRole);
   //compare password into hash password
   if (emailCheck.password === hashPassword(user.password)) {
     const getAccessToken = await generateAccessToken(getUser);
@@ -56,7 +55,7 @@ export const checkCredentials = async function (user) {
       {
         userInfo: getUser,
         accessToken: accessToken,
-        permission: PermissionData,
+        permission: PrivilageRole,
       }
     );
   }
