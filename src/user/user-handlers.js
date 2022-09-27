@@ -4,7 +4,9 @@ import {
   deleteUser,
   getUser,
   updateUser,
+  userReset,
   resetPassword,
+  userPermission,
 } from "./user-services.js";
 import { convertToSpecificLang } from "../common/utilies.js";
 
@@ -64,13 +66,26 @@ export const get = async (req, res) => {
   );
 };
 
+export const user_permission = async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  userPermission(token).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
+};
 /**
  * @description handles user registration
  * @param req { Request } - user's request object
  * @param res { Response }
  */
 export const user_reset = function (req, res) {
-  resetPassword(req.body).then((data) =>
+  userReset(req.body).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
+};
+
+export const reset_password = function (req, res) {
+  resetPassword(req.params).then((data) =>
     res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };

@@ -127,6 +127,7 @@ const responseMessages = {
   USER_UPDATE_SUCC: "user.update.successfully",
   USER_GET_ID: "fetched.single.user",
   USER_GET_ALL: "all.user.show",
+  USER_PERMISSION_ALLOW:"user.permission.allow"
 };
 const privilage = [
   {

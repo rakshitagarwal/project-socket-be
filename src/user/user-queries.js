@@ -54,6 +54,19 @@ export const persistence = async (genToken) => {
   const userMeta = await Persistence.create(genToken);
   return userMeta;
 };
+export const getRoleUsers = async (token) => {
+  const roleId = await Persistence.findOne({ accessToken: token }).select({
+    _id: 1,
+  });
+  if (roleId === null) {
+    return false;
+  }
+  return roleId._id;
+};
+export const getUserByIdRole = async (id) => {
+  const userMeta = await Persistence.findById(id).lean();
+  return userMeta;
+};
 
 const USER_SELECT = {
   passcode: true,
@@ -72,6 +85,8 @@ export const findUserByEmail = async (email) => {
 export const setUserPasscode = async (user_id, passcode) => {
   console.log(user_id);
   const userToken = await Persistence.updateMany({
-    where: { User: { equal: user_id } },
+    where: { User: { equals: user_id } },
+    passcode: passcode,
   });
+  return userToken;
 };
