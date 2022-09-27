@@ -1,5 +1,5 @@
 import { helpers } from "../helper/helpers.js";
-import { createResponse } from "../common/utilies.js";
+import { createResponse, validateObjectId } from "../common/utilies.js";
 import { storeMultipleFiles } from "./../common/utilies.js";
 import logger from "../config/logger.js";
 import { uploadFile } from "../common/utilies.js";
@@ -115,10 +115,26 @@ const query = (schema) => (req, res, next) => {
   validate(schema, req.query, res, next);
 };
 
+const objectId = (req, res, next) => {
+  const valid = validateObjectId(req.params.id);
+  if (valid) {
+    next();
+  }
+  return createResponse(
+    helpers.StatusCodes.NOT_ACCEPTABLE,
+    helpers.StatusMessages.NOT_ACCEPTABLE,
+    {},
+    {
+      error: "Object Id is not Proper",
+    }
+  );
+};
+
 export const validateSchema = {
   body,
   params,
   file,
   query,
   multipleFile,
+  objectId,
 };
