@@ -29,3 +29,22 @@ export const getAuctions = async () => {
     helpers.StatusMessages.NOT_FOUND
   );
 };
+
+export const getCategory = async () => {
+  // const category = await auctionCategories();
+
+  if (category) {
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.StatusMessages.OK,
+      category
+    );
+  }
+
+  return createResponse(
+    helpers.StatusCodes.NOT_FOUND,
+    helpers.StatusMessages.NOT_FOUND
+  );
+};
+
+export const updateAuction = async () => {};
