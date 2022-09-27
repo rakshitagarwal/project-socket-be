@@ -69,6 +69,16 @@ export const search = async (pages, limit, searchText) => {
     const product = await getProducts(pages, limit);
     return product;
   } else {
+    const filtered = await productModel.find({
+      title: { $regex: `^${searchText}`, $options: "i" },
+      createdAt: {
+        $lte: new Date().toISOString(),
+      },
+      status: false,
+    });
+
+    totalPages = parseInt(filtered.length / limit);
+
     const product = await productModel
       .find({
         title: { $regex: `^${searchText}`, $options: "i" },
@@ -87,7 +97,7 @@ export const search = async (pages, limit, searchText) => {
       pages: totalPages,
       limit: limit,
       currentPage: pages,
-      recordCount: count,
+      recordCount: filtered.length,
       searchText: searchText,
     };
   }

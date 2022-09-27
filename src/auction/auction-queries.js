@@ -5,9 +5,8 @@ import {
 } from "./../auction/auction-schemas.js";
 
 export const create = async (data) => {
-  if (data.registerationStatus) {
-    let { auctionPreRegister, auctionPostRegister, ...auction } = data;
-
+  let { auctionPreRegister, auctionPostRegister, ...auction } = data;
+  if (auctionPostRegister && auctionPreRegister && data.registerationStatus) {
     let auctionData = await auctionModel.create(auction);
     let auctionPreData = await auctionPreModel.create({
       ...auctionPreRegister,
