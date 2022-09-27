@@ -266,6 +266,10 @@ export const loginSchema = Joi.object({
   password: Joi.required(),
 });
 
+export const resetPassword = Joi.object({
+  email: Joi.required(),
+});
+
 export const auctionPreRegister = Joi.object({
   startDate: Joi.date().required().messages({
     required_error: "startDate must be present in responses",

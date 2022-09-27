@@ -7,6 +7,10 @@ import {
   getAllUser,
   getEmailUser,
   persistence,
+  findUserByEmail,
+  setUserPasscode,
+  getRoleUsers,
+  getUserByIdRole,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -14,6 +18,8 @@ import {
   createResponse,
   generateAccessToken,
   idCheck,
+  sendEmail,
+  verifyJwtToken,
 } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
@@ -26,7 +32,7 @@ export const checkCredentials = async function (user) {
   const emailCheck = await getEmailUser(user);
   if (!emailCheck) {
     return createResponse(
-      helpers.StatusCodes.ACCEPTED,
+      helpers.StatusCodes.UNAUTHORIZED,
       helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
     );
   }
@@ -40,7 +46,6 @@ export const checkCredentials = async function (user) {
     delete element.privilageNumber;
     PrivilageRole.push(element);
   });
-  const PermissionData = Object.assign({}, PrivilageRole);
   //compare password into hash password
   if (emailCheck.password === hashPassword(user.password)) {
     const getAccessToken = await generateAccessToken(getUser);
@@ -53,7 +58,7 @@ export const checkCredentials = async function (user) {
       {
         userInfo: getUser,
         accessToken: accessToken,
-        permission: PermissionData,
+        permission: PrivilageRole,
       }
     );
   }
@@ -72,7 +77,7 @@ export const createUser = async (user) => {
   user.password = hashPassword(user.password);
   if (emailCheck) {
     return createResponse(
-      helpers.StatusCodes.ACCEPTED,
+      helpers.StatusCodes.UNAUTHORIZED,
       helpers.responseMessages.REGISTRATION_USER_ALREADY_EXIST
     );
   } else {
@@ -176,6 +181,54 @@ export const getUser = async (page, limit, userid) => {
   }
   return notFound();
 };
+export const userReset = async (user) => {
+  const randomPasscode = Math.round(Math.random() * 10000)
+    .toString()
+    .padStart(4, "0");
+
+  const userData = await getEmailUser(user);
+  if (userData === null) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND
+    );
+  }
+  const encrypted = hashPassword(randomPasscode, user.email);
+  await setUserPasscode(userData._id, encrypted);
+  const link = `http://localhost:3300/v1/users/password-reset/${userData._id}/${encrypted}`;
+  await sendEmail(userData, "user-created", randomPasscode, link);
+  return createResponse(helpers.StatusCodes.OK, "email sent sucessfully");
+};
+export const userPermission = async (token) => {
+  const data = await getRoleUsers(token);
+  if (data) {
+    const getRoleId = await getUserByIdRole(data);
+    const getuser = await getUserById(getRoleId.User);
+    const getPrivilageRole = await getPrivilagesForRole(getuser.Role);
+    let permission = [];
+    getPrivilageRole.module.forEach((element) => {
+      const calPrivilage = calculatePrivilages(element.privilageNumber);
+      element.ActionRole = calPrivilage;
+      delete element._id;
+      delete element.privilageNumber;
+      permission.push(element);
+    });
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.USER_PERMISSION_ALLOW,
+      {
+        permission,
+      }
+    );
+  }
+  return createResponse(
+    helpers.StatusCodes.UNAUTHORIZED,
+    helpers.StatusMessages.UNAUTHORIZED
+  );
+};
+
+export const resetPassword = async (userId, tokenId) => {};
+
 /**
  * @description page not found.
  */
