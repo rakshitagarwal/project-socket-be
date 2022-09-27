@@ -93,9 +93,9 @@ export const verifyJwtToken = (token, publicKey) => {
  *
  * @param {Object} payload - email template details, whom to send mail
  */
-export const sendEmail = (payload, eventName) => {
+export const sendEmail = (payload, eventName, randomPasscode) => {
   const verificationHTML = readFileSync(
-    `assets/templates/${eventName}}/index.html`,
+    `assets/templates/${eventName}/index.html`,
     {
       encoding: "utf8",
     }
@@ -104,11 +104,10 @@ export const sendEmail = (payload, eventName) => {
   const verificationTemplate = compile(verificationHTML);
 
   const templateVariable = {
-    name: payload.name,
-    date: payload.date,
-    participantCount: payload.participantCount,
+    name: payload.fullName,
+    date: payload.createdAt,
+    randomPasscode:randomPasscode
   };
-
   const transport = nodemailer.createTransport({
     host: env.EMAIL_HOST,
     port: env.EMAIL_PORT,
@@ -117,12 +116,11 @@ export const sendEmail = (payload, eventName) => {
       user: env.EMAIL_USERNAME,
     },
   });
-
   transport
     .sendMail({
       from: env.FROM_EMAIL,
       to: payload.email,
-      subject: payload.subject,
+      subject: "BigDeal - Let's Start",
       html: verificationTemplate(templateVariable),
     })
     .catch((error) => {

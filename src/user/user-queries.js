@@ -22,7 +22,7 @@ export const getRoleUser = async (user) => {
   return roleId._id;
 };
 export const getUserById = async (id) => {
-  const userMeta = await UserModel.findById(id);
+  const userMeta = await UserModel.findById(id).lean();
   return userMeta;
 };
 export const removeUser = async (id) => {
@@ -53,4 +53,25 @@ export const getAllUser = async (pages = 0, limit = 10) => {
 export const persistence = async (genToken) => {
   const userMeta = await Persistence.create(genToken);
   return userMeta;
+};
+
+const USER_SELECT = {
+  passcode: true,
+  name: true,
+  email: true,
+  id: true,
+};
+export const findUserByEmail = async (email) => {
+  const user = await UserModel.findOne({
+    where: { email: { equals: email } },
+    select: USER_SELECT,
+  });
+  return user;
+};
+
+export const setUserPasscode = async (user_id, passcode) => {
+  console.log(user_id);
+  const userToken = await Persistence.updateMany({
+    where: { User: { equal: user_id } },
+  });
 };

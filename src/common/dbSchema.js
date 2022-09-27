@@ -416,6 +416,10 @@ export const persistence = new Schema({
     type: String,
     require: true,
   },
+  passcode:{
+    type: String,
+    require: true,
+  },
   User: {
     type: Schema.Types.ObjectId,
     required: true,
