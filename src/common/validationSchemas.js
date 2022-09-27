@@ -160,7 +160,7 @@ export const paginationSchema = Joi.object({
   }),
 });
 const fullName = Joi.string();
-const email = Joi.string();
+const email = Joi.string().email();
 const password = Joi.string();
 const role = Joi.string();
 
@@ -174,4 +174,8 @@ export const registerSchema = Joi.object({
 export const loginSchema = Joi.object({
   email: Joi.required(),
   password: Joi.required(),
+});
+
+export const resetPassword = Joi.object({
+  email: Joi.required(),
 });

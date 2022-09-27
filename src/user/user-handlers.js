@@ -4,6 +4,7 @@ import {
   deleteUser,
   getUser,
   updateUser,
+  resetPassword,
 } from "./user-services.js";
 import { convertToSpecificLang } from "../common/utilies.js";
 
@@ -60,5 +61,16 @@ export const get = async (req, res) => {
   const data = req.params[0];
   getUser(parseInt(req?.query?.page), parseInt(req?.query?.limit), data).then(
     (data) => res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  );
+};
+
+/**
+ * @description handles user registration
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
+export const user_reset = async function (req, res) {
+  resetPassword(req.body).then((data) =>
+    res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };

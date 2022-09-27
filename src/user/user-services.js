@@ -7,6 +7,8 @@ import {
   getAllUser,
   getEmailUser,
   persistence,
+  findUserByEmail,
+  setUserPasscode,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -14,6 +16,7 @@ import {
   createResponse,
   generateAccessToken,
   idCheck,
+  sendEmail,
 } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
@@ -26,7 +29,7 @@ export const checkCredentials = async function (user) {
   const emailCheck = await getEmailUser(user);
   if (!emailCheck) {
     return createResponse(
-      helpers.StatusCodes.ACCEPTED,
+      helpers.StatusCodes.UNAUTHORIZED,
       helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
     );
   }
@@ -176,6 +179,28 @@ export const getUser = async (page, limit, userid) => {
   }
   return notFound();
 };
+export const resetPassword = async (user) => {
+  const randomPasscode = Math.round(Math.random() * 10000)
+    .toString()
+    .padStart(4, "0");
+
+  const userData = await getEmailUser(user);
+  if (userData === null) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND
+    );
+  }
+  const encrypted = hashPassword(randomPasscode, user.email);
+  console.log("::::", encrypted);
+  const data = await setUserPasscode(userData._id, encrypted);
+
+  // await sendEmail(userData, "user-created", randomPasscode);
+  // return createResponse(helpers.StatusCodes.OK, "email sent sucessfully");
+
+  // await setUserPasscode(userData._id, hasData);
+};
+
 /**
  * @description page not found.
  */
