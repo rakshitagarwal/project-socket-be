@@ -14,7 +14,7 @@ import { convertToSpecificLang } from "../common/utilies.js";
  * @param res { Response } user's request's response object
  */
 export const login = async function (req, res) {
-  checkCredentials(req.body).then((data) =>
+  await  checkCredentials(req.body).then((data) =>
     res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };
@@ -25,7 +25,7 @@ export const login = async function (req, res) {
  * @param res { Response }
  */
 export const register = async function (req, res) {
-  createUser(req.body).then((data) =>
+ await createUser(req.body).then((data) =>
     res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };
@@ -36,7 +36,7 @@ export const register = async function (req, res) {
  * @param res { Response }
  */
 export const remove = async (req, res) => {
-  deleteUser(req.params.id).then((data) =>
+ await deleteUser(req.params.id).then((data) =>
     res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };
@@ -47,7 +47,7 @@ export const remove = async (req, res) => {
  * @param res { Response }
  */
 export const update = async (req, res) => {
-  updateUser(req.params.id, req.body).then((data) =>
+ await updateUser(req.params.id, req.body).then((data) =>
     res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };
@@ -59,7 +59,7 @@ export const update = async (req, res) => {
  */
 export const get = async (req, res) => {
   const data = req.params[0];
-  getUser(parseInt(req?.query?.page), parseInt(req?.query?.limit), data).then(
+ await getUser(parseInt(req?.query?.page), parseInt(req?.query?.limit), data).then(
     (data) => res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };
@@ -70,7 +70,7 @@ export const get = async (req, res) => {
  * @param res { Response }
  */
 export const user_reset = async function (req, res) {
-  resetPassword(req.body).then((data) =>
+ await resetPassword(req.body).then((data) =>
     res.status(data.statusCode).json(convertToSpecificLang(data, res))
   );
 };
