@@ -11,9 +11,10 @@
     "termsOfService": "Can be used by anyone"
   },
   "tags": [
-    { "name": "Users", "description": "User operations" },
-    { "name": "Products", "description": "Product operations" },
-    { "name": "Uploads", "description": "Upload Operations" }
+    { "name": "Users", "description": "Users operations" },
+    { "name": "Products", "description": "Products operations" },
+    { "name": "Uploads", "description": "Uploads Operations" },
+    { "name": "Auctions", "description": "Auctions Operations" }
   ],
   "servers": [
     {
@@ -281,6 +282,24 @@
             "type": "string"
           }
         }
+      },
+      "AuctionCategory": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        }
       }
     }
   },
@@ -502,6 +521,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -1686,6 +1708,1258 @@
           },
           "400": {
             "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/auctions/": {
+      "post": {
+        "tags": ["Auctions"],
+        "description": "Add the Auctions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "Title of the auctions"
+                  },
+                  "bannerImage": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "bannerImage of the auctions"
+                  },
+                  "bannerVideo": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "bannerVideo of the auctions"
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "description": "quantity of the auctions"
+                  },
+                  "openingPrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "openingPrice of the auctions"
+                  },
+                  "bot": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": false,
+                    "description": "bot of the auctions"
+                  },
+                  "botMaxPrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "noOfPlayConsumed": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "bidIncrement": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "noNewBidderLimit": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "autoStart": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "autoStart of the auctions"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "nullable": false,
+                    "description": "startDate of the auctions"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "nullable": false,
+                    "description": "startDate of the auctions"
+                  },
+                  "registerationStatus": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": false,
+                    "description": "startDate of the auctions"
+                  },
+                  "auctionPreRegister": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "startDate": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": false,
+                        "description": "startdate of the auctions"
+                      },
+                      "endDate": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": false,
+                        "description": "startdate of the auctions"
+                      },
+                      "participantCount": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": false,
+                        "description": "endDate of the auctions"
+                      },
+                      "participantFees": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": false,
+                        "description": "participantFees of the auctions"
+                      }
+                    }
+                  },
+                  "auctionPostRegister": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "participantFees": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": false,
+                        "description": "participantFees of the auctions"
+                      }
+                    }
+                  },
+                  "state": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "enum": ["Active", "Publish", "Cancel", "Closed"],
+                    "default": "Active",
+                    "description": "state of the auctions"
+                  },
+                  "status": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "default": false,
+                    "nullable": false,
+                    "description": "status of the auctions"
+                  },
+                  "Product": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "Product in the auctions"
+                  },
+                  "AuctionCategory": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "AuctionCategory in the auctions"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Auction Added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "get": {
+        "description": "fetch All Auctions",
+        "tags": ["Auctions"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 5
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "Title of the auctions"
+                          },
+                          "bannerImage": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "bannerImage of the auctions"
+                          },
+                          "bannerVideo": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "bannerVideo of the auctions"
+                          },
+                          "quantity": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "description": "quantity of the auctions"
+                          },
+                          "openingPrice": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "openingPrice of the auctions"
+                          },
+                          "bot": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "nullable": false,
+                            "default": false,
+                            "description": "bot of the auctions"
+                          },
+                          "botMaxPrice": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "noOfPlayConsumed": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "bidIncrement": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "noNewBidderLimit": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "autoStart": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "autoStart of the auctions"
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date",
+                            "nullable": false,
+                            "description": "startDate of the auctions"
+                          },
+                          "endDate": {
+                            "type": "string",
+                            "format": "date",
+                            "nullable": false,
+                            "description": "startDate of the auctions"
+                          },
+                          "registerationStatus": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "nullable": false,
+                            "default": false,
+                            "description": "startDate of the auctions"
+                          },
+                          "auctionPreRegister": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "startDate": {
+                                "type": "string",
+                                "format": "date",
+                                "nullable": false,
+                                "description": "startdate of the auctions"
+                              },
+                              "endDate": {
+                                "type": "string",
+                                "format": "date",
+                                "nullable": false,
+                                "description": "startdate of the auctions"
+                              },
+                              "participantCount": {
+                                "type": "number",
+                                "format": "int32",
+                                "nullable": false,
+                                "description": "endDate of the auctions"
+                              },
+                              "participantFees": {
+                                "type": "number",
+                                "format": "int32",
+                                "nullable": false,
+                                "description": "participantFees of the auctions"
+                              }
+                            }
+                          },
+                          "auctionPostRegister": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "participantFees": {
+                                "type": "number",
+                                "format": "int32",
+                                "nullable": false,
+                                "description": "participantFees of the auctions"
+                              }
+                            }
+                          },
+                          "state": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "enum": ["Active", "Publish", "Cancel", "Closed"],
+                            "default": "Active",
+                            "description": "state of the auctions"
+                          },
+                          "status": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "default": false,
+                            "nullable": false,
+                            "description": "status of the auctions"
+                          },
+                          "Product": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "Product in the auctions"
+                          },
+                          "AuctionCategory": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "AuctionCategory in the auctions"
+                          }
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number" },
+                        "totalPages": { "type": "number" },
+                        "recordCount": { "type": "number" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/auctions/category/": {
+      "get": {
+        "description": "get All Auction category",
+        "tags": ["Auctions"],
+        "responses": {
+          "200": {
+            "description": "get all category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AuctionCategory"
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/auctions/{id}": {
+      "put": {
+        "description": "Update the specific Auctions",
+        "tags": ["Auctions"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "Title of the auctions"
+                  },
+                  "bannerImage": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "bannerImage of the auctions"
+                  },
+                  "bannerVideo": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "bannerVideo of the auctions"
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "description": "quantity of the auctions"
+                  },
+                  "openingPrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "openingPrice of the auctions"
+                  },
+                  "bot": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": false,
+                    "description": "bot of the auctions"
+                  },
+                  "botMaxPrice": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "noOfPlayConsumed": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "bidIncrement": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "noNewBidderLimit": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "botMaxPrice of the auctions"
+                  },
+                  "autoStart": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": 0,
+                    "description": "autoStart of the auctions"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "nullable": false,
+                    "description": "startDate of the auctions"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "nullable": false,
+                    "description": "startDate of the auctions"
+                  },
+                  "registerationStatus": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": false,
+                    "description": "startDate of the auctions"
+                  },
+                  "auctionPreRegister": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "startDate": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": false,
+                        "description": "startdate of the auctions"
+                      },
+                      "endDate": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": false,
+                        "description": "startdate of the auctions"
+                      },
+                      "participantCount": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": false,
+                        "description": "endDate of the auctions"
+                      },
+                      "participantFees": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": false,
+                        "description": "participantFees of the auctions"
+                      }
+                    }
+                  },
+                  "auctionPostRegister": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "participantFees": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": false,
+                        "description": "participantFees of the auctions"
+                      }
+                    }
+                  },
+                  "state": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "enum": ["Active", "Publish", "Cancel", "Closed"],
+                    "default": "Active",
+                    "description": "state of the auctions"
+                  },
+                  "status": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "default": false,
+                    "nullable": false,
+                    "description": "status of the auctions"
+                  },
+                  "Product": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "Product in the auctions"
+                  },
+                  "AuctionCategory": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "AuctionCategory in the auctions"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Auction Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {},
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "get": {
+        "description": "Fetch the specific Auctions",
+        "tags": ["Auctions"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false,
+                          "description": "Title of the auctions"
+                        },
+                        "bannerImage": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false,
+                          "description": "bannerImage of the auctions"
+                        },
+                        "bannerVideo": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false,
+                          "description": "bannerVideo of the auctions"
+                        },
+                        "quantity": {
+                          "type": "number",
+                          "format": "number",
+                          "nullable": false,
+                          "description": "quantity of the auctions"
+                        },
+                        "openingPrice": {
+                          "type": "number",
+                          "format": "number",
+                          "nullable": false,
+                          "default": 0,
+                          "description": "openingPrice of the auctions"
+                        },
+                        "bot": {
+                          "type": "boolean",
+                          "format": "boolean",
+                          "nullable": false,
+                          "default": false,
+                          "description": "bot of the auctions"
+                        },
+                        "botMaxPrice": {
+                          "type": "number",
+                          "format": "number",
+                          "nullable": false,
+                          "default": 0,
+                          "description": "botMaxPrice of the auctions"
+                        },
+                        "noOfPlayConsumed": {
+                          "type": "number",
+                          "format": "number",
+                          "nullable": false,
+                          "default": 0,
+                          "description": "botMaxPrice of the auctions"
+                        },
+                        "bidIncrement": {
+                          "type": "number",
+                          "format": "number",
+                          "nullable": false,
+                          "default": 0,
+                          "description": "botMaxPrice of the auctions"
+                        },
+                        "noNewBidderLimit": {
+                          "type": "number",
+                          "format": "number",
+                          "nullable": false,
+                          "default": 0,
+                          "description": "botMaxPrice of the auctions"
+                        },
+                        "autoStart": {
+                          "type": "boolean",
+                          "format": "boolean",
+                          "nullable": false,
+                          "default": 0,
+                          "description": "autoStart of the auctions"
+                        },
+                        "startDate": {
+                          "type": "string",
+                          "format": "date",
+                          "nullable": false,
+                          "description": "startDate of the auctions"
+                        },
+                        "endDate": {
+                          "type": "string",
+                          "format": "date",
+                          "nullable": false,
+                          "description": "startDate of the auctions"
+                        },
+                        "registerationStatus": {
+                          "type": "boolean",
+                          "format": "boolean",
+                          "nullable": false,
+                          "default": false,
+                          "description": "startDate of the auctions"
+                        },
+                        "auctionPreRegister": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "startDate": {
+                              "type": "string",
+                              "format": "date",
+                              "nullable": false,
+                              "description": "startdate of the auctions"
+                            },
+                            "endDate": {
+                              "type": "string",
+                              "format": "date",
+                              "nullable": false,
+                              "description": "startdate of the auctions"
+                            },
+                            "participantCount": {
+                              "type": "number",
+                              "format": "int32",
+                              "nullable": false,
+                              "description": "endDate of the auctions"
+                            },
+                            "participantFees": {
+                              "type": "number",
+                              "format": "int32",
+                              "nullable": false,
+                              "description": "participantFees of the auctions"
+                            }
+                          }
+                        },
+                        "auctionPostRegister": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "participantFees": {
+                              "type": "number",
+                              "format": "int32",
+                              "nullable": false,
+                              "description": "participantFees of the auctions"
+                            }
+                          }
+                        },
+                        "state": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false,
+                          "enum": ["Active", "Publish", "Cancel", "Closed"],
+                          "default": "Active",
+                          "description": "state of the auctions"
+                        },
+                        "status": {
+                          "type": "boolean",
+                          "format": "boolean",
+                          "default": false,
+                          "nullable": false,
+                          "description": "status of the auctions"
+                        },
+                        "Product": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false,
+                          "description": "Product in the auctions"
+                        },
+                        "AuctionCategory": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false,
+                          "description": "AuctionCategory in the auctions"
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number" },
+                        "totalPages": { "type": "number" },
+                        "recordCount": { "type": "number" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/500"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "description": "Disbale the specific Auction",
+        "tags": ["Auctions"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disable Auction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": {
+                      "type": "string"
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      }
+    },
+    "/auction/search/": {
+      "get": {
+        "tags": ["Auctions"],
+        "description": "Search/Filter/Sort Auctions Details",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 0
+            },
+            "description": "page of the auctions record"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 5
+            },
+            "description": "limit of the auctions record"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string",
+              "enum": ["Active", "Publish", "Cancel", "Closed"],
+              "default": "Active"
+            },
+            "description": "state of the auctions"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "status of the auctions"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "description": "type of the auctions"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get the search result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": ""
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "Title of the auctions"
+                          },
+                          "bannerImage": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "bannerImage of the auctions"
+                          },
+                          "bannerVideo": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "bannerVideo of the auctions"
+                          },
+                          "quantity": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "description": "quantity of the auctions"
+                          },
+                          "openingPrice": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "openingPrice of the auctions"
+                          },
+                          "bot": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "nullable": false,
+                            "default": false,
+                            "description": "bot of the auctions"
+                          },
+                          "botMaxPrice": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "noOfPlayConsumed": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "bidIncrement": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "noNewBidderLimit": {
+                            "type": "number",
+                            "format": "number",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "botMaxPrice of the auctions"
+                          },
+                          "autoStart": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "nullable": false,
+                            "default": 0,
+                            "description": "autoStart of the auctions"
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date",
+                            "nullable": false,
+                            "description": "startDate of the auctions"
+                          },
+                          "endDate": {
+                            "type": "string",
+                            "format": "date",
+                            "nullable": false,
+                            "description": "startDate of the auctions"
+                          },
+                          "registerationStatus": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "nullable": false,
+                            "default": false,
+                            "description": "startDate of the auctions"
+                          },
+                          "auctionPreRegister": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "startDate": {
+                                "type": "string",
+                                "format": "date",
+                                "nullable": false,
+                                "description": "startdate of the auctions"
+                              },
+                              "endDate": {
+                                "type": "string",
+                                "format": "date",
+                                "nullable": false,
+                                "description": "startdate of the auctions"
+                              },
+                              "participantCount": {
+                                "type": "number",
+                                "format": "int32",
+                                "nullable": false,
+                                "description": "endDate of the auctions"
+                              },
+                              "participantFees": {
+                                "type": "number",
+                                "format": "int32",
+                                "nullable": false,
+                                "description": "participantFees of the auctions"
+                              }
+                            }
+                          },
+                          "auctionPostRegister": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "participantFees": {
+                                "type": "number",
+                                "format": "int32",
+                                "nullable": false,
+                                "description": "participantFees of the auctions"
+                              }
+                            }
+                          },
+                          "state": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "enum": ["Active", "Publish", "Cancel", "Closed"],
+                            "default": "Active",
+                            "description": "state of the auctions"
+                          },
+                          "status": {
+                            "type": "boolean",
+                            "format": "boolean",
+                            "default": false,
+                            "nullable": false,
+                            "description": "status of the auctions"
+                          },
+                          "Product": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "Product in the auctions"
+                          },
+                          "AuctionCategory": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false,
+                            "description": "AuctionCategory in the auctions"
+                          }
+                        }
+                      }
+                    },
+                    "metdata": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number", "default": 0 },
+                        "totalPages": { "type": "number", "default": 5 },
+                        "recordCount": { "type": "number", "default": 0 },
+                        "state": { "type": "string", "default": "" },
+                        "status": { "type": "string", "default": "" },
+                        "type": { "type": "string", "default": "" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"

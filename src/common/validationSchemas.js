@@ -355,7 +355,7 @@ export const auctionSchema = Joi.object({
   }),
   auctionPreRegister: auctionPreRegister,
   auctionPostRegister: auctionPostRegister,
-  state: Joi.boolean()
+  state: Joi.string()
     .required()
     .valid("Active", "Publish", "Cancel", "Closed")
     .messages({
