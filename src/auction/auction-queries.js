@@ -83,14 +83,15 @@ export const fetchAuction = async (page, limit) => {
 
 export const getAuctionById = async (id) => {
   const auction = await auctionModel
-    .find({ _id: id, status: false })
+    .findById(id)
+    .find({ status: false })
     .populate("Product", { _id: 1, title: 1 })
     .populate("AuctionCategory", { _id: 1, name: 1 })
     .lean();
 
   const auctionPreRegister = await auctionPreModel
     .findOne({
-      Auction: auction[0]._id,
+      Auction: auction._id,
     })
     .select({
       startDate: 1,
@@ -103,24 +104,25 @@ export const getAuctionById = async (id) => {
 
   const auctionPostRegister = await auctionPostModel
     .findOne({
-      Auction: auction[0]._id,
+      Auction: auction._id,
     })
     .select({ participantFees: 1, _id: 0 });
 
   if (auctionPreRegister && auctionPostRegister) {
-    return {
+    const auctions = {
       ...auction,
       auctionPreRegister,
       auctionPostRegister,
     };
+    return auctions;
   }
 
   return auction;
 };
 
-export const putAuction = async (id, auction, pre, post) => {
+export const putAuction = async (id, data, pre, post) => {
   if (!pre && !post) {
-    const auction = await auctionModel.findByIdAndUpdate(id, auction);
+    const auction = await auctionModel.findByIdAndUpdate(id, data);
     return auction;
   }
 
@@ -149,7 +151,7 @@ export const softDelete = async (id) => {
   return auction;
 };
 
-export const filterAuction = async (page, limit, state, status, type) => {
+export const filterAuction = async (page, limit, state, status, category) => {
   const count = await auctionModel.find({ status: false }).countDocuments();
   let totalPages;
   if (count < limit) {
@@ -163,7 +165,7 @@ export const filterAuction = async (page, limit, state, status, type) => {
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })
-    .populate("AuctionCategory", { _id: 1, name: 1 }, { name: type })
+    .populate("AuctionCategory", { _id: 1, name: 1 }, { name: category })
     .lean();
 
   return {
@@ -172,5 +174,16 @@ export const filterAuction = async (page, limit, state, status, type) => {
     limit: limit,
     currentPage: page,
     recordCount: count,
+    category,
+    state,
   };
+};
+
+export const validateAuctionStatus = async (id) => {
+  const isActive = await auctionCategory
+    .findOne({ _id: id, status: false })
+    .select({ _id: 0, status: 1 })
+    .lean();
+
+  return isActive;
 };

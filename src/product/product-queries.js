@@ -124,3 +124,12 @@ export const fetchAllCategory = async () => {
     .lean();
   return categories;
 };
+
+export const validateStatus = async (id) => {
+  const isActive = await productModel
+    .findOne({ _id: id, status: false })
+    .select({ status: 1, _id: 0 })
+    .lean();
+
+  return isActive;
+};

@@ -1,5 +1,6 @@
-import { createResponse } from "../common/utilies.js";
+import { createResponse, validateObjectId } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
+import { validateStatus } from "../product/product-queries.js";
 import {
   create,
   fetchAuction,
@@ -8,9 +9,48 @@ import {
   putAuction,
   softDelete,
   filterAuction,
+  validateAuctionStatus,
 } from "./../auction/auction-queries.js";
 
 export const addAuction = async (data) => {
+  let { Product, AuctionCategory } = data;
+
+  // check ObjectId
+  const valid = validateObjectId(Product);
+  if (!valid) {
+    return createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      "Put the valid Product ObjectID"
+    );
+  }
+
+  // check if a product is active or not
+  const isActive = await validateStatus(Product);
+  if (!isActive) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      "Product Id you send is not Active"
+    );
+  }
+
+  // check ObjectId
+  const validAuctions = validateObjectId(AuctionCategory);
+  if (!validAuctions) {
+    return createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      "Put the valid Auction ObjectID"
+    );
+  }
+
+  // check if a auction category is active or not
+  const isActiveAuction = await validateAuctionStatus(AuctionCategory);
+  if (!isActiveAuction) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      "Auctions you send is not Active"
+    );
+  }
+
   if (!data.registerationStatus) {
     if (data.auctionPreRegister && data.auctionPostRegister) {
       return createResponse(
@@ -71,13 +111,7 @@ export const getAuctions = async (query) => {
   let limit = parseInt(query.limit) || 5;
 
   const auctions = await fetchAuction(page, limit);
-  let {
-    auctionData,
-    page: pages,
-    limit: limits,
-    currentPage,
-    recordCount,
-  } = auctions;
+  let { auctionData, ...metadata } = auctions;
 
   if (auctionData.length > 0) {
     return createResponse(
@@ -85,10 +119,7 @@ export const getAuctions = async (query) => {
       helpers.StatusMessages.OK,
       auctionData,
       {
-        pages,
-        limits,
-        currentPage,
-        recordCount,
+        ...metadata,
       }
     );
   }
@@ -117,9 +148,47 @@ export const getCategory = async () => {
 };
 
 export const updateAuction = async (id, updated) => {
+  let { Product, AuctionCategory } = updated;
+
+  // check ObjectId
+  const valid = validateObjectId(Product);
+  if (!valid) {
+    return createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      "Put the valid Product ObjectID"
+    );
+  }
+
+  // check if a product is active or not
+  const isActive = await validateStatus(Product);
+  if (!isActive) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      "Product Id you send is not Active"
+    );
+  }
+
+  // check ObjectId
+  const validAuctions = validateObjectId(AuctionCategory);
+  if (!validAuctions) {
+    return createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      "Put the valid Auction ObjectID"
+    );
+  }
+
+  // check if a auction category is active or not
+  const isActiveAuction = await validateAuctionStatus(AuctionCategory);
+  if (!isActiveAuction) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      "Auctions you send is not Active"
+    );
+  }
+
   const auction = await getAuctionById(id);
 
-  if (!auction) {
+  if (typeof auction === null) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
       helpers.StatusMessages.NOT_FOUND
@@ -168,11 +237,7 @@ export const updateAuction = async (id, updated) => {
       );
     }
 
-    return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.StatusMessages.OK,
-      update
-    );
+    return createResponse(helpers.StatusCodes.OK, "Auction Updated");
   }
 
   return createResponse(
@@ -201,7 +266,7 @@ export const deleteAuction = async (id) => {
 export const fetchAuctionById = async (id) => {
   const auction = await getAuctionById(id);
 
-  if (auction.length > 0 || auction) {
+  if (auction.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
       "Get Single Auction",
@@ -220,9 +285,10 @@ export const searchByQuery = async (query) => {
   let limit = parseInt(query.limit) || 5;
   let state = query.state;
   let status = query.status;
+  let category = query.type;
 
-  const searched = await filterAuction(page, limit, state, status);
-  let { auctions, limits, pages, states, status: isActive, type } = searched;
+  const searched = await filterAuction(page, limit, state, status, category);
+  let { auctions, ...metadata } = searched;
 
   if (searched) {
     return createResponse(
@@ -230,10 +296,7 @@ export const searchByQuery = async (query) => {
       "Get all Searched",
       auctions,
       {
-        limits,
-        pages,
-        states,
-        isActive,
+        ...metadata,
       }
     );
   }
