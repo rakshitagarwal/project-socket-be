@@ -123,11 +123,12 @@ const responseMessages = {
   REGISTRATION_USER_ALREADY_EXIST: "registration.already.exist.email",
   USER_REGISTER_CREATED_SUCC: "register.created.successfully",
   USER_REGISTER_ROLE_NOT_EXIST: "user.register.role.not.exist",
-  USER_DELETE_SUCC: "user.deleted.successfully",
-  USER_UPDATE_SUCC: "user.update.successfully",
+  USER_DELETE_SUCCESSFULL: "user.deleted.successfully",
+  USER_UPDATE_SUCCESSFULL: "user.update.successfully",
   USER_GET_ID: "fetched.single.user",
   USER_GET_ALL: "all.user.show",
-  USER_PERMISSION_ALLOW:"user.permission.allow"
+  USER_PERMISSION_ALLOW: "user.permission.allow",
+  USER_INVALID_ID:"invalid.user.id"
 };
 const privilage = [
   {

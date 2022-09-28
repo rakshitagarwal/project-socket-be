@@ -9,5 +9,8 @@
 	"Not.Found":"niet gevonden",
 	"user.update.successfully":"gebruiker succesvol geüpdatet",
 	"fetched.single.user":"enkele gebruiker opgehaald",
-	"all.user.show":"Alle gebruikers Tonen"
+	"all.user.show":"Alle gebruikers Tonen",
+	"user.permission.allow":"gebruikerstoestemming toestaan",
+	"Unauthorized": "Onbevoegd",
+	"invalid.user.id": "ongeldige gebruikersnaam"
 }

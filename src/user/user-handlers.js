@@ -15,10 +15,9 @@ import { convertToSpecificLang } from "../common/utilies.js";
  * @param req { Request } user's request object
  * @param res { Response } user's request's response object
  */
-export const login = function (req, res) {
-  checkCredentials(req.body).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+export const login = async (req, res) => {
+  const { statusCode, response } = await checkCredentials(req.body);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 /**
@@ -26,10 +25,9 @@ export const login = function (req, res) {
  * @param req { Request } - user's request object
  * @param res { Response }
  */
-export const register = function (req, res) {
-  createUser(req.body).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+export const register = async (req, res) => {
+  const { statusCode, response } = await createUser(req.body);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 /**
@@ -37,10 +35,9 @@ export const register = function (req, res) {
  * @param req { Request } - user's request object
  * @param res { Response }
  */
-export const remove = (req, res) => {
-  deleteUser(req.params.id).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+export const remove = async (req, res) => {
+  const { statusCode, response } = await deleteUser(req.params.id);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 /**
@@ -48,10 +45,9 @@ export const remove = (req, res) => {
  * @param req { Request } - user's request object
  * @param res { Response }
  */
-export const update = (req, res) => {
-  updateUser(req.params.id, req.body).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+export const update = async (req, res) => {
+  const { statusCode, response } = await updateUser(req.params.id, req.body);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 /**
@@ -61,31 +57,31 @@ export const update = (req, res) => {
  */
 export const get = async (req, res) => {
   const data = req.params[0];
-  getUser(parseInt(req?.query?.page), parseInt(req?.query?.limit), data).then(
-    (data) => res.status(data.statusCode).json(convertToSpecificLang(data, res))
+  const { statusCode, response } = await getUser(
+    parseInt(req?.query?.page),
+    parseInt(req?.query?.limit),
+    data
   );
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const user_permission = async (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  userPermission(token).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+  const { statusCode, response } = await userPermission(token);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 /**
  * @description handles user registration
  * @param req { Request } - user's request object
  * @param res { Response }
  */
-export const user_reset = function (req, res) {
-  userReset(req.body).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+export const user_reset = async (req, res) => {
+  const { statusCode, response } = await userReset(req.body);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
-export const reset_password = function (req, res) {
-  resetPassword(req.params).then((data) =>
-    res.status(data.statusCode).json(convertToSpecificLang(data, res))
-  );
+export const reset_password = async (req, res) => {
+  const { statusCode, response } = await resetPassword(req.params, req.body);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };

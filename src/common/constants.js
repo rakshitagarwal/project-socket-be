@@ -12,6 +12,7 @@ export const USER_PATH_ALLID = "/*/";
 export const USER_LOGIN = "/login";
 export const USER_RESET = "/reset-password";
 export const USER_REGISTER = "/";
+export const USER_PERMISSION="/permission";
 const FETCH_USER_EMAIL = USER_PATHNAME + "/:email";
 const FETCH_USER_ID = USER_PATHNAME + ID_POSTFIX;
 const CHANGE_USER_STATUS = USER_PATHNAME + "/status";

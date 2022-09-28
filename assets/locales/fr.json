@@ -9,5 +9,9 @@
 	"Not.Found": "pas trouvé",
 	"user.update.successfully": "utilisateur mis à jour avec succès",
 	"fetched.single.user":"Utilisateur unique récupéré",
-	"all.user.show":"Tous les utilisateurs Afficher"
+	"all.user.show":"Tous les utilisateurs Afficher",
+	"user.permission.allow":"autorisation de l'utilisateur autoriser",
+	"Unauthorized": "Non autorisé",
+	"invalid.user.id": "Identifiant invalide"
+
 }

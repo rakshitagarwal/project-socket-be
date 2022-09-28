@@ -239,13 +239,34 @@
           "id": {
             "type": "string"
           },
-          "fullName": {
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
             "type": "string"
           },
           "email": {
             "type": "string"
           },
           "password": {
+            "type": "string"
+          },
+          "zip":{
+            "type": "number"
+          },
+          "country": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "age": {
+            "type": "number"
+          },
+          "mobile": {
+            "type": "number"
+          },
+          "profession": {
             "type": "string"
           },
           "status": {
@@ -705,10 +726,11 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "type": "string",
-            "enum": "[en, fr ,de]",
-            "description":"fetch in some Language [ en, fr ,de ]",
-            "default" :"en"
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
           }
         ],
         "requestBody": {
@@ -719,11 +741,17 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "fullName": {
+                  "firstname": {
                     "type": "string",
                     "format": "string",
                     "nullable": false,
-                    "description": " name of the user"
+                    "description": "First name of the user"
+                  },
+                  "lastname": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": "Last name of the user"
                   },
                   "email": {
                     "type": "string",
@@ -737,6 +765,42 @@
                     "nullable": false,
                     "description": " password of the user"
                   },
+                  "zip": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "description": "zip in number"
+                  },
+                  "country":{
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " country of the user"
+                  },
+                  "gender":{
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " gender of the user"
+                  },
+                  "age":{
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "description": "age in number"
+                  },
+                  "mobile":{
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false,
+                    "description": "mobile in number"
+                  },
+                  "profession":{
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " profession of the user"
+                  },
                   "Role": {
                     "type": "string",
                     "format": "string",
@@ -749,7 +813,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful User Added",
             "content": {
               "application/json": {
@@ -770,11 +834,14 @@
               }
             }
           },
-          "500": {
-            "$ref": "#/components/responses/500"
-          },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           },
           "default": {
             "$ref": "#/components/responses/404"
@@ -806,10 +873,11 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "type": "string",
-            "enum": "[en, fr ,de]",
-            "description":"fetch in some Language [ en, fr ,de ]",
-            "default" :"en"
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
           }
         ],
         "responses": {
@@ -864,10 +932,11 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "type": "string",
-            "enum": "[en, fr ,de]",
-            "description":"fetch in some Language [ en, fr ,de ]",
-            "default" :"en"
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
           }
         ],
         "responses": {
@@ -895,17 +964,14 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
           "404": {
             "$ref": "#/components/responses/404"
           },
-          "500": {
-            "$ref": "#/components/responses/500"
-          },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -924,10 +990,11 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "type": "string",
-            "enum": "[en, fr ,de]",
-            "description":"fetch in some Language [ en, fr ,de ]",
-            "default" :"en"
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
           }
         ],
         "responses": {
@@ -949,17 +1016,11 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
           "404": {
             "$ref": "#/components/responses/404"
           },
           "500": {
             "$ref": "#/components/responses/500"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
           }
         }
       },
@@ -978,10 +1039,11 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "type": "string",
-            "enum": "[en, fr ,de]",
-            "description":"fetch in some Language [ en, fr ,de ]",
-            "default" :"en"
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
           }
         ],
         "requestBody": {
@@ -992,12 +1054,42 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "fullName": {
+                  "firstname": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "lastname": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
                   },
                   "email": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "zip": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "country": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "gender": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "age": {
+                    "type": "number",
+                    "format": "number",
+                    "nullable": false
+                  },
+                  "profession":{
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -1040,29 +1132,20 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
           }
         }
       }
     },
-    "/users/user-permission":{
+    "/users/permission":{
       "post":{
         "tags": ["Users"],
         "description": "User Permission Allow",
-      "securityDefinitions": {
-        "bearerAuth": {
-          "name": "Authorization",
-          "in": "header",
-          "type": "apiKey",
-          "description": "JWT Authorization header"
-        }
-      },
-      "security": [ { "bearerAuth": [] } ],
+      "security": [ { "bearerAuth": [
+        "Authorization","header","apiKey","JWT Authorization header"
+      ] } ],
       "responses": {
         "200": {
-          "description": "Disable User",
+          "description": "User Permission Allow",
           "content": {
             "application/json": {
               "schema": {
@@ -1088,14 +1171,8 @@
         "401": {
           "$ref": "#/components/responses/401"
         },
-        "404": {
-          "$ref": "#/components/responses/404"
-        },
         "500": {
           "$ref": "#/components/responses/500"
-        },
-        "400": {
-          "$ref": "#/components/responses/400"
         }
       }
     }
@@ -1108,10 +1185,11 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "type": "string",
-            "enum": "[en, fr ,de]",
-            "description":"fetch in some Language [ en, fr ,de ]",
-            "default" :"en"
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
           }
         ],
         "requestBody": {
@@ -1140,7 +1218,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful User Login",
             "content": {
               "application/json": {
@@ -1161,11 +1239,14 @@
               }
             }
           },
-          "500": {
-            "$ref": "#/components/responses/500"
-          },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           },
           "default": {
             "$ref": "#/components/responses/404"

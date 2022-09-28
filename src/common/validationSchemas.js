@@ -159,16 +159,42 @@ export const paginationSchema = Joi.object({
     invalid_type_error: "Invalid FILE_ALLOWED_SIZE in environment variables",
   }),
 });
-const fullName = Joi.string();
+const firstname = Joi.string().max(50);
+const lastname = Joi.string().max(50);
 const email = Joi.string().email();
 const password = Joi.string();
+const zip = Joi.number();
+const country = Joi.string();
+const gender = Joi.string().min(4).max(6).optional().allow("");
+const age = Joi.number().optional().allow();
+const mobile = Joi.number().optional().allow(null);
+const profession = Joi.string().optional().allow("");
 const role = Joi.string();
 
-export const registerSchema = Joi.object({
-  fullName: fullName.required(),
+export const userSchema = Joi.object({
+  firstname: firstname.required(),
+  lastname: lastname.required(),
   email: email.required(),
-  password: password.required(),
+  password: password.allow("").optional(),
+  zip: zip.required(),
+  country: country.required(),
+  gender: gender,
+  age: age,
+  mobile: mobile,
+  profession: profession,
   Role: role.required(),
+});
+
+export const userUpdateSchema = Joi.object({
+  firstname: firstname.required(),
+  lastname: lastname.required(),
+  email: Joi.string().optional().allow(""),
+  zip: zip.required(),
+  country: country.required(),
+  gender: gender,
+  age: age,
+  mobile: mobile,
+  profession: profession,
 });
 
 export const loginSchema = Joi.object({

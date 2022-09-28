@@ -112,7 +112,11 @@ export const rolePrivilage = new Schema({
 
 export const userSchema = new Schema(
   {
-    fullName: {
+    firstname: {
+      type: String,
+      required: true,
+    },
+    lastname: {
       type: String,
       required: true,
     },
@@ -122,13 +126,32 @@ export const userSchema = new Schema(
     },
     password: {
       type: String,
+    },
+    zip: {
+      type: Number,
       required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+    gender: { type: String },
+    age: { type: Number },
+    mobile: { type: Number },
+    profession: { type: String },
+    passcode: {
+      type: String,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
     },
     status: {
       type: Boolean,
       required: true,
       default: false,
     },
+
     Role: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -413,10 +436,6 @@ export const persistence = new Schema({
     require: true,
   },
   accessToken: {
-    type: String,
-    require: true,
-  },
-  passcode:{
     type: String,
     require: true,
   },

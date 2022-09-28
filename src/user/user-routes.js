@@ -5,6 +5,7 @@ import {
   ID_POSTFIX,
   USER_PATH_ALLID,
   USER_RESET,
+  USER_PERMISSION,
 } from "./../common/constants.js";
 import {
   login,
@@ -18,18 +19,19 @@ import {
 } from "./user-handlers.js";
 import { validateSchema } from "../middleware/validate.js";
 import {
-  registerSchema,
+  userSchema,
   idSchema,
   loginSchema,
+  userUpdateSchema
 } from "./../common/validationSchemas.js";
 import { isAuthenticated } from "../middleware/auth.js";
 export const userRouter = Router();
 userRouter
   .post(USER_LOGIN, validateSchema.body(loginSchema), login)
-  .post(USER_REGISTER, validateSchema.body(registerSchema), register)
+  .post(USER_REGISTER, validateSchema.body(userSchema), register)
   .delete(ID_POSTFIX, validateSchema.params(idSchema), remove)
-  .put(ID_POSTFIX, update)
+  .put(ID_POSTFIX,validateSchema.body(userUpdateSchema), update)
   .get(USER_PATH_ALLID, get)
-  .post("/user-permission", user_permission)
+  .post(USER_PERMISSION, user_permission)
   .post(USER_RESET, user_reset)
-  .post("/:userId/:token", reset_password);
+  .post("/password-reset/:token", reset_password);

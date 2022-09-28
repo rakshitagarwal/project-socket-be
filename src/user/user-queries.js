@@ -4,14 +4,18 @@ export const create = async (user) => {
   const userMeta = await UserModel.create(user);
   return userMeta;
 };
+
 export const getEmailUser = async (user) => {
   const email = user.email;
   const emailUser = await UserModel.findOne({
     email: email,
     status: false,
-  }).lean();
+  })
+    .lean()
+    .populate("Role", { name: 1 });
   return emailUser;
 };
+
 export const getRoleUser = async (user) => {
   const roleId = await UseRole.findOne({ name: user }).select({
     _id: 1,
@@ -22,8 +26,11 @@ export const getRoleUser = async (user) => {
   return roleId._id;
 };
 export const getUserById = async (id) => {
-  const userMeta = await UserModel.findById(id).lean();
-  return userMeta;
+  const userMeta = await UserModel.findById(id).find({ status: false }).lean();
+  if (!userMeta) {
+    return false;
+  }
+  return userMeta[0];
 };
 export const removeUser = async (id) => {
   const userMeta = await UserModel.findByIdAndUpdate(id, {
@@ -49,6 +56,10 @@ export const getAllUser = async (pages = 0, limit = 10) => {
     currentPage: pages,
     limit: limit,
   };
+};
+export const updatePass = async (id, userdata) => {
+  const updatedUser = await UserModel.findByIdAndUpdate(id, userdata);
+  return updatedUser;
 };
 export const persistence = async (genToken) => {
   const userMeta = await Persistence.create(genToken);
@@ -83,10 +94,22 @@ export const findUserByEmail = async (email) => {
 };
 
 export const setUserPasscode = async (user_id, passcode) => {
-  console.log(user_id);
-  const userToken = await Persistence.updateMany({
-    where: { User: { equals: user_id } },
+  const userDetails = await UserModel.findByIdAndUpdate(user_id, {
     passcode: passcode,
   });
-  return userToken;
+  return userDetails;
+};
+export const getTokenUsers = async (data) => {
+  const roleId = await Persistence.findOne({ passcode: data.token });
+  if (roleId === null) {
+    return false;
+  }
+  return roleId;
+};
+export const removeTokenUser = async (data) => {
+  const roleId = await Persistence.deleteMany({ passcode: data.token });
+  if (roleId === null) {
+    return false;
+  }
+  return roleId;
 };

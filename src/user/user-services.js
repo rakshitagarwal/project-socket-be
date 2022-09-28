@@ -11,15 +11,17 @@ import {
   setUserPasscode,
   getRoleUsers,
   getUserByIdRole,
+  getTokenUsers,
+  updatePass,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
   hashPassword,
   createResponse,
   generateAccessToken,
-  idCheck,
   sendEmail,
   verifyJwtToken,
+  validateObjectId,
 } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
@@ -30,6 +32,7 @@ import { getPrivilagesForRole } from "../roles/role-queries.js";
  */
 export const checkCredentials = async function (user) {
   const emailCheck = await getEmailUser(user);
+
   if (!emailCheck) {
     return createResponse(
       helpers.StatusCodes.UNAUTHORIZED,
@@ -46,10 +49,12 @@ export const checkCredentials = async function (user) {
     delete element.privilageNumber;
     PrivilageRole.push(element);
   });
+
   //compare password into hash password
   if (emailCheck.password === hashPassword(user.password)) {
     const getAccessToken = await generateAccessToken(getUser);
     getAccessToken.User = getUser._id;
+
     const token = await persistence(getAccessToken);
     const accessToken = token.accessToken;
     return createResponse(
@@ -74,18 +79,23 @@ export const checkCredentials = async function (user) {
  */
 export const createUser = async (user) => {
   const emailCheck = await getEmailUser(user);
-  user.password = hashPassword(user.password);
+  console.log(":::>>>>", user);
+  const { password, ...userdata } = user;
+  if (password) {
+    user.password = hashPassword(user.password);
+  }
+
   if (emailCheck) {
     return createResponse(
-      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.StatusCodes.BAD_REQUEST,
       helpers.responseMessages.REGISTRATION_USER_ALREADY_EXIST
     );
   } else {
-    // user.password = hashPassword(user.password);
     const userRoleId = await getRoleUser(user.Role);
     if (userRoleId) {
       user.Role = userRoleId;
       const usersMeta = await create(user);
+
       if (usersMeta) {
         return createResponse(
           helpers.StatusCodes.CREATED,
@@ -95,7 +105,7 @@ export const createUser = async (user) => {
       }
     } else {
       return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
+        helpers.StatusCodes.UNAUTHORIZED,
         helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
       );
     }
@@ -107,16 +117,21 @@ export const createUser = async (user) => {
  * @param id -  user id request body
  */
 export const deleteUser = async (id) => {
-  const userId = await idCheck(id);
+  const userId = validateObjectId(id);
   if (userId) {
     // Yes, it's a valid ObjectId, proceed with `findById` call.
     const metaData = await removeUser(id);
-    if (metaData) {
+
+    if (metaData === null) {
       return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.USER_DELETE_SUCC
+        helpers.StatusCodes.BAD_REQUEST,
+        helpers.responseMessages.USER_INVALID_ID
       );
     }
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.USER_DELETE_SUCCESSFULL
+    );
   }
   return notFound();
 };
@@ -127,18 +142,21 @@ export const deleteUser = async (id) => {
  * @param - user into database
  */
 export const updateUser = async (id, userdata) => {
-  const userId = await idCheck(id);
+  const userId = validateObjectId(id);
   if (userId) {
-    const updateUser = await update(id, userdata);
     const getuser = await getUserById(id);
-    const { password, email, Role, ...userData } = getuser;
-    if (updateUser) {
-      return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.USER_UPDATE_SUCC,
-        userData
-      );
+    if (getuser?.status) {
+      const updateUser = await update(id, userdata);
+      const { password, email, Role, ...userData } = getuser;
+      if (updateUser) {
+        return createResponse(
+          helpers.StatusCodes.OK,
+          helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
+          userData
+        );
+      }
     }
+    return notFound();
   }
   return notFound();
 };
@@ -150,55 +168,42 @@ export const updateUser = async (id, userdata) => {
  * @param  userid -  user update's request body
  */
 export const getUser = async (page, limit, userid) => {
-  const userCheck = await idCheck(userid);
-  const userInfo = [];
-  const userMeta =
-    userid.length > 0
-      ? await getUserById(userCheck)
-      : await getAllUser(page, limit);
-
-  !userid
-    ? userMeta.users.forEach((element) => {
-        delete element.Role;
-        delete element.password;
-        userInfo.push(element);
-      })
-    : userInfo.push(userMeta);
-  if (userInfo && userMeta !== null) {
-    return createResponse(
-      helpers.StatusCodes.OK,
+  const userCheck = validateObjectId(userid);
+  if (userCheck || page || limit) {
+    const userInfo = [];
+    const userMeta =
+      userid.length > 0
+        ? await getUserById(userid)
+        : await getAllUser(page, limit);
+    if (userMeta !== undefined) {
       !userid
-        ? helpers.responseMessages.USER_GET_ALL
-        : helpers.responseMessages.USER_GET_ID,
-      {
-        userInfo,
-        limit: userMeta.limit,
-        currentPage: userMeta.currentPage,
-        totalPages: userMeta.pages,
-        count: userMeta.count,
+        ? userMeta.users.forEach((element) => {
+            delete element.Role;
+            delete element.password;
+            userInfo.push(element);
+          })
+        : userInfo.push(userMeta);
+      if (userInfo && userMeta !== null) {
+        return createResponse(
+          helpers.StatusCodes.OK,
+          !userid
+            ? helpers.responseMessages.USER_GET_ALL
+            : helpers.responseMessages.USER_GET_ID,
+          {
+            userInfo,
+            limit: userMeta.limit,
+            currentPage: userMeta.currentPage,
+            totalPages: userMeta.pages,
+            count: userMeta.count,
+          }
+        );
       }
-    );
+    }
+    return notFound();
   }
   return notFound();
 };
-export const userReset = async (user) => {
-  const randomPasscode = Math.round(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
 
-  const userData = await getEmailUser(user);
-  if (userData === null) {
-    return createResponse(
-      helpers.StatusCodes.NOT_FOUND,
-      helpers.StatusMessages.NOT_FOUND
-    );
-  }
-  const encrypted = hashPassword(randomPasscode, user.email);
-  await setUserPasscode(userData._id, encrypted);
-  const link = `http://localhost:3300/v1/users/password-reset/${userData._id}/${encrypted}`;
-  await sendEmail(userData, "user-created", randomPasscode, link);
-  return createResponse(helpers.StatusCodes.OK, "email sent sucessfully");
-};
 export const userPermission = async (token) => {
   const data = await getRoleUsers(token);
   if (data) {
@@ -227,7 +232,38 @@ export const userPermission = async (token) => {
   );
 };
 
-export const resetPassword = async (userId, tokenId) => {};
+export const userReset = async (user) => {
+  const randomPasscode = Math.round(Math.random() * 10000)
+    .toString()
+    .padStart(4, "0");
+
+  const userData = await getEmailUser(user);
+  console.log(userData);
+  if (userData === null) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      "Invalid link or expired"
+    );
+  }
+  const hashPass = hashPassword(randomPasscode, user.email);
+  await setUserPasscode(userData._id, hashPass);
+  const link = `http://localhost:3300/v1/users/password-reset/${hashPass}`;
+  await sendEmail(userData, "user-created", randomPasscode, link);
+  return createResponse(helpers.StatusCodes.OK, "email sent sucessfully");
+};
+export const resetPassword = async (tokenId, pass) => {
+  const data = await getTokenUsers(tokenId);
+  if (data) {
+    const getuser = await getUserById(data.User);
+    const hashPass = hashPassword(pass.password);
+    getuser.password = hashPass;
+    const dd = await updatePass(getuser._id, getuser);
+    return createResponse(
+      helpers.StatusCodes.ACCEPTED,
+      "password reset sucessfully"
+    );
+  }
+};
 
 /**
  * @description page not found.
