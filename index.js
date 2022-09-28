@@ -69,6 +69,14 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json(response);
 });
 
+app.use("*", (req, res) => {
+  res.status(helpers.StatusCodes.NOT_FOUND).json({
+    success: false,
+    message: "routes " + helpers.StatusMessages.NOT_FOUND,
+    metadata: req["originalUrl"],
+  });
+});
+
 const server = app.listen(PORT, () => {
   console.log(`listening on http://localhost:${PORT}`);
   connectDB();

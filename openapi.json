@@ -193,6 +193,39 @@
             }
           }
         }
+      },
+      "406": {
+        "description": "Not Acceptable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "message": {
+                  "type": "string",
+                  "default": "Not Acceptable",
+                  "maxLength": 12
+                },
+                "metdata": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "format": "string",
+                      "default": "Invalid Respones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "schemas": {
@@ -1803,7 +1836,7 @@
                     "type": "boolean",
                     "format": "boolean",
                     "nullable": false,
-                    "default": 0,
+                    "default": false,
                     "description": "autoStart of the auctions"
                   },
                   "startDate": {
@@ -1925,6 +1958,9 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
+          "406": {
+            "$ref": "#/components/responses/406"
+          },
           "default": {
             "$ref": "#/components/responses/404"
           }
@@ -2040,7 +2076,7 @@
                             "type": "boolean",
                             "format": "boolean",
                             "nullable": false,
-                            "default": 0,
+                            "default": false,
                             "description": "autoStart of the auctions"
                           },
                           "startDate": {
@@ -2304,7 +2340,7 @@
                     "type": "boolean",
                     "format": "boolean",
                     "nullable": false,
-                    "default": 0,
+                    "default": false,
                     "description": "autoStart of the auctions"
                   },
                   "startDate": {
@@ -2529,7 +2565,7 @@
                           "type": "boolean",
                           "format": "boolean",
                           "nullable": false,
-                          "default": 0,
+                          "default": false,
                           "description": "autoStart of the auctions"
                         },
                         "startDate": {
@@ -2846,7 +2882,7 @@
                             "type": "boolean",
                             "format": "boolean",
                             "nullable": false,
-                            "default": 0,
+                            "default": false,
                             "description": "autoStart of the auctions"
                           },
                           "startDate": {
