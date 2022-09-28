@@ -20,7 +20,7 @@ export const addAuction = async (data) => {
   if (!valid) {
     return createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
-      "Put the valid Product ObjectID"
+      helpers.responseMessages.VALIDE_OBJECT_ID
     );
   }
 
@@ -29,7 +29,7 @@ export const addAuction = async (data) => {
   if (!isActive) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
-      "Product Id you send is not Active"
+      helpers.responseMessages.PRODUCT_OBJECT_ID
     );
   }
 
@@ -38,7 +38,7 @@ export const addAuction = async (data) => {
   if (!validAuctions) {
     return createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
-      "Put the valid Auction ObjectID"
+      helpers.responseMessages.VALID_OBJECT_ID
     );
   }
 
@@ -47,7 +47,7 @@ export const addAuction = async (data) => {
   if (!isActiveAuction) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
-      "Auctions you send is not Active"
+      helpers.responseMessages.PRODUCT_OBJECT_ID
     );
   }
 
@@ -58,7 +58,7 @@ export const addAuction = async (data) => {
         helpers.StatusMessages.NOT_ACCEPTABLE,
         {},
         {
-          error: "Invalid Response",
+          error: helpers.responseMessages.INVALID_RESPONSES,
         }
       );
     }
@@ -66,11 +66,14 @@ export const addAuction = async (data) => {
     if (!auction) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Auction Can't Added"
+        helpers.responseMessages.AUCTION_NOT_ADDED
       );
     }
 
-    return createResponse(helpers.StatusCodes.OK, "Auction Added");
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.AUCTION_ADDED
+    );
   }
 
   if (data.registerationStatus) {
@@ -80,7 +83,7 @@ export const addAuction = async (data) => {
         helpers.StatusMessages.NOT_ACCEPTABLE,
         {},
         {
-          error: "Invalid Response",
+          error: helpers.responseMessages.INVALID_RESPONSES,
         }
       );
     }
@@ -89,11 +92,14 @@ export const addAuction = async (data) => {
     if (!auction) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Auction Can't Added"
+        helpers.responseMessages.AUCTION_NOT_ADDED
       );
     }
 
-    return createResponse(helpers.StatusCodes.OK, "Auction Added");
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.AUCTION_ADDED
+    );
   }
 
   return createResponse(
@@ -101,7 +107,7 @@ export const addAuction = async (data) => {
     helpers.StatusMessages.NOT_ACCEPTABLE,
     {},
     {
-      error: "Invalid Response",
+      error: helpers.responseMessages.INVALID_RESPONSES,
     }
   );
 };
@@ -155,7 +161,7 @@ export const updateAuction = async (id, updated) => {
   if (!valid) {
     return createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
-      "Put the valid Product ObjectID"
+      helpers.responseMessages.NOT_VALID_OBJECTID
     );
   }
 
@@ -164,7 +170,7 @@ export const updateAuction = async (id, updated) => {
   if (!isActive) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
-      "Product Id you send is not Active"
+      helpers.responseMessages.PRODUCT_OBJECT_ID
     );
   }
 
@@ -173,7 +179,7 @@ export const updateAuction = async (id, updated) => {
   if (!validAuctions) {
     return createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
-      "Put the valid Auction ObjectID"
+      helpers.responseMessages.VALID_OBJECT_ID
     );
   }
 
@@ -182,7 +188,7 @@ export const updateAuction = async (id, updated) => {
   if (!isActiveAuction) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
-      "Auctions you send is not Active"
+      helpers.responseMessages.PRODUCT_OBJECT_ID
     );
   }
 
@@ -218,7 +224,10 @@ export const updateAuction = async (id, updated) => {
       );
     }
 
-    return createResponse(helpers.StatusCodes.OK, "Product Updated");
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.AUCTION_UPDATED
+    );
   }
 
   if (
@@ -237,7 +246,10 @@ export const updateAuction = async (id, updated) => {
       );
     }
 
-    return createResponse(helpers.StatusCodes.OK, "Auction Updated");
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.AUCTION_UPDATED
+    );
   }
 
   return createResponse(
@@ -245,7 +257,7 @@ export const updateAuction = async (id, updated) => {
     helpers.StatusMessages.NOT_ACCEPTABLE,
     {},
     {
-      error: "Invalid Response",
+      error: helpers.responseMessages.INVALID_RESPONSES,
     }
   );
 };
@@ -254,7 +266,10 @@ export const deleteAuction = async (id) => {
   const auctions = await softDelete(id);
 
   if (auctions) {
-    return createResponse(helpers.StatusCodes.OK, "Auction Deleted");
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.AUCTION_DELETED
+    );
   }
 
   return createResponse(
@@ -269,7 +284,7 @@ export const fetchAuctionById = async (id) => {
   if (auction.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "Get Single Auction",
+      helpers.responseMessages.SINGLE_AUCTION,
       auction
     );
   }
@@ -293,7 +308,7 @@ export const searchByQuery = async (query) => {
   if (searched) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "Get all Searched",
+      helpers.responseMessages.SEARCHED_AUCTION,
       auctions,
       {
         ...metadata,

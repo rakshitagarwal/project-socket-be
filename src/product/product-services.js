@@ -15,7 +15,10 @@ export const createProduct = async (product) => {
   const productMeta = await create(product);
 
   if (productMeta !== undefined) {
-    return createResponse(helpers.StatusCodes.CREATED, "Product Added");
+    return createResponse(
+      helpers.StatusCodes.CREATED,
+      helpers.responseMessages.PRODUCT_ADDED
+    );
   }
 
   return createResponse(
@@ -28,9 +31,9 @@ export const deleteProduct = async (id) => {
   if (!validateObjectId(id)) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST,
+      helpers.responseMessages.BAD_REQUEST,
       {
-        err: `Not Valid ObjectId you have sent ${id}`,
+        err: helpers.responseMessages.NOT_VALID_OBJECTID,
       }
     );
   }
@@ -41,12 +44,15 @@ export const deleteProduct = async (id) => {
     const metaData = await removeProduct(id);
 
     if (metaData) {
-      return createResponse(helpers.StatusCodes.OK, `Product Deleted`);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.PRODUCT_DELETED
+      );
     }
 
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST
+      helpers.responseMessages.BAD_REQUEST
     );
   }
 
@@ -60,9 +66,9 @@ export const updateProduct = async (id, product) => {
   if (!validateObjectId(id)) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST,
+      helpers.responseMessages.BAD_REQUEST,
       {
-        err: `Not Valid ObjectId you have sent ${id}`,
+        err: helpers.responseMessages.NOT_VALID_OBJECTID,
       }
     );
   }
@@ -72,7 +78,10 @@ export const updateProduct = async (id, product) => {
   if (productMeta) {
     const updateProduct = await update(id, product);
     if (updateProduct) {
-      return createResponse(helpers.StatusCodes.OK, `Product Updated`);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.PRODUCT_UPDATED
+      );
     }
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
@@ -92,7 +101,7 @@ export const fetchProduct = async (pages, limit) => {
   if (productMeta.products.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "All Products Fetched",
+      helpers.responseMessages.PRODUCT_FETCHED,
       productMeta.products,
       {
         limit: productMeta.limit,
@@ -119,9 +128,9 @@ export const getProduct = async (id) => {
   if (!validateObjectId(id)) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST,
+      helpers.responseMessages.BAD_REQUEST,
       {
-        err: `Not Valid ObjectId you have sent ${id}`,
+        err: helpers.responseMessages.NOT_VALID_OBJECTID,
       }
     );
   }
@@ -131,7 +140,7 @@ export const getProduct = async (id) => {
   if (products) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "fetched single product",
+      helpers.responseMessages.PRODUCT_SINGLE_FETCHED,
       products
     );
   }
@@ -148,7 +157,7 @@ export const getCategories = async () => {
   if (category.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "Fetch All Categories with types",
+      helpers.responseMessages.PRODUCT_CATEGORY_FETCHED,
       category
     );
   }
@@ -176,7 +185,7 @@ export const findProduct = async (query) => {
   if (searched.products.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "Searched Appeared",
+      helpers.responseMessages.PRODUCT_SEARCHED,
       products,
       {
         limits,

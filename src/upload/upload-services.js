@@ -6,7 +6,7 @@ export const add = async (origin, body, moduleName, file) => {
   if (body.image) {
     return createResponse(
       helpers.StatusCodes.OK,
-      `Image Uploaded ${helpers.StatusMessages.OK}`,
+      helpers.responseMessages.UPLOAD_IMAGE,
       {
         path: file.path,
         fileName: file.filename,
@@ -37,7 +37,7 @@ export const remove = async (query, path) => {
       }
       resolve({
         code: helpers.StatusCodes.OK,
-        message: "Files Deleted",
+        message: helpers.responseMessages.UPLOAD_IMAGE_DELETED,
       });
     });
   });
@@ -65,13 +65,18 @@ export const update = async (origin, query, body, file) => {
         reject(
           createResponse(
             helpers.StatusCodes.BAD_REQUEST,
-            "Error occurred while trying to remove file",
+            helpers.responseMessages.ERROR_OCCURED_FILES,
             {},
             err.stack
           )
         );
       }
-      resolve(createResponse(helpers.StatusCodes.OK, "File Deleted"));
+      resolve(
+        createResponse(
+          helpers.StatusCodes.OK,
+          helpers.responseMessages.UPLOAD_IMAGE_UPDATED
+        )
+      );
     });
   });
 
@@ -106,8 +111,12 @@ export const multiple = async (moduleName, files) => {
     filename.push(files[index].filename);
   }
 
-  return createResponse(helpers.StatusCodes.OK, "Multiple Images uploaded", {
-    path: path,
-    filenName: filename,
-  });
+  return createResponse(
+    helpers.StatusCodes.OK,
+    helpers.responseMessages.MULTIPLE_UPLOAD_IMAGE,
+    {
+      path: path,
+      filenName: filename,
+    }
+  );
 };
