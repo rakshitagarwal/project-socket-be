@@ -39,6 +39,10 @@ export const productCategory = new Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -198,6 +202,10 @@ export const productSchema = new Schema(
       required: true,
       default: 0,
     },
+    vendor: {
+      type: String,
+      required: true,
+    },
     status: {
       type: Boolean,
       required: true,
@@ -234,18 +242,36 @@ const auctionSchema = new Schema(
       required: true,
       default: 0,
     },
-    OpeningPrice: {
+    autoStart: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    openingPrice: {
       type: Number,
       required: true,
       default: 0,
     },
-    startTime: {
+    startDate: {
       type: Date,
       required: true,
     },
-    endTime: {
+    endDate: {
       type: Date,
       required: true,
+    },
+    bot: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    botMaxPrice: {
+      type: Number,
+      required: true,
+    },
+    registerationStatus: {
+      type: Boolean,
+      default: null,
     },
     quantity: {
       type: Number,
@@ -256,11 +282,16 @@ const auctionSchema = new Schema(
       type: Number,
       default: 0,
     },
-    status: {
+    state: {
       type: String,
       required: true,
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
+    },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     Product: {
       type: Schema.Types.ObjectId,
@@ -282,11 +313,36 @@ const auctionPreRegisterSchema = new Schema(
       type: Date,
       required: true,
     },
+    endDate: {
+      type: Date,
+      required: true,
+    },
     participantCount: {
       type: Number,
       required: true,
       default: 0,
     },
+    participantFees: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    Auction: {
+      type: Schema.Types.ObjectId,
+      ref: "Auction",
+      required: true,
+    },
+  },
+  schemaOptions
+);
+
+const auctionPostRegisterSchema = new Schema(
+  {
     participantFees: {
       type: Number,
       required: true,
@@ -435,4 +491,7 @@ export const model = {
   auctionCategory,
   userSchema,
   persistence,
+  auctionSchema,
+  auctionPreRegisterSchema,
+  auctionPostRegisterSchema,
 };

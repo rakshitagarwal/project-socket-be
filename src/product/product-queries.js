@@ -11,7 +11,10 @@ export const update = async (id, product) => {
 };
 
 export const getProductById = async (id) => {
-  const productMeta = await productModel.findById(id).where({ status: false });
+  const productMeta = await productModel
+    .findById(id)
+    .populate("ProductCategory", { name: 1, _id: 1 })
+    .where({ status: false });
   return productMeta;
 };
 
@@ -40,15 +43,64 @@ export const getProducts = async (pages, limit) => {
   const products = await productModel
     .find({ status: false })
     .limit(limit)
-    .skip(limit * pages);
+    .skip(limit * pages)
+    .populate("ProductCategory", { name: 1, _id: 0 })
+    .lean();
 
   return {
     products: products,
     pages: totalPages,
-    currentPage: pages,
     limit: limit,
+    currentPage: pages,
     recordCount: count,
   };
+};
+
+export const search = async (pages, limit, searchText) => {
+  const count = await productCount();
+  let totalPages;
+  if (count < limit) {
+    totalPages = 1;
+  } else {
+    totalPages = parseInt(count / limit);
+  }
+
+  if (searchText === "") {
+    const product = await getProducts(pages, limit);
+    return product;
+  } else {
+    const filtered = await productModel.find({
+      title: { $regex: `^${searchText}`, $options: "i" },
+      createdAt: {
+        $lte: new Date().toISOString(),
+      },
+      status: false,
+    });
+
+    totalPages = parseInt(filtered.length / limit);
+
+    const product = await productModel
+      .find({
+        title: { $regex: `^${searchText}`, $options: "i" },
+        createdAt: {
+          $lte: new Date().toISOString(),
+        },
+        status: false,
+      })
+      .limit(limit)
+      .skip(limit * pages)
+      .populate("ProductCategory", { name: 1, _id: 0 })
+      .lean();
+
+    return {
+      products: product,
+      pages: totalPages,
+      limit: limit,
+      currentPage: pages,
+      recordCount: filtered.length,
+      searchText: searchText,
+    };
+  }
 };
 
 export const getProductByTitle = async (title) => {
@@ -62,6 +114,31 @@ export const inActiveProductByTitle = async (title) => {
 };
 
 export const fetchAllCategory = async () => {
-  const categories = await productCategoryModel.find({ status: false }).lean();
+  const categories = await productCategoryModel
+    .find({ status: false })
+    .select({
+      _id: 1,
+      type: 1,
+      name: 1,
+    })
+    .lean();
   return categories;
+};
+
+export const validateStatus = async (id) => {
+  const isActive = await productModel
+    .findOne({ _id: id, status: false })
+    .select({ status: 1, _id: 0 })
+    .lean();
+
+  return isActive;
+};
+
+export const getCategoryById = async (id) => {
+  const isActive = await productCategoryModel
+    .findById(id)
+    .select({ status: 1, _id: 1 })
+    .lean();
+
+  return isActive;
 };

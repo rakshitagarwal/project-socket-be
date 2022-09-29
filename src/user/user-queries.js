@@ -83,7 +83,6 @@ export const findUserByEmail = async (email) => {
 };
 
 export const setUserPasscode = async (user_id, passcode) => {
-  console.log(user_id);
   const userToken = await Persistence.updateMany({
     where: { User: { equals: user_id } },
     passcode: passcode,
