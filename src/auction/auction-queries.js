@@ -34,7 +34,7 @@ export const create = async (data) => {
 
 export const fetchAuction = async (page, limit) => {
   let auctionData = [];
-  const count = await auctionModel.find({ status: false }).countDocuments();
+  const count = await auctionModel.find().countDocuments();
   let totalPages;
   if (count < limit) {
     totalPages = 1;
@@ -43,7 +43,7 @@ export const fetchAuction = async (page, limit) => {
   }
 
   const auctions = await auctionModel
-    .find({ status: false })
+    .find()
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })

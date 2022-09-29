@@ -32,7 +32,7 @@ export const productCount = async () => {
 };
 
 export const getProducts = async (pages, limit) => {
-  const count = await productCount();
+  const count = await productModel.countDocuments();
   let totalPages;
   if (count < limit) {
     totalPages = 1;
@@ -41,7 +41,7 @@ export const getProducts = async (pages, limit) => {
   }
 
   const products = await productModel
-    .find({ status: false })
+    .find()
     .limit(limit)
     .skip(limit * pages)
     .populate("ProductCategory", { name: 1, _id: 0 })

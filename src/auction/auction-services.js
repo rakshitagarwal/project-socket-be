@@ -113,8 +113,8 @@ export const addAuction = async (data) => {
 };
 
 export const getAuctions = async (query) => {
-  let page = parseInt(query.page) || 0;
-  let limit = parseInt(query.limit) || 5;
+  let page = parseInt(query.page);
+  let limit = parseInt(query.limit);
 
   const auctions = await fetchAuction(page, limit);
   let { auctionData, ...metadata } = auctions;
