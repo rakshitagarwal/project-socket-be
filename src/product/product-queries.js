@@ -133,3 +133,12 @@ export const validateStatus = async (id) => {
 
   return isActive;
 };
+
+export const getCategoryById = async (id) => {
+  const isActive = await productCategoryModel
+    .findById(id)
+    .select({ status: 1, _id: 1 })
+    .lean();
+
+  return isActive;
+};

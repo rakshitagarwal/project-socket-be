@@ -8,10 +8,37 @@ import {
   getProducts,
   fetchAllCategory,
   search,
+  getCategoryById,
 } from "./product-queries.js";
 import { validateObjectId } from "./../common/utilies.js";
 
 export const createProduct = async (product) => {
+  let { ProductCategory } = product;
+
+  const validId = validateObjectId(ProductCategory);
+
+  !validId &&
+    createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.StatusMessages.NOT_ACCEPTABLE,
+      {},
+      {
+        error: "check the ObjectID which is not valid",
+      }
+    );
+
+  const isActive = await getCategoryById(ProductCategory);
+
+  isActive &&
+    createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.StatusMessages.NOT_ACCEPTABLE,
+      {},
+      {
+        error: "check the ObjectID which is not valid",
+      }
+    );
+
   const productMeta = await create(product);
 
   if (productMeta !== undefined) {

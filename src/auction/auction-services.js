@@ -20,7 +20,7 @@ export const addAuction = async (data) => {
   if (!valid) {
     return createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
-      helpers.responseMessages.VALIDE_OBJECT_ID
+      helpers.responseMessages.VALID_OBJECT_ID
     );
   }
 

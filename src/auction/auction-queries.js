@@ -7,7 +7,7 @@ import {
 
 export const auctionCategories = async () => {
   const categories = await auctionCategory
-    .find()
+    .find({ status: false })
     .select({ _id: 1, name: 1 })
     .lean();
   return categories;
@@ -152,7 +152,14 @@ export const softDelete = async (id) => {
 };
 
 export const filterAuction = async (page, limit, state, status, category) => {
-  const count = await auctionModel.find({ status: false }).countDocuments();
+  const count = await auctionModel
+    .find({ state: state, status: status })
+    .limit(limit)
+    .skip(limit * page)
+    .populate("Product", { _id: 1, title: 1 })
+    .populate("AuctionCategory", { _id: 1, name: 1 }, { name: category })
+    .countDocuments();
+
   let totalPages;
   if (count < limit) {
     totalPages = 1;
