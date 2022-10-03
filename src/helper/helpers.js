@@ -136,7 +136,30 @@ const responseMessages = {
   USER_ALREADY_RESET_PASS: "you.have.already.reset.your.password",
   USER_INVALID_LINK: "Invalid.link.or.expired.",
   USER_LOGOUT: "logout.Successfully",
-  USER_LOGOUT_ALREADY:"logout.user"
+  USER_LOGOUT_ALREADY: "logout.user",
+  PRODUCT_ADDED: "product.added",
+  PRODUCT_DELETED: "product.deleted",
+  PRODUCT_UPDATED: "product.updated",
+  PRODUCT_FETCHED: "all.product.fetched",
+  PRODUCT_SINGLE_FETCHED: "fetched.single.product",
+  PRODUCT_CATEGORY_FETCHED: "all.category.fetched",
+  PRODUCT_SEARCHED: "searched.appeared",
+  UPLOAD_IMAGE: "files.uploaded",
+  UPLOAD_IMAGE_DELETED: "files.deleted",
+  UPLOAD_IMAGE_UPDATED: "file.updated",
+  MULTIPLE_UPLOAD_IMAGE: "multiple.images.uploaded",
+  BAD_REQUEST: "Bad.Request",
+  NOT_VALID_OBJECTID: "NOT.VALID.OBJECTID",
+  ERROR_OCCURED_FILES: "error.occured.file",
+  VALID_OBJECT_ID: "valid.objectid",
+  PRODUCT_OBJECT_ID: "valid.productid",
+  INVALID_RESPONSES: "invalid.responses",
+  AUCTION_NOT_ADDED: "auction.not.added",
+  AUCTION_ADDED: "auction.added",
+  AUCTION_UPDATED: "auction.updated",
+  AUCTION_DELETED: "auction.deleted",
+  SINGLE_AUCTION: "single.auction",
+  SEARCHED_AUCTION: "searched.auction",
 };
 const privilage = [
   {
@@ -160,6 +183,7 @@ const privilage = [
     accessNumber: 8,
   },
 ];
+
 const privilageRole = [
   {
     module: [
@@ -182,6 +206,7 @@ const privilageRole = [
     ],
   },
 ];
+
 const privilageRoleVan = [
   {
     module: [
@@ -207,14 +232,38 @@ const privilageRoleVan = [
 
 const roles = [{ name: "Admin" }, { name: "Vendor" }];
 
+/**
+ * @description Product Category Master with all fields
+ *
+ */
 const productCategory = [
   {
-    name: "mobile",
+    name: "Appliances",
+    type: "Physical",
     description:
       "three categories of mobile phones: basic phones, feature phones, and smartphones.",
   },
   {
-    name: "car",
+    name: "Cell Phones & Accessories",
+    type: "Digital",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+  {
+    name: "Handmade",
+    type: "Physical",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+  {
+    name: "Musical Instrument",
+    type: "Physical",
+    description:
+      "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
+  },
+  {
+    name: "Jewelry",
+    type: "Physical",
     description:
       "car body types: Hatchback, Sedan, SUV, MUV, Coupe, Convertible, and Pickup Truck.",
   },

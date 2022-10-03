@@ -7,13 +7,45 @@ import {
   removeProduct,
   getProducts,
   fetchAllCategory,
+  search,
+  getCategoryById,
 } from "./product-queries.js";
+import { validateObjectId } from "./../common/utilies.js";
 
 export const createProduct = async (product) => {
+  let { ProductCategory } = product;
+
+  const validId = validateObjectId(ProductCategory);
+
+  !validId &&
+    createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.StatusMessages.NOT_ACCEPTABLE,
+      {},
+      {
+        error: "check the ObjectID which is not valid",
+      }
+    );
+
+  const isActive = await getCategoryById(ProductCategory);
+
+  isActive &&
+    createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.StatusMessages.NOT_ACCEPTABLE,
+      {},
+      {
+        error: "check the ObjectID which is not valid",
+      }
+    );
+
   const productMeta = await create(product);
 
   if (productMeta !== undefined) {
-    return createResponse(helpers.StatusCodes.CREATED, "Product Added");
+    return createResponse(
+      helpers.StatusCodes.CREATED,
+      helpers.responseMessages.PRODUCT_ADDED
+    );
   }
 
   return createResponse(
@@ -23,18 +55,31 @@ export const createProduct = async (product) => {
 };
 
 export const deleteProduct = async (id) => {
+  if (!validateObjectId(id)) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.BAD_REQUEST,
+      {
+        err: helpers.responseMessages.NOT_VALID_OBJECTID,
+      }
+    );
+  }
+
   const productMeta = await getProductById(id);
 
   if (productMeta) {
     const metaData = await removeProduct(id);
 
     if (metaData) {
-      return createResponse(helpers.StatusCodes.OK, `Product Deleted`);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.PRODUCT_DELETED
+      );
     }
 
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST
+      helpers.responseMessages.BAD_REQUEST
     );
   }
 
@@ -45,12 +90,25 @@ export const deleteProduct = async (id) => {
 };
 
 export const updateProduct = async (id, product) => {
+  if (!validateObjectId(id)) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.BAD_REQUEST,
+      {
+        err: helpers.responseMessages.NOT_VALID_OBJECTID,
+      }
+    );
+  }
+
   const productMeta = await getProductById(id);
 
   if (productMeta) {
     const updateProduct = await update(id, product);
     if (updateProduct) {
-      return createResponse(helpers.StatusCodes.OK, `Product Updated`);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.PRODUCT_UPDATED
+      );
     }
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
@@ -70,7 +128,7 @@ export const fetchProduct = async (pages, limit) => {
   if (productMeta.products.length > 0) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "All Products Fetched",
+      helpers.responseMessages.PRODUCT_FETCHED,
       productMeta.products,
       {
         limit: productMeta.limit,
@@ -94,12 +152,22 @@ export const fetchProduct = async (pages, limit) => {
 };
 
 export const getProduct = async (id) => {
+  if (!validateObjectId(id)) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.BAD_REQUEST,
+      {
+        err: helpers.responseMessages.NOT_VALID_OBJECTID,
+      }
+    );
+  }
+
   const products = await getProductById(id);
 
   if (products) {
     return createResponse(
       helpers.StatusCodes.OK,
-      "fetched single product",
+      helpers.responseMessages.PRODUCT_SINGLE_FETCHED,
       products
     );
   }
@@ -114,11 +182,58 @@ export const getCategories = async () => {
   const category = await fetchAllCategory();
 
   if (category.length > 0) {
-    return createResponse(helpers.StatusCodes.OK, category);
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.PRODUCT_CATEGORY_FETCHED,
+      category
+    );
   }
 
   return createResponse(
     helpers.StatusCodes.NOT_FOUND,
     helpers.StatusMessages.NOT_FOUND
+  );
+};
+
+export const findProduct = async (query) => {
+  const page = parseInt(query.page) || 0;
+  const limit = parseInt(query.limit) || 5;
+  const searchText = query.searchText || "";
+
+  const searched = await search(page, limit, searchText);
+  let {
+    currentPage,
+    limit: limits,
+    pages,
+    products,
+    recordCount,
+    searchText: text,
+  } = searched;
+  if (searched.products.length > 0) {
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.PRODUCT_SEARCHED,
+      products,
+      {
+        limits,
+        pages,
+        currentPage,
+        recordCount,
+        text,
+      }
+    );
+  }
+
+  return createResponse(
+    helpers.StatusCodes.NOT_FOUND,
+    helpers.StatusMessages.NOT_FOUND,
+    {},
+    {
+      limits,
+      currentPage,
+      text,
+      recordCount,
+      pages,
+    }
   );
 };

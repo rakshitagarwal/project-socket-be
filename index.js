@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
-app.use(express.static(env.FILE_STORAGE_PATH));
+app.use("/assets/uploads", express.static(env.FILE_STORAGE_PATH));
 
 // language configurations
 i18n.configure({
@@ -67,6 +67,14 @@ app.use((err, req, res, next) => {
     }
   );
   res.status(statusCode).json(response);
+});
+
+app.use("*", (req, res) => {
+  res.status(helpers.StatusCodes.NOT_FOUND).json({
+    success: false,
+    message: "routes " + helpers.StatusMessages.NOT_FOUND,
+    metadata: req["originalUrl"],
+  });
 });
 
 const server = app.listen(PORT, () => {

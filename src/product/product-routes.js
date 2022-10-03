@@ -6,25 +6,40 @@ import {
   update,
   selectProduct,
   selectCategories,
+  searchProduct,
 } from "./product-handlers.js";
 import {
   idSchema,
   paginationSchema,
   productSchema,
+  searchSchema,
+  updateProductSchema,
 } from "./../common/validationSchemas.js";
-import { uploadFile } from "../common/utilies.js";
 import { validateSchema } from "../middleware/validate.js";
 
 export const productRouter = Router();
 
 productRouter
   .get("/category/", selectCategories)
+  .get("/search/", validateSchema.query(searchSchema), searchProduct)
   .post("/", [validateSchema.body(productSchema)], add)
-  .delete("/:id", validateSchema.params(idSchema), remove)
+  .delete(
+    "/:id",
+    [validateSchema.objectId, validateSchema.params(idSchema)],
+    remove
+  )
   .put(
     "/:id",
-    [validateSchema.params(idSchema), validateSchema.body(productSchema)],
+    [
+      validateSchema.objectId,
+      validateSchema.params(idSchema),
+      validateSchema.body(updateProductSchema),
+    ],
     update
   )
-  .get("/:id", validateSchema.params(idSchema), selectProduct)
+  .get(
+    "/:id",
+    [validateSchema.objectId, validateSchema.params(idSchema)],
+    selectProduct
+  )
   .get("/", validateSchema.query(paginationSchema), select);
