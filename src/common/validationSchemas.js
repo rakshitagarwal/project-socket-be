@@ -3,12 +3,6 @@ import Joi from "joi";
 const price = Joi.number();
 const module = Joi.string();
 const path = Joi.string();
-const fullName = Joi.string();
-const email = Joi.string();
-const password = Joi.string();
-const role = Joi.string();
-const page = Joi.number();
-const limit = Joi.number();
 
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
@@ -195,14 +189,6 @@ export const updateProductSchema = Joi.object({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),
-  vendor: Joi.string().max(20).required().messages({
-    required_error: "title must be present in responses",
-    validate_error: "title must be a string in responses",
-  }),
-  status: Joi.boolean().required().default(false).messages({
-    required_error: "title must be present in responses",
-    validate_error: "title must be a string in responses",
-  }),
   ProductCategory: Joi.string().required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
@@ -213,10 +199,10 @@ export const updateProductSchema = Joi.object({
  * @description scheams for checking the query parmas for pagination
  */
 export const paginationSchema = Joi.object({
-  page: page.messages({
+  page: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
-  limit: limit.messages({
+  limit: Joi.number().messages({
     invalid_type_error: "Invalid limits number not allowed in params",
   }),
 });
@@ -225,10 +211,10 @@ export const paginationSchema = Joi.object({
  * @description schemas for checking the query params for searching
  */
 export const searchSchema = Joi.object({
-  page: page.messages({
+  page: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
-  limit: page.messages({
+  limit: Joi.number().messages({
     invalid_type_error: "Invalid limit number not allowed in params",
   }),
   searchText: Joi.string().max(20).messages({
@@ -237,10 +223,10 @@ export const searchSchema = Joi.object({
 });
 
 export const auctionSearchSchema = Joi.object({
-  page: page.messages({
+  page: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
-  limit: limit.messages({
+  limit: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
   state: Joi.string().required().messages({
@@ -253,12 +239,42 @@ export const auctionSearchSchema = Joi.object({
     invalid_type_error: "Invalid type number not allowed in params",
   }),
 });
+const firstname = Joi.string().max(50);
+const lastname = Joi.string().max(50);
+const email = Joi.string().email();
+const password = Joi.string();
+const zip = Joi.number();
+const country = Joi.string();
+const gender = Joi.string().min(4).max(6).optional().allow("");
+const age = Joi.number().optional().allow();
+const mobile = Joi.number().optional().allow(null);
+const profession = Joi.string().optional().allow("");
+const role = Joi.string();
 
-export const registerSchema = Joi.object({
-  fullName: fullName.required(),
+export const userSchema = Joi.object({
+  firstname: firstname.required(),
+  lastname: lastname.required(),
   email: email.required(),
-  password: password.required(),
+  password: password.allow("").optional(),
+  zip: zip.required(),
+  country: country.required(),
+  gender: gender,
+  age: age,
+  mobile: mobile,
+  profession: profession,
   Role: role.required(),
+});
+
+export const userUpdateSchema = Joi.object({
+  firstname: firstname.required(),
+  lastname: lastname.required(),
+  email: Joi.string().optional().allow(""),
+  zip: zip.required(),
+  country: country.required(),
+  gender: gender,
+  age: age,
+  mobile: mobile,
+  profession: profession,
 });
 
 export const loginSchema = Joi.object({

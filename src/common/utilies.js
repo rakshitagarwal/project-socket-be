@@ -280,11 +280,8 @@ export const hashPassword = (data) => {
  * @returns  return data
  */
 export const convertToSpecificLang = function (data, res) {
-  if (typeof data.response.message === "string")
-    data.response.message = res.__(data.response.message);
-  return data;
-};
-
-export const idCheck = (id) => {
-  return id.match(/^[0-9a-fA-F]{24}$/);
+  if (typeof data.message === "string") {
+    data.message = res.__(data.message);
+    return data;
+  }
 };
