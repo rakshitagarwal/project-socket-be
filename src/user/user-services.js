@@ -99,33 +99,31 @@ export const createUser = async (user) => {
     if (userRoleId) {
       user.Role = userRoleId;
       const usersMeta = await create(user);
-      if (usersMeta) {
-        if (usersMeta.password === undefined) {
-          const randomPasscode = Math.round(Math.random() * 10000)
-            .toString()
-            .padStart(4, "0");
-          const hashPass = hashPassword(randomPasscode, user.email);
-          const data = await setUserPasscode(usersMeta._id, hashPass);
-          const passCodeUser = await getUserById(data._id);
-          if (!passCodeUser.verified) {
-            const link = passCodeUser.passcode;
-            await sendEmail(data, "user-created", randomPasscode, link);
-            return createResponse(
-              helpers.StatusCodes.CREATED,
-              helpers.responseMessages.USER_CHECK_EMAIL_PASS
-            );
-          }
+      if (!usersMeta.password) {
+        const randomPasscode = Math.round(Math.random() * 10000)
+          .toString()
+          .padStart(4, "0");
+        const hashPass = hashPassword(randomPasscode, user.email);
+        const data = await setUserPasscode(usersMeta._id, hashPass);
+        const passCodeUser = await getUserById(data._id);
+        if (!passCodeUser.verified) {
+          const link = passCodeUser.passcode;
+          await sendEmail(data, "user-created", randomPasscode, link);
+          return createResponse(
+            helpers.StatusCodes.CREATED,
+            helpers.responseMessages.USER_CHECK_EMAIL_PASS
+          );
         }
-        return createResponse(
-          helpers.StatusCodes.CREATED,
-          helpers.responseMessages.USER_REGISTER_CREATED_SUCC
-        );
       }
       return createResponse(
-        helpers.StatusCodes.UNAUTHORIZED,
-        helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+        helpers.StatusCodes.CREATED,
+        helpers.responseMessages.USER_REGISTER_CREATED_SUCC
       );
     }
+    return createResponse(
+      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+    );
   }
 };
 
@@ -161,7 +159,6 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
   if (userId) {
-    // const getuser = awaits getUserById(id);
     const getuser = await getUserUpdateById(id);
     if (getuser) {
       const updateUser = await update(id, userdata);
@@ -227,6 +224,7 @@ export const getUser = async (page, limit, userid) => {
 
 export const userPermission = async (token) => {
   const data = await getRoleUsers(token);
+  console.log("::::>>>", data);
   if (data) {
     const getRoleId = await getUserByIdRole(data);
     const getuser = await getUserUpdateById(getRoleId.User);
@@ -281,6 +279,7 @@ export const userForget = async (user) => {
 };
 export const userSetpassword = async (tokenId, pass) => {
   const data = await getTokenUsers(tokenId.passcode);
+  console.log("::::>>>", data);
   if (data) {
     const hashPass = hashPassword(pass.password);
     data.password = hashPass;
@@ -306,6 +305,7 @@ export const resetPassword = async (tokenId, pass) => {
     dataUser.forEach((data) => {
       arr.push(data._id);
     });
+
     await removeTokenUser(arr);
     if (data && data.passcode !== null) {
       const hashPass = hashPassword(pass.password);
@@ -326,8 +326,9 @@ export const resetPassword = async (tokenId, pass) => {
   return notFound();
 };
 export const logOut = async (jwttoken) => {
-  if (jwttoken && typeof jwttoken === "string") {
+  if (jwttoken) {
     const dataId = await getJwtTokenUsers(jwttoken);
+    console.log(":::>>>>", dataId);
     if (dataId) {
       await getTokenRemoveByIdUser(dataId[0]._id);
       return createResponse(

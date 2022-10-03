@@ -18,7 +18,7 @@ export const getEmailUser = async (user) => {
 export const getEmailUsers = async (user) => {
   const emailUser = await UserModel.findOne({
     email: user,
-    verified: true,
+    verified: false,
     status: false,
   })
     .lean()
@@ -29,7 +29,7 @@ export const getRoleUser = async (user) => {
   const roleId = await UseRole.findOne({ name: user }).select({
     _id: 1,
   });
-  if (roleId === null) {
+  if (!roleId) {
     return false;
   }
   return roleId._id;
@@ -95,7 +95,7 @@ export const getRoleUsers = async (token) => {
   const roleId = await Persistence.findOne({ accessToken: token }).select({
     _id: 1,
   });
-  if (roleId === null) {
+  if (!roleId) {
     return false;
   }
   return roleId._id;
@@ -124,7 +124,7 @@ export const getTokenUsers = async (data) => {
     passcode: data,
     verified: false,
   });
-  if (roleId === null) {
+  if (!roleId) {
     return false;
   }
   return roleId;
@@ -134,22 +134,15 @@ export const getPasscodeUsers = async (data) => {
     passcode: data,
     status: false,
   });
-  if (roleId === null) {
+  if (!roleId) {
     return false;
   }
   return roleId;
 };
 
-export const getTokenUserss = async (data) => {
-  const roleId = await Persistence.findOne({ passcode: data.token });
-  if (roleId === null) {
-    return false;
-  }
-  return roleId;
-};
 export const removeTokenUser = async (data) => {
   const roleId = await Persistence.remove({ _id: data });
-  if (roleId === null) {
+  if (!roleId) {
     return false;
   }
   return roleId;
@@ -157,9 +150,6 @@ export const removeTokenUser = async (data) => {
 
 export const getPersistenaceUsers = async (data) => {
   const roleId = await Persistence.find({ Role: data });
-  if (roleId === null) {
-    return false;
-  }
   return roleId;
 };
 export const getJwtTokenUsers = async (data) => {
