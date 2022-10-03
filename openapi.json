@@ -668,6 +668,11 @@
                     "default": false,
                     "nullable": false
                   },
+                  "vendor": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
                   "quantity": {
                     "type": "number",
                     "format": "number",
@@ -778,8 +783,7 @@
             "name": "limit",
             "schema": {
               "type": "number",
-              "format": "Int32",
-              "default": 5
+              "format": "Int32"
             }
           },
           {
@@ -787,16 +791,24 @@
             "name": "page",
             "schema": {
               "type": "number",
-              "format": "Int32",
-              "default": 0
+              "format": "Int32"
             }
           },
           {
             "in": "query",
-            "name": "searchText",
+            "name": "type",
             "schema": {
               "type": "string",
-              "format": "Int32",
+              "format": "string",
+              "default": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string",
+              "format": "string",
               "default": ""
             }
           }

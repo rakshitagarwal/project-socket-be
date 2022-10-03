@@ -34,7 +34,7 @@ export const create = async (data) => {
 
 export const fetchAuction = async (page, limit) => {
   let auctionData = [];
-  const count = await auctionModel.find().countDocuments();
+  const count = await auctionModel.find({ IsDeleted: false }).countDocuments();
   let totalPages;
   if (count < limit) {
     totalPages = 1;
@@ -43,7 +43,7 @@ export const fetchAuction = async (page, limit) => {
   }
 
   const auctions = await auctionModel
-    .find()
+    .find({ IsDeleted: false })
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })
@@ -84,7 +84,7 @@ export const fetchAuction = async (page, limit) => {
 export const getAuctionById = async (id) => {
   const auction = await auctionModel
     .findById(id)
-    .find({ status: false })
+    .find({ IsDeleted: false })
     .populate("Product", { _id: 1, title: 1 })
     .populate("AuctionCategory", { _id: 1, name: 1 })
     .lean();
@@ -126,7 +126,11 @@ export const putAuction = async (id, data, pre, post) => {
     return auction;
   }
 
-  const updatedAuction = await auctionModel.findByIdAndUpdate(id, auction);
+  const updatedAuction = await auctionModel.findByIdAndUpdate(id, {
+    ...data,
+    auctionPreRegister: pre,
+    auctionPostRegister: post,
+  });
   const preAuction = await auctionPreModel.findOneAndUpdate(
     { Auction: id },
     pre
@@ -144,7 +148,7 @@ export const putAuction = async (id, data, pre, post) => {
 };
 
 export const softDelete = async (id) => {
-  const auction = await auctionModel.findByIdAndUpdate(id, { status: true });
+  const auction = await auctionModel.findByIdAndUpdate(id, { IsDeleted: true });
   await auctionPostModel.findOneAndUpdate({ Auction: id }, { status: true });
   await auctionPreModel.findOneAndUpdate({ Auction: id }, { status: true });
 
@@ -153,7 +157,7 @@ export const softDelete = async (id) => {
 
 export const filterAuction = async (page, limit, state, status, category) => {
   const count = await auctionModel
-    .find({ state: state, status: status })
+    .find({ state: state, status: status, IsDeleted: false })
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })

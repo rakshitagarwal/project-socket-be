@@ -13,7 +13,6 @@ import {
   paginationSchema,
   productSchema,
   searchSchema,
-  updateProductSchema,
 } from "./../common/validationSchemas.js";
 import { validateSchema } from "../middleware/validate.js";
 
@@ -33,7 +32,7 @@ productRouter
     [
       validateSchema.objectId,
       validateSchema.params(idSchema),
-      validateSchema.body(updateProductSchema),
+      validateSchema.body(productSchema),
     ],
     update
   )

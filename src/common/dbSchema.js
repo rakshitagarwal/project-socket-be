@@ -211,6 +211,10 @@ export const productSchema = new Schema(
       required: true,
       default: false,
     },
+    IsDeleted: {
+      type: Boolean,
+      default: false,
+    },
     ProductCategory: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -291,6 +295,10 @@ const auctionSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
+      default: false,
+    },
+    IsDeleted: {
+      type: Boolean,
       default: false,
     },
     Product: {
@@ -472,7 +480,7 @@ export const persistence = new Schema({
     type: String,
     require: true,
   },
-  passcode:{
+  passcode: {
     type: String,
     require: true,
   },

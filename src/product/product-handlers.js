@@ -20,6 +20,7 @@ export const remove = async (req, res) => {
 
 export const update = async (req, res) => {
   let updateProductData = req.body;
+
   if (req.file) {
     updateProductData = { ...req?.body, image: req.file.path };
   }
