@@ -196,11 +196,15 @@ export const getCategories = async () => {
 };
 
 export const findProduct = async (query) => {
-  const page = parseInt(query.page) || 0;
-  const limit = parseInt(query.limit) || 5;
-  const searchText = query.searchText || "";
+  const { category, type, page, limit } = query;
 
-  const searched = await search(page, limit, searchText);
+  const searched = await search(
+    parseInt(page),
+    parseInt(limit),
+    category,
+    type
+  );
+
   let {
     currentPage,
     limit: limits,
