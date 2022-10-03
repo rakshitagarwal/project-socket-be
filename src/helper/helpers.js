@@ -128,7 +128,15 @@ const responseMessages = {
   USER_GET_ID: "fetched.single.user",
   USER_GET_ALL: "all.user.show",
   USER_PERMISSION_ALLOW: "user.permission.allow",
-  USER_INVALID_ID:"invalid.user.id"
+  USER_INVALID_ID: "invalid.user.id",
+  USER_CHECK_EMAIL_PASS: "please.check.your.email.then.set.your.password",
+  USER_SET_PASS_SUCESSFULL: "user.set.the.password.sucessfully",
+  USER_ALREADY_USES: "you.have.already.uses",
+  USER_RESET_SUCESSFULL: "password.reset.sucessfully",
+  USER_ALREADY_RESET_PASS: "you.have.already.reset.your.password",
+  USER_INVALID_LINK: "Invalid.link.or.expired.",
+  USER_LOGOUT: "logout.Successfully",
+  USER_LOGOUT_ALREADY:"logout.user"
 };
 const privilage = [
   {

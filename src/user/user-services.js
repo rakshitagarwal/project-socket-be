@@ -7,12 +7,19 @@ import {
   getAllUser,
   getEmailUser,
   persistence,
-  findUserByEmail,
   setUserPasscode,
   getRoleUsers,
   getUserByIdRole,
   getTokenUsers,
   updatePass,
+  getPasscodeUsers,
+  removeTokenUser,
+  getPersistenaceUsers,
+  getJwtTokenUsers,
+  getTokenRemoveByIdUser,
+  getResetUserById,
+  getEmailUsers,
+  getUserUpdateById,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -20,7 +27,6 @@ import {
   createResponse,
   generateAccessToken,
   sendEmail,
-  verifyJwtToken,
   validateObjectId,
 } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
@@ -31,8 +37,7 @@ import { getPrivilagesForRole } from "../roles/role-queries.js";
  * @param user user's request object
  */
 export const checkCredentials = async function (user) {
-  const emailCheck = await getEmailUser(user);
-
+  const emailCheck = await getEmailUser(user.email);
   if (!emailCheck) {
     return createResponse(
       helpers.StatusCodes.UNAUTHORIZED,
@@ -78,8 +83,7 @@ export const checkCredentials = async function (user) {
  * @param user - user registration's request body
  */
 export const createUser = async (user) => {
-  const emailCheck = await getEmailUser(user);
-  console.log(":::>>>>", user);
+  const emailCheck = await getEmailUsers(user.email);
   const { password, ...userdata } = user;
   if (password) {
     user.password = hashPassword(user.password);
@@ -95,15 +99,28 @@ export const createUser = async (user) => {
     if (userRoleId) {
       user.Role = userRoleId;
       const usersMeta = await create(user);
-
       if (usersMeta) {
+        if (usersMeta.password === undefined) {
+          const randomPasscode = Math.round(Math.random() * 10000)
+            .toString()
+            .padStart(4, "0");
+          const hashPass = hashPassword(randomPasscode, user.email);
+          const data = await setUserPasscode(usersMeta._id, hashPass);
+          const passCodeUser = await getUserById(data._id);
+          if (!passCodeUser.verified) {
+            const link = passCodeUser.passcode;
+            await sendEmail(data, "user-created", randomPasscode, link);
+            return createResponse(
+              helpers.StatusCodes.CREATED,
+              helpers.responseMessages.USER_CHECK_EMAIL_PASS
+            );
+          }
+        }
         return createResponse(
           helpers.StatusCodes.CREATED,
-          helpers.responseMessages.USER_REGISTER_CREATED_SUCC,
-          usersMeta
+          helpers.responseMessages.USER_REGISTER_CREATED_SUCC
         );
       }
-    } else {
       return createResponse(
         helpers.StatusCodes.UNAUTHORIZED,
         helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
@@ -144,8 +161,9 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
   if (userId) {
-    const getuser = await getUserById(id);
-    if (getuser?.status) {
+    // const getuser = awaits getUserById(id);
+    const getuser = await getUserUpdateById(id);
+    if (getuser) {
       const updateUser = await update(id, userdata);
       const { password, email, Role, ...userData } = getuser;
       if (updateUser) {
@@ -173,16 +191,19 @@ export const getUser = async (page, limit, userid) => {
     const userInfo = [];
     const userMeta =
       userid.length > 0
-        ? await getUserById(userid)
+        ? await getUserUpdateById(userid)
         : await getAllUser(page, limit);
+    const { passcode, password, createdAt, ...getuserInfo } = userMeta;
     if (userMeta !== undefined) {
       !userid
         ? userMeta.users.forEach((element) => {
             delete element.Role;
+            delete element.passcode;
             delete element.password;
+            delete element.createdAt;
             userInfo.push(element);
           })
-        : userInfo.push(userMeta);
+        : userInfo.push(getuserInfo);
       if (userInfo && userMeta !== null) {
         return createResponse(
           helpers.StatusCodes.OK,
@@ -208,7 +229,7 @@ export const userPermission = async (token) => {
   const data = await getRoleUsers(token);
   if (data) {
     const getRoleId = await getUserByIdRole(data);
-    const getuser = await getUserById(getRoleId.User);
+    const getuser = await getUserUpdateById(getRoleId.User);
     const getPrivilageRole = await getPrivilagesForRole(getuser.Role);
     let permission = [];
     getPrivilageRole.module.forEach((element) => {
@@ -232,36 +253,94 @@ export const userPermission = async (token) => {
   );
 };
 
-export const userReset = async (user) => {
+export const userForget = async (user) => {
   const randomPasscode = Math.round(Math.random() * 10000)
     .toString()
     .padStart(4, "0");
 
-  const userData = await getEmailUser(user);
-  console.log(userData);
+  const userData = await getEmailUser(user.email);
+
   if (userData === null) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      "Invalid link or expired"
+      helpers.responseMessages.USER_INVALID_LINK
     );
   }
   const hashPass = hashPassword(randomPasscode, user.email);
-  await setUserPasscode(userData._id, hashPass);
-  const link = `http://localhost:3300/v1/users/password-reset/${hashPass}`;
-  await sendEmail(userData, "user-created", randomPasscode, link);
-  return createResponse(helpers.StatusCodes.OK, "email sent sucessfully");
+  const passCodeUser = await setUserPasscode(userData._id, hashPass);
+  const userId = await getResetUserById(userData._id);
+  if (userId) {
+    const link = userId.passcode;
+    await sendEmail(userData, "user-forget", randomPasscode, link);
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.USER_CHECK_EMAIL_PASS
+    );
+  }
+  return notFound();
+};
+export const userSetpassword = async (tokenId, pass) => {
+  const data = await getTokenUsers(tokenId.passcode);
+  if (data) {
+    const hashPass = hashPassword(pass.password);
+    data.password = hashPass;
+    data.verified = true;
+    const checkUser = await updatePass(data._id, data);
+    if (checkUser) {
+      return createResponse(
+        helpers.StatusCodes.ACCEPTED,
+        helpers.responseMessages.USER_SET_PASS_SUCESSFULL
+      );
+    }
+  }
+  return createResponse(
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.responseMessages.USER_ALREADY_USES
+  );
 };
 export const resetPassword = async (tokenId, pass) => {
-  const data = await getTokenUsers(tokenId);
-  if (data) {
-    const getuser = await getUserById(data.User);
-    const hashPass = hashPassword(pass.password);
-    getuser.password = hashPass;
-    const dd = await updatePass(getuser._id, getuser);
+  const data = await getPasscodeUsers(tokenId.passcode);
+  if (tokenId) {
+    const dataUser = await getPersistenaceUsers(data._id);
+    const arr = [];
+    dataUser.forEach((data) => {
+      arr.push(data._id);
+    });
+    await removeTokenUser(arr);
+    if (data && data.passcode !== null) {
+      const hashPass = hashPassword(pass.password);
+      data.password = hashPass;
+      data.flag = true;
+      data.passcode = null;
+      const userUpdate = await updatePass(data._id, data);
+      return createResponse(
+        helpers.StatusCodes.ACCEPTED,
+        helpers.responseMessages.USER_RESET_SUCESSFULL
+      );
+    }
     return createResponse(
-      helpers.StatusCodes.ACCEPTED,
-      "password reset sucessfully"
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.USER_ALREADY_USES
     );
+  }
+  return notFound();
+};
+export const logOut = async (jwttoken) => {
+  if (jwttoken && typeof jwttoken === "string") {
+    const dataId = await getJwtTokenUsers(jwttoken);
+    if (dataId) {
+      await getTokenRemoveByIdUser(dataId[0]._id);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.USER_LOGOUT
+      );
+    }
+    return createResponse(
+      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.responseMessages.USER_LOGOUT_ALREADY
+    );
+  } else if (jwttoken == undefined) {
+    return notFound();
   }
 };
 

@@ -1177,6 +1177,82 @@
       }
     }
     },
+    "/users/set-password/{passcode}":{
+      "post": { 
+        "tags": ["Users"],
+        "description": "set password for user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
+          },
+          {
+            "in": "path",
+            "name": "passcode",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": { 
+                  "password": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " password of the user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful User Added the Password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
     "/users/login":{
       "post": { 
         "tags": ["Users"],
@@ -1243,6 +1319,202 @@
             "$ref": "#/components/responses/400"
           },
           "401": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/users/logout":{
+      "post": { 
+        "tags": ["Users"],
+        "description": "User Logout",
+        "security": [ { "bearerAuth": [
+          "Authorization","header","apiKey","JWT Authorization header"
+        ] } ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful User Logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/users/forget-password":{
+      "post": { 
+        "tags": ["Users"],
+        "description": "User forget password",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " email of the user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful User Reset password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "default": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/users/password-reset/{passcode}":{
+      "post": { 
+        "tags": ["Users"],
+        "description": "reset password for user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema":{
+              "type": "string",
+              "default" :"Language [ en, fr ,de]",
+              "example":"en"
+            }
+          },
+          {
+            "in": "path",
+            "name": "passcode",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": { 
+                  "password": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " password of the user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "reset User Added the Password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
             "$ref": "#/components/responses/400"
           },
           "500": {

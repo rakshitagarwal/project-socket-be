@@ -13,7 +13,18 @@
 	"Unauthorized": "Unauthorized",
 	"all.user.show": "all.user.show",
 	"invalid.user.id": "Invalid User Id",
+	"please.check.your.email.then.set.your.password": "please check your email and then set your password",
+	"user.set.the.password.sucessfully": "user set the password sucessfully",
 	"you have already register this email.": "you have already register this email.",
-	"you have already registered this email. so you uses another email.": "you have already registered this email. so you uses another email.",
-
+	"User set the password sucessfully": "User set the password sucessfully",
+	"you.have.already.uses": "You already used this link.",
+	"password.reset.sucessfully": "password reset sucessfully",
+	"you.have.already.reset.your.password": "you have already reset your password",
+	"Invalid.link.or.expired.": " please regiser your email or Invalid link or expired",
+	"email sent sucessfully": "email sent sucessfully",
+	"email your sent sucessfully": "email your sent sucessfully",
+	"you have already logout": "you have already logout",
+	"you please check your authorized token": "you please check your authorized token",
+	"logout.Successfully":"logout Successfully",
+	"logout.user":"Invalid user logout"
 }
