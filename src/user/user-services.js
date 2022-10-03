@@ -224,7 +224,6 @@ export const getUser = async (page, limit, userid) => {
 
 export const userPermission = async (token) => {
   const data = await getRoleUsers(token);
-  console.log("::::>>>", data);
   if (data) {
     const getRoleId = await getUserByIdRole(data);
     const getuser = await getUserUpdateById(getRoleId.User);
@@ -279,7 +278,6 @@ export const userForget = async (user) => {
 };
 export const userSetpassword = async (tokenId, pass) => {
   const data = await getTokenUsers(tokenId.passcode);
-  console.log("::::>>>", data);
   if (data) {
     const hashPass = hashPassword(pass.password);
     data.password = hashPass;
@@ -328,7 +326,6 @@ export const resetPassword = async (tokenId, pass) => {
 export const logOut = async (jwttoken) => {
   if (jwttoken) {
     const dataId = await getJwtTokenUsers(jwttoken);
-    console.log(":::>>>>", dataId);
     if (dataId) {
       await getTokenRemoveByIdUser(dataId[0]._id);
       return createResponse(
