@@ -6,12 +6,8 @@ const boolean = Joi.boolean();
 const date = Joi.date();
 
 const price = Joi.number();
-const fullName = Joi.string();
-const email = Joi.string();
-const password = Joi.string();
-const role = Joi.string();
-const page = Joi.number();
-const limit = Joi.number();
+const module = Joi.string();
+const path = Joi.string();
 
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
@@ -172,7 +168,31 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  ProductCategory: string.required().messages({
+  image: Joi.string().required().messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  description: Joi.string().max(1000).required().messages({
+    required_error: "description must be present in responses",
+    validate_error: "description must be a string in responses",
+  }),
+  purchasePrice: price.integer().min(20).required().messages({
+    required_error: "purchasePrice must be present in responses",
+    validate_error: "purchasePrice must be a number in responses",
+  }),
+  sellingPrice: price.integer().min(20).required().messages({
+    required_error: "sellingPrice must be present in responses",
+    validate_error: "sellingPrice must be a number in responses",
+  }),
+  overHeadCost: price.integer().min(20).required().messages({
+    required_error: "overHeadCost must be present in responses",
+    validate_error: "overHeadCost must be a number in responses",
+  }),
+  quantity: price.integer().max(20).required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a number in responses",
+  }),
+  ProductCategory: Joi.string().required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
   }),
@@ -182,10 +202,10 @@ export const productSchema = Joi.object({
  * @description scheams for checking the query parmas for pagination
  */
 export const paginationSchema = Joi.object({
-  page: page.messages({
+  page: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
-  limit: limit.messages({
+  limit: Joi.number().messages({
     invalid_type_error: "Invalid limits number not allowed in params",
   }),
 });
@@ -194,17 +214,17 @@ export const paginationSchema = Joi.object({
  * @description schemas for checking the query params for searching
  */
 export const searchSchema = Joi.object({
-  page: page.optional(),
-  limit: page.optional(),
+  page: Joi.number().optional(),
+  limit: Joi.number().optional(),
   type: string.optional(),
   category: string.optional(),
 });
 
 export const auctionSearchSchema = Joi.object({
-  page: page.messages({
+  page: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
-  limit: limit.messages({
+  limit: Joi.number().messages({
     invalid_type_error: "Invalid page number not allowed in params",
   }),
   state: string.required().messages({
@@ -217,12 +237,42 @@ export const auctionSearchSchema = Joi.object({
     invalid_type_error: "Invalid type number not allowed in params",
   }),
 });
+const firstname = Joi.string().max(50);
+const lastname = Joi.string().max(50);
+const email = Joi.string().email();
+const password = Joi.string();
+const zip = Joi.number();
+const country = Joi.string();
+const gender = Joi.string().min(4).max(6).optional().allow("");
+const age = Joi.number().optional().allow();
+const mobile = Joi.number().optional().allow(null);
+const profession = Joi.string().optional().allow("");
+const role = Joi.string();
 
-export const registerSchema = Joi.object({
-  fullName: fullName.required(),
+export const userSchema = Joi.object({
+  firstname: firstname.required(),
+  lastname: lastname.required(),
   email: email.required(),
-  password: password.required(),
+  password: password.allow("").optional(),
+  zip: zip.required(),
+  country: country.required(),
+  gender: gender,
+  age: age,
+  mobile: mobile,
+  profession: profession,
   Role: role.required(),
+});
+
+export const userUpdateSchema = Joi.object({
+  firstname: firstname.required(),
+  lastname: lastname.required(),
+  email: Joi.string().optional().allow(""),
+  zip: zip.required(),
+  country: country.required(),
+  gender: gender,
+  age: age,
+  mobile: mobile,
+  profession: profession,
 });
 
 export const loginSchema = Joi.object({
