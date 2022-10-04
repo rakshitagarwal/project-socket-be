@@ -198,3 +198,8 @@ export const validateAuctionStatus = async (id) => {
 
   return isActive;
 };
+
+export const checkProductAuction = async (productId) => {
+  const products = await auctionModel.find({ Product: productId });
+  return products;
+};

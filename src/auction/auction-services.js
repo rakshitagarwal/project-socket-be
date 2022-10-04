@@ -263,6 +263,15 @@ export const updateAuction = async (id, updated) => {
 };
 
 export const deleteAuction = async (id) => {
+  const auction = await getAuctionById(id);
+
+  if (auction[0].state === "Publish") {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      "Aucion Cannot be deleted, because is has already started"
+    );
+  }
+
   const auctions = await softDelete(id);
 
   if (auctions) {

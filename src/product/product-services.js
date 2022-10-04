@@ -1,5 +1,6 @@
 import { createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
+import { checkProductAuction } from "../auction/auction-queries.js";
 import {
   create,
   getProductById,
@@ -55,6 +56,15 @@ export const createProduct = async (product) => {
 };
 
 export const deleteProduct = async (id) => {
+  // <-- change the acution Product delete logic -->
+  const auctionProduct = await checkProductAuction(id);
+  if (auctionProduct) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      "Product is Already Registered in auctions, So can't be deleted"
+    );
+  }
+
   if (!validateObjectId(id)) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
@@ -103,6 +113,17 @@ export const updateProduct = async (id, product) => {
   const productMeta = await getProductById(id);
 
   if (productMeta) {
+    const { status } = product;
+    if (status) {
+      const auctionProduct = await checkProductAuction(id);
+      if (auctionProduct) {
+        return createResponse(
+          helpers.StatusCodes.NOT_ACCEPTABLE,
+          "Product is Already, registered in auctions, so cant be deleted"
+        );
+      }
+    }
+
     const updateProduct = await update(id, product);
     if (updateProduct) {
       return createResponse(

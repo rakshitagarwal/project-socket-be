@@ -144,7 +144,7 @@ export const envSchema = Joi.object({
  * @description schemas for checking the product request and response
  */
 export const productSchema = Joi.object({
-  title: string.min(20).required().messages({
+  title: string.max(20, "UTF8").required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
