@@ -268,7 +268,7 @@ export const deleteAuction = async (id) => {
   if (auction[0].state === "Publish") {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      "Aucion Cannot be deleted, because is has already started"
+      "Aucion Cannot be deleted, because it has already started"
     );
   }
 
