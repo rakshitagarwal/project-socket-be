@@ -239,14 +239,20 @@ export const auctionSearchSchema = Joi.object({
     invalid_type_error: "Invalid type number not allowed in params",
   }),
 });
-const firstname = Joi.string().max(50);
+const firstname = Joi.string().min(3).max(50);
 const lastname = Joi.string().max(50);
 const email = Joi.string().email();
 const password = Joi.string();
-const zip = Joi.number();
-const country = Joi.string();
-const gender = Joi.string().min(4).max(6).optional().allow("");
-const age = Joi.number().optional().allow();
+const zip = Joi.number().min(3);
+const country = Joi.string().min(0).max(50);
+const gender = Joi.string()
+  .valid("female")
+  .valid("male")
+  .min(4)
+  .max(6)
+  .optional()
+  .allow("");
+const age = Joi.number().min(0).max(100).optional().allow();
 const mobile = Joi.number().optional().allow(null);
 const profession = Joi.string().optional().allow("");
 const role = Joi.string();

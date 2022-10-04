@@ -13,6 +13,9 @@ export const getEmailUser = async (user) => {
   })
     .lean()
     .populate("Role", { name: 1 });
+  if (!emailUser) {
+    return false;
+  }
   return emailUser;
 };
 export const getEmailUsers = async (user) => {
@@ -23,6 +26,7 @@ export const getEmailUsers = async (user) => {
   })
     .lean()
     .populate("Role", { name: 1 });
+
   return emailUser;
 };
 export const getRoleUser = async (user) => {
@@ -61,7 +65,11 @@ export const getResetUserById = async (id) => {
 export const removeUser = async (id) => {
   const userMeta = await UserModel.findByIdAndUpdate(id, {
     status: false,
+    verified: true,
   }).lean();
+  if (!userMeta) {
+    return false;
+  }
   return userMeta;
 };
 export const update = async (id, userdata) => {
@@ -170,3 +178,4 @@ export const getTokenRemoveByIdUser = async (id) => {
 export const restUserRemove = async (data) => {
   const user = await UserModel.deleteOne({ passcode: data });
 };
+export const search = async (pages, limit, filters) => {};
