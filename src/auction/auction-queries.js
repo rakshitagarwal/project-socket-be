@@ -162,11 +162,7 @@ export const filterAuction = async (page, limit, state, status, category) => {
     .countDocuments();
 
   let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+  totalPages = Math.ceil(count / limit);
 
   const auctions = await auctionModel
     .find({ state: state, status: status })
@@ -178,7 +174,7 @@ export const filterAuction = async (page, limit, state, status, category) => {
 
   return {
     auctions,
-    page: totalPages + 1,
+    page: totalPages,
     limit: limit,
     currentPage: page,
     recordCount: count,
