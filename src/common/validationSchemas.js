@@ -341,11 +341,11 @@ export const auctionSchema = Joi.object({
     required_error: "noOfPlayConsumed must be present in responses",
     validate_error: "noOfPlayConsumed must be a number in responses",
   }),
-  bidIncrement: number.required().messages({
+  bidIncrement: number.greater(0).required().messages({
     required_error: "bidIncrement must be present in responses",
     validate_error: "bidIncrement must be a number in responses",
   }),
-  noNewBidderLimit: number.required().messages({
+  noNewBidderLimit: number.greater(0).required().messages({
     required_error: "noNewBidderLimit must be present in responses",
     validate_error: "noNewBidderLimit must be a number in responses",
   }),
