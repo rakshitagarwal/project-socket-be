@@ -181,7 +181,7 @@ export const filterAuction = async (page, limit, state, status, category) => {
 
   return {
     auctions,
-    page: totalPages,
+    page: totalPages + 1,
     limit: limit,
     currentPage: page,
     recordCount: count,

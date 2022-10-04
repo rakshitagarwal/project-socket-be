@@ -77,7 +77,7 @@ export const search = async (pages, limit, category, type) => {
 
   return {
     products: product,
-    pages: totalPages,
+    pages: totalPages + 1,
     limit: limit,
     currentPage: pages,
     recordCount: count,
