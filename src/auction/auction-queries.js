@@ -88,7 +88,7 @@ export const getAuctionById = async (id) => {
 
   const auctionPreRegister = await auctionPreModel
     .findOne({
-      Auction: auction._id,
+      Auction: auction[0]._id,
     })
     .select({
       startDate: 1,
@@ -101,7 +101,7 @@ export const getAuctionById = async (id) => {
 
   const auctionPostRegister = await auctionPostModel
     .findOne({
-      Auction: auction._id,
+      Auction: auction[0]._id,
     })
     .select({ participantFees: 1, _id: 0 });
 

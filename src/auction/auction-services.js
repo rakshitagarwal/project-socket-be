@@ -290,7 +290,7 @@ export const deleteAuction = async (id) => {
 export const fetchAuctionById = async (id) => {
   const auction = await getAuctionById(id);
 
-  if (auction.length > 0) {
+  if (auction) {
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.SINGLE_AUCTION,
