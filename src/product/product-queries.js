@@ -28,12 +28,7 @@ export const removeProduct = async (id) => {
 export const getProducts = async (pages, limit) => {
   const count = await productModel.find({ IsDeleted: false }).countDocuments();
 
-  let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+  totalPages = Math.ceil(count / limit);
 
   const products = await productModel
     .find({ IsDeleted: false })

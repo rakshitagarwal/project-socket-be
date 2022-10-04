@@ -36,11 +36,8 @@ export const fetchAuction = async (page, limit) => {
   let auctionData = [];
   const count = await auctionModel.find({ IsDeleted: false }).countDocuments();
   let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+
+  totalPages = Math.ceil(count / limit);
 
   const auctions = await auctionModel
     .find({ IsDeleted: false })
