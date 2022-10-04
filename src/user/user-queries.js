@@ -47,7 +47,7 @@ export const getUserById = async (id) => {
   }
   return userMeta[0];
 };
-export const getUserUpdateById = async (id) => {
+export const getUserFind = async (id) => {
   const userMeta = await UserModel.findById(id).find({ verified: true }).lean();
   if (!userMeta) {
     return false;

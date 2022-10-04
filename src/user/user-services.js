@@ -19,7 +19,7 @@ import {
   getTokenRemoveByIdUser,
   getResetUserById,
   getEmailUsers,
-  getUserUpdateById,
+  getUserFind,
   search,
 } from "./user-queries.js";
 import {
@@ -160,7 +160,7 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
   if (userId) {
-    const getUser = await getUserUpdateById(id);
+    const getUser = await getUserFind(id);
 
     if (getUser) {
       const updateUser = await update(id, userdata);
@@ -191,7 +191,7 @@ export const getUser = async (page, limit, userid) => {
     const userInfo = [];
     const userMeta =
       userid.length > 0
-        ? await getUserUpdateById(userid)
+        ? await getUserFind(userid)
         : await getAllUser(page, limit);
     const { passcode, password, createdAt, ...getuserInfo } = userMeta;
     if (userMeta) {
@@ -229,7 +229,7 @@ export const userPermission = async (token) => {
   const dataToken = await getRoleUsers(token);
   if (dataToken) {
     const getRoleId = await getUserByIdRole(dataToken);
-    const getUser = await getUserUpdateById(getRoleId.User);
+    const getUser = await getUserFind(getRoleId.User);
     const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
     let permission = [];
     getPrivilageRole.module.forEach((element) => {
@@ -347,9 +347,9 @@ export const findUser = async (query) => {
   const filters = query;
   const page = parseInt(query.page) || 0;
   const limit = parseInt(query.limit) || 5;
-  const searchText = query.searchText || "";
+  // const searchText = query.searchText || "";
   const searched = await search(page, limit, filters);
-  return createResponse(helpers.StatusCodes.OK, "search", searched);
+  // return createResponse(helpers.StatusCodes.OK, "search", searched);
 };
 /**
  * @description page not found.
