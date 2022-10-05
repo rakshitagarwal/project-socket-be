@@ -144,7 +144,7 @@ export const envSchema = Joi.object({
  * @description schemas for checking the product request and response
  */
 export const productSchema = Joi.object({
-  title: string.max(20, "UTF8").required().messages({
+  title: string.min(3).max(20, "UTF8").required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
@@ -152,23 +152,23 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  description: string.max(1000).required().messages({
+  description: string.min(3).max(1000).required().messages({
     required_error: "description must be present in responses",
     validate_error: "description must be a string in responses",
   }),
-  purchasePrice: price.integer().min(20).required().messages({
+  purchasePrice: price.integer().greater(0).required().messages({
     required_error: "purchasePrice must be present in responses",
     validate_error: "purchasePrice must be a number in responses",
   }),
-  sellingPrice: price.integer().min(20).required().messages({
+  sellingPrice: price.integer().greater(0).required().messages({
     required_error: "sellingPrice must be present in responses",
     validate_error: "sellingPrice must be a number in responses",
   }),
-  overHeadCost: price.integer().min(20).required().messages({
+  overHeadCost: price.integer().greater(0).required().messages({
     required_error: "overHeadCost must be present in responses",
     validate_error: "overHeadCost must be a number in responses",
   }),
-  quantity: price.integer().max(20).required().messages({
+  quantity: price.integer().greater(0).required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),
@@ -176,30 +176,6 @@ export const productSchema = Joi.object({
   vendor: string.max(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
-  }),
-  image: Joi.string().required().messages({
-    required_error: "title must be present in responses",
-    validate_error: "title must be a string in responses",
-  }),
-  description: Joi.string().max(1000).required().messages({
-    required_error: "description must be present in responses",
-    validate_error: "description must be a string in responses",
-  }),
-  purchasePrice: price.integer().min(20).required().messages({
-    required_error: "purchasePrice must be present in responses",
-    validate_error: "purchasePrice must be a number in responses",
-  }),
-  sellingPrice: price.integer().min(20).required().messages({
-    required_error: "sellingPrice must be present in responses",
-    validate_error: "sellingPrice must be a number in responses",
-  }),
-  overHeadCost: price.integer().min(20).required().messages({
-    required_error: "overHeadCost must be present in responses",
-    validate_error: "overHeadCost must be a number in responses",
-  }),
-  quantity: price.integer().max(20).required().messages({
-    required_error: "quantity must be present in responses",
-    validate_error: "quantity must be a number in responses",
   }),
   ProductCategory: Joi.string().required().messages({
     required_error: "quantity must be present in responses",
@@ -283,45 +259,45 @@ export const resetPassword = Joi.object({
 });
 
 export const auctionPreRegister = Joi.object({
-  startDate: Joi.date().required().messages({
+  startDate: date.required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: Joi.date().required().messages({
+  endDate: date.required().messages({
     required_error: "endDate must be present in responses",
     validate_error: "endDate must be a string in responses",
   }),
-  participantCount: Joi.number().required().messages({
+  participantCount: number.greater(0).required().messages({
     required_error: "participantCount must be present in responses",
     validate_error: "participantCount must be a string in responses",
   }),
-  participantFees: Joi.number().required().messages({
+  participantFees: number.greater(0).required().messages({
     required_error: "participantFees must be present in responses",
     validate_error: "participantFees must be a string in responses",
   }),
 });
 
 export const auctionPostRegister = Joi.object({
-  participantFees: Joi.number().required().messages({
+  participantFees: number.greater(0).required().messages({
     required_error: "participantFees must be present in responses",
     validate_error: "participantFees must be a string in responses",
   }),
 });
 
 export const auctionSchema = Joi.object({
-  title: string.messages({
+  title: string.min(3).max(20).messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  bannerImage: string.required({
+  bannerImage: string.required().messages({
     required_error: "bannerImage must be present in responses",
     validate_error: "bannerImage must be a string in responses",
   }),
-  bannerVideo: string.messages({
+  bannerVideo: string.required().messages({
     required_error: "bannerVideo must be present in responses",
     validate_error: "bannerVideo must be a string in responses",
   }),
-  quantity: number.greater(0).required().messages({
+  quantity: number.greater(0).default(1).required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
   }),
