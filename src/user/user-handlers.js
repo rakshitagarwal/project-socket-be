@@ -9,6 +9,7 @@ import {
   userPermission,
   userSetpassword,
   logOut,
+  findUser,
 } from "./user-services.js";
 import { convertToSpecificLang } from "../common/utilies.js";
 
@@ -97,4 +98,9 @@ export const logout = async (req, res) => {
   const token = authHeader && authHeader.split(" ")[1];
   const { statusCode, response } = await logOut(token);
   res.status(statusCode).json(convertToSpecificLang(response, res));
+};
+
+export const searchUser = async (req, res) => {
+  const { statusCode, response } = await findUser(req.query);
+  res.status(statusCode).json(response);
 };

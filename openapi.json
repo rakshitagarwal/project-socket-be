@@ -897,8 +897,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -927,12 +927,6 @@
                     "format": "string",
                     "nullable": false,
                     "description": " email of the user"
-                  },
-                  "password": {
-                    "type": "string",
-                    "format": "string",
-                    "nullable": false,
-                    "description": " password of the user"
                   },
                   "zip": {
                     "type": "number",
@@ -1044,8 +1038,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -1103,8 +1097,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -1161,8 +1155,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -1210,8 +1204,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -1356,8 +1350,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           },
           {
@@ -1432,8 +1426,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -1500,8 +1494,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           },
           {
@@ -1582,8 +1576,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],
@@ -1631,8 +1625,8 @@
             "name": "Accept-Language",
             "schema":{
               "type": "string",
-              "default" :"Language [ en, fr ,de]",
-              "example":"en"
+              "enum": ["en","fr","de"],
+              "default" :"en"
             }
           }
         ],

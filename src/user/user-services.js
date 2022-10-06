@@ -19,7 +19,8 @@ import {
   getTokenRemoveByIdUser,
   getResetUserById,
   getEmailUsers,
-  getUserUpdateById,
+  getUserFind,
+  search,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -83,13 +84,14 @@ export const checkCredentials = async function (user) {
  * @param user - user registration's request body
  */
 export const createUser = async (user) => {
-  const emailCheck = await getEmailUsers(user.email);
+  const userEmailCheck = await getEmailUsers(user.email);
+  const userVerifiedCheck = await getEmailUser(user.email);
   const { password, ...userdata } = user;
   if (password) {
     user.password = hashPassword(user.password);
   }
 
-  if (emailCheck) {
+  if (userEmailCheck || userVerifiedCheck) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
       helpers.responseMessages.REGISTRATION_USER_ALREADY_EXIST
@@ -103,17 +105,17 @@ export const createUser = async (user) => {
         const randomPasscode = Math.round(Math.random() * 10000)
           .toString()
           .padStart(4, "0");
-        const hashPass = hashPassword(randomPasscode, user.email);
-        const data = await setUserPasscode(usersMeta._id, hashPass);
+        const data = await setUserPasscode(
+          usersMeta._id,
+          hashPassword(randomPasscode, user.email)
+        );
         const passCodeUser = await getUserById(data._id);
-        if (!passCodeUser.verified) {
-          const link = passCodeUser.passcode;
-          await sendEmail(data, "user-created", randomPasscode, link);
-          return createResponse(
-            helpers.StatusCodes.CREATED,
-            helpers.responseMessages.USER_CHECK_EMAIL_PASS
-          );
-        }
+        const link = passCodeUser.passcode;
+        // await sendEmail(data, "user-created", randomPasscode, link);
+        return createResponse(
+          helpers.StatusCodes.CREATED,
+          helpers.responseMessages.USER_CHECK_EMAIL_PASS
+        );
       }
       return createResponse(
         helpers.StatusCodes.CREATED,
@@ -136,8 +138,7 @@ export const deleteUser = async (id) => {
   if (userId) {
     // Yes, it's a valid ObjectId, proceed with `findById` call.
     const metaData = await removeUser(id);
-
-    if (metaData === null) {
+    if (!metaData) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.USER_INVALID_ID
@@ -159,10 +160,12 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
   if (userId) {
-    const getuser = await getUserUpdateById(id);
-    if (getuser) {
+    const getUser = await getUserFind(id);
+
+    if (getUser) {
       const updateUser = await update(id, userdata);
-      const { password, email, Role, ...userData } = getuser;
+      const { password, email, Role, createdAt, passcode, ...userData } =
+        getUser;
       if (updateUser) {
         return createResponse(
           helpers.StatusCodes.OK,
@@ -188,10 +191,10 @@ export const getUser = async (page, limit, userid) => {
     const userInfo = [];
     const userMeta =
       userid.length > 0
-        ? await getUserUpdateById(userid)
+        ? await getUserFind(userid)
         : await getAllUser(page, limit);
     const { passcode, password, createdAt, ...getuserInfo } = userMeta;
-    if (userMeta !== undefined) {
+    if (userMeta) {
       !userid
         ? userMeta.users.forEach((element) => {
             delete element.Role;
@@ -207,8 +210,8 @@ export const getUser = async (page, limit, userid) => {
           !userid
             ? helpers.responseMessages.USER_GET_ALL
             : helpers.responseMessages.USER_GET_ID,
+          userInfo,
           {
-            userInfo,
             limit: userMeta.limit,
             currentPage: userMeta.currentPage,
             totalPages: userMeta.pages,
@@ -223,11 +226,11 @@ export const getUser = async (page, limit, userid) => {
 };
 
 export const userPermission = async (token) => {
-  const data = await getRoleUsers(token);
-  if (data) {
-    const getRoleId = await getUserByIdRole(data);
-    const getuser = await getUserUpdateById(getRoleId.User);
-    const getPrivilageRole = await getPrivilagesForRole(getuser.Role);
+  const dataToken = await getRoleUsers(token);
+  if (dataToken) {
+    const getRoleId = await getUserByIdRole(dataToken);
+    const getUser = await getUserFind(getRoleId.User);
+    const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
     let permission = [];
     getPrivilageRole.module.forEach((element) => {
       const calPrivilage = calculatePrivilages(element.privilageNumber);
@@ -256,15 +259,13 @@ export const userForget = async (user) => {
     .padStart(4, "0");
 
   const userData = await getEmailUser(user.email);
-
-  if (userData === null) {
+  if (!userData) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
       helpers.responseMessages.USER_INVALID_LINK
     );
   }
-  const hashPass = hashPassword(randomPasscode, user.email);
-  const passCodeUser = await setUserPasscode(userData._id, hashPass);
+  await setUserPasscode(userData._id, hashPassword(randomPasscode, user.email));
   const userId = await getResetUserById(userData._id);
   if (userId) {
     const link = userId.passcode;
@@ -342,6 +343,14 @@ export const logOut = async (jwttoken) => {
   }
 };
 
+export const findUser = async (query) => {
+  const filters = query;
+  const page = parseInt(query.page) || 0;
+  const limit = parseInt(query.limit) || 5;
+  // const searchText = query.searchText || "";
+  const searched = await search(page, limit, filters);
+  // return createResponse(helpers.StatusCodes.OK, "search", searched);
+};
 /**
  * @description page not found.
  */

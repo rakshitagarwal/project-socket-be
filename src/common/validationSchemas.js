@@ -5,18 +5,8 @@ const number = Joi.number();
 const boolean = Joi.boolean();
 const date = Joi.date();
 const price = Joi.number();
-
-const firstname = Joi.string().max(50);
-const lastname = Joi.string().max(50);
-const email = Joi.string().email();
-const password = Joi.string();
-const zip = Joi.number();
-const country = Joi.string();
-const gender = Joi.string().min(4).max(6).optional().allow("");
-const age = Joi.number().optional().allow();
-const mobile = Joi.number().optional().allow(null);
-const profession = Joi.string().optional().allow("");
-const role = Joi.string();
+const module = Joi.string();
+const path = Joi.string();
 
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
@@ -172,8 +162,18 @@ export const productSchema = Joi.object({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),
-  status: Joi.boolean().optional(),
-  vendor: string.max(20).required().messages({
+  vendor: Joi.string().max(20).required().messages({
+    required_error: "title must be present in responses",
+    validate_error: "title must be a string in responses",
+  }),
+  ProductCategory: Joi.string().required().messages({
+    required_error: "quantity must be present in responses",
+    validate_error: "quantity must be a string in responses",
+  }),
+});
+
+export const updateProductSchema = Joi.object({
+  title: Joi.string().min(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
@@ -222,6 +222,23 @@ export const auctionSearchSchema = Joi.object({
     invalid_type_error: "Invalid type number not allowed in params",
   }),
 });
+const firstname = Joi.string().min(3).max(50);
+const lastname = Joi.string().max(50);
+const email = Joi.string().email();
+const password = Joi.string();
+const zip = Joi.number().min(3);
+const country = Joi.string().min(0).max(50);
+const gender = Joi.string()
+  .valid("female")
+  .valid("male")
+  .min(4)
+  .max(6)
+  .optional()
+  .allow("");
+const age = Joi.number().min(0).max(100).optional().allow();
+const mobile = Joi.number().optional().allow(null);
+const profession = Joi.string().optional().allow("");
+const role = Joi.string();
 
 export const userSchema = Joi.object({
   firstname: firstname.required(),
