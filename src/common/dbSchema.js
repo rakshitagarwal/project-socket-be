@@ -294,7 +294,7 @@ const auctionSchema = new Schema(
     },
     botMaxPrice: {
       type: Number,
-      required: true,
+      default: 0,
     },
     registerationStatus: {
       type: Boolean,

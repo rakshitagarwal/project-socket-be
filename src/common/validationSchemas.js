@@ -327,8 +327,8 @@ export const auctionSchema = Joi.object({
     required_error: "bot must be present in responses",
     validate_error: "bot must be a boolean in responses",
   }),
-  botMaxPrice: number.greater(0).required().messages({
-    required_error: "botMaxPrice must be present in responses",
+  botMaxPrice: number.greater(0).messages({
+    number_error: "botMaxPrice must be greater then 0",
     validate_error: "botMaxPrice must be a number in responses",
   }),
   noOfPlayConsumed: number.greater(0).required().messages({
