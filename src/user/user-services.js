@@ -20,7 +20,6 @@ import {
   getResetUserById,
   getEmailUsers,
   getUserFind,
-  search,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -204,7 +203,8 @@ export const getUser = async (page, limit, userid) => {
             userInfo.push(element);
           })
         : userInfo.push(getuserInfo);
-      if (userInfo && userMeta !== null) {
+
+      if (userInfo.length > 0) {
         return createResponse(
           helpers.StatusCodes.OK,
           !userid
@@ -220,7 +220,19 @@ export const getUser = async (page, limit, userid) => {
         );
       }
     }
-    return notFound();
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND,
+      {},
+      {
+        limit,
+        currentPage: userMeta.currentPage,
+
+        // text,
+        recordCount: userMeta.count,
+        pages: userMeta.pages,
+      }
+    );
   }
   return notFound();
 };
@@ -343,14 +355,6 @@ export const logOut = async (jwttoken) => {
   }
 };
 
-export const findUser = async (query) => {
-  const filters = query;
-  const page = parseInt(query.page) || 0;
-  const limit = parseInt(query.limit) || 5;
-  // const searchText = query.searchText || "";
-  const searched = await search(page, limit, filters);
-  // return createResponse(helpers.StatusCodes.OK, "search", searched);
-};
 /**
  * @description page not found.
  */

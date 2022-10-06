@@ -1061,6 +1061,15 @@
                       "items": {
                         "$ref": "#/components/schemas/user"
                       }
+                    },
+                     "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number" },
+                        "totalPages": { "type": "number" },
+                        "count": { "type": "number" }
+                      }
                     }
                   }
                 }

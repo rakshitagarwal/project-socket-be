@@ -21,7 +21,6 @@ import {
   reset_password,
   user_setpassword,
   logout,
-  searchUser,
 } from "./user-handlers.js";
 import { validateSchema } from "../middleware/validate.js";
 import {
@@ -43,4 +42,3 @@ userRouter
   .post(USER_FORGET, user_forget)
   .post(USER_RESET, reset_password)
   .post(USER_LOGOUT, logout)
-  .post("/search", searchUser);

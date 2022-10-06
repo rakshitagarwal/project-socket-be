@@ -48,11 +48,13 @@ export const getUserById = async (id) => {
   return userMeta[0];
 };
 export const getUserFind = async (id) => {
-  const userMeta = await UserModel.findById(id).find({ verified: true }).lean();
-  if (!userMeta) {
-    return false;
+  const userMeta = await UserModel.findById(id)
+    .find({ status: false, verified: true })
+    .lean();
+  if (userMeta.length > 0) {
+    return userMeta[0];
   }
-  return userMeta[0];
+  return false;
 };
 export const getResetUserById = async (id) => {
   const userMeta = await UserModel.findById(id).find({ verified: true }).lean();
@@ -64,7 +66,7 @@ export const getResetUserById = async (id) => {
 
 export const removeUser = async (id) => {
   const userMeta = await UserModel.findByIdAndUpdate(id, {
-    status: false,
+    status: true,
     verified: true,
   }).lean();
   if (!userMeta) {
@@ -178,4 +180,3 @@ export const getTokenRemoveByIdUser = async (id) => {
 export const restUserRemove = async (data) => {
   const user = await UserModel.deleteOne({ passcode: data });
 };
-export const search = async (pages, limit, filters) => {};
