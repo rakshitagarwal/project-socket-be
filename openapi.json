@@ -295,7 +295,7 @@
           "password": {
             "type": "string"
           },
-          "zip":{
+          "zip": {
             "type": "number"
           },
           "country": {
@@ -888,17 +888,17 @@
       }
     },
     "/users/": {
-      "post": { 
+      "post": {
         "tags": ["Users"],
         "description": "Add a new user",
         "parameters": [
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -934,31 +934,31 @@
                     "nullable": false,
                     "description": "zip in number"
                   },
-                  "country":{
+                  "country": {
                     "type": "string",
                     "format": "string",
                     "nullable": false,
                     "description": " country of the user"
                   },
-                  "gender":{
+                  "gender": {
                     "type": "string",
                     "format": "string",
                     "nullable": false,
                     "description": " gender of the user"
                   },
-                  "age":{
+                  "age": {
                     "type": "number",
                     "format": "number",
                     "nullable": false,
                     "description": "age in number"
                   },
-                  "mobile":{
+                  "mobile": {
                     "type": "number",
                     "format": "number",
                     "nullable": false,
                     "description": "mobile in number"
                   },
-                  "profession":{
+                  "profession": {
                     "type": "string",
                     "format": "string",
                     "nullable": false,
@@ -989,8 +989,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
@@ -1036,10 +1035,10 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -1095,10 +1094,10 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -1153,10 +1152,10 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -1202,10 +1201,10 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -1252,7 +1251,7 @@
                     "format": "number",
                     "nullable": false
                   },
-                  "profession":{
+                  "profession": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -1303,55 +1302,62 @@
       "post": {
         "tags": ["Users"],
         "description": "User Permission Allow",
-      "security": [ { "bearerAuth": [
-        "Authorization","header","apiKey","JWT Authorization header"
-      ] } ],
-      "responses": {
-        "200": {
-          "description": "User Permission Allow",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "success": { "type": "boolean" },
-                  "message": { "type": "string" },
-                  "data": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
-                      "message": {
-                        "type": "string"
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Permission Allow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
                       }
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
-        },
-        "401": {
-          "$ref": "#/components/responses/401"
-        },
-        "500": {
-          "$ref": "#/components/responses/500"
         }
       }
-    }
     },
-    "/users/set-password/{passcode}":{
-      "post": { 
+    "/users/set-password/{passcode}": {
+      "post": {
         "tags": ["Users"],
         "description": "set password for user",
         "parameters": [
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           },
           {
@@ -1370,7 +1376,7 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "properties": { 
+                "properties": {
                   "password": {
                     "type": "string",
                     "format": "string",
@@ -1396,8 +1402,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
@@ -1424,10 +1429,10 @@
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -1464,8 +1469,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
@@ -1484,18 +1488,18 @@
         }
       }
     },
-    "/users/password-reset/{passcode}":{
-      "post": { 
+    "/users/password-reset/{passcode}": {
+      "post": {
         "tags": ["Users"],
         "description": "reset password for user",
         "parameters": [
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           },
           {
@@ -1514,7 +1518,7 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "properties": { 
+                "properties": {
                   "password": {
                     "type": "string",
                     "format": "string",
@@ -1540,8 +1544,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
@@ -1563,21 +1566,28 @@
         }
       }
     },
-    "/users/logout":{
-      "post": { 
+    "/users/logout": {
+      "post": {
         "tags": ["Users"],
         "description": "User Logout",
-        "security": [ { "bearerAuth": [
-          "Authorization","header","apiKey","JWT Authorization header"
-        ] } ],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -1595,8 +1605,7 @@
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
-                      "properties": {
-                      }
+                      "properties": {}
                     }
                   }
                 }
@@ -1615,18 +1624,18 @@
         }
       }
     },
-    "/users/forget-password":{
-      "post": { 
+    "/users/forget-password": {
+      "post": {
         "tags": ["Users"],
         "description": "User forget password",
         "parameters": [
           {
             "in": "header",
             "name": "Accept-Language",
-            "schema":{
+            "schema": {
               "type": "string",
-              "enum": ["en","fr","de"],
-              "default" :"en"
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -2242,6 +2251,13 @@
                       }
                     }
                   },
+                  "postAuctionStatus": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": false,
+                    "description": "postAuctionStatus of the auctions"
+                  },
                   "auctionPostRegister": {
                     "type": "object",
                     "additionalProperties": false,
@@ -2767,6 +2783,13 @@
                         "description": "participantFees of the auctions"
                       }
                     }
+                  },
+                  "postAuctionStatus": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "nullable": false,
+                    "default": false,
+                    "description": "postAuctionStatus of the auctions"
                   },
                   "auctionPostRegister": {
                     "type": "object",

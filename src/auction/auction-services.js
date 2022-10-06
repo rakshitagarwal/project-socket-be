@@ -51,32 +51,57 @@ export const addAuction = async (data) => {
     );
   }
 
-  if (!data.registerationStatus) {
-    if (data.auctionPreRegister && data.auctionPostRegister) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.StatusMessages.NOT_ACCEPTABLE,
-        {},
-        {
-          error: helpers.responseMessages.INVALID_RESPONSES,
-        }
-      );
-    }
-    const auction = await create(data);
-    if (!auction) {
-      return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
-        helpers.responseMessages.AUCTION_NOT_ADDED
-      );
-    }
-
-    return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.responseMessages.AUCTION_ADDED
-    );
-  }
-
   if (data.registerationStatus) {
+    if (data.postAuctionStatus) {
+      if (data.auctionPostRegister || data.auctionPreRegister) {
+        return createResponse(
+          helpers.StatusCodes.NOT_ACCEPTABLE,
+          helpers.StatusMessages.NOT_ACCEPTABLE,
+          {},
+          {
+            error: helpers.responseMessages.INVALID_RESPONSES,
+          }
+        );
+      } else {
+        const auction = await create(data);
+        if (!auction) {
+          return createResponse(
+            helpers.StatusCodes.BAD_REQUEST,
+            helpers.responseMessages.AUCTION_NOT_ADDED
+          );
+        }
+
+        return createResponse(
+          helpers.StatusCodes.OK,
+          helpers.responseMessages.AUCTION_ADDED
+        );
+      }
+    } else {
+      if (data.auctionPostRegister) {
+        return createResponse(
+          helpers.StatusCodes.NOT_ACCEPTABLE,
+          helpers.StatusMessages.NOT_ACCEPTABLE,
+          {},
+          {
+            error: helpers.responseMessages.INVALID_RESPONSES,
+          }
+        );
+      }
+
+      const auction = await create(data);
+      if (!auction) {
+        return createResponse(
+          helpers.StatusCodes.BAD_REQUEST,
+          helpers.responseMessages.AUCTION_NOT_ADDED
+        );
+      }
+
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.AUCTION_ADDED
+      );
+    }
+  } else {
     if (!data.auctionPreRegister && !data.auctionPostRegister) {
       return createResponse(
         helpers.StatusCodes.NOT_ACCEPTABLE,
@@ -88,28 +113,30 @@ export const addAuction = async (data) => {
       );
     }
 
+    if (!data.postAuctionStatus) {
+      return createResponse(
+        helpers.StatusCodes.NOT_ACCEPTABLE,
+        helpers.StatusMessages.NOT_ACCEPTABLE,
+        {},
+        {
+          error: helpers.responseMessages.INVALID_RESPONSES,
+        }
+      );
+    }
+
     const auction = await create(data);
     if (!auction) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.AUCTION_NOT_ADDED
       );
+    } else {
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.AUCTION_ADDED
+      );
     }
-
-    return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.responseMessages.AUCTION_ADDED
-    );
   }
-
-  return createResponse(
-    helpers.StatusCodes.NOT_ACCEPTABLE,
-    helpers.StatusMessages.NOT_ACCEPTABLE,
-    {},
-    {
-      error: helpers.responseMessages.INVALID_RESPONSES,
-    }
-  );
 };
 
 export const getAuctions = async (query) => {
@@ -194,50 +221,96 @@ export const updateAuction = async (id, updated) => {
 
   const auction = await getAuctionById(id);
 
-  if (typeof auction === null) {
+  if (!auction) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
       helpers.StatusMessages.NOT_FOUND
     );
   }
 
-  const { auctionPreRegister, auctionPostRegister, ...data } = auction;
+  if (updated.registerationStatus) {
+    if (updated.postAuctionStatus) {
+      if (updated.auctionPostRegister || updated.auctionPreRegister) {
+        return createResponse(
+          helpers.StatusCodes.NOT_ACCEPTABLE,
+          helpers.StatusMessages.NOT_ACCEPTABLE,
+          {},
+          {
+            error: helpers.responseMessages.INVALID_RESPONSES,
+          }
+        );
+      } else {
+        const update = await putAuction(id, updated);
 
-  if (
-    updated.auctionPreRegister &&
-    updated.auctionPostRegister &&
-    updated.registerationStatus
-  ) {
-    const { auctionPreRegister, auctionPostRegister, ...data } = updated;
-
-    const updatedAuction = await putAuction(
-      id,
-      data,
-      auctionPreRegister,
-      auctionPostRegister
-    );
-
-    if (!updatedAuction) {
+        if (!update) {
+          return createResponse(
+            helpers.StatusCodes.BAD_REQUEST,
+            helpers.StatusMessages.BAD_REQUEST
+          );
+        }
+        return createResponse(
+          helpers.StatusCodes.OK,
+          helpers.responseMessages.AUCTION_UPDATED
+        );
+      }
+    } else {
       return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
-        helpers.StatusMessages.BAD_REQUEST
+        helpers.StatusCodes.NOT_ACCEPTABLE,
+        helpers.StatusMessages.NOT_ACCEPTABLE,
+        {},
+        {
+          error: helpers.responseMessages.INVALID_RESPONSES,
+        }
+      );
+    }
+  } else {
+    if (updated.postAuctionStatus) {
+      if (updated.auctionPostRegister) {
+        return createResponse(
+          helpers.StatusCodes.NOT_ACCEPTABLE,
+          helpers.StatusMessages.NOT_ACCEPTABLE,
+          {},
+          {
+            error: helpers.responseMessages.INVALID_RESPONSES,
+          }
+        );
+      }
+
+      let { auctionPreRegister } = updated;
+
+      const update = await putAuction(id, updated, auctionPreRegister);
+
+      if (!update) {
+        return createResponse(
+          helpers.StatusCodes.BAD_REQUEST,
+          helpers.StatusMessages.BAD_REQUEST
+        );
+      }
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.AUCTION_UPDATED
       );
     }
 
-    return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.responseMessages.AUCTION_UPDATED
+    if (!updated.auctionPreRegister && !updated.auctionPostRegister) {
+      return createResponse(
+        helpers.StatusCodes.NOT_ACCEPTABLE,
+        helpers.StatusMessages.NOT_ACCEPTABLE,
+        {},
+        {
+          error: helpers.responseMessages.INVALID_RESPONSES,
+        }
+      );
+    }
+
+    let { auctionPreRegister, auctionPostRegister } = updated;
+
+    const update = await putAuction(
+      id,
+      updated,
+      auctionPreRegister,
+      auctionPostRegister
     );
-  }
-
-  if (
-    !updated.auctionPreRegister &&
-    !updated.auctionPostRegister &&
-    !updated.registerationStatus
-  ) {
-    const { auctionPreRegister, auctionPostRegister, ...data } = updated;
-
-    const update = await putAuction(id, data);
 
     if (!update) {
       return createResponse(
@@ -245,27 +318,24 @@ export const updateAuction = async (id, updated) => {
         helpers.StatusMessages.BAD_REQUEST
       );
     }
-
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.AUCTION_UPDATED
     );
   }
-
-  return createResponse(
-    helpers.StatusCodes.NOT_ACCEPTABLE,
-    helpers.StatusMessages.NOT_ACCEPTABLE,
-    {},
-    {
-      error: helpers.responseMessages.INVALID_RESPONSES,
-    }
-  );
 };
 
 export const deleteAuction = async (id) => {
   const auction = await getAuctionById(id);
 
-  if (auction[0].state === "Publish") {
+  if (!auction) {
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND
+    );
+  }
+
+  if (auction.state === "Publish") {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
       "Aucion Cannot be deleted, because it has already started"
@@ -289,12 +359,13 @@ export const deleteAuction = async (id) => {
 
 export const fetchAuctionById = async (id) => {
   const auction = await getAuctionById(id);
-
+  const list = [];
+  list.push(auction);
   if (auction) {
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.SINGLE_AUCTION,
-      auction
+      list
     );
   }
 
