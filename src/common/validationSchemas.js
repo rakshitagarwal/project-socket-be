@@ -222,6 +222,7 @@ export const auctionSearchSchema = Joi.object({
     invalid_type_error: "Invalid type number not allowed in params",
   }),
 });
+
 const firstname = Joi.string().min(3).max(50);
 const lastname = Joi.string().max(50);
 const email = Joi.string().email();
