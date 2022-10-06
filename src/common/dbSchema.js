@@ -234,6 +234,10 @@ export const productSchema = new Schema(
       required: true,
       default: false,
     },
+    IsDeleted: {
+      type: Boolean,
+      default: false,
+    },
     ProductCategory: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -290,7 +294,7 @@ const auctionSchema = new Schema(
     },
     botMaxPrice: {
       type: Number,
-      required: true,
+      default: 0,
     },
     registerationStatus: {
       type: Boolean,
@@ -314,6 +318,10 @@ const auctionSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
+      default: false,
+    },
+    IsDeleted: {
+      type: Boolean,
       default: false,
     },
     Product: {
@@ -492,6 +500,10 @@ export const persistence = new Schema({
     require: true,
   },
   accessToken: {
+    type: String,
+    require: true,
+  },
+  passcode: {
     type: String,
     require: true,
   },

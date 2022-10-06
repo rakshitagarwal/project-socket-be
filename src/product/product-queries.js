@@ -14,34 +14,25 @@ export const getProductById = async (id) => {
   const productMeta = await productModel
     .findById(id)
     .populate("ProductCategory", { name: 1, _id: 1 })
-    .where({ status: false });
+    .where({ status: false, IsDeleted: false });
   return productMeta;
 };
 
 export const removeProduct = async (id) => {
   const productMeta = await productModel.findByIdAndUpdate(id, {
-    status: true,
+    IsDeleted: true,
   });
   return productMeta;
 };
 
-// all active products count
-export const productCount = async () => {
-  const count = await productModel.find({ status: false });
-  return count.length;
-};
-
 export const getProducts = async (pages, limit) => {
-  const count = await productCount();
+  const count = await productModel.find({ IsDeleted: false }).countDocuments();
+
   let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+  totalPages = Math.ceil(count / limit);
 
   const products = await productModel
-    .find({ status: false })
+    .find({ IsDeleted: false })
     .limit(limit)
     .skip(limit * pages)
     .populate("ProductCategory", { name: 1, _id: 0 })
@@ -56,51 +47,33 @@ export const getProducts = async (pages, limit) => {
   };
 };
 
-export const search = async (pages, limit, searchText) => {
-  const count = await productCount();
+export const search = async (pages, limit, category, type) => {
+  if (!category || !type) {
+    const products = await getProducts(pages, limit);
+    return products;
+  }
+
+  const count = await productModel.find({ IsDeleted: false }).countDocuments();
+
   let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+  totalPages = Math.ceil(count / limit);
 
-  if (searchText === "") {
-    const product = await getProducts(pages, limit);
-    return product;
-  } else {
-    const filtered = await productModel.find({
-      title: { $regex: `^${searchText}`, $options: "i" },
-      createdAt: {
-        $lte: new Date().toISOString(),
-      },
-      status: false,
-    });
+  totalPages = parseInt(count / limit);
 
-    totalPages = parseInt(filtered.length / limit);
+  const product = await productModel
+    .find({ IsDeleted: false })
+    .limit(limit)
+    .skip(limit * pages)
+    .populate("ProductCategory", false, { name: category, type: type })
+    .lean();
 
-    const product = await productModel
-      .find({
-        title: { $regex: `^${searchText}`, $options: "i" },
-        createdAt: {
-          $lte: new Date().toISOString(),
-        },
-        status: false,
-      })
-      .limit(limit)
-      .skip(limit * pages)
-      .populate("ProductCategory", { name: 1, _id: 0 })
-      .lean();
-
-    return {
-      products: product,
-      pages: totalPages,
-      limit: limit,
-      currentPage: pages,
-      recordCount: filtered.length,
-      searchText: searchText,
-    };
-  }
+  return {
+    products: product,
+    pages: totalPages,
+    limit: limit,
+    currentPage: pages,
+    recordCount: count,
+  };
 };
 
 export const getProductByTitle = async (title) => {

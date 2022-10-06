@@ -113,8 +113,8 @@ export const addAuction = async (data) => {
 };
 
 export const getAuctions = async (query) => {
-  let page = parseInt(query.page) || 0;
-  let limit = parseInt(query.limit) || 5;
+  let page = parseInt(query.page);
+  let limit = parseInt(query.limit);
 
   const auctions = await fetchAuction(page, limit);
   let { auctionData, ...metadata } = auctions;
@@ -263,6 +263,15 @@ export const updateAuction = async (id, updated) => {
 };
 
 export const deleteAuction = async (id) => {
+  const auction = await getAuctionById(id);
+
+  if (auction[0].state === "Publish") {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      "Aucion Cannot be deleted, because it has already started"
+    );
+  }
+
   const auctions = await softDelete(id);
 
   if (auctions) {
@@ -281,7 +290,7 @@ export const deleteAuction = async (id) => {
 export const fetchAuctionById = async (id) => {
   const auction = await getAuctionById(id);
 
-  if (auction.length > 0) {
+  if (auction) {
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.SINGLE_AUCTION,

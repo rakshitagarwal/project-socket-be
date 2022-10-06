@@ -34,16 +34,13 @@ export const create = async (data) => {
 
 export const fetchAuction = async (page, limit) => {
   let auctionData = [];
-  const count = await auctionModel.find({ status: false }).countDocuments();
+  const count = await auctionModel.find({ IsDeleted: false }).countDocuments();
   let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+
+  totalPages = Math.ceil(count / limit);
 
   const auctions = await auctionModel
-    .find({ status: false })
+    .find({ IsDeleted: false })
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })
@@ -84,14 +81,14 @@ export const fetchAuction = async (page, limit) => {
 export const getAuctionById = async (id) => {
   const auction = await auctionModel
     .findById(id)
-    .find({ status: false })
+    .find({ IsDeleted: false })
     .populate("Product", { _id: 1, title: 1 })
     .populate("AuctionCategory", { _id: 1, name: 1 })
     .lean();
 
   const auctionPreRegister = await auctionPreModel
     .findOne({
-      Auction: auction._id,
+      Auction: auction[0]._id,
     })
     .select({
       startDate: 1,
@@ -104,7 +101,7 @@ export const getAuctionById = async (id) => {
 
   const auctionPostRegister = await auctionPostModel
     .findOne({
-      Auction: auction._id,
+      Auction: auction[0]._id,
     })
     .select({ participantFees: 1, _id: 0 });
 
@@ -126,7 +123,11 @@ export const putAuction = async (id, data, pre, post) => {
     return auction;
   }
 
-  const updatedAuction = await auctionModel.findByIdAndUpdate(id, auction);
+  const updatedAuction = await auctionModel.findByIdAndUpdate(id, {
+    ...data,
+    auctionPreRegister: pre,
+    auctionPostRegister: post,
+  });
   const preAuction = await auctionPreModel.findOneAndUpdate(
     { Auction: id },
     pre
@@ -144,7 +145,7 @@ export const putAuction = async (id, data, pre, post) => {
 };
 
 export const softDelete = async (id) => {
-  const auction = await auctionModel.findByIdAndUpdate(id, { status: true });
+  const auction = await auctionModel.findByIdAndUpdate(id, { IsDeleted: true });
   await auctionPostModel.findOneAndUpdate({ Auction: id }, { status: true });
   await auctionPreModel.findOneAndUpdate({ Auction: id }, { status: true });
 
@@ -153,7 +154,7 @@ export const softDelete = async (id) => {
 
 export const filterAuction = async (page, limit, state, status, category) => {
   const count = await auctionModel
-    .find({ state: state, status: status })
+    .find({ state: state, status: status, IsDeleted: false })
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })
@@ -161,11 +162,7 @@ export const filterAuction = async (page, limit, state, status, category) => {
     .countDocuments();
 
   let totalPages;
-  if (count < limit) {
-    totalPages = 1;
-  } else {
-    totalPages = parseInt(count / limit);
-  }
+  totalPages = Math.ceil(count / limit);
 
   const auctions = await auctionModel
     .find({ state: state, status: status })
@@ -193,4 +190,9 @@ export const validateAuctionStatus = async (id) => {
     .lean();
 
   return isActive;
+};
+
+export const checkProductAuction = async (productId) => {
+  const products = await auctionModel.find({ Product: productId });
+  return products;
 };
