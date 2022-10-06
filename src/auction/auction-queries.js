@@ -76,7 +76,7 @@ export const fetchAuction = async (page, limit) => {
       .select({ participantFees: 1 })
       .lean();
 
-    auctionPreRegister && auctionPostRegister
+    auctionPreRegister || auctionPostRegister
       ? auctionData.push({
           ...auctions[i],
           auctionPreRegister,
@@ -129,7 +129,7 @@ export const getAuctionById = async (id) => {
     .where({ IsDeleted: false })
     .select({ participantFees: 1, _id: 0 });
 
-  if (auctionPreRegister && auctionPostRegister) {
+  if (auctionPreRegister || auctionPostRegister) {
     const auctions = {
       ...auction,
       auctionPreRegister,
@@ -199,8 +199,8 @@ export const putAuction = async (id, data, pre, post) => {
 
 export const softDelete = async (id) => {
   const auction = await auctionModel.findByIdAndUpdate(id, { IsDeleted: true });
-  await auctionPostModel.findOneAndUpdate({ Auction: id }, { status: true });
-  await auctionPreModel.findOneAndUpdate({ Auction: id }, { status: true });
+  await auctionPostModel.findOneAndUpdate({ Auction: id }, { IsDeleted: true });
+  await auctionPreModel.findOneAndUpdate({ Auction: id }, { IsDeleted: true });
 
   return auction;
 };

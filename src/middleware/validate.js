@@ -10,6 +10,7 @@ const validate = (schema, data, res, next) => {
     const { statusCode, response } = createResponse(
       helpers.StatusCodes.NOT_FOUND,
       parsed.error.message,
+      {},
       {
         error: parsed.error.details,
       }
