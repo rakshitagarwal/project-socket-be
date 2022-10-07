@@ -51,6 +51,8 @@ export const addAuction = async (data) => {
     );
   }
 
+  // check if a preRegiser startdate and enddate shoudl be betweeen the auction startdate and Enddate
+
   if (data.registerationStatus) {
     if (data.postAuctionStatus) {
       if (data.auctionPostRegister || data.auctionPreRegister) {
