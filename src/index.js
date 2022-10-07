@@ -14,5 +14,5 @@ export const v1Router = Router();
 
 v1Router.use(PRODUCT_PATHNAME, [checkAccess], productRouter);
 v1Router.use(UPLOAD_PATHNAME, uploadRouter);
-v1Router.use(USER_PATHNAME, userRouter);
+v1Router.use(USER_PATHNAME, [checkAccess], userRouter);
 v1Router.use(AUCTION_PATHNAME, auctionRouter);

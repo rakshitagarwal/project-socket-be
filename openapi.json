@@ -361,6 +361,7 @@
     "/products/category/": {
       "get": {
         "description": "get single product",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Products"],
         "responses": {
           "200": {
@@ -410,6 +411,7 @@
     "/products/": {
       "post": {
         "tags": ["Products"],
+        "security": [{ "bearerAuth": [] }],
         "description": "Add a new product",
         "requestBody": {
           "required": true,
@@ -511,6 +513,7 @@
       },
       "get": {
         "description": "fetch All products",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Products"],
         "parameters": [
           {
@@ -585,6 +588,7 @@
     "/products/{id}": {
       "delete": {
         "description": "Disbale the specific product",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Products"],
         "parameters": [
           {
@@ -634,6 +638,7 @@
       },
       "put": {
         "description": "Update the specific product",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Products"],
         "parameters": [
           {
@@ -745,6 +750,7 @@
       },
       "get": {
         "description": "get single product",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Products"],
         "parameters": [
           {
@@ -798,6 +804,7 @@
       "get": {
         "description": "Search the product with name",
         "tags": ["Products"],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",
@@ -1694,6 +1701,7 @@
     "/uploads/": {
       "post": {
         "tags": ["Uploads"],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",
@@ -1777,6 +1785,7 @@
       },
       "put": {
         "tags": ["Uploads"],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",
@@ -1870,6 +1879,7 @@
       },
       "delete": {
         "tags": ["Uploads"],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",
@@ -1943,6 +1953,7 @@
     "/uploads/video/": {
       "post": {
         "tags": ["Uploads"],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",
@@ -2031,6 +2042,7 @@
     "/uploads/multiple/": {
       "post": {
         "tags": ["Uploads"],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",
@@ -2121,6 +2133,7 @@
       "post": {
         "tags": ["Auctions"],
         "description": "Add the Auctions",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -2360,6 +2373,7 @@
       },
       "get": {
         "description": "fetch All Auctions",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -2594,6 +2608,7 @@
     "/auctions/category/": {
       "get": {
         "description": "get All Auction category",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Auctions"],
         "responses": {
           "200": {
@@ -2643,6 +2658,7 @@
     "/auctions/{id}": {
       "put": {
         "description": "Update the specific Auctions",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -2872,6 +2888,7 @@
       },
       "get": {
         "description": "Fetch the specific Auctions",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -3090,6 +3107,7 @@
       },
       "delete": {
         "description": "Disbale the specific Auction",
+        "security": [{ "bearerAuth": [] }],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -3142,6 +3160,7 @@
       "get": {
         "tags": ["Auctions"],
         "description": "Search/Filter/Sort Auctions Details",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "in": "query",

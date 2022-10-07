@@ -1,6 +1,6 @@
 import { createResponse, validateObjectId } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
-import { validateStatus } from "../product/product-queries.js";
+import { getProductById, validateStatus } from "../product/product-queries.js";
 import {
   create,
   fetchAuction,
@@ -49,6 +49,32 @@ export const addAuction = async (data) => {
       helpers.StatusCodes.NOT_FOUND,
       helpers.responseMessages.PRODUCT_OBJECT_ID
     );
+  }
+
+  // check if a preRegiser startdate and enddate shoudl be betweeen the auction startdate and Enddate
+  const { startDate, endDate, auctionPreRegister, quantity } = data;
+  if (!data.registerationStatus) {
+    if (
+      auctionPreRegister.startDate <= startDate ||
+      auctionPreRegister.endDate >= endDate
+    ) {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        "Auction PreRegister StartDate or EndDate is not valid"
+      );
+    }
+  }
+
+  // check if a Product quanity shoudl be less than auction quantity
+  const products = await getProductById(Product);
+  if (products) {
+    const { quantity: qty } = products;
+    if (quantity > qty) {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        "Auction Quantity should be less than or equal to Product Quantity"
+      );
+    }
   }
 
   if (data.registerationStatus) {
@@ -206,6 +232,31 @@ export const updateAuction = async (id, updated) => {
       helpers.StatusCodes.NOT_FOUND,
       helpers.responseMessages.PRODUCT_OBJECT_ID
     );
+  }
+
+  const { startDate, endDate, auctionPreRegister, quantity } = updated;
+  if (!updated.registerationStatus) {
+    if (
+      auctionPreRegister.startDate <= startDate ||
+      auctionPreRegister.endDate >= endDate
+    ) {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        "Auction PreRegister StartDate or EndDate is not valid"
+      );
+    }
+  }
+
+  // check if a Product quanity shoudl be less than auction quantity
+  const products = await getProductById(Product);
+  if (products) {
+    const { quantity: qty } = products;
+    if (quantity > qty) {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        "Auction Quantity should be less than or equal to Product Quantity"
+      );
+    }
   }
 
   const auction = await getAuctionById(id);
