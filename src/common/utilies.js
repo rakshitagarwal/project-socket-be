@@ -1,5 +1,8 @@
 import { readFileSync } from "fs";
-import { SUPPORTED_EXTENSION_FILE } from "./../config/settings.js";
+import {
+  ASSESTS_FILES_NAME,
+  SUPPORTED_EXTENSION_FILE,
+} from "./../config/settings.js";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
 import multer from "multer";
@@ -134,6 +137,12 @@ const storage = multer.diskStorage({
     if (!req.query.moduleName) {
       cb("query parameter not found in URL");
     }
+
+    const exists = ASSESTS_FILES_NAME.includes(req.query.moduleName);
+    if (!exists) {
+      cb("ModuleName should be proper");
+    }
+
     if (!fs.existsSync(env.FILE_STORAGE_PATH + req.query.moduleName)) {
       fs.mkdirSync(env.FILE_STORAGE_PATH + req.query.moduleName);
     }
