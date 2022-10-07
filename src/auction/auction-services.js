@@ -113,17 +113,6 @@ export const addAuction = async (data) => {
       );
     }
 
-    if (!data.postAuctionStatus) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.StatusMessages.NOT_ACCEPTABLE,
-        {},
-        {
-          error: helpers.responseMessages.INVALID_RESPONSES,
-        }
-      );
-    }
-
     const auction = await create(data);
     if (!auction) {
       return createResponse(

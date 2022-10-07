@@ -281,7 +281,7 @@ export const auctionPreRegister = Joi.object({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date.required().messages({
+  endDate: date.required().greater(Joi.ref("startDate")).messages({
     required_error: "endDate must be present in responses",
     validate_error: "endDate must be a string in responses",
   }),
@@ -351,7 +351,7 @@ export const auctionSchema = Joi.object({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date.required().messages({
+  endDate: date.required().greater(Joi.ref("startDate")).messages({
     required_error: "endDate must be present in responses",
     validate_error: "endDate must be a string in responses",
   }),
