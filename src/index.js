@@ -4,6 +4,7 @@ import {
   PRODUCT_PATHNAME,
   UPLOAD_PATHNAME,
   USER_PATHNAME,
+  SEARCH_PATHNAME,
 } from "./common/constants.js";
 import { productRouter } from "./product/product-routes.js";
 import { userRouter } from "./user/user-routes.js";

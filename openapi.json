@@ -1135,6 +1135,15 @@
                       "items": {
                         "$ref": "#/components/schemas/user"
                       }
+                    },
+                     "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": { "type": "number" },
+                        "currentPage": { "type": "number" },
+                        "totalPages": { "type": "number" },
+                        "count": { "type": "number" }
+                      }
                     }
                   }
                 }
@@ -1301,11 +1310,6 @@
                     "format": "string",
                     "nullable": false
                   },
-                  "email": {
-                    "type": "string",
-                    "format": "string",
-                    "nullable": false
-                  },
                   "zip": {
                     "type": "number",
                     "format": "number",
@@ -1329,6 +1333,12 @@
                   "profession": {
                     "type": "string",
                     "format": "string",
+                    "nullable": false
+                  },
+                  "Role": {
+                    "type": "string",
+                    "format": "string",
+                    "description": " Role of Name to used in (Admin or Vendor)",
                     "nullable": false
                   }
                 }
@@ -1524,6 +1534,12 @@
                     "format": "string",
                     "nullable": false,
                     "description": " email of the user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false,
+                    "description": " password of the user"
                   }
                 }
               }

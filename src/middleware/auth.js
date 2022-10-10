@@ -1,5 +1,6 @@
 import { verifyJwtToken, createResponse } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
+import { getJwtTokenUsers } from "../user/user-queries.js";
 
 /**
  * verify JWT_TOKEN from headers
@@ -8,7 +9,7 @@ import { helpers } from "../helper/helpers.js";
  * @param {function} next
  * @returns Object
  */
-export const isAuthenticated = (req, res, next) => {
+export const isAuthenticated = async (req, res, next) => {
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
     helpers.StatusMessages.UNAUTHORIZED,
@@ -24,8 +25,8 @@ export const isAuthenticated = (req, res, next) => {
     res.status(statusCode).json(response);
     return;
   }
-
-  const userData = verifyJwtToken(jwtToken);
+  const data = await getJwtTokenUsers(jwtToken);
+  const userData = verifyJwtToken(jwtToken, data[0].publicKey);
   res.locals = userData;
   next();
 };

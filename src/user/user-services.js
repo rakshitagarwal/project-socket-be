@@ -8,7 +8,7 @@ import {
   getEmailUser,
   persistence,
   setUserPasscode,
-  getRoleUsers,
+  getRoleAccessToken,
   getUserByIdRole,
   getTokenUsers,
   updatePass,
@@ -20,7 +20,7 @@ import {
   getResetUserById,
   getEmailUsers,
   getUserFind,
-  search,
+  getRoles,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -138,7 +138,7 @@ export const deleteUser = async (id) => {
   if (userId) {
     // Yes, it's a valid ObjectId, proceed with `findById` call.
     const metaData = await removeUser(id);
-    if (!metaData) {
+    if (!metaData || metaData.status) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.USER_INVALID_ID
@@ -159,20 +159,29 @@ export const deleteUser = async (id) => {
  */
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
-  if (userId) {
-    const getUser = await getUserFind(id);
+  let userRoleId = await getRoleUser(userdata.Role);
+  const roles = await getRoles(userdata.Role);
 
-    if (getUser) {
-      const updateUser = await update(id, userdata);
-      const { password, email, Role, createdAt, passcode, ...userData } =
-        getUser;
-      if (updateUser) {
-        return createResponse(
-          helpers.StatusCodes.OK,
-          helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
-          userData
-        );
-      }
+  if (!roles) {
+    return createResponse(
+      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+    );
+  }
+  if (userId) {
+    if (userdata.Role) {
+      userdata.Role = userRoleId;
+    }
+    const updateUser = await update(id, userdata);
+    const getUsers = await getUserFind(id);
+    const { password, email, Role, createdAt, passcode, ...userData } =
+      getUsers;
+    if (getUsers) {
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
+        userData
+      );
     }
     return notFound();
   }
@@ -204,7 +213,8 @@ export const getUser = async (page, limit, userid) => {
             userInfo.push(element);
           })
         : userInfo.push(getuserInfo);
-      if (userInfo && userMeta !== null) {
+
+      if (userInfo.length > 0) {
         return createResponse(
           helpers.StatusCodes.OK,
           !userid
@@ -220,13 +230,23 @@ export const getUser = async (page, limit, userid) => {
         );
       }
     }
-    return notFound();
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND,
+      {},
+      {
+        limit,
+        currentPage: userMeta.currentPage,
+        recordCount: userMeta.count,
+        pages: userMeta.pages,
+      }
+    );
   }
   return notFound();
 };
 
 export const userPermission = async (token) => {
-  const dataToken = await getRoleUsers(token);
+  const dataToken = await getRoleAccessToken(token);
   if (dataToken) {
     const getRoleId = await getUserByIdRole(dataToken);
     const getUser = await getUserFind(getRoleId.User);
@@ -343,14 +363,6 @@ export const logOut = async (jwttoken) => {
   }
 };
 
-export const findUser = async (query) => {
-  const filters = query;
-  const page = parseInt(query.page) || 0;
-  const limit = parseInt(query.limit) || 5;
-  // const searchText = query.searchText || "";
-  const searched = await search(page, limit, filters);
-  // return createResponse(helpers.StatusCodes.OK, "search", searched);
-};
 /**
  * @description page not found.
  */
