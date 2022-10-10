@@ -30,15 +30,26 @@ import {
   userUpdateSchema,
 } from "./../common/validationSchemas.js";
 import { isAuthenticated } from "../middleware/auth.js";
+import { checkAccess } from "../middleware/acl.js";
 export const userRouter = Router();
 userRouter
   .post(USER_LOGIN, validateSchema.body(loginSchema), login)
   .post(USER_REGISTER, validateSchema.body(userSchema), register)
-  .delete(ID_POSTFIX, validateSchema.params(idSchema), remove)
-  .put(ID_POSTFIX, validateSchema.body(userUpdateSchema), update)
-  .get(USER_PATH_ALLID, get)
+  .delete(
+    ID_POSTFIX,
+    validateSchema.params(idSchema),
+    [isAuthenticated, checkAccess],
+    remove
+  )
+  .put(
+    ID_POSTFIX,
+    validateSchema.body(userUpdateSchema),
+    [isAuthenticated, checkAccess],
+    update
+  )
+  .get(USER_PATH_ALLID, [isAuthenticated, checkAccess], get)
   .post(USER_PERMISSION, user_permission)
   .post(USER_SETPASSWORD, user_setpassword)
   .post(USER_FORGET, user_forget)
   .post(USER_RESET, reset_password)
-  .post(USER_LOGOUT, logout)
+  .post(USER_LOGOUT, [isAuthenticated, checkAccess], logout);

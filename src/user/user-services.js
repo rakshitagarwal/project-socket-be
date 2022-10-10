@@ -8,7 +8,7 @@ import {
   getEmailUser,
   persistence,
   setUserPasscode,
-  getRoleUsers,
+  getRoleAccessToken,
   getUserByIdRole,
   getTokenUsers,
   updatePass,
@@ -160,14 +160,9 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
   let userRoleId = await getRoleUser(userdata.Role);
-  const roles = await getRoles();
+  const roles = await getRoles(userdata.Role);
 
-  const arr = [];
-  roles.filter((data) => {
-    arr.push(data.name);
-  });
-  const userExists = arr.includes(userdata.Role);
-  if (!userExists) {
+  if (!roles) {
     return createResponse(
       helpers.StatusCodes.UNAUTHORIZED,
       helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
@@ -242,8 +237,6 @@ export const getUser = async (page, limit, userid) => {
       {
         limit,
         currentPage: userMeta.currentPage,
-
-        // text,
         recordCount: userMeta.count,
         pages: userMeta.pages,
       }
@@ -253,7 +246,7 @@ export const getUser = async (page, limit, userid) => {
 };
 
 export const userPermission = async (token) => {
-  const dataToken = await getRoleUsers(token);
+  const dataToken = await getRoleAccessToken(token);
   if (dataToken) {
     const getRoleId = await getUserByIdRole(dataToken);
     const getUser = await getUserFind(getRoleId.User);

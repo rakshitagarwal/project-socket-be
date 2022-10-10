@@ -4,6 +4,7 @@ import { calculatePrivilages } from "./../common/utilies.js";
 import { getRoleById, getPrivilagesForRole } from "./../roles/role-queries.js";
 
 export const checkAccess = async (req, res, next) => {
+  const roleUser = res.locals.Role.name;
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
     {
@@ -13,15 +14,14 @@ export const checkAccess = async (req, res, next) => {
 
   // TODO: add roleid from jwt auth
 
-  const role = await getRoleById("Admin");
+  const role = await getRoleById(roleUser);
+
   if (!role) {
     res.status(statusCode).json(response);
   }
   const { module } = await getPrivilagesForRole(role._id);
-
-  const moduleName = req._parsedUrl.pathname.split("/")[1];
+  const moduleName = req.baseUrl.split("/")[2];
   const requestedModule = module.find((m) => moduleName.indexOf(m.name) != -1);
-
   if (requestedModule) {
     const methodsToAccess = calculatePrivilages(
       requestedModule.privilageNumber

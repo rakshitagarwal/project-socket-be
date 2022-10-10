@@ -38,9 +38,14 @@ export const getRoleUser = async (user) => {
   }
   return roleId._id;
 };
-export const getRoles = async () => {
-  const roles = await UseRole.find().select({ name: 1, _id: 0 }).lean();
-  return roles;
+export const getRoles = async (user) => {
+  const roleId = await UseRole.findOne({ name: user }).select({
+    _id: 1,
+  });
+  if (!roleId) {
+    return false;
+  }
+  return roleId;
 };
 export const getUserById = async (id) => {
   const userMeta = await UserModel.findById(id)
@@ -54,7 +59,8 @@ export const getUserById = async (id) => {
 export const getUserFind = async (id) => {
   const userMeta = await UserModel.findById(id)
     .find({ status: false, verified: true })
-    .lean();
+    .lean()
+    .populate("Role", { name: 1 });
   if (userMeta.length > 0) {
     return userMeta[0];
   }
@@ -105,7 +111,7 @@ export const persistence = async (genToken) => {
   const userMeta = await Persistence.create(genToken);
   return userMeta;
 };
-export const getRoleUsers = async (token) => {
+export const getRoleAccessToken = async (token) => {
   const roleId = await Persistence.findOne({ accessToken: token }).select({
     _id: 1,
   });
