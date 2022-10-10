@@ -11,9 +11,7 @@ import { helpers } from "../helper/helpers.js";
 export const isAuthenticated = (req, res, next) => {
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
-    {
-      message: helpers.StatusMessages.UNAUTHORIZED,
-    }
+    helpers.StatusMessages.UNAUTHORIZED,
   );
 
   if (!req.headers.authorization?.includes(" ")) {

@@ -30,7 +30,7 @@ import {
   loginSchema,
   userUpdateSchema,
 } from "./../common/validationSchemas.js";
-import { isAuthenticated } from "../middleware/auth.js";
+
 export const userRouter = Router();
 userRouter
   .post(USER_LOGIN, validateSchema.body(loginSchema), login)
