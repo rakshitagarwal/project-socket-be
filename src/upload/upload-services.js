@@ -86,7 +86,7 @@ export const update = async (origin, query, body, file) => {
     if (body?.image) {
       return createResponse(
         helpers.StatusCodes.OK,
-        `Image Updated ${helpers.StatusMessages.OK}`,
+        `${helpers.StatusMessages.OK}`,
         {
           path: file.path,
           fileName: file.filename,

@@ -60,7 +60,7 @@ export const addAuction = async (data) => {
     ) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Auction PreRegister StartDate or EndDate is not valid"
+        helpers.responseMessages.AUCTION_DATE
       );
     }
   }
@@ -72,7 +72,7 @@ export const addAuction = async (data) => {
     if (quantity > qty) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Auction Quantity should be less than or equal to Product Quantity"
+        helpers.responseMessages.AUCTION_QUANTITY
       );
     }
   }
@@ -128,7 +128,7 @@ export const addAuction = async (data) => {
       );
     }
   } else {
-    if(data.postAuctionStatus && data.auctionPostRegister) {
+    if (data.postAuctionStatus && data.auctionPostRegister) {
       return createResponse(
         helpers.StatusCodes.NOT_ACCEPTABLE,
         helpers.StatusMessages.NOT_ACCEPTABLE,
@@ -137,8 +137,8 @@ export const addAuction = async (data) => {
           error: helpers.responseMessages.INVALID_RESPONSES,
         }
       );
-    } 
-    
+    }
+
     if (!data.auctionPreRegister && !data.auctionPostRegister) {
       return createResponse(
         helpers.StatusCodes.NOT_ACCEPTABLE,
@@ -253,7 +253,7 @@ export const updateAuction = async (id, updated) => {
     ) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Auction PreRegister StartDate or EndDate is not valid"
+        helpers.responseMessages.AUCTION_DATE
       );
     }
   }
@@ -265,7 +265,7 @@ export const updateAuction = async (id, updated) => {
     if (quantity > qty) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Auction Quantity should be less than or equal to Product Quantity"
+        helpers.responseMessages.AUCTION_QUANTITY
       );
     }
   }
@@ -389,7 +389,7 @@ export const deleteAuction = async (id) => {
   if (auction.state === "Publish") {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      "Aucion Cannot be deleted, because it has already started"
+      helpers.responseMessages.AUCTION_CANT_DELETE
     );
   }
 
@@ -422,7 +422,7 @@ export const fetchAuctionById = async (id) => {
 
   return createResponse(
     helpers.StatusCodes.NOT_FOUND,
-    "Auction " + helpers.StatusMessages.NOT_FOUND
+    helpers.StatusMessages.NOT_FOUND
   );
 };
 

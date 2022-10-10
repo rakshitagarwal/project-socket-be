@@ -1,3 +1,4 @@
+import { convertToSpecificLang } from "../common/utilies.js";
 import {
   createProduct,
   deleteProduct,
@@ -10,12 +11,12 @@ import {
 
 export const add = async (req, res) => {
   const { statusCode, response } = await createProduct(req.body);
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const remove = async (req, res) => {
   const { statusCode, response } = await deleteProduct(req.params.id);
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const update = async (req, res) => {
@@ -28,7 +29,7 @@ export const update = async (req, res) => {
     req.params.id,
     updateProductData
   );
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const select = async (req, res) => {
@@ -37,20 +38,20 @@ export const select = async (req, res) => {
     parseInt(req.query.limit)
   );
 
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const selectProduct = async (req, res) => {
   const { statusCode, response } = await getProduct(req.params.id);
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const selectCategories = async (req, res) => {
   const { statusCode, response } = await getCategories();
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
 export const searchProduct = async (req, res) => {
   const { statusCode, response } = await findProduct(req.query);
-  res.status(statusCode).json(response);
+  res.status(statusCode).json(convertToSpecificLang(response, res));
 };
