@@ -232,12 +232,13 @@ const country = Joi.string().min(0).max(50);
 const gender = Joi.string()
   .valid("female")
   .valid("male")
+  .valid("not prefer to specify")
   .min(4)
   .max(6)
   .optional()
   .allow("");
 const age = Joi.number().min(0).max(100).optional().allow();
-const mobile = Joi.number().optional().allow(null);
+const mobile = Joi.number().optional().allow(null).min(6);
 const profession = Joi.string().optional().allow("");
 const role = Joi.string();
 
@@ -265,6 +266,7 @@ export const userUpdateSchema = Joi.object({
   age: age,
   mobile: mobile,
   profession: profession,
+  Role: Joi.string().optional().allow(""),
 });
 
 export const loginSchema = Joi.object({
