@@ -193,7 +193,7 @@ export const putAuction = async (id, data, pre, post) => {
       }
     );
 
-    if (auctionPre && auctionpost) return auction;
+    if (auctionPre || auctionpost || auction) return auction;
   }
 };
 

@@ -51,9 +51,20 @@ export const addAuction = async (data) => {
     );
   }
 
+  // check if a bot is Isvalid or not
+  if (!data.bot) {
+    if (!data.botMaxPrice) {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        "Bot Max Price must be needed when Bot is Active"
+      );
+    }
+  }
+
   // check if a preRegiser startdate and enddate shoudl be betweeen the auction startdate and Enddate
-  const { startDate, endDate, auctionPreRegister, quantity } = data;
+  const { quantity } = data;
   if (!data.registerationStatus) {
+    const { startDate, endDate, auctionPreRegister } = data;
     if (
       auctionPreRegister.startDate <= startDate ||
       auctionPreRegister.endDate >= endDate
@@ -245,8 +256,19 @@ export const updateAuction = async (id, updated) => {
     );
   }
 
-  const { startDate, endDate, auctionPreRegister, quantity } = updated;
+  // check if a bot is Isvalid or not
+  if (!updated.bot) {
+    if (!updated.botMaxPrice) {
+      return createResponse(
+        helpers.StatusCodes.BAD_REQUEST,
+        "Bot Max Price must be needed when Bot is Active"
+      );
+    }
+  }
+
+  const { quantity } = updated;
   if (!updated.registerationStatus) {
+    const { startDate, endDate, auctionPreRegister } = updated;
     if (
       auctionPreRegister.startDate <= startDate ||
       auctionPreRegister.endDate >= endDate
