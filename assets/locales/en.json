@@ -25,8 +25,8 @@
 	"email your sent sucessfully": "email your sent sucessfully",
 	"you have already logout": "you have already logout",
 	"you please check your authorized token": "you please check your authorized token",
-	"logout.Successfully":"logout Successfully",
-	"logout.user":"Invalid user logout",
+	"logout.Successfully": "logout Successfully",
+	"logout.user": "Invalid user logout",
 	"product.added": "Product Added",
 	"product.deleted": "Product Deleted",
 	"product.updated": "Product Updated",
@@ -49,5 +49,11 @@
 	"auction.updated": "Auction Updated",
 	"auction.deleted": "Auction Deleted",
 	"single.auction": "Get Single Auction",
-	"searched.auction": "Get all Searched"
+	"searched.auction": "Get all Searched",
+	"auction.date": "Auction PreRegister StartDate or EndDate is not valid",
+	"auction.quantity": "Auction Quantity should be less than or equal to Product Quantity",
+	"auction.cantDelete": "Aucion Cannot be deleted, because it has already started",
+	"product.objectid": "check the ObjectID which is not valid",
+	"product.exists": "Product is Already Registered in auctions, So can't be deleted",
+	"OK": "OK"
 }

@@ -162,6 +162,7 @@ export const productSchema = Joi.object({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a number in responses",
   }),
+  status: boolean.optional(),
   vendor: Joi.string().max(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",

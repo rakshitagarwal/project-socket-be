@@ -160,6 +160,11 @@ const responseMessages = {
   AUCTION_DELETED: "auction.deleted",
   SINGLE_AUCTION: "single.auction",
   SEARCHED_AUCTION: "searched.auction",
+  AUCTION_DATE: "auction.date",
+  AUCTION_QUANTITY: "auction.quantity",
+  AUCTION_CANT_DELETE: "auction.cantDelete",
+  PRODUCT_OBJECTID: "product.objectid",
+  PRODUCT_EXISTS: "product.exists",
 };
 const privilage = [
   {

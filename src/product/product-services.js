@@ -24,7 +24,7 @@ export const createProduct = async (product) => {
       helpers.StatusMessages.NOT_ACCEPTABLE,
       {},
       {
-        error: "check the ObjectID which is not valid",
+        error: helpers.responseMessages.PRODUCT_OBJECTID,
       }
     );
 
@@ -36,7 +36,7 @@ export const createProduct = async (product) => {
       helpers.StatusMessages.NOT_ACCEPTABLE,
       {},
       {
-        error: "check the ObjectID which is not valid",
+        error: helpers.responseMessages.PRODUCT_OBJECTID,
       }
     );
 
@@ -62,7 +62,7 @@ export const deleteProduct = async (id) => {
   if (auctionProduct.length > 0) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
-      "Product is Already Registered in auctions, So can't be deleted"
+      helpers.responseMessages.PRODUCT_EXISTS
     );
   }
 
@@ -101,7 +101,9 @@ export const deleteProduct = async (id) => {
 };
 
 export const updateProduct = async (id, product) => {
-  if (!validateObjectId(id)) {
+  const isValid = validateObjectId(id);
+
+  if (!isValid) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
       helpers.responseMessages.BAD_REQUEST,
@@ -120,7 +122,7 @@ export const updateProduct = async (id, product) => {
       if (auctionProduct) {
         return createResponse(
           helpers.StatusCodes.NOT_ACCEPTABLE,
-          "Product is Already, registered in auctions, so cant be deleted"
+          helpers.responseMessages.PRODUCT_EXISTS
         );
       }
     }

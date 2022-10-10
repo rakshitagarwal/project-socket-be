@@ -118,17 +118,15 @@ const query = (schema) => (req, res, next) => {
 
 const objectId = (req, res, next) => {
   const valid = validateObjectId(req.params.id);
-  if (valid) {
-    next();
+  if (!valid) {
+    const { statusCode, response } = createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.VALID_OBJECT_ID
+    );
+    res.status(statusCode).json(response);
+    return;
   }
-  return createResponse(
-    helpers.StatusCodes.NOT_ACCEPTABLE,
-    helpers.StatusMessages.NOT_ACCEPTABLE,
-    {},
-    {
-      error: "Object Id is not Proper",
-    }
-  );
+  next();
 };
 
 export const validateSchema = {

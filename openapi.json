@@ -363,6 +363,17 @@
         "description": "get single product",
         "security": [{ "bearerAuth": [] }],
         "tags": ["Products"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "get all category",
@@ -413,6 +424,17 @@
         "tags": ["Products"],
         "security": [{ "bearerAuth": [] }],
         "description": "Add a new product",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -536,6 +558,15 @@
               "format": "Int32",
               "default": 0
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
+            }
           }
         ],
         "responses": {
@@ -601,6 +632,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
+            }
           }
         ],
         "responses": {
@@ -650,6 +690,15 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
@@ -763,6 +812,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
+            }
           }
         ],
         "responses": {
@@ -830,8 +888,7 @@
             "name": "type",
             "schema": {
               "type": "string",
-              "format": "string",
-              "default": ""
+              "format": "string"
             }
           },
           {
@@ -839,8 +896,16 @@
             "name": "category",
             "schema": {
               "type": "string",
-              "format": "string",
-              "default": ""
+              "format": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Accept-Language",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "fr", "de"],
+              "default": "en"
             }
           }
         ],
