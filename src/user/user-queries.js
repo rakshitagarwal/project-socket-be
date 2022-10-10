@@ -38,6 +38,10 @@ export const getRoleUser = async (user) => {
   }
   return roleId._id;
 };
+export const getRoles = async () => {
+  const roles = await UseRole.find().select({ name: 1, _id: 0 }).lean();
+  return roles;
+};
 export const getUserById = async (id) => {
   const userMeta = await UserModel.findById(id)
     .find({ verified: false })

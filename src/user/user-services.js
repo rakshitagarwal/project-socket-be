@@ -20,6 +20,7 @@ import {
   getResetUserById,
   getEmailUsers,
   getUserFind,
+  getRoles,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -137,7 +138,7 @@ export const deleteUser = async (id) => {
   if (userId) {
     // Yes, it's a valid ObjectId, proceed with `findById` call.
     const metaData = await removeUser(id);
-    if (!metaData) {
+    if (!metaData || metaData.status) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.USER_INVALID_ID
@@ -158,20 +159,34 @@ export const deleteUser = async (id) => {
  */
 export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
-  if (userId) {
-    const getUser = await getUserFind(id);
+  let userRoleId = await getRoleUser(userdata.Role);
+  const roles = await getRoles();
 
-    if (getUser) {
-      const updateUser = await update(id, userdata);
-      const { password, email, Role, createdAt, passcode, ...userData } =
-        getUser;
-      if (updateUser) {
-        return createResponse(
-          helpers.StatusCodes.OK,
-          helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
-          userData
-        );
-      }
+  const arr = [];
+  roles.filter((data) => {
+    arr.push(data.name);
+  });
+  const userExists = arr.includes(userdata.Role);
+  if (!userExists) {
+    return createResponse(
+      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+    );
+  }
+  if (userId) {
+    if (userdata.Role) {
+      userdata.Role = userRoleId;
+    }
+    const updateUser = await update(id, userdata);
+    const getUsers = await getUserFind(id);
+    const { password, email, Role, createdAt, passcode, ...userData } =
+      getUsers;
+    if (getUsers) {
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
+        userData
+      );
     }
     return notFound();
   }
