@@ -128,6 +128,17 @@ export const addAuction = async (data) => {
       );
     }
   } else {
+    if(data.postAuctionStatus && data.auctionPostRegister) {
+      return createResponse(
+        helpers.StatusCodes.NOT_ACCEPTABLE,
+        helpers.StatusMessages.NOT_ACCEPTABLE,
+        {},
+        {
+          error: helpers.responseMessages.INVALID_RESPONSES,
+        }
+      );
+    } 
+    
     if (!data.auctionPreRegister && !data.auctionPostRegister) {
       return createResponse(
         helpers.StatusCodes.NOT_ACCEPTABLE,

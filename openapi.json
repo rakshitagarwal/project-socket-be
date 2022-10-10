@@ -503,6 +503,9 @@
           "500": {
             "$ref": "#/components/responses/500"
           },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
           "400": {
             "$ref": "#/components/responses/400"
           },
