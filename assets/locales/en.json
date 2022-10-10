@@ -55,5 +55,6 @@
 	"auction.cantDelete": "Aucion Cannot be deleted, because it has already started",
 	"product.objectid": "check the ObjectID which is not valid",
 	"product.exists": "Product is Already Registered in auctions, So can't be deleted",
-	"OK": "OK"
+	"OK": "OK",
+	"Bad Request": "Bad Request"
 }
