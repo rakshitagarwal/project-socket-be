@@ -58,7 +58,8 @@ export const createProduct = async (product) => {
 export const deleteProduct = async (id) => {
   // <-- change the acution Product delete logic -->
   const auctionProduct = await checkProductAuction(id);
-  if (auctionProduct) {
+
+  if (auctionProduct.length > 0) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
       "Product is Already Registered in auctions, So can't be deleted"

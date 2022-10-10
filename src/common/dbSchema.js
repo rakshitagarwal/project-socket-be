@@ -298,7 +298,11 @@ const auctionSchema = new Schema(
     },
     registerationStatus: {
       type: Boolean,
-      default: null,
+      default: false,
+    },
+    postAuctionStatus: {
+      type: Boolean,
+      default: false,
     },
     quantity: {
       type: Number,
@@ -363,6 +367,11 @@ const auctionPreRegisterSchema = new Schema(
       required: true,
       default: false,
     },
+    IsDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     Auction: {
       type: Schema.Types.ObjectId,
       ref: "Auction",
@@ -381,7 +390,10 @@ const auctionPostRegisterSchema = new Schema(
     },
     status: {
       type: Boolean,
-      required: true,
+      default: false,
+    },
+    IsDeleted: {
+      type: Boolean,
       default: false,
     },
     Auction: {

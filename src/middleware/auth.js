@@ -12,9 +12,7 @@ import { getJwtTokenUsers } from "../user/user-queries.js";
 export const isAuthenticated = async (req, res, next) => {
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
-    {
-      message: helpers.StatusMessages.UNAUTHORIZED,
-    }
+    helpers.StatusMessages.UNAUTHORIZED,
   );
 
   if (!req.headers.authorization?.includes(" ")) {

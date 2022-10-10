@@ -7,9 +7,7 @@ export const checkAccess = async (req, res, next) => {
   const roleUser = res.locals.Role.name;
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
-    {
-      message: helpers.StatusMessages.UNAUTHORIZED,
-    }
+    helpers.StatusMessages.UNAUTHORIZED,
   );
 
   // TODO: add roleid from jwt auth
@@ -29,6 +27,7 @@ export const checkAccess = async (req, res, next) => {
     const hasAccess = methodsToAccess.find((method) =>
       method.includes(req.method) ? true : false
     );
+    
     if (hasAccess) {
       next();
     } else {
@@ -42,8 +41,6 @@ export const checkAccess = async (req, res, next) => {
 export const userAccess = async (req, res, next) => {
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
-    {
-      message: helpers.StatusMessages.UNAUTHORIZED,
-    }
+    helpers.StatusMessages.UNAUTHORIZED,
   );
 };
