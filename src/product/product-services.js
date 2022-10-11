@@ -40,6 +40,13 @@ export const createProduct = async (product) => {
       }
     );
 
+  if (product.sellingPrice < product.purchasePrice) {
+    return createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.responseMessages.SELLING_PRICE
+    );
+  }
+
   const productMeta = await create(product);
 
   if (productMeta !== undefined) {

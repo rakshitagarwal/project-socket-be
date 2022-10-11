@@ -166,6 +166,7 @@ const responseMessages = {
   PRODUCT_OBJECTID: "product.objectid",
   PRODUCT_EXISTS: "product.exists",
   BOT_MAX_PRICE: "bot.price",
+  SELLING_PRICE: "selling.price",
 };
 const privilage = [
   {
