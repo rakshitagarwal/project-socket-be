@@ -148,7 +148,7 @@ const responseMessages = {
   UPLOAD_IMAGE_DELETED: "files.deleted",
   UPLOAD_IMAGE_UPDATED: "file.updated",
   MULTIPLE_UPLOAD_IMAGE: "multiple.images.uploaded",
-  BAD_REQUEST: "Bad.Request",
+  BAD_REQUEST: "bad.request",
   NOT_VALID_OBJECTID: "NOT.VALID.OBJECTID",
   ERROR_OCCURED_FILES: "error.occured.file",
   VALID_OBJECT_ID: "valid.objectid",
@@ -165,6 +165,7 @@ const responseMessages = {
   AUCTION_CANT_DELETE: "auction.cantDelete",
   PRODUCT_OBJECTID: "product.objectid",
   PRODUCT_EXISTS: "product.exists",
+  BOT_MAX_PRICE: "bot.price",
 };
 const privilage = [
   {
