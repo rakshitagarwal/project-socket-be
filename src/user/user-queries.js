@@ -174,10 +174,10 @@ export const getPersistenaceUsers = async (data) => {
 };
 export const getJwtTokenUsers = async (data) => {
   const roleId = await Persistence.find({ accessToken: data });
-  if (roleId[0] === undefined) {
-    return false;
+  if (roleId.length > 0) {
+    return roleId;
   }
-  return roleId;
+  return false;
 };
 export const getTokenRemoveByIdUser = async (id) => {
   const roleId = await Persistence.deleteOne(id).lean();

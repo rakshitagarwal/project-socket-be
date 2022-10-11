@@ -161,7 +161,7 @@ export const updateUser = async (id, userdata) => {
   const userId = validateObjectId(id);
   let userRoleId = await getRoleUser(userdata.Role);
   const roles = await getRoles(userdata.Role);
-
+  
   if (!roles) {
     return createResponse(
       helpers.StatusCodes.UNAUTHORIZED,
