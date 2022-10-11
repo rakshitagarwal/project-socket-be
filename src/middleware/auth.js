@@ -12,7 +12,7 @@ import { getJwtTokenUsers } from "../user/user-queries.js";
 export const isAuthenticated = async (req, res, next) => {
   const { statusCode, response } = createResponse(
     helpers.StatusCodes.UNAUTHORIZED,
-    helpers.StatusMessages.UNAUTHORIZED,
+    helpers.StatusMessages.UNAUTHORIZED
   );
 
   if (!req.headers.authorization?.includes(" ")) {
@@ -25,8 +25,17 @@ export const isAuthenticated = async (req, res, next) => {
     res.status(statusCode).json(response);
     return;
   }
-  const data = await getJwtTokenUsers(jwtToken);
-  const userData = verifyJwtToken(jwtToken, data[0].publicKey);
-  res.locals = userData;
-  next();
+  try {
+    const data = await getJwtTokenUsers(jwtToken);
+    const userData = verifyJwtToken(jwtToken, data[0].publicKey);
+    res.locals = userData;
+    next();
+  } catch (error) {
+    const { response, statusCode } = createResponse(
+      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.responseMessages.TOKEN_EXPIRED,
+      {}
+    );
+    res.status(statusCode).json(response);
+  }
 };

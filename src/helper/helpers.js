@@ -165,6 +165,7 @@ const responseMessages = {
   AUCTION_CANT_DELETE: "auction.cantDelete",
   PRODUCT_OBJECTID: "product.objectid",
   PRODUCT_EXISTS: "product.exists",
+  TOKEN_EXPIRED: "Protected resource, token expired",
   BOT_MAX_PRICE: "bot.price",
   SELLING_PRICE: "selling.price",
 };
