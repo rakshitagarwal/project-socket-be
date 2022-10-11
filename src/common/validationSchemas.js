@@ -239,7 +239,7 @@ const gender = Joi.string()
   .optional()
   .allow("");
 const age = Joi.number().min(0).max(100).optional().allow();
-const mobile = Joi.number().optional().allow(null).min(6);
+const mobile = Joi.number().optional().allow(0).min(6).positive();
 const profession = Joi.string().optional().allow("");
 const role = Joi.string();
 
