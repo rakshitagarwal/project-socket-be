@@ -1,12 +1,12 @@
-import Joi from "joi";
+import BaseJoi from "joi";
+import JoiDate from "@joi/date";
+const Joi = BaseJoi.extend(JoiDate);
 
 const string = Joi.string();
 const number = Joi.number();
 const boolean = Joi.boolean();
 const date = Joi.date();
 const price = Joi.number();
-const module = Joi.string();
-const path = Joi.string();
 
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
@@ -280,14 +280,18 @@ export const resetPassword = Joi.object({
 });
 
 export const auctionPreRegister = Joi.object({
-  startDate: date.required().messages({
+  startDate: date.format("YYYY-MM-DD:HH:MM:SS").required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date.required().greater(Joi.ref("startDate")).messages({
-    required_error: "endDate must be present in responses",
-    validate_error: "endDate must be a string in responses",
-  }),
+  endDate: date
+    .format("YYYY-MM-DD:HH:MM:SS")
+    .required()
+    .greater(Joi.ref("startDate"))
+    .messages({
+      required_error: "endDate must be present in responses",
+      validate_error: "endDate must be a string in responses",
+    }),
   participantCount: number.greater(0).required().messages({
     required_error: "participantCount must be present in responses",
     validate_error: "participantCount must be a string in responses",
@@ -347,14 +351,18 @@ export const auctionSchema = Joi.object({
     required_error: "autoStart must be present in responses",
     validate_error: "autoStart must be a number in responses",
   }),
-  startDate: date.required().messages({
+  startDate: date.format("YYYY-MM-DD:HH:MM:SS").required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date.required().greater(Joi.ref("startDate")).messages({
-    required_error: "endDate must be present in responses",
-    validate_error: "endDate must be a string in responses",
-  }),
+  endDate: date
+    .format("YYYY-MM-DD:HH:MM:SS")
+    .required()
+    .greater(Joi.ref("startDate"))
+    .messages({
+      required_error: "endDate must be present in responses",
+      validate_error: "endDate must be a string in responses",
+    }),
   registerationStatus: boolean.required().messages({
     required_error: "registerationStatus must be present in responses",
     validate_error: "registerationStatus must be a number in responses",
