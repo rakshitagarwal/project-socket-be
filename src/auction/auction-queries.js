@@ -161,7 +161,8 @@ export const putAuction = async (id, data, pre, post) => {
     const auction = await auctionModel.findByIdAndUpdate(id, data);
     const auctionPre = await auctionPreModel.findOneAndUpdate(
       { Auction: id },
-      pre
+      pre,
+      { upsert: true, new: true }
     );
     const auctionpost = await auctionPostModel.findOneAndUpdate(
       {
@@ -171,7 +172,7 @@ export const putAuction = async (id, data, pre, post) => {
         IsDeleted: true,
       }
     );
-    if (auctionPre && auctionpost) return auction;
+    if (auctionPre || auctionpost) return auction;
   }
 
   if (!pre && !post) {
