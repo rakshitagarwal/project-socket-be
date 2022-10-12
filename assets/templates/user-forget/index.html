@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BigDeal Email Template</title>
+  </head>
+  <body>
+    <h3>
+      Welcome to the user
+      <b>{{ name }}</b>
+      you have created the user on
+      <b>{{ date }}</b>
+      <br/>
+      <p>
+        You requested for reset password, kindly use this 
+        <a href="http://localhost:3300/v1/users/password-reset/{{text}}">Click here </a>
+        to reset your password.
+      </p>
+    </h3>
+  </body>
+</html>
