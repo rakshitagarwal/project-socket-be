@@ -59,5 +59,6 @@
   "bad.request": "Bad Request",
   "bot.price": "Bot Max Price must be needed when Bot is Active",
   "Not Acceptable": "Not Acceptable",
-  "selling.price": "It must be greater than purchase price"
+  "selling.price": "It must be greater than purchase price",
+  "auction.type": "auction type is inappropriate"
 }
