@@ -7,7 +7,6 @@ const number = Joi.number();
 const boolean = Joi.boolean();
 const date = Joi.date();
 const price = Joi.number();
-
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
  */
@@ -142,9 +141,8 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  description: string.min(3).max(1000).required().messages({
-    required_error: "description must be present in responses",
-    validate_error: "description must be a string in responses",
+  description: string.min(3).max(1000).optional().messages({
+    length_error: "Length should be proper",
   }),
   purchasePrice: price.integer().greater(0).required().messages({
     required_error: "purchasePrice must be present in responses",
@@ -164,17 +162,6 @@ export const productSchema = Joi.object({
   }),
   status: boolean.optional(),
   vendor: Joi.string().max(20).required().messages({
-    required_error: "title must be present in responses",
-    validate_error: "title must be a string in responses",
-  }),
-  ProductCategory: Joi.string().required().messages({
-    required_error: "quantity must be present in responses",
-    validate_error: "quantity must be a string in responses",
-  }),
-});
-
-export const updateProductSchema = Joi.object({
-  title: Joi.string().min(20).required().messages({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
