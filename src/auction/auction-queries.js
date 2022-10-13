@@ -42,11 +42,73 @@ export const create = async (data) => {
   return auctionData;
 };
 
-export const fetchAuction = async (page, limit) => {
+export const fetchAuction = async (page, limit, auctionType) => {
   let auctionData = [];
+
+  // with auction type for filtering the differet types
+  if (auctionType) {
+    const auctionTypeCount = await auctionModel
+      .find({
+        state: auctionType,
+        IsDeleted: false,
+      })
+      .countDocuments();
+
+    let totalPages = Math.ceil(auctionTypeCount / limit);
+
+    const auctions = await auctionModel
+      .find({
+        state: auctionType,
+        IsDeleted: false,
+      })
+      .limit(limit)
+      .skip(limit * page)
+      .populate("Product", { _id: 1, title: 1 })
+      .populate("AuctionCategory", { _id: 1, name: 1 })
+      .lean();
+
+    for (let i = 0; i < auctions.length; i++) {
+      let id = auctions[i]._id;
+      const auctionPreRegister = await auctionPreModel
+        .findOne({ Auction: id })
+        .where({ IsDeleted: false })
+        .select({
+          startDate: 1,
+          endDate: 1,
+          participantCount: 1,
+          participantFees: 1,
+        })
+        .lean();
+
+      const auctionPostRegister = await auctionPostModel
+        .findOne({ Auction: id })
+        .where({ IsDeleted: false })
+        .select({ participantFees: 1 })
+        .lean();
+
+      auctionPreRegister || auctionPostRegister
+        ? auctionData.push({
+            ...auctions[i],
+            auctionPreRegister,
+            auctionPostRegister,
+          })
+        : auctionData.push({
+            ...auctions[i],
+          });
+    }
+
+    return {
+      auctionData,
+      auctionType,
+      page: totalPages,
+      limit: limit,
+      currentPage: page,
+      recordCount: auctionTypeCount,
+    };
+  }
+
   const count = await auctionModel.find({ IsDeleted: false }).countDocuments();
   let totalPages;
-
   totalPages = Math.ceil(count / limit);
 
   const auctions = await auctionModel

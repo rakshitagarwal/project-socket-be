@@ -179,6 +179,29 @@ export const addAuction = async (data) => {
 export const getAuctions = async (query) => {
   let page = parseInt(query.page);
   let limit = parseInt(query.limit);
+  let auctionType = query.auctionType;
+
+  if (auctionType) {
+    const auctions = await fetchAuction(page, limit, auctionType);
+
+    let { auctionData, ...metadata } = auctions;
+
+    if (auctionData.length > 0) {
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.StatusMessages.OK,
+        auctionData,
+        {
+          ...metadata,
+        }
+      );
+    }
+
+    return createResponse(
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND
+    );
+  }
 
   const auctions = await fetchAuction(page, limit);
   let { auctionData, ...metadata } = auctions;

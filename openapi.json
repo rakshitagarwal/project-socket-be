@@ -2460,7 +2460,7 @@
         }
       },
       "get": {
-        "description": "fetch All Auctions",
+        "description": "fetch All Auctions with auction type filter",
         "security": [{ "bearerAuth": [] }],
         "tags": ["Auctions"],
         "parameters": [
@@ -2480,6 +2480,15 @@
               "type": "number",
               "format": "Int32",
               "default": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "auctionType",
+            "schema": {
+              "type": "string",
+              "enum": ["Active", "Publish", "Cancel", "Closed"],
+              "default": ""
             }
           }
         ],

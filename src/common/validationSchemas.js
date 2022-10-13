@@ -181,6 +181,12 @@ export const paginationSchema = Joi.object({
   limit: Joi.number().messages({
     invalid_type_error: "Invalid limits number not allowed in params",
   }),
+  auctionType: Joi.string()
+    .optional()
+    .valid("Active", "Publish", "Cancel", "Closed")
+    .messages({
+      invalid_type_error: "Invalid types for the auctionType in params",
+    }),
 });
 
 /**
