@@ -54,9 +54,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
       })
       .countDocuments();
 
-    let totalPages;
-
-    totalPages = Math.ceil(auctionTypeCount / limit);
+    let totalPages = Math.ceil(auctionTypeCount / limit);
 
     const auctions = await auctionModel
       .find({
