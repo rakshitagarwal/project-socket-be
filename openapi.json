@@ -1796,7 +1796,7 @@
             }
           }
         ],
-        "description": "Upload a file",
+        "description": "Upload a Single file which can be video or image",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -1887,7 +1887,7 @@
             }
           }
         ],
-        "description": "Update Upload a file",
+        "description": "Update the uploaded file which can be Image or Video",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -1974,7 +1974,7 @@
             }
           }
         ],
-        "description": "Delete Upload file",
+        "description": "Delete a Upload file which can be Video or Image",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -2037,6 +2037,8 @@
     "/uploads/video/": {
       "post": {
         "tags": ["Uploads"],
+        "deprecated": true,
+        "summary": "Depricated Don't Use",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -2137,7 +2139,7 @@
             }
           }
         ],
-        "description": "Upload a file",
+        "description": "Upload a multiple Images",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -2154,7 +2156,7 @@
                     "items": {
                       "type": "string",
                       "format": "binary",
-                      "minLength": 4
+                      "maxItems": 2
                     }
                   }
                 }

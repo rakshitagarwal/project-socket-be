@@ -1,5 +1,6 @@
 import { helpers } from "../helper/helpers.js";
 import { createResponse, validateObjectId } from "../common/utilies.js";
+import env from "../config/env.js";
 import { storeMultipleFiles } from "./../common/utilies.js";
 import logger from "../config/logger.js";
 import { uploadFile } from "../common/utilies.js";
@@ -60,12 +61,12 @@ const file = (req, res, next) => {
 
 const multipleFile = (req, res, next) => {
   const uploadFile = storeMultipleFiles();
-  const files = uploadFile.array("file", 4);
+  const files = uploadFile.array("file", 2);
   files(req, res, function (err) {
     if (err) {
       const { statusCode, response } = createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        err
+        helpers.StatusCodes.BAD_REQUEST,
+        err.message ? err.message : err
       );
       logger.error({
         type: "Error",
@@ -74,8 +75,7 @@ const multipleFile = (req, res, next) => {
       res.status(statusCode).json(response);
       return;
     }
-
-    if (req.files.length !== 4) {
+    if (req.files.length < 0) {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         "Uploaded files count should be 4"
@@ -83,12 +83,58 @@ const multipleFile = (req, res, next) => {
       res.status(statusCode).json(response);
       logger.error({
         type: "Error",
-        message: "Images upload count is not proper",
+        message: "Image upload count is not proper",
       });
       return;
     }
-    if (req.files) {
-      next();
+    if (req.files.length > 0) {
+      // size: 7142443   mimetype: 'image/jpeg',
+      // for (let i = 0; i < req.files.length; i++) {
+      //   if (req.files[i].mimetype.startsWith("video/")) {
+      //     const max = req.files[i].size > env.FILE_ALLOWED_SIZE;
+      //     if (max) {
+      //       const { statusCode, response } = createResponse(
+      //         helpers.StatusCodes.NOT_ACCEPTABLE,
+      //         "THe File is inappropriate"
+      //       );
+      //       logger.error({
+      //         type: "Error",
+      //         message: "THe File is inappropriate",
+      //       });
+      //       res.status(statusCode).json(response);
+      //       return;
+      //     }
+      //     next();
+      //   }
+      //   const { statusCode, response } = createResponse(
+      //     helpers.StatusCodes.NOT_ACCEPTABLE,
+      //     "THe File is inappropriate"
+      //   );
+      //   logger.error({
+      //     type: "Error",
+      //     message: "THe File is inappropriate",
+      //   });
+      //   res.status(statusCode).json(response);
+      //   return;
+      // }
+
+      // start logic of the file size
+      for (let i = 0; i < req.files.length; i++) {
+        const max = req.files[i].size > env.FILE_ALLOWED_SIZE;
+        if (max) {
+          const { statusCode, response } = createResponse(
+            helpers.StatusCodes.NOT_ACCEPTABLE,
+            "THe File is inappropriate"
+          );
+          logger.error({
+            type: "Error",
+            message: "THe File is inappropriate",
+          });
+          res.status(statusCode).json(response);
+          return;
+        }
+        // end logic of the file size
+      }
     } else {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.NOT_FOUND,
@@ -97,7 +143,7 @@ const multipleFile = (req, res, next) => {
       res.status(statusCode).json(response);
       logger.error({
         type: "Error",
-        message: "Image Not Found",
+        message: "Images Not Found",
       });
       return;
     }
