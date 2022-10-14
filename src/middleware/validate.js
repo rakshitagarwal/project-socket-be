@@ -42,17 +42,49 @@ const file = (req, res, next) => {
       return;
     }
     if (req.file) {
+      if (req.file.mimetype.startsWith("image/")) {
+        const max = req.file.size > env.FILE_ALLOWED_SIZE;
+        if (max) {
+          const { statusCode, response } = createResponse(
+            helpers.StatusCodes.NOT_ACCEPTABLE,
+            "File Size " + helpers.StatusMessages.NOT_ACCEPTABLE
+          );
+          res.status(statusCode).json(response);
+          logger.error({
+            type: "Error",
+            message: "File Not Found",
+          });
+          return;
+        }
+      }
+
+      if (req.file.mimetype.startsWith("video/")) {
+        const max = req.file.size > env.VIDEO_ALLOWED_SIZE;
+        if (max) {
+          const { statusCode, response } = createResponse(
+            helpers.StatusCodes.NOT_ACCEPTABLE,
+            "File Size " + helpers.StatusMessages.NOT_ACCEPTABLE
+          );
+          res.status(statusCode).json(response);
+          logger.error({
+            type: "Error",
+            message: "File Not Found",
+          });
+          return;
+        }
+      }
+
       req.body = { ...req?.body, image: req?.file?.path };
       next();
     } else {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.NOT_FOUND,
-        "Image " + helpers.StatusMessages.NOT_FOUND
+        "File " + helpers.StatusMessages.NOT_FOUND
       );
       res.status(statusCode).json(response);
       logger.error({
         type: "Error",
-        message: "Image Not Found",
+        message: "File Not Found",
       });
       return;
     }
@@ -78,7 +110,7 @@ const multipleFile = (req, res, next) => {
     if (req.files.length < 0) {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Uploaded files count should be 4"
+        "Uploaded files count should be max 2"
       );
       res.status(statusCode).json(response);
       logger.error({
@@ -88,53 +120,22 @@ const multipleFile = (req, res, next) => {
       return;
     }
     if (req.files.length > 0) {
-      // size: 7142443   mimetype: 'image/jpeg',
-      // for (let i = 0; i < req.files.length; i++) {
-      //   if (req.files[i].mimetype.startsWith("video/")) {
-      //     const max = req.files[i].size > env.FILE_ALLOWED_SIZE;
-      //     if (max) {
-      //       const { statusCode, response } = createResponse(
-      //         helpers.StatusCodes.NOT_ACCEPTABLE,
-      //         "THe File is inappropriate"
-      //       );
-      //       logger.error({
-      //         type: "Error",
-      //         message: "THe File is inappropriate",
-      //       });
-      //       res.status(statusCode).json(response);
-      //       return;
-      //     }
-      //     next();
-      //   }
-      //   const { statusCode, response } = createResponse(
-      //     helpers.StatusCodes.NOT_ACCEPTABLE,
-      //     "THe File is inappropriate"
-      //   );
-      //   logger.error({
-      //     type: "Error",
-      //     message: "THe File is inappropriate",
-      //   });
-      //   res.status(statusCode).json(response);
-      //   return;
-      // }
-
-      // start logic of the file size
       for (let i = 0; i < req.files.length; i++) {
         const max = req.files[i].size > env.FILE_ALLOWED_SIZE;
         if (max) {
           const { statusCode, response } = createResponse(
             helpers.StatusCodes.NOT_ACCEPTABLE,
-            "THe File is inappropriate"
+            "THe File Size is inappropriate"
           );
           logger.error({
             type: "Error",
-            message: "THe File is inappropriate",
+            message: "THe File size is inappropriate",
           });
           res.status(statusCode).json(response);
           return;
         }
-        // end logic of the file size
       }
+      next();
     } else {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.NOT_FOUND,

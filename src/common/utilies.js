@@ -218,7 +218,7 @@ export const storeMultipleFiles = () => {
     let isAllowedMimeType = file.mimetype.startsWith("image/");
 
     if (!isAllowedMimeType) {
-      cb("File type should be image, you have sent the ", file.mimetype);
+      cb("File type should be image, you have sent the", file.mimetype);
       return;
     }
     cb(null, true);

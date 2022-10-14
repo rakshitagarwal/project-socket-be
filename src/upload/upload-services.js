@@ -50,9 +50,11 @@ export const remove = async (query, path) => {
 };
 
 export const update = async (origin, query, body, file) => {
+  console.log(query, body, file);
+
   let fileRemovePromise = new Promise((resolve, reject) => {
     fs.unlink("./" + query.path, function (err) {
-      if (err && err.code == "ENOENT") {
+      if (err.code === "ENOENT") {
         reject(
           createResponse(
             helpers.StatusCodes.NOT_FOUND,

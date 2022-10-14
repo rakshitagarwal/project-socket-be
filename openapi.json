@@ -1786,6 +1786,7 @@
       "post": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Upload Single Video and Image",
         "parameters": [
           {
             "in": "query",
