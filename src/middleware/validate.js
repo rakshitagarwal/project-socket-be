@@ -47,7 +47,7 @@ const file = (req, res, next) => {
         if (max) {
           const { statusCode, response } = createResponse(
             helpers.StatusCodes.NOT_ACCEPTABLE,
-            "File Size " + helpers.StatusMessages.NOT_ACCEPTABLE
+            helpers.responseMessages.IMAGE_MAX_SIZE
           );
           res.status(statusCode).json(response);
           logger.error({
@@ -63,7 +63,7 @@ const file = (req, res, next) => {
         if (max) {
           const { statusCode, response } = createResponse(
             helpers.StatusCodes.NOT_ACCEPTABLE,
-            "File Size " + helpers.StatusMessages.NOT_ACCEPTABLE
+            helpers.responseMessages.VIDEO_MAX_SIZE
           );
           res.status(statusCode).json(response);
           logger.error({
@@ -79,7 +79,7 @@ const file = (req, res, next) => {
     } else {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.NOT_FOUND,
-        "File " + helpers.StatusMessages.NOT_FOUND
+        helpers.responseMessages.FILE_NOT_UPLOAD
       );
       res.status(statusCode).json(response);
       logger.error({
@@ -94,6 +94,7 @@ const file = (req, res, next) => {
 const multipleFile = (req, res, next) => {
   const uploadFile = storeMultipleFiles();
   const files = uploadFile.array("file", 2);
+
   files(req, res, function (err) {
     if (err) {
       const { statusCode, response } = createResponse(
@@ -107,29 +108,31 @@ const multipleFile = (req, res, next) => {
       res.status(statusCode).json(response);
       return;
     }
+
     if (req.files.length < 0) {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.BAD_REQUEST,
-        "Uploaded files count should be max 2"
+        helpers.responseMessages.FILE_NOT_UPLOAD
       );
       res.status(statusCode).json(response);
       logger.error({
         type: "Error",
-        message: "Image upload count is not proper",
+        message: "Uploaded files count should be max 2",
       });
       return;
     }
+
     if (req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const max = req.files[i].size > env.FILE_ALLOWED_SIZE;
         if (max) {
           const { statusCode, response } = createResponse(
             helpers.StatusCodes.NOT_ACCEPTABLE,
-            "THe File Size is inappropriate"
+            helpers.responseMessages.IMAGE_MAX_SIZE
           );
           logger.error({
             type: "Error",
-            message: "THe File size is inappropriate",
+            message: "THe File size must be 2mb",
           });
           res.status(statusCode).json(response);
           return;
@@ -139,7 +142,7 @@ const multipleFile = (req, res, next) => {
     } else {
       const { statusCode, response } = createResponse(
         helpers.StatusCodes.NOT_FOUND,
-        "Image " + helpers.StatusMessages.NOT_FOUND
+        helpers.responseMessages.FILE_NOT_UPLOAD
       );
       res.status(statusCode).json(response);
       logger.error({

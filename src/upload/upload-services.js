@@ -50,58 +50,39 @@ export const remove = async (query, path) => {
 };
 
 export const update = async (origin, query, body, file) => {
-  console.log(query, body, file);
-
   let fileRemovePromise = new Promise((resolve, reject) => {
     fs.unlink("./" + query.path, function (err) {
-      if (err.code === "ENOENT") {
-        reject(
-          createResponse(
-            helpers.StatusCodes.NOT_FOUND,
-            err.message,
-            {},
-            err.stack
-          )
-        );
+      if (err) {
+        reject({
+          code: helpers.StatusCodes.NOT_ACCEPTABLE,
+          message: helpers.StatusMessages.NOT_FOUND,
+          stack: err.stack,
+        });
       } else if (err) {
-        reject(
-          createResponse(
-            helpers.StatusCodes.BAD_REQUEST,
-            helpers.responseMessages.ERROR_OCCURED_FILES,
-            {},
-            err.stack
-          )
-        );
+        reject({
+          code: helpers.StatusCodes.NOT_ACCEPTABLE,
+          message: helpers.StatusMessages.NOT_FOUND,
+          stack: err.stack,
+        });
       }
-      resolve(
-        createResponse(
-          helpers.StatusCodes.OK,
-          helpers.responseMessages.UPLOAD_IMAGE_UPDATED
-        )
-      );
+      resolve({
+        code: helpers.StatusCodes.OK,
+        message: helpers.StatusMessages.OK,
+        path: file.path,
+        fileName: file.fileName,
+      });
     });
   });
 
-  const response = await fileRemovePromise;
-
-  if (response?.statusCode) {
-    if (body?.image) {
-      return createResponse(
-        helpers.StatusCodes.OK,
-        `${helpers.StatusMessages.OK}`,
-        {
-          path: file.path,
-          fileName: file.filename,
-        }
-      );
-    }
-    return createResponse(
-      helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST
-    );
+  try {
+    const response = await fileRemovePromise;
+    return createResponse(response.code, response.message, {
+      path: response.path,
+      fileName: response.fileName,
+    });
+  } catch (error) {
+    return createResponse(error.code, error.message, {}, error.stack);
   }
-
-  return response;
 };
 
 export const multiple = async (moduleName, files) => {

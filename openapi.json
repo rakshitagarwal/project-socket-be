@@ -1871,6 +1871,7 @@
       "put": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Updated Single Video and Image",
         "parameters": [
           {
             "in": "query",
@@ -1965,6 +1966,7 @@
       "delete": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Delete Single Video and Image",
         "parameters": [
           {
             "in": "query",
@@ -2130,6 +2132,7 @@
       "post": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Multiple Image Uploads",
         "parameters": [
           {
             "in": "query",

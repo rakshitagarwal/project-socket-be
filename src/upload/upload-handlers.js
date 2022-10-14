@@ -1,3 +1,5 @@
+import { createResponse } from "../common/utilies.js";
+import { helpers } from "../helper/helpers.js";
 import { add, remove, update, multiple } from "./upload-services.js";
 
 export const createImage = async (req, res) => {
@@ -38,11 +40,15 @@ export const removeImage = async (req, res) => {
 };
 
 export const createVideo = async (req, res) => {
-  const { statusCode, response } = await add(
-    req.headers.origin,
-    req.body,
-    req.query.moduleName,
-    req.file
+  // const { statusCode, response } = await add(
+  //   req.headers.origin,
+  //   req.body,
+  //   req.query.moduleName,
+  //   req.file
+  // );
+  const { statusCode, response } = createResponse(
+    helpers.StatusCodes.SERVICE_UNAVAILABLE,
+    helpers.StatusMessages.SERVICE_UNAVAILABLE
   );
   res.status(statusCode).json(response);
 };
