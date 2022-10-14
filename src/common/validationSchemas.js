@@ -127,6 +127,14 @@ export const envSchema = Joi.object({
     required_error: "DEFAULT_LANGUAGE must be present in environment variables",
     invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
+  HOST: string.required().messages({
+    required_error: "HOST must be present in environment variables",
+    invalid_type_error: "HOST type in environment variables",
+  }),
+  STATIC_PATH: string.required().messages({
+    required_error: "STATIC_PATH must be present in environment variables",
+    invalid_type_error: "STATIC_PATH type present in environment variables",
+  }),
 });
 
 /**
@@ -273,12 +281,12 @@ export const resetPassword = Joi.object({
 });
 
 export const auctionPreRegister = Joi.object({
-  startDate: date.format("YYYY-MM-DD:HH:MM:SS").required().messages({
+  startDate: date.format("YYYY-MM-DD:HH:mm:SS").required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
   endDate: date
-    .format("YYYY-MM-DD:HH:MM:SS")
+    .format("YYYY-MM-DD:HH:mm:SS")
     .required()
     .greater(Joi.ref("startDate"))
     .messages({
@@ -344,12 +352,12 @@ export const auctionSchema = Joi.object({
     required_error: "autoStart must be present in responses",
     validate_error: "autoStart must be a number in responses",
   }),
-  startDate: date.format("YYYY-MM-DD:HH:MM:SS").required().messages({
+  startDate: date.format("YYYY-MM-DD:HH:mm:SS").required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
   endDate: date
-    .format("YYYY-MM-DD:HH:MM:SS")
+    .format("YYYY-MM-DD:HH:mm:SS")
     .required()
     .greater(Joi.ref("startDate"))
     .messages({
