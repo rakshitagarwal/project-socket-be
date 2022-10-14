@@ -28,6 +28,7 @@ import {
   idSchema,
   loginSchema,
   userUpdateSchema,
+  forgetPassword
 } from "./../common/validationSchemas.js";
 import { isAuthenticated } from "../middleware/auth.js";
 import { checkAccess } from "../middleware/acl.js";
@@ -50,6 +51,6 @@ userRouter
   .get(USER_PATH_ALLID, [isAuthenticated, checkAccess], get)
   .post(USER_PERMISSION, user_permission)
   .post(USER_SETPASSWORD, user_setpassword)
-  .post(USER_FORGET, user_forget)
+  .post(USER_FORGET,validateSchema.body(forgetPassword), user_forget)
   .post(USER_RESET, reset_password)
   .post(USER_LOGOUT, [isAuthenticated, checkAccess], logout);
