@@ -15,11 +15,17 @@ import cookieParser from "cookie-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import i18n from "i18n";
+import { authSchemas } from "./src/roles/role-schema.js";
+import { productCategoryModel } from "./src/product/product-schemas.js";
+import { auctionRole } from "./src/auction/auction-schemas.js";
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const app = express();
 const PORT = env.PORT;
 const LOG_ENV = env.LOG_ENV;
+const HOST = env.HOST;
+const STATIC_PATH = env.STATIC_PATH;
 
 const swaggerDoc = JSON.parse(fs.readFileSync("./openapi.json", "utf8"));
 
@@ -33,7 +39,7 @@ app.use("/assets/uploads", express.static(env.FILE_STORAGE_PATH));
 // language configurations
 i18n.configure({
   locales: ["en", "fr", "nl"],
-  directory: process.cwd() + "/assets/locales",
+  directory: process.cwd() + STATIC_PATH,
   header: "accept-language",
   defaultLocale: "en",
 });
@@ -72,13 +78,125 @@ app.use((err, req, res, next) => {
 app.use("*", (req, res) => {
   res.status(helpers.StatusCodes.NOT_FOUND).json({
     success: false,
-    message: "routes " + helpers.StatusMessages.NOT_FOUND,
+    message: "route " + helpers.StatusMessages.NOT_FOUND,
     metadata: req["originalUrl"],
   });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`listening on http://localhost:${PORT}`);
+// initial scripts for seeding the data
+(async () => {
+  connectDB();
+  const roleCount = await authSchemas.roleSchema.countDocuments();
+  const privilageCout = await authSchemas.privilageSchema.countDocuments();
+  const prodCategoryCount = await productCategoryModel.countDocuments();
+  const aucCategoryCount = await auctionRole.auctionCategory.countDocuments();
+  const rolePrivilageCount = await authSchemas.rolePrivilage.countDocuments();
+
+  const rolesSchema = async () => {
+    try {
+      await authSchemas.roleSchema.deleteMany({});
+      const data = await authSchemas.roleSchema.insertMany(helpers.roles);
+      if (data.length > 0) {
+        logger.info({
+          type: "info",
+          message: "Roles Added",
+        });
+      }
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
+  const privilageSchema = async () => {
+    await authSchemas.privilageSchema.deleteMany({});
+
+    const privilageData = await authSchemas.privilageSchema.insertMany(
+      helpers.privilage
+    );
+    if (privilageData > 0) {
+      logger.info({
+        type: "info",
+        message: "Prvilage add",
+      });
+    }
+  };
+
+  const privilage = async () => {
+    try {
+      const adminRoleId = await authSchemas.roleSchema
+        .findOne({ name: "Admin" })
+        .select({ _id: 1 });
+      const vendorRoleId = await authSchemas.roleSchema
+        .findOne({ name: "Vendor" })
+        .select({ _id: 1 });
+
+      const vandorData = helpers.privilageRole;
+      const adminData = helpers.privilageRoleVan;
+      await authSchemas.rolePrivilage.deleteMany({});
+      const PrvilageRoleAdmin = await authSchemas.rolePrivilage.insertMany({
+        role: adminRoleId,
+        module: vandorData[0].module,
+      });
+      const PrvilageRoleVandor = await authSchemas.rolePrivilage.insertMany({
+        role: vendorRoleId,
+        module: adminData[0].module,
+      });
+      if (PrvilageRole.length > 0) {
+        logger.info({
+          type: "info",
+          message: "Privilage checked in Role",
+        });
+      }
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
+  const auctionCategorySchema = async () => {
+    await auctionRole.auctionCategory.deleteMany({});
+    const auctionCategory = await auctionRole.auctionCategory.insertMany({
+      name: "English",
+      description: "This is an english acution",
+    });
+
+    if (auctionCategory.length > 0) {
+      logger.info({
+        type: "info",
+        message: "Auction Category add",
+      });
+    }
+  };
+
+  const productCategorySchema = async () => {
+    await productCategoryModel.deleteMany({});
+    const productCategory = await productCategoryModel.insertMany(
+      helpers.productCategory
+    );
+    if (productCategory.length > 0) {
+      logger.info({
+        type: "info",
+        message: "Product Category add",
+      });
+    }
+  };
+
+  if (
+    roleCount <= 0 &&
+    privilageCout <= 0 &&
+    prodCategoryCount <= 0 &&
+    aucCategoryCount <= 0 &&
+    rolePrivilageCount <= 0
+  ) {
+    await rolesSchema();
+    await privilageSchema();
+    await privilage();
+    await productCategorySchema();
+    await auctionCategorySchema();
+  }
+})();
+
+const server = app.listen(PORT, async () => {
+  console.log(`listening on https://${HOST}:${PORT}`);
   connectDB();
 });
 
