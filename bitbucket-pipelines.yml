@@ -1,12 +1,11 @@
-image: node:18-alpine
 options:
     docker: true
 pipelines:
     branches:
-        release/admin-panel-1.0.0
+        release/admin-panel-1.0.0:
             - step:
                   name: Push Docker Image
                   script:
                       - docker login -u $docker_username -p $docker_password
-                      - docker build -t globalvox/lexeon-node:1.0.0 .
-                      - docker push globalvox/lexeon-node:1.0.0
+                      - docker build -t globalvox/bigdeal-admin:$backend_tag .
+                      - docker push globalvox/bigdeal-admin:$backend_tag
