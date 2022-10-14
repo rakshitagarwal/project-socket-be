@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
+    "seed": "node src/seeds/authorization.js",
     "dev": "NODE_ENV=production nodemon index.js",
     "test": "mocha",
-    "lint": "eslint --fix src/*.js",
-    "seed": "node src/seeds/authorization.js"
+    "lint": "eslint --fix src/*.js"
   },
   "repository": {
     "type": "git",

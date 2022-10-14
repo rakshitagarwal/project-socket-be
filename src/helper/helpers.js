@@ -168,6 +168,7 @@ const responseMessages = {
   TOKEN_EXPIRED: "Protected resource, token expired",
   BOT_MAX_PRICE: "bot.price",
   SELLING_PRICE: "selling.price",
+  AUCTION_TYPE: "auction.type",
 };
 const privilage = [
   {

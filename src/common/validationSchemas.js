@@ -7,7 +7,6 @@ const number = Joi.number();
 const boolean = Joi.boolean();
 const date = Joi.date();
 const price = Joi.number();
-
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
  */
@@ -128,6 +127,14 @@ export const envSchema = Joi.object({
     required_error: "DEFAULT_LANGUAGE must be present in environment variables",
     invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
+  HOST: string.required().messages({
+    required_error: "HOST must be present in environment variables",
+    invalid_type_error: "HOST type in environment variables",
+  }),
+  STATIC_PATH: string.required().messages({
+    required_error: "STATIC_PATH must be present in environment variables",
+    invalid_type_error: "STATIC_PATH type present in environment variables",
+  }),
 });
 
 /**
@@ -142,9 +149,8 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  description: string.min(3).max(1000).required().messages({
-    required_error: "description must be present in responses",
-    validate_error: "description must be a string in responses",
+  description: string.min(3).max(1000).optional().messages({
+    length_error: "Length should be proper",
   }),
   purchasePrice: price.integer().greater(0).required().messages({
     required_error: "purchasePrice must be present in responses",
@@ -173,17 +179,6 @@ export const productSchema = Joi.object({
   }),
 });
 
-export const updateProductSchema = Joi.object({
-  title: Joi.string().min(20).required().messages({
-    required_error: "title must be present in responses",
-    validate_error: "title must be a string in responses",
-  }),
-  ProductCategory: Joi.string().required().messages({
-    required_error: "quantity must be present in responses",
-    validate_error: "quantity must be a string in responses",
-  }),
-});
-
 /**
  * @description scheams for checking the query parmas for pagination
  */
@@ -194,6 +189,12 @@ export const paginationSchema = Joi.object({
   limit: Joi.number().messages({
     invalid_type_error: "Invalid limits number not allowed in params",
   }),
+  auctionType: Joi.string()
+    .optional()
+    .valid("Active", "Publish", "Cancel", "Closed")
+    .messages({
+      invalid_type_error: "Invalid types for the auctionType in params",
+    }),
 });
 
 /**
@@ -280,12 +281,12 @@ export const resetPassword = Joi.object({
 });
 
 export const auctionPreRegister = Joi.object({
-  startDate: date.format("YYYY-MM-DD:HH:MM:SS").required().messages({
+  startDate: date.format("YYYY-MM-DD:HH:mm:SS").required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
   endDate: date
-    .format("YYYY-MM-DD:HH:MM:SS")
+    .format("YYYY-MM-DD:HH:mm:SS")
     .required()
     .greater(Joi.ref("startDate"))
     .messages({
@@ -351,12 +352,12 @@ export const auctionSchema = Joi.object({
     required_error: "autoStart must be present in responses",
     validate_error: "autoStart must be a number in responses",
   }),
-  startDate: date.format("YYYY-MM-DD:HH:MM:SS").required().messages({
+  startDate: date.format("YYYY-MM-DD:HH:mm:SS").required().messages({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
   endDate: date
-    .format("YYYY-MM-DD:HH:MM:SS")
+    .format("YYYY-MM-DD:HH:mm:SS")
     .required()
     .greater(Joi.ref("startDate"))
     .messages({
