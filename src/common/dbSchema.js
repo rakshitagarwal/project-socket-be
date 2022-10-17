@@ -1,4 +1,3 @@
-import { string } from "joi";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -204,7 +203,7 @@ export const productSchema = new Schema(
     image: {
       type: [
         {
-          type: string,
+          type: String,
         },
       ],
       required: true,
@@ -260,7 +259,7 @@ const auctionSchema = new Schema(
     bannerImage: {
       type: [
         {
-          type: string,
+          type: String,
         },
       ],
     },
