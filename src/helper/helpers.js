@@ -169,6 +169,10 @@ const responseMessages = {
   BOT_MAX_PRICE: "bot.price",
   SELLING_PRICE: "selling.price",
   AUCTION_TYPE: "auction.type",
+  IMAGE_MAX_SIZE: "file.max.size",
+  VIDEO_MAX_SIZE: "video.max.size",
+  FILE_NOT_UPLOAD: "file.not.found",
+  UPLOAD_FILE_COUNT: "upload.file.count",
 };
 const privilage = [
   {

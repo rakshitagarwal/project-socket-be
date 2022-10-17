@@ -60,5 +60,9 @@
   "bot.price": "Bot Max Price must be needed when Bot is Active",
   "Not Acceptable": "Not Acceptable",
   "selling.price": "It must be greater than purchase price",
-  "auction.type": "auction type is inappropriate"
+  "auction.type": "auction type is inappropriate",
+  "image.max.size": "File Size must be 2mb",
+  "video.max.size": "File Size must be 10mb",
+  "file.not.found": "File Not Found",
+  "upload.file.count": "Uploaded files count should be max 2"
 }

@@ -11,9 +11,12 @@ const price = Joi.number();
  * @description moudleName scheams for checking the moduleName from query parmas
  */
 export const moduleNameSchema = Joi.object({
-  moduleName: string.required().messages({
-    required_error: "MoudleName must be presnet",
-  }),
+  moduleName: string
+    .required()
+    .valid("auctions", "products", "users")
+    .messages({
+      required_error: "MoudleName must be presnet",
+    }),
 });
 
 /**
