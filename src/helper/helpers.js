@@ -130,7 +130,7 @@ const responseMessages = {
   USER_PERMISSION_ALLOW: "user.permission.allow",
   USER_INVALID: "invalid.user.id",
   USER_CHECK_EMAIL: "please.check.your.email.then.set.your.password",
-  USER_SET_PASSWORD_SUCESSFULL: "user.set.the.password.sucessfully",
+  USER_SET_PASSWORD_SUCCESSFUL: "user.set.the.password.sucessfully",
   USER_ALREADY_USES: "you.have.already.uses",
   USER_RESET_SUCESSFULL: "password.reset.sucessfully",
   USER_ALREADY_RESET_PASS: "you.have.already.reset.your.password",

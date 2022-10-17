@@ -244,9 +244,9 @@ export const getUser = async (page, limit, userid, roleName) => {
         );
       }
     } else if (userRoleId.name === roleName && roleName === "Vendor") {
-      console.log("welcome to Vendor");
+      // TO DO comments (this function used to vendor for future)
     } else {
-      console.log("Other user");
+      // TO DO comments (this function used to other user for future)
     }
   }
   return notFound();
@@ -327,7 +327,7 @@ export const userSetpassword = async (tokenId, user) => {
     const checkUser = await updatePass(userData._id, userData);
     return createResponse(
       helpers.StatusCodes.ACCEPTED,
-      helpers.responseMessages.USER_SET_PASSWORD_SUCESSFULL
+      helpers.responseMessages.USER_SET_PASSWORD_SUCCESSFUL
     );
   }
   return createResponse(
