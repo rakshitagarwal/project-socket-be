@@ -40,15 +40,11 @@ export const removeImage = async (req, res) => {
 };
 
 export const createVideo = async (req, res) => {
-  // const { statusCode, response } = await add(
-  //   req.headers.origin,
-  //   req.body,
-  //   req.query.moduleName,
-  //   req.file
-  // );
-  const { statusCode, response } = createResponse(
-    helpers.StatusCodes.SERVICE_UNAVAILABLE,
-    helpers.StatusMessages.SERVICE_UNAVAILABLE
+  const { statusCode, response } = await add(
+    req.headers.origin,
+    req.body,
+    req.query.moduleName,
+    req.file
   );
   res.status(statusCode).json(response);
 };
