@@ -1786,6 +1786,7 @@
       "post": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Upload Single Video and Image",
         "parameters": [
           {
             "in": "query",
@@ -1796,7 +1797,7 @@
             }
           }
         ],
-        "description": "Upload a file",
+        "description": "Upload a Single file which can be video or image",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -1870,6 +1871,7 @@
       "put": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Updated Single Video and Image",
         "parameters": [
           {
             "in": "query",
@@ -1887,7 +1889,7 @@
             }
           }
         ],
-        "description": "Update Upload a file",
+        "description": "Update the uploaded file which can be Image or Video",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -1964,6 +1966,7 @@
       "delete": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Delete Single Video and Image",
         "parameters": [
           {
             "in": "query",
@@ -1974,7 +1977,7 @@
             }
           }
         ],
-        "description": "Delete Upload file",
+        "description": "Delete a Upload file which can be Video or Image",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -2037,6 +2040,8 @@
     "/uploads/video/": {
       "post": {
         "tags": ["Uploads"],
+        "deprecated": true,
+        "summary": "Depricated Don't Use",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -2127,6 +2132,7 @@
       "post": {
         "tags": ["Uploads"],
         "security": [{ "bearerAuth": [] }],
+        "summary": "Multiple Image Uploads",
         "parameters": [
           {
             "in": "query",
@@ -2137,7 +2143,7 @@
             }
           }
         ],
-        "description": "Upload a file",
+        "description": "Upload a multiple Images",
         "requestBody": {
           "description": "valid product body",
           "required": true,
@@ -2154,7 +2160,7 @@
                     "items": {
                       "type": "string",
                       "format": "binary",
-                      "minLength": 4
+                      "maxItems": 2
                     }
                   }
                 }
