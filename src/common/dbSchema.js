@@ -1,3 +1,4 @@
+import { string } from "joi";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -201,7 +202,11 @@ export const productSchema = new Schema(
       type: String,
     },
     image: {
-      type: String,
+      type: [
+        {
+          type: string,
+        },
+      ],
       required: true,
     },
     purchasePrice: {
@@ -253,7 +258,11 @@ const auctionSchema = new Schema(
       required: true,
     },
     bannerImage: {
-      type: String,
+      type: [
+        {
+          type: string,
+        },
+      ],
     },
     bannerVideo: {
       type: String,
