@@ -173,6 +173,8 @@ const responseMessages = {
   VIDEO_MAX_SIZE: "video.max.size",
   FILE_NOT_UPLOAD: "file.not.found",
   UPLOAD_FILE_COUNT: "upload.file.count",
+  BIDDER_LIMIT_NOT_REQUIRED: "noNewBidderLimit.not.required",
+  BIDDER_LIMIT_REQUIRED: "noNewBidderLimit.required",
 };
 const privilage = [
   {

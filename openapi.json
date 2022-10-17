@@ -2282,21 +2282,21 @@
                     "format": "number",
                     "nullable": false,
                     "default": 0,
-                    "description": "botMaxPrice of the auctions"
+                    "description": "noOfPlayConsumed in auction"
                   },
                   "bidIncrement": {
                     "type": "number",
                     "format": "number",
                     "nullable": false,
                     "default": 0,
-                    "description": "botMaxPrice of the auctions"
+                    "description": "bidIncrement in auctions"
                   },
                   "noNewBidderLimit": {
                     "type": "number",
                     "format": "number",
                     "nullable": false,
                     "default": 0,
-                    "description": "botMaxPrice of the auctions"
+                    "description": "noNewBidderLimit in auctions"
                   },
                   "autoStart": {
                     "type": "boolean",

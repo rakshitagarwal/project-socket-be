@@ -64,5 +64,7 @@
   "image.max.size": "File Size must be 2mb",
   "video.max.size": "File Size must be 10mb",
   "file.not.found": "File Not Found",
-  "upload.file.count": "Uploaded files count should be max 2"
+  "upload.file.count": "Uploaded files count should be max 2",
+  "noNewBidderLimit.not.required": "noNewBidderLimit is not required",
+  "noNewBidderLimit.required": "noNewBidderLimit is required"
 }
