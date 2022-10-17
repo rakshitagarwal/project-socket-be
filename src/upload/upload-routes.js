@@ -17,11 +17,7 @@ import {
 export const uploadRouter = Router();
 
 uploadRouter
-  .post(
-    "/video/",
-    [validateSchema.query(moduleNameSchema), validateSchema.file],
-    createVideo
-  )
+  .post("/video/", createVideo)
   .post(
     "/multiple/",
     [validateSchema.query(moduleNameSchema), validateSchema.multipleFile],

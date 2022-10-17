@@ -2,6 +2,8 @@ import { readFileSync } from "fs";
 import {
   ASSESTS_FILES_NAME,
   SUPPORTED_EXTENSION_FILE,
+  SUPPORTED_EXTENSION_IMAGE,
+  SUPPORTED_EXTENSION_VIDEO,
 } from "./../config/settings.js";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
@@ -180,9 +182,6 @@ const fileFilter = (req, file, cb) => {
 
 export const uploadFile = multer({
   storage: storage,
-  limits: {
-    fileSize: env.FILE_ALLOWED_SIZE,
-  },
   fileFilter: fileFilter,
 });
 
@@ -206,28 +205,20 @@ export const storeMultipleFiles = () => {
   });
 
   const multiplefileFilter = (req, file, cb) => {
-    let fileExts = SUPPORTED_EXTENSION_FILE;
+    let fileExts = SUPPORTED_EXTENSION_IMAGE;
 
     let isAllowedExt = fileExts.includes(
       path.extname(file.originalname.toLowerCase())
     );
-
     if (!isAllowedExt) {
-      cb(
-        "File extension is not proper allowed are {.png & .jpeg} you have sent the ",
-        file.originalname
-      );
+      cb(`File extension is not proper allowed`);
       return;
     }
 
-    let isAllowedMimeType =
-      file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/");
+    let isAllowedMimeType = file.mimetype.startsWith("image/");
 
     if (!isAllowedMimeType) {
-      cb(
-        "File type should be image or video, you have sent the ",
-        file.mimetype
-      );
+      cb("File type should be image, you have sent the", file.mimetype);
       return;
     }
     cb(null, true);
