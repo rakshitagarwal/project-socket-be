@@ -5,7 +5,7 @@ import fs from "fs";
 export const add = async (origin, body, moduleName, file) => {
   if (body.image) {
     return createResponse(
-      helpers.StatusCodes.FAILED_DEPENDENCY,
+      helpers.StatusCodes.OK,
       helpers.responseMessages.UPLOAD_IMAGE,
       {
         path: file.path,

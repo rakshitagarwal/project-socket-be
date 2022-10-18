@@ -237,7 +237,8 @@
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "array",
+            "items": {}
           },
           "description": {
             "type": "string"
@@ -450,8 +451,8 @@
                     "description": "name of the product you want in auctions"
                   },
                   "image": {
-                    "type": "string",
-                    "format": "string",
+                    "type": "array",
+                    "items": {},
                     "nullable": false,
                     "description": "image path from the uploads"
                   },
@@ -721,8 +722,8 @@
                     "nullable": false
                   },
                   "image": {
-                    "type": "string",
-                    "format": "string",
+                    "type": "array",
+                    "items": {},
                     "nullable": false
                   },
                   "purchasePrice": {
@@ -2239,8 +2240,8 @@
                     "description": "Title of the auctions"
                   },
                   "bannerImage": {
-                    "type": "string",
-                    "format": "string",
+                    "type": "array",
+                    "items": {},
                     "nullable": false,
                     "description": "bannerImage of the auctions"
                   },
@@ -2282,21 +2283,21 @@
                     "format": "number",
                     "nullable": false,
                     "default": 0,
-                    "description": "botMaxPrice of the auctions"
+                    "description": "noOfPlayConsumed in auction"
                   },
                   "bidIncrement": {
                     "type": "number",
                     "format": "number",
                     "nullable": false,
                     "default": 0,
-                    "description": "botMaxPrice of the auctions"
+                    "description": "bidIncrement in auctions"
                   },
                   "noNewBidderLimit": {
                     "type": "number",
                     "format": "number",
                     "nullable": false,
                     "default": 0,
-                    "description": "botMaxPrice of the auctions"
+                    "description": "noNewBidderLimit in auctions"
                   },
                   "autoStart": {
                     "type": "boolean",
@@ -2522,8 +2523,8 @@
                             "description": "Title of the auctions"
                           },
                           "bannerImage": {
-                            "type": "string",
-                            "format": "string",
+                            "type": "array",
+                            "items": {},
                             "nullable": false,
                             "description": "bannerImage of the auctions"
                           },
@@ -2788,8 +2789,8 @@
                     "description": "Title of the auctions"
                   },
                   "bannerImage": {
-                    "type": "string",
-                    "format": "string",
+                    "type": "array",
+                    "items": {},
                     "nullable": false,
                     "description": "bannerImage of the auctions"
                   },
@@ -3028,8 +3029,8 @@
                           "description": "Title of the auctions"
                         },
                         "bannerImage": {
-                          "type": "string",
-                          "format": "string",
+                          "type": "array",
+                          "items": {},
                           "nullable": false,
                           "description": "bannerImage of the auctions"
                         },
@@ -3347,8 +3348,8 @@
                             "description": "Title of the auctions"
                           },
                           "bannerImage": {
-                            "type": "string",
-                            "format": "string",
+                            "type": "array",
+                            "items": {},
                             "nullable": false,
                             "description": "bannerImage of the auctions"
                           },

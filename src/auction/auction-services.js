@@ -76,7 +76,7 @@ export const addAuction = async (data) => {
     }
   }
 
-  // check if a Product quanity shoudl be less than auction quantity
+  // check if a Product quanity should be less than auction quantity
   const products = await getProductById(Product);
   if (products) {
     const { quantity: qty } = products;
@@ -84,6 +84,26 @@ export const addAuction = async (data) => {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.AUCTION_QUANTITY
+      );
+    }
+  }
+
+  /**
+   * if postRegisteration status is false, then noNewBidderLimit is optional
+   * else mandatory
+   */
+  if (!data.postAuctionStatus) {
+    if (data.noNewBidderLimit) {
+      return createResponse(
+        helpers.StatusCodes.NOT_ACCEPTABLE,
+        helpers.responseMessages.BIDDER_LIMIT_NOT_REQUIRED
+      );
+    }
+  } else {
+    if (!data.noNewBidderLimit) {
+      return createResponse(
+        helpers.StatusCodes.NOT_ACCEPTABLE,
+        helpers.responseMessages.BIDDER_LIMIT_REQUIRED
       );
     }
   }

@@ -7,6 +7,7 @@ const number = Joi.number();
 const boolean = Joi.boolean();
 const date = Joi.date();
 const price = Joi.number();
+const stringArray = Joi.array().items(Joi.string());
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
  */
@@ -148,9 +149,9 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  image: string.required().messages({
+  image: stringArray.required().messages({
     required_error: "title must be present in responses",
-    validate_error: "title must be a string in responses",
+    validate_error: "title must be a array in responses",
   }),
   description: string.min(3).max(1000).optional().messages({
     length_error: "Length should be proper",
@@ -319,9 +320,9 @@ export const auctionSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  bannerImage: string.required().messages({
+  bannerImage: stringArray.required().messages({
     required_error: "bannerImage must be present in responses",
-    validate_error: "bannerImage must be a string in responses",
+    validate_error: "bannerImage must be a array in responses",
   }),
   bannerVideo: string.required().messages({
     required_error: "bannerVideo must be present in responses",
@@ -348,8 +349,7 @@ export const auctionSchema = Joi.object({
     required_error: "bidIncrement must be present in responses",
     validate_error: "bidIncrement must be a number in responses",
   }),
-  noNewBidderLimit: number.greater(0).required().messages({
-    required_error: "noNewBidderLimit must be present in responses",
+  noNewBidderLimit: number.greater(0).optional().messages({
     validate_error: "noNewBidderLimit must be a number in responses",
   }),
   autoStart: boolean.required().messages({
