@@ -201,7 +201,11 @@ export const productSchema = new Schema(
       type: String,
     },
     image: {
-      type: String,
+      type: [
+        {
+          type: String,
+        },
+      ],
       required: true,
     },
     purchasePrice: {
@@ -253,7 +257,11 @@ const auctionSchema = new Schema(
       required: true,
     },
     bannerImage: {
-      type: String,
+      type: [
+        {
+          type: String,
+        },
+      ],
     },
     bannerVideo: {
       type: String,

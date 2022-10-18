@@ -63,11 +63,13 @@ export const update = async (req, res) => {
  * @param res { Response }
  */
 export const get = async (req, res) => {
+  const roleuserName = res.locals.Role.name;
   const data = req.params[0];
   const { statusCode, response } = await getUser(
     parseInt(req?.query?.page),
     parseInt(req?.query?.limit),
-    data
+    data,
+    roleuserName
   );
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
@@ -98,4 +100,3 @@ export const logout = async (req, res) => {
   const { statusCode, response } = await logOut(token);
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
-
