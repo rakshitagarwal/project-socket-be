@@ -50,7 +50,7 @@
   "auction.deleted": "Auction Deleted",
   "single.auction": "Get Single Auction",
   "searched.auction": "Get all Searched",
-  "auction.date": "Auction PreRegister StartDate or EndDate is not valid",
+  "auction.date": "The startDate and time must be less than or equal to the startDate and time of the auction",
   "auction.quantity": "Auction Quantity should be less than or equal to Product Quantity",
   "auction.cantDelete": "Aucion Cannot be deleted, because it has already started",
   "product.objectid": "check the ObjectID which is not valid",
@@ -66,5 +66,6 @@
   "file.not.found": "File Not Found",
   "upload.file.count": "Uploaded files count should be max 2",
   "noNewBidderLimit.not.required": "noNewBidderLimit is not required",
-  "noNewBidderLimit.required": "noNewBidderLimit is required"
+  "noNewBidderLimit.required": "noNewBidderLimit is required",
+  "pre.start.date": "In order to qualify, it must be equal to or greater than pre-registration"
 }
