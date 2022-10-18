@@ -280,7 +280,7 @@ export const loginSchema = Joi.object({
   password: Joi.required(),
 });
 
-export const resetPassword = Joi.object({
+export const forgetPassword = Joi.object({
   email: Joi.required(),
 });
 
