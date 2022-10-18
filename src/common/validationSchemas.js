@@ -347,8 +347,7 @@ export const auctionSchema = Joi.object({
     required_error: "bidIncrement must be present in responses",
     validate_error: "bidIncrement must be a number in responses",
   }),
-  noNewBidderLimit: number.greater(0).required().messages({
-    required_error: "noNewBidderLimit must be present in responses",
+  noNewBidderLimit: number.greater(0).optional().messages({
     validate_error: "noNewBidderLimit must be a number in responses",
   }),
   autoStart: boolean.required().messages({
