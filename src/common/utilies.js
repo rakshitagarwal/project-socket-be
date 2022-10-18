@@ -105,7 +105,8 @@ export const sendEmail = (payload, eventName, randomPasscode, text) => {
   const verificationTemplate = compile(verificationHTML);
 
   const templateVariable = {
-    name: payload.fullName,
+    name: payload.firstname,
+    email: payload.email,
     date: payload.createdAt,
     randomPasscode: randomPasscode,
     text: text,

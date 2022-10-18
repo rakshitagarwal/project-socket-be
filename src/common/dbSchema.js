@@ -155,6 +155,11 @@ export const userSchema = new Schema(
       required: true,
       default: false,
     },
+    isblock: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
 
     Role: {
       type: Schema.Types.ObjectId,

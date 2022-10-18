@@ -262,15 +262,16 @@ export const userSchema = Joi.object({
 });
 
 export const userUpdateSchema = Joi.object({
-  firstname: firstname.required(),
-  lastname: lastname.required(),
+  firstname: firstname.optional(),
+  lastname: lastname.optional(),
   email: Joi.string().optional().allow(""),
-  zip: zip.required(),
-  country: country.required(),
+  zip: zip.optional(),
+  country: country.optional(),
   gender: gender,
   age: age,
   mobile: mobile,
   profession: profession,
+  isblock: Joi.boolean().optional(),
   Role: Joi.string().optional().allow(""),
 });
 

@@ -47,7 +47,7 @@ export const checkCredentials = async function (user) {
       helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
     );
   }
-  const { password, ...getUser } = emailCheck;
+  const { password, passcode, createdAt, updatedAt, ...getUser } = emailCheck;
   const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
   let PrivilageRole = [];
   getPrivilageRole.module.forEach((element) => {
@@ -159,30 +159,38 @@ export const deleteUser = async (id) => {
  * @description update user into databse
  */
 export const updateUser = async (id, userdata) => {
+  const dataVerfied = await getUserByIdVerfied(id);
+  const data = userdata.isblock ? userdata : userdata;
+  if (data.isblock) {
+    sendEmail(dataVerfied, "user-blocked");
+    return createResponse(helpers.StatusCodes.OK, "disable the user");
+  } else if (data.isblock === false) {
+    return createResponse(helpers.StatusCodes.NO_CONTENT, "enable the user");
+  }
+
   // Yes, it's a valid ObjectId, proceed with `findById` call.
   const userObjId = validateObjectId(id);
-  let userRoleId = await roleSchema(userdata.Role);
-
-  if (!userRoleId) {
+  let userRoleId = await roleSchema(data.Role);
+  if (!userRoleId && !data.isblock) {
     return createResponse(
       helpers.StatusCodes.UNAUTHORIZED,
       helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
     );
   }
   if (userObjId) {
-    if (userdata.Role) {
-      userdata.Role = userRoleId;
+    if (data.Role) {
+      data.Role = userRoleId;
     }
 
-    await update(id, userdata);
+    await update(id, data);
     const getUsersVerfied = await getUserByIdVerfied(id);
     const { password, email, Role, createdAt, passcode, ...userData } =
       getUsersVerfied;
     if (getUsersVerfied) {
       return createResponse(
         helpers.StatusCodes.OK,
-        helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
-        userData
+        data.isblock ? "" : helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
+        !data.isblock ? userData : ""
       );
     }
     return notFound();
