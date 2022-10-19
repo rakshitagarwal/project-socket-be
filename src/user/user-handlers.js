@@ -52,7 +52,7 @@ export const remove = async (req, res) => {
  * @param req { Request } - user's request object
  * @param res { Response }
  */
-export const update = async (req, res) => { 
+export const update = async (req, res) => {
   const { statusCode, response } = await updateUser(req.params.id, req.body);
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };

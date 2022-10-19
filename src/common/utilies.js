@@ -262,7 +262,10 @@ export const calculatePrivilages = (previlageNum) => {
  */
 export const validateObjectId = (objectId) => {
   const valid = mongoose.Types.ObjectId.isValid(objectId);
-  return valid;
+  if (!valid) {
+    return false;
+  }
+  return true;
 };
 
 /**

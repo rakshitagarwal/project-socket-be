@@ -13,11 +13,16 @@ export const userExists = async (user) => {
   })
     .lean()
     .populate("Role", { name: 1 });
+
   if (!emailUser) {
     return false;
+  } else if (emailUser.isblock) {
+    const data = await UserModel.findOne({ email: user, isblock: true });
+    return data;
   }
   return emailUser;
 };
+
 export const emailVerfiedUser = async (user) => {
   const userEmail = await UserModel.findOne({
     email: user,

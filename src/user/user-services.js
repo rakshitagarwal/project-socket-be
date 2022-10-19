@@ -46,6 +46,11 @@ export const checkCredentials = async function (user) {
       helpers.StatusCodes.UNAUTHORIZED,
       helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
     );
+  } else if (emailCheck.isblock) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.USER_TEMPORARY_BLOCKED
+    );
   }
   const { password, passcode, createdAt, updatedAt, ...getUser } = emailCheck;
   const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
@@ -150,7 +155,10 @@ export const deleteUser = async (id) => {
       helpers.responseMessages.USER_DELETE_SUCCESSFULL
     );
   }
-  return notFound();
+  return createResponse(
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.responseMessages.USER_INVALID
+  );
 };
 
 /**
@@ -159,29 +167,36 @@ export const deleteUser = async (id) => {
  * @description update user into databse
  */
 export const updateUser = async (id, userdata) => {
-  const dataVerfied = await getUserByIdVerfied(id);
-  const data = userdata.isblock ? userdata : userdata;
-  if (data.isblock) {
-    sendEmail(dataVerfied, "user-blocked");
-    return createResponse(helpers.StatusCodes.OK, "disable the user");
-  } else if (data.isblock === false) {
-    return createResponse(helpers.StatusCodes.NO_CONTENT, "enable the user");
-  }
-
   // Yes, it's a valid ObjectId, proceed with `findById` call.
   const userObjId = validateObjectId(id);
-  let userRoleId = await roleSchema(data.Role);
-  if (!userRoleId && !data.isblock) {
+  const data = userdata.isblock ? userdata : userdata;
+  if (data.isblock && userObjId) {
+    const dataVerfied = await getUserByIdVerfied(id);
+    sendEmail(dataVerfied, "user-blocked");
+    await update(id, data);
     return createResponse(
-      helpers.StatusCodes.UNAUTHORIZED,
-      helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.USER_DISABLE
+    );
+  } else if (data.isblock === false && userObjId) {
+    await update(id, data);
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.USER_ENABLE
     );
   }
+
   if (userObjId) {
+    let userRoleId = await roleSchema(data.Role);
+    if (!userRoleId && !data.isblock) {
+      return createResponse(
+        helpers.StatusCodes.UNAUTHORIZED,
+        helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+      );
+    }
     if (data.Role) {
       data.Role = userRoleId;
     }
-
     await update(id, data);
     const getUsersVerfied = await getUserByIdVerfied(id);
     const { password, email, Role, createdAt, passcode, ...userData } =
@@ -195,7 +210,10 @@ export const updateUser = async (id, userdata) => {
     }
     return notFound();
   }
-  return notFound();
+  return createResponse(
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.responseMessages.USER_INVALID
+  );
 };
 
 /**
@@ -206,11 +224,14 @@ export const updateUser = async (id, userdata) => {
  */
 export const getUser = async (page, limit, userid, roleName) => {
   // Yes, it's a valid ObjectId, proceed with `findById` call.
-  const userObjId = validateObjectId(userid);
-  if (userObjId) {
+  if (!page || !limit || !roleName) {
+    var userObjId = validateObjectId(userid);
+  }
+  if (userObjId && userid) {
     const userInfo = await getUserByIdVerfied(userid);
     const arr = [];
-    const { password, passcode, createdAt, ...userData } = userInfo;
+    const { password, passcode, isblock, updatedAt, createdAt, ...userData } =
+      userInfo;
     if (userInfo) {
       arr.push(userData);
       return createResponse(
@@ -222,6 +243,11 @@ export const getUser = async (page, limit, userid, roleName) => {
       );
     }
     return notFound();
+  } else if (!userObjId && (page || limit || roleName) && userid) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.USER_INVALID
+    );
   } else if (page || limit || roleName) {
     const userRoleId = await roleSchemaName(roleName);
     if (userRoleId.name === roleName && roleName === "Admin") {

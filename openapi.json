@@ -1089,6 +1089,16 @@
       "get": {
         "description": "fetch All users",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1167,6 +1177,16 @@
       "delete": {
         "description": "Disbale the specific users",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1225,6 +1245,16 @@
       "get": {
         "description": "get single user",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1274,6 +1304,16 @@
       "put": {
         "description": "Update the specific user",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "path",
