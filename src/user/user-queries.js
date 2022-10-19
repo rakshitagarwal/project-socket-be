@@ -71,7 +71,7 @@ export const getUserById = async (id) => {
 };
 export const getUserByIdVerfied = async (id) => {
   const userData = await UserModel.findById(id)
-    .find({ status: false, verified: true })
+    .find({ status: false })
     .lean()
     .populate("Role", { name: 1 });
   if (userData.length > 0) {
