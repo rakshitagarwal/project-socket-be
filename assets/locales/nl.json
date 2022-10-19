@@ -20,6 +20,9 @@
 	"you.have.already.reset.your.password":"je hebt je wachtwoord al opnieuw ingesteld",
 	"Invalid.link.or.expired.": "Ongeldige link of verlopen",
 	"logout.Successfully":"uitloggen succesvol",
-	"logout.user":"gebruiker uitloggen succesvol"
+	"logout.user":"gebruiker uitloggen succesvol",
+	"disable.the.user": "de gebruiker uitschakelen",
+	"enable.the.user":"de gebruiker inschakelen",
+	"user.is.temporary.blocked":"De gebruiker is tijdelijk geblokkeerd"
 
 }

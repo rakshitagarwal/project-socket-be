@@ -20,5 +20,8 @@
 	"you.have.already.reset.your.password":"vous avez déjà réinitialisé votre mot de passe",
 	"Invalid.link.or.expired.": "Lien invalide ou expiré",
 	"logout.Successfully":"déconnexion réussie",
-	"logout.user":"déconnexion de l'utilisateur réussie"
+	"logout.user":"déconnexion de l'utilisateur réussie",
+  "disable.the.user": "désactiver l'utilisateur",
+	"user.is.temporary.blocked":"L'utilisateur est temporairement bloqué",
+  "enable.the.user":"activer dans l'utilisateur"
 }
