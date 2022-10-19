@@ -310,6 +310,5 @@ export const validateAuctionStatus = async (id) => {
 
 export const checkProductAuction = async (productId) => {
   const products = await auctionModel.find({ Product: productId });
-
   return products;
 };
