@@ -170,15 +170,16 @@ export const updateUser = async (id, userdata) => {
   // Yes, it's a valid ObjectId, proceed with `findById` call.
   const userObjId = validateObjectId(id);
   const data = userdata.isblock ? userdata : userdata;
-  await update(id, data);
   if (data.isblock && userObjId) {
     const dataVerfied = await getUserByIdVerfied(id);
     sendEmail(dataVerfied, "user-blocked");
+    await update(id, data);
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.USER_DISABLE
     );
   } else if (data.isblock === false && userObjId) {
+    await update(id, data);
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.USER_ENABLE
@@ -196,6 +197,7 @@ export const updateUser = async (id, userdata) => {
     if (data.Role) {
       data.Role = userRoleId;
     }
+    await update(id, data);
     const getUsersVerfied = await getUserByIdVerfied(id);
     const { password, email, Role, createdAt, passcode, ...userData } =
       getUsersVerfied;
