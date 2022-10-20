@@ -35,9 +35,7 @@
       "variables": {
         "basePath": {
           "default": "/v1",
-          "enum": [
-            "v1"
-          ]
+          "enum": ["v1"]
         }
       }
     }
@@ -400,20 +398,14 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "in": "header",
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -465,9 +457,7 @@
     },
     "/products/": {
       "post": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "security": [
           {
             "bearerAuth": []
@@ -480,11 +470,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -601,9 +587,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "in": "query",
@@ -628,11 +612,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -703,9 +683,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "in": "path",
@@ -720,11 +698,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -774,9 +748,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "in": "path",
@@ -791,11 +763,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -909,9 +877,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "in": "path",
@@ -926,11 +892,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -980,9 +942,7 @@
     "/products/search/": {
       "get": {
         "description": "Search the product with name",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "security": [
           {
             "bearerAuth": []
@@ -1026,11 +986,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1104,9 +1060,7 @@
     },
     "/users/": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "Add a new user",
         "parameters": [
           {
@@ -1114,11 +1068,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1237,8 +1187,16 @@
       },
       "get": {
         "description": "fetch All users",
-        "tags": [
-          "Users"
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
         ],
         "parameters": [
           {
@@ -1264,11 +1222,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1331,8 +1285,16 @@
     "/users/{id}": {
       "delete": {
         "description": "Disbale the specific users",
-        "tags": [
-          "Users"
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
         ],
         "parameters": [
           {
@@ -1348,11 +1310,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1399,9 +1357,7 @@
       },
       "get": {
         "description": "get single user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "in": "path",
@@ -1416,11 +1372,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1458,8 +1410,16 @@
       },
       "put": {
         "description": "Update the specific user",
-        "tags": [
-          "Users"
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
         ],
         "parameters": [
           {
@@ -1475,11 +1435,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1581,9 +1537,7 @@
     },
     "/users/permission": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "User Permission Allow",
         "security": [
           {
@@ -1635,9 +1589,7 @@
     },
     "/users/set-password/{passcode}": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "set password for user",
         "parameters": [
           {
@@ -1645,11 +1597,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           },
@@ -1720,9 +1668,7 @@
     },
     "/users/login": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "User forget password",
         "parameters": [
           {
@@ -1730,11 +1676,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1803,9 +1745,7 @@
     },
     "/users/password-reset/{passcode}": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "reset password for user",
         "parameters": [
           {
@@ -1813,11 +1753,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           },
@@ -1891,9 +1827,7 @@
     },
     "/users/logout": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "User Logout",
         "security": [
           {
@@ -1911,11 +1845,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -1959,9 +1889,7 @@
     },
     "/users/forget-password": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "description": "User forget password",
         "parameters": [
           {
@@ -1969,11 +1897,7 @@
             "name": "Accept-Language",
             "schema": {
               "type": "string",
-              "enum": [
-                "en",
-                "fr",
-                "de"
-              ],
+              "enum": ["en", "fr", "de"],
               "default": "en"
             }
           }
@@ -2036,9 +1960,7 @@
     },
     "/uploads/": {
       "post": {
-        "tags": [
-          "Uploads"
-        ],
+        "tags": ["Uploads"],
         "security": [
           {
             "bearerAuth": []
@@ -2051,11 +1973,7 @@
             "name": "moduleName",
             "schema": {
               "type": "string",
-              "enum": [
-                "auctions",
-                "products",
-                "users"
-              ]
+              "enum": ["auctions", "products", "users"]
             }
           }
         ],
@@ -2133,9 +2051,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Uploads"
-        ],
+        "tags": ["Uploads"],
         "security": [
           {
             "bearerAuth": []
@@ -2148,11 +2064,7 @@
             "name": "moduleName",
             "schema": {
               "type": "string",
-              "enum": [
-                "auctions",
-                "products",
-                "users"
-              ]
+              "enum": ["auctions", "products", "users"]
             }
           },
           {
@@ -2238,9 +2150,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Uploads"
-        ],
+        "tags": ["Uploads"],
         "security": [
           {
             "bearerAuth": []
@@ -2253,11 +2163,7 @@
             "name": "moduleName",
             "schema": {
               "type": "string",
-              "enum": [
-                "auctions",
-                "products",
-                "users"
-              ]
+              "enum": ["auctions", "products", "users"]
             }
           }
         ],
@@ -2323,9 +2229,7 @@
     },
     "/uploads/video/": {
       "post": {
-        "tags": [
-          "Uploads"
-        ],
+        "tags": ["Uploads"],
         "deprecated": true,
         "summary": "Depricated Don't Use",
         "security": [
@@ -2339,11 +2243,7 @@
             "name": "moduleName",
             "schema": {
               "type": "string",
-              "enum": [
-                "auctions",
-                "products",
-                "users"
-              ]
+              "enum": ["auctions", "products", "users"]
             }
           }
         ],
@@ -2424,9 +2324,7 @@
     },
     "/uploads/multiple/": {
       "post": {
-        "tags": [
-          "Uploads"
-        ],
+        "tags": ["Uploads"],
         "security": [
           {
             "bearerAuth": []
@@ -2439,11 +2337,7 @@
             "name": "moduleName",
             "schema": {
               "type": "string",
-              "enum": [
-                "auctions",
-                "products",
-                "users"
-              ]
+              "enum": ["auctions", "products", "users"]
             }
           }
         ],
@@ -2527,9 +2421,7 @@
     },
     "/auctions/": {
       "post": {
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "description": "Add the Auctions",
         "security": [
           {
@@ -2693,12 +2585,7 @@
                     "type": "string",
                     "format": "string",
                     "nullable": false,
-                    "enum": [
-                      "Active",
-                      "Publish",
-                      "Cancel",
-                      "Closed"
-                    ],
+                    "enum": ["Active", "Publish", "Cancel", "Closed"],
                     "default": "Active",
                     "description": "state of the auctions"
                   },
@@ -2803,9 +2690,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "parameters": [
           {
             "in": "query",
@@ -2830,12 +2715,7 @@
             "name": "auctionType",
             "schema": {
               "type": "string",
-              "enum": [
-                "Active",
-                "Publish",
-                "Cancel",
-                "Closed"
-              ],
+              "enum": ["Active", "Publish", "Cancel", "Closed"],
               "default": ""
             }
           }
@@ -2999,12 +2879,7 @@
                             "type": "string",
                             "format": "string",
                             "nullable": false,
-                            "enum": [
-                              "Active",
-                              "Publish",
-                              "Cancel",
-                              "Closed"
-                            ],
+                            "enum": ["Active", "Publish", "Cancel", "Closed"],
                             "default": "Active",
                             "description": "state of the auctions"
                           },
@@ -3085,9 +2960,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "responses": {
           "200": {
             "description": "get all category",
@@ -3141,9 +3014,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "parameters": [
           {
             "in": "path",
@@ -3311,12 +3182,7 @@
                     "type": "string",
                     "format": "string",
                     "nullable": false,
-                    "enum": [
-                      "Active",
-                      "Publish",
-                      "Cancel",
-                      "Closed"
-                    ],
+                    "enum": ["Active", "Publish", "Cancel", "Closed"],
                     "default": "Active",
                     "description": "state of the auctions"
                   },
@@ -3400,9 +3266,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "parameters": [
           {
             "in": "path",
@@ -3569,12 +3433,7 @@
                           "type": "string",
                           "format": "string",
                           "nullable": false,
-                          "enum": [
-                            "Active",
-                            "Publish",
-                            "Cancel",
-                            "Closed"
-                          ],
+                          "enum": ["Active", "Publish", "Cancel", "Closed"],
                           "default": "Active",
                           "description": "state of the auctions"
                         },
@@ -3635,9 +3494,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "parameters": [
           {
             "in": "path",
@@ -3689,9 +3546,7 @@
     },
     "/auction/search/": {
       "get": {
-        "tags": [
-          "Auctions"
-        ],
+        "tags": ["Auctions"],
         "description": "Search/Filter/Sort Auctions Details",
         "security": [
           {
@@ -3724,12 +3579,7 @@
             "name": "state",
             "schema": {
               "type": "string",
-              "enum": [
-                "Active",
-                "Publish",
-                "Cancel",
-                "Closed"
-              ],
+              "enum": ["Active", "Publish", "Cancel", "Closed"],
               "default": "Active"
             },
             "description": "state of the auctions"
@@ -3913,12 +3763,7 @@
                             "type": "string",
                             "format": "string",
                             "nullable": false,
-                            "enum": [
-                              "Active",
-                              "Publish",
-                              "Cancel",
-                              "Closed"
-                            ],
+                            "enum": ["Active", "Publish", "Cancel", "Closed"],
                             "default": "Active",
                             "description": "state of the auctions"
                           },
