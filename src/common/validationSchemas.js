@@ -1,5 +1,6 @@
 import BaseJoi from "joi";
 import JoiDate from "@joi/date";
+
 const Joi = BaseJoi.extend(JoiDate);
 
 const string = Joi.string();
@@ -7,7 +8,7 @@ const number = Joi.number();
 const boolean = Joi.boolean();
 const date = Joi.date();
 const price = Joi.number();
-const stringArray = Joi.array().items(Joi.string());
+const stringArray = Joi.array().items(Joi.string()).min(1);
 /**
  * @description moudleName scheams for checking the moduleName from query parmas
  */
@@ -114,14 +115,6 @@ export const envSchema = Joi.object({
     required_error:
       "VIDEO_ALLOWED_SIZE must be present in environment variables",
     invalid_type_error: "Invalid VIDEO_ALLOWED_SIZE in environment variables",
-  }),
-  LANGUAGE_PATH: string.required().messages({
-    required_error: "LANGUAGE_PATH must be present in environment variables",
-    invalid_type_error: "Invalid LANGUAGE_PATH in environment variables",
-  }),
-  DEFAULT_LANGUAGE: string.required().messages({
-    required_error: "DEFAULT_LANGUAGE must be present in environment variables",
-    invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
   LANGUAGE_PATH: string.required().messages({
     required_error: "LANGUAGE_PATH must be present in environment variables",
@@ -340,7 +333,6 @@ export const auctionSchema = Joi.object({
     required_error: "bot must be present in responses",
     validate_error: "bot must be a boolean in responses",
   }),
-  botMaxPrice: number.optional(),
   noOfPlayConsumed: number.greater(0).required().messages({
     required_error: "noOfPlayConsumed must be present in responses",
     validate_error: "noOfPlayConsumed must be a number in responses",
@@ -348,9 +340,6 @@ export const auctionSchema = Joi.object({
   bidIncrement: number.greater(0).required().messages({
     required_error: "bidIncrement must be present in responses",
     validate_error: "bidIncrement must be a number in responses",
-  }),
-  noNewBidderLimit: number.greater(0).optional().messages({
-    validate_error: "noNewBidderLimit must be a number in responses",
   }),
   autoStart: boolean.required().messages({
     required_error: "autoStart must be present in responses",
@@ -360,14 +349,10 @@ export const auctionSchema = Joi.object({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date
-    .format("YYYY-MM-DD:HH:mm:SS")
-    .required()
-    .greater(Joi.ref("startDate"))
-    .messages({
-      required_error: "endDate must be present in responses",
-      validate_error: "endDate must be a string in responses",
-    }),
+  endDate: date.messages({
+    required_error: "endDate must be present in responses",
+    validate_error: "endDate must be a string in responses",
+  }),
   registerationStatus: boolean.required().messages({
     required_error: "registerationStatus must be present in responses",
     validate_error: "registerationStatus must be a number in responses",
@@ -375,8 +360,6 @@ export const auctionSchema = Joi.object({
   postAuctionStatus: boolean.required().messages({
     required_error: "postRegisterationStatus must be present in responses",
   }),
-  auctionPreRegister: auctionPreRegister,
-  auctionPostRegister: auctionPostRegister,
   state: string
     .required()
     .valid("Active", "Publish", "Cancel", "Closed")
@@ -384,6 +367,12 @@ export const auctionSchema = Joi.object({
       required_error: "state must be present in responses",
       validate_error: "state must be a boolean in responses",
     }),
+  "terms&Condition": string.messages({
+    validate_error: "terms&Condition must be a boolean in responses",
+  }),
+  description: string.messages({
+    validate_error: "description must be a boolean in responses",
+  }),
   status: boolean.allow().optional(),
   Product: string.required().messages({
     required_error: "Product must be present in responses",
@@ -393,4 +382,35 @@ export const auctionSchema = Joi.object({
     required_error: "AuctionCategory must be present in responses",
     validate_error: "AuctionCategory must be a string in responses",
   }),
-});
+})
+  .when(".bot", {
+    is: false,
+    then: Joi.object({
+      botMaxPrice: number.required().messages({
+        "bot.required": "BotMaxPrice is required",
+        "bot.type": "BotMaxPrice should be Integer",
+        "bot.count": "BotMaxPrice should be more than zero",
+      }),
+    }),
+  })
+  .when(".registerationStatus", {
+    is: false,
+    then: Joi.object({
+      auctionPreRegister: auctionPreRegister.required().messages({
+        "auctionPreRegister.required": "AuctionPreRegister is required",
+      }),
+    }),
+  })
+  .when(".postAuctionStatus", {
+    is: false,
+    then: Joi.object({
+      auctionPostRegister: auctionPostRegister.required().messages({
+        auctionPostRegister: "AuctionPostRegister is required",
+      }),
+    }),
+    otherwise: Joi.object({
+      noNewBidderLimit: number.greater(0).required().messages({
+        validate_error: "noNewBidderLimit must be a number in responses",
+      }),
+    }),
+  });

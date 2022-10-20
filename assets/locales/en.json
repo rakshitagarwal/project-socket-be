@@ -68,6 +68,7 @@
 	"noNewBidderLimit.not.required": "noNewBidderLimit is not required",
 	"noNewBidderLimit.required": "noNewBidderLimit is required",
 	"disable.the.user": "disable the user",
-	"enable.the.user":"enable in the user",
-	"user.is.temporary.blocked":"The user is temporarily blocked"
+	"enable.the.user": "enable in the user",
+	"user.is.temporary.blocked": "The user is temporarily blocked",
+	"": ""
 }

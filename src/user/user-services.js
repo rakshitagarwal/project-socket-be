@@ -243,7 +243,7 @@ export const getUser = async (page, limit, userid, roleName) => {
       );
     }
     return notFound();
-  } else if (!userObjId && (page || limit || roleName) && userid) {
+  } else if (userObjId === false && (page || limit || roleName) && userid) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
       helpers.responseMessages.USER_INVALID

@@ -51,23 +51,14 @@ export const addAuction = async (data) => {
     );
   }
 
-  // check if a bot is Isvalid or not
-  if (data.bot) {
-    if (data.botMaxPrice) {
-      return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
-        helpers.responseMessages.BOT_MAX_PRICE
-      );
-    }
-  }
-
-  // check if a preRegiser startdate and enddate shoudl be betweeen the auction startdate and Enddate
+  // checking the date for the {postRegisteration} and {auctions}
   const { quantity } = data;
   if (!data.registerationStatus) {
     const { startDate, endDate, auctionPreRegister } = data;
     if (
-      auctionPreRegister.startDate <= startDate ||
-      auctionPreRegister.endDate >= endDate
+      auctionPreRegister.startDate > startDate ||
+      auctionPreRegister.endDate > startDate ||
+      endDate < startDate
     ) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
@@ -84,26 +75,6 @@ export const addAuction = async (data) => {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.AUCTION_QUANTITY
-      );
-    }
-  }
-
-  /**
-   * if postRegisteration status is false, then noNewBidderLimit is optional
-   * else mandatory
-   */
-  if (!data.postAuctionStatus) {
-    if (data.noNewBidderLimit) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.responseMessages.BIDDER_LIMIT_NOT_REQUIRED
-      );
-    }
-  } else {
-    if (!data.noNewBidderLimit) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.responseMessages.BIDDER_LIMIT_REQUIRED
       );
     }
   }
@@ -299,22 +270,14 @@ export const updateAuction = async (id, updated) => {
     );
   }
 
-  // check if a bot is Isvalid or not
-  if (updated.bot) {
-    if (updated.botMaxPrice) {
-      return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
-        helpers.responseMessages.BOT_MAX_PRICE
-      );
-    }
-  }
-
+  // checking the date for the {postRegisteration} and {auctions}
   const { quantity } = updated;
   if (!updated.registerationStatus) {
     const { startDate, endDate, auctionPreRegister } = updated;
     if (
-      auctionPreRegister.startDate <= startDate ||
-      auctionPreRegister.endDate >= endDate
+      auctionPreRegister.startDate > startDate ||
+      auctionPreRegister.endDate > startDate ||
+      endDate < startDate
     ) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
