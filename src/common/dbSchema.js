@@ -51,7 +51,7 @@ export const productCategory = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
   },
   schemaOptions
@@ -241,11 +241,11 @@ export const productSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     ProductCategory: {
       type: Schema.Types.ObjectId,
