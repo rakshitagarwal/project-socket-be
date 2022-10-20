@@ -333,7 +333,6 @@ const auctionSchema = new Schema(
     },
     "terms&Condition": {
       type: String,
-      required: true,
     },
     description: {
       type: String,
