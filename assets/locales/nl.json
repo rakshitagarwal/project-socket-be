@@ -23,6 +23,7 @@
 	"logout.user":"gebruiker uitloggen succesvol",
 	"disable.the.user": "de gebruiker uitschakelen",
 	"enable.the.user":"de gebruiker inschakelen",
-	"user.is.temporary.blocked":"De gebruiker is tijdelijk geblokkeerd"
+	"user.is.temporary.blocked":"De gebruiker is tijdelijk geblokkeerd",
+	"you.have.already.blocked":"je hebt al geblokkeerd"
 
 }

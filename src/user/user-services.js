@@ -173,10 +173,16 @@ export const updateUser = async (id, userdata) => {
   if (data.isblock && userObjId) {
     const dataVerfied = await getUserByIdVerfied(id);
     sendEmail(dataVerfied, "user-blocked");
-    await update(id, data);
+    if (!dataVerfied.isblock) {
+      await update(id, data);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.USER_DISABLE
+      );
+    }
     return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.responseMessages.USER_DISABLE
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.USER_ALREADY_BLOCK
     );
   } else if (data.isblock === false && userObjId) {
     await update(id, data);
