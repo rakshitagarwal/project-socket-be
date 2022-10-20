@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const { Schema } = mongoose;
 
 /**
@@ -297,7 +298,6 @@ const auctionSchema = new Schema(
     },
     endDate: {
       type: Date,
-      required: true,
     },
     bot: {
       type: Boolean,
@@ -330,6 +330,12 @@ const auctionSchema = new Schema(
       required: true,
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
+    },
+    "terms&Condition": {
+      type: String,
+    },
+    description: {
+      type: String,
     },
     status: {
       type: Boolean,

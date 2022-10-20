@@ -51,13 +51,14 @@ export const addAuction = async (data) => {
     );
   }
 
-  // check if a preRegiser startdate and enddate shoudl be betweeen the auction startdate and Enddate
+  // checking the date for the {postRegisteration} and {auctions}
   const { quantity } = data;
   if (!data.registerationStatus) {
     const { startDate, endDate, auctionPreRegister } = data;
     if (
-      auctionPreRegister.startDate <= startDate ||
-      auctionPreRegister.endDate >= endDate
+      auctionPreRegister.startDate > startDate ||
+      auctionPreRegister.endDate > startDate ||
+      endDate < startDate
     ) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,
@@ -269,12 +270,14 @@ export const updateAuction = async (id, updated) => {
     );
   }
 
+  // checking the date for the {postRegisteration} and {auctions}
   const { quantity } = updated;
   if (!updated.registerationStatus) {
     const { startDate, endDate, auctionPreRegister } = updated;
     if (
-      auctionPreRegister.startDate <= startDate ||
-      auctionPreRegister.endDate >= endDate
+      auctionPreRegister.startDate > startDate ||
+      auctionPreRegister.endDate > startDate ||
+      endDate < startDate
     ) {
       return createResponse(
         helpers.StatusCodes.BAD_REQUEST,

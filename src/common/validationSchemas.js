@@ -1,5 +1,6 @@
 import BaseJoi from "joi";
 import JoiDate from "@joi/date";
+
 const Joi = BaseJoi.extend(JoiDate);
 
 const string = Joi.string();
@@ -114,14 +115,6 @@ export const envSchema = Joi.object({
     required_error:
       "VIDEO_ALLOWED_SIZE must be present in environment variables",
     invalid_type_error: "Invalid VIDEO_ALLOWED_SIZE in environment variables",
-  }),
-  LANGUAGE_PATH: string.required().messages({
-    required_error: "LANGUAGE_PATH must be present in environment variables",
-    invalid_type_error: "Invalid LANGUAGE_PATH in environment variables",
-  }),
-  DEFAULT_LANGUAGE: string.required().messages({
-    required_error: "DEFAULT_LANGUAGE must be present in environment variables",
-    invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
   LANGUAGE_PATH: string.required().messages({
     required_error: "LANGUAGE_PATH must be present in environment variables",
@@ -356,14 +349,10 @@ export const auctionSchema = Joi.object({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date
-    .format("YYYY-MM-DD:HH:mm:SS")
-    .required()
-    .greater(Joi.ref("startDate"))
-    .messages({
-      required_error: "endDate must be present in responses",
-      validate_error: "endDate must be a string in responses",
-    }),
+  endDate: date.messages({
+    required_error: "endDate must be present in responses",
+    validate_error: "endDate must be a string in responses",
+  }),
   registerationStatus: boolean.required().messages({
     required_error: "registerationStatus must be present in responses",
     validate_error: "registerationStatus must be a number in responses",
@@ -378,6 +367,12 @@ export const auctionSchema = Joi.object({
       required_error: "state must be present in responses",
       validate_error: "state must be a boolean in responses",
     }),
+  "terms&Condition": string.messages({
+    validate_error: "terms&Condition must be a boolean in responses",
+  }),
+  description: string.messages({
+    validate_error: "description must be a boolean in responses",
+  }),
   status: boolean.allow().optional(),
   Product: string.required().messages({
     required_error: "Product must be present in responses",
