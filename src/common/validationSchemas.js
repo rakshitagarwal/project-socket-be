@@ -385,7 +385,7 @@ export const auctionSchema = Joi.object({
   }),
 })
   .when(".bot", {
-    is: false,
+    is: true,
     then: Joi.object({
       botMaxPrice: number.required().messages({
         "bot.required": "BotMaxPrice is required",
@@ -395,7 +395,7 @@ export const auctionSchema = Joi.object({
     }),
   })
   .when(".registerationStatus", {
-    is: false,
+    is: true,
     then: Joi.object({
       auctionPreRegister: auctionPreRegister.required().messages({
         "auctionPreRegister.required": "AuctionPreRegister is required",
@@ -403,7 +403,7 @@ export const auctionSchema = Joi.object({
     }),
   })
   .when(".postAuctionStatus", {
-    is: false,
+    is: true,
     then: Joi.object({
       auctionPostRegister: auctionPostRegister.required().messages({
         auctionPostRegister: "AuctionPostRegister is required",
