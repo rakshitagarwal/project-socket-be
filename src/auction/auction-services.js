@@ -171,7 +171,7 @@ export const updateAuction = async (id, updated) => {
 
   // check if a product is active or not
   const isActive = await validateStatus(Product);
-  if (!isActive) {
+  if (!isActive.status) {
     return createResponse(
       helpers.StatusCodes.NOT_FOUND,
       helpers.responseMessages.PRODUCT_OBJECT_ID
@@ -198,7 +198,7 @@ export const updateAuction = async (id, updated) => {
 
   // checking the date for the {postRegisteration} and {auctions}
   const { quantity } = updated;
-  if (!updated.registerationStatus) {
+  if (updated.registerationStatus) {
     const { startDate, endDate, auctionPreRegister } = updated;
     if (
       auctionPreRegister.startDate > startDate ||
@@ -233,101 +233,19 @@ export const updateAuction = async (id, updated) => {
     );
   }
 
-  if (updated.registerationStatus) {
-    if (updated.postAuctionStatus) {
-      if (updated.auctionPostRegister || updated.auctionPreRegister) {
-        return createResponse(
-          helpers.StatusCodes.NOT_ACCEPTABLE,
-          helpers.StatusMessages.NOT_ACCEPTABLE,
-          {},
-          {
-            error: helpers.responseMessages.INVALID_RESPONSES,
-          }
-        );
-      } else {
-        const update = await putAuction(id, updated);
+  const update = await putAuction(id, updated);
 
-        if (!update) {
-          return createResponse(
-            helpers.StatusCodes.BAD_REQUEST,
-            helpers.StatusMessages.BAD_REQUEST
-          );
-        }
-        return createResponse(
-          helpers.StatusCodes.OK,
-          helpers.responseMessages.AUCTION_UPDATED
-        );
-      }
-    } else {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.StatusMessages.NOT_ACCEPTABLE,
-        {},
-        {
-          error: helpers.responseMessages.INVALID_RESPONSES,
-        }
-      );
-    }
-  } else {
-    if (updated.postAuctionStatus) {
-      if (updated.auctionPostRegister) {
-        return createResponse(
-          helpers.StatusCodes.NOT_ACCEPTABLE,
-          helpers.StatusMessages.NOT_ACCEPTABLE,
-          {},
-          {
-            error: helpers.responseMessages.INVALID_RESPONSES,
-          }
-        );
-      }
-
-      let { auctionPreRegister } = updated;
-
-      const update = await putAuction(id, updated, auctionPreRegister);
-
-      if (!update) {
-        return createResponse(
-          helpers.StatusCodes.BAD_REQUEST,
-          helpers.StatusMessages.BAD_REQUEST
-        );
-      }
-      return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.AUCTION_UPDATED
-      );
-    }
-
-    if (!updated.auctionPreRegister && !updated.auctionPostRegister) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.StatusMessages.NOT_ACCEPTABLE,
-        {},
-        {
-          error: helpers.responseMessages.INVALID_RESPONSES,
-        }
-      );
-    }
-
-    let { auctionPreRegister, auctionPostRegister } = updated;
-
-    const update = await putAuction(
-      id,
-      updated,
-      auctionPreRegister,
-      auctionPostRegister
-    );
-
-    if (!update) {
-      return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
-        helpers.StatusMessages.BAD_REQUEST
-      );
-    }
+  if (!update) {
     return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.responseMessages.AUCTION_UPDATED
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST
     );
   }
+
+  return createResponse(
+    helpers.StatusCodes.OK,
+    helpers.responseMessages.AUCTION_UPDATED
+  );
 };
 
 export const deleteAuction = async (id) => {
