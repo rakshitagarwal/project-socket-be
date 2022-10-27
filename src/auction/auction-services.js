@@ -52,8 +52,7 @@ export const addAuction = async (data) => {
   }
 
   // checking the date for the {postRegisteration} and {auctions}
-  const { quantity } = data;
-  if (!data.registerationStatus) {
+  if (data.registerationStatus) {
     const { startDate, endDate, auctionPreRegister } = data;
     if (
       auctionPreRegister.startDate > startDate ||
@@ -68,6 +67,7 @@ export const addAuction = async (data) => {
   }
 
   // check if a Product quanity should be less than auction quantity
+  const { quantity } = data;
   const products = await getProductById(Product);
   if (products) {
     const { quantity: qty } = products;
@@ -79,92 +79,18 @@ export const addAuction = async (data) => {
     }
   }
 
-  if (data.registerationStatus) {
-    if (data.postAuctionStatus) {
-      if (data.auctionPostRegister || data.auctionPreRegister) {
-        return createResponse(
-          helpers.StatusCodes.NOT_ACCEPTABLE,
-          helpers.StatusMessages.NOT_ACCEPTABLE,
-          {},
-          {
-            error: helpers.responseMessages.INVALID_RESPONSES,
-          }
-        );
-      } else {
-        const auction = await create(data);
-        if (!auction) {
-          return createResponse(
-            helpers.StatusCodes.BAD_REQUEST,
-            helpers.responseMessages.AUCTION_NOT_ADDED
-          );
-        }
+  let auctions = await create(data);
 
-        return createResponse(
-          helpers.StatusCodes.OK,
-          helpers.responseMessages.AUCTION_ADDED
-        );
-      }
-    } else {
-      if (data.auctionPostRegister) {
-        return createResponse(
-          helpers.StatusCodes.NOT_ACCEPTABLE,
-          helpers.StatusMessages.NOT_ACCEPTABLE,
-          {},
-          {
-            error: helpers.responseMessages.INVALID_RESPONSES,
-          }
-        );
-      }
-
-      const auction = await create(data);
-      if (!auction) {
-        return createResponse(
-          helpers.StatusCodes.BAD_REQUEST,
-          helpers.responseMessages.AUCTION_NOT_ADDED
-        );
-      }
-
-      return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.AUCTION_ADDED
-      );
-    }
-  } else {
-    if (data.postAuctionStatus && data.auctionPostRegister) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.StatusMessages.NOT_ACCEPTABLE,
-        {},
-        {
-          error: helpers.responseMessages.INVALID_RESPONSES,
-        }
-      );
-    }
-
-    if (!data.auctionPreRegister && !data.auctionPostRegister) {
-      return createResponse(
-        helpers.StatusCodes.NOT_ACCEPTABLE,
-        helpers.StatusMessages.NOT_ACCEPTABLE,
-        {},
-        {
-          error: helpers.responseMessages.INVALID_RESPONSES,
-        }
-      );
-    }
-
-    const auction = await create(data);
-    if (!auction) {
-      return createResponse(
-        helpers.StatusCodes.BAD_REQUEST,
-        helpers.responseMessages.AUCTION_NOT_ADDED
-      );
-    } else {
-      return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.AUCTION_ADDED
-      );
-    }
+  if (!auctions) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.AUCTION_NOT_ADDED
+    );
   }
+  return createResponse(
+    helpers.StatusCodes.OK,
+    helpers.responseMessages.AUCTION_ADDED
+  );
 };
 
 export const getAuctions = async (query) => {

@@ -7,7 +7,7 @@ import {
 
 export const auctionCategories = async () => {
   const categories = await auctionCategory
-    .find({ status: false })
+    .find({ status: true })
     .select({ _id: 1, name: 1 })
     .lean();
   return categories;
@@ -16,7 +16,7 @@ export const auctionCategories = async () => {
 export const create = async (data) => {
   let { auctionPreRegister, auctionPostRegister, ...auction } = data;
 
-  if (!data.registerationStatus && !data.postAuctionStatus) {
+  if (data.registerationStatus && data.postAuctionStatus) {
     let auctionData = await auctionModel.create(auction);
     let auctionPreData = await auctionPreModel.create({
       ...auctionPreRegister,
@@ -29,7 +29,7 @@ export const create = async (data) => {
     return auctionData;
   }
 
-  if (data.postAuctionStatus && !data.registerationStatus) {
+  if (!data.postAuctionStatus && data.registerationStatus) {
     let auctionData = await auctionModel.create(auction);
     let auctionPreData = await auctionPreModel.create({
       ...auctionPreRegister,
@@ -301,7 +301,7 @@ export const filterAuction = async (page, limit, state, status, category) => {
 
 export const validateAuctionStatus = async (id) => {
   const isActive = await auctionCategory
-    .findOne({ _id: id, status: false })
+    .findOne({ _id: id, status: true })
     .select({ _id: 0, status: 1 })
     .lean();
 
