@@ -50,7 +50,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
     const auctionTypeCount = await auctionModel
       .find({
         state: auctionType,
-        IsDeleted: false,
+        IsDeleted: true,
       })
       .countDocuments();
 
@@ -59,7 +59,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
     const auctions = await auctionModel
       .find({
         state: auctionType,
-        IsDeleted: false,
+        IsDeleted: true,
       })
       .limit(limit)
       .skip(limit * page)
@@ -71,7 +71,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
       let id = auctions[i]._id;
       const auctionPreRegister = await auctionPreModel
         .findOne({ Auction: id })
-        .where({ IsDeleted: false })
+        .where({ IsDeleted: true })
         .select({
           startDate: 1,
           endDate: 1,
@@ -82,7 +82,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
 
       const auctionPostRegister = await auctionPostModel
         .findOne({ Auction: id })
-        .where({ IsDeleted: false })
+        .where({ IsDeleted: true })
         .select({ participantFees: 1 })
         .lean();
 
@@ -107,12 +107,12 @@ export const fetchAuction = async (page, limit, auctionType) => {
     };
   }
 
-  const count = await auctionModel.find({ IsDeleted: false }).countDocuments();
+  const count = await auctionModel.find({ IsDeleted: true }).countDocuments();
   let totalPages;
   totalPages = Math.ceil(count / limit);
 
   const auctions = await auctionModel
-    .find({ IsDeleted: false })
+    .find({ IsDeleted: true })
     .limit(limit)
     .skip(limit * page)
     .populate("Product", { _id: 1, title: 1 })
@@ -123,7 +123,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
     let id = auctions[i]._id;
     const auctionPreRegister = await auctionPreModel
       .findOne({ Auction: id })
-      .where({ IsDeleted: false })
+      .where({ IsDeleted: true })
       .select({
         startDate: 1,
         endDate: 1,
@@ -134,7 +134,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
 
     const auctionPostRegister = await auctionPostModel
       .findOne({ Auction: id })
-      .where({ IsDeleted: false })
+      .where({ IsDeleted: true })
       .select({ participantFees: 1 })
       .lean();
 
@@ -161,7 +161,7 @@ export const fetchAuction = async (page, limit, auctionType) => {
 export const getAuctionById = async (id) => {
   const auction = await auctionModel
     .findById(id)
-    .where({ IsDeleted: false })
+    .where({ IsDeleted: true })
     .populate("Product", { _id: 1, title: 1 })
     .populate("AuctionCategory", { _id: 1, name: 1 })
     .lean();
@@ -174,7 +174,7 @@ export const getAuctionById = async (id) => {
     .findOne({
       Auction: auction._id,
     })
-    .where({ IsDeleted: false })
+    .where({ IsDeleted: true })
     .select({
       startDate: 1,
       endDate: 1,
@@ -188,7 +188,7 @@ export const getAuctionById = async (id) => {
     .findOne({
       Auction: auction._id,
     })
-    .where({ IsDeleted: false })
+    .where({ IsDeleted: true })
     .select({ participantFees: 1, _id: 0 });
 
   if (auctionPreRegister || auctionPostRegister) {
@@ -203,27 +203,27 @@ export const getAuctionById = async (id) => {
   return auction;
 };
 
-export const putAuction = async (id, data, pre, post) => {
-  if (pre && post) {
+export const putAuction = async (id, data) => {
+  if (data.auctionPreRegister && data.auctionPostRegister) {
     const auction = await auctionModel.findByIdAndUpdate(id, data);
     const auctionPre = await auctionPreModel.findOneAndUpdate(
       { Auction: id },
-      pre,
+      { ...data.auctionPreRegister, IsDeleted: true },
       { upsert: true, new: true }
     );
     const auctionpost = await auctionPostModel.findOneAndUpdate(
       { Auction: id },
-      post,
+      { ...data.auctionPostRegister, IsDeleted: true },
       { upsert: true, new: true }
     );
     if (auctionPre && auctionpost) return auction;
   }
 
-  if (pre) {
+  if (data.auctionPreRegister) {
     const auction = await auctionModel.findByIdAndUpdate(id, data);
     const auctionPre = await auctionPreModel.findOneAndUpdate(
       { Auction: id },
-      pre,
+      data.auctionPreRegister,
       { upsert: true, new: true }
     );
     const auctionpost = await auctionPostModel.findOneAndUpdate(
@@ -231,20 +231,20 @@ export const putAuction = async (id, data, pre, post) => {
         Auction: id,
       },
       {
-        IsDeleted: true,
+        IsDeleted: false,
       }
     );
     if (auctionPre || auctionpost) return auction;
   }
 
-  if (!pre && !post) {
+  if (!data.auctionPreRegister && !data.auctionPreRegister) {
     const auction = await auctionModel.findByIdAndUpdate(id, data);
     const auctionPre = await auctionPreModel.findOneAndUpdate(
       {
         Auction: id,
       },
       {
-        IsDeleted: true,
+        IsDeleted: false,
       }
     );
     const auctionpost = await auctionPostModel.findOneAndUpdate(
@@ -252,7 +252,7 @@ export const putAuction = async (id, data, pre, post) => {
         Auction: id,
       },
       {
-        IsDeleted: true,
+        IsDeleted: false,
       }
     );
 
@@ -261,9 +261,14 @@ export const putAuction = async (id, data, pre, post) => {
 };
 
 export const softDelete = async (id) => {
-  const auction = await auctionModel.findByIdAndUpdate(id, { IsDeleted: true });
-  await auctionPostModel.findOneAndUpdate({ Auction: id }, { IsDeleted: true });
-  await auctionPreModel.findOneAndUpdate({ Auction: id }, { IsDeleted: true });
+  const auction = await auctionModel.findByIdAndUpdate(id, {
+    IsDeleted: false,
+  });
+  await auctionPostModel.findOneAndUpdate(
+    { Auction: id },
+    { IsDeleted: false }
+  );
+  await auctionPreModel.findOneAndUpdate({ Auction: id }, { IsDeleted: false });
 
   return auction;
 };
