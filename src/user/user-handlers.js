@@ -5,9 +5,8 @@ import {
   getUser,
   updateUser,
   userForget,
-  resetPassword,
   userPermission,
-  userSetpassword,
+  userSetResetPass,
   logOut,
 } from "./user-services.js";
 import { convertToSpecificLang } from "../common/utilies.js";
@@ -29,11 +28,6 @@ export const login = async (req, res) => {
  */
 export const register = async (req, res) => {
   const { statusCode, response } = await createUser(req.body);
-  res.status(statusCode).json(convertToSpecificLang(response, res));
-};
-
-export const user_setpassword = async (req, res) => {
-  const { statusCode, response } = await userSetpassword(req.params, req.body);
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
@@ -90,10 +84,11 @@ export const user_forget = async (req, res) => {
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
-export const reset_password = async (req, res) => {
-  const { statusCode, response } = await resetPassword(req.params, req.body);
+export const user_SetReset_Password = async (req, res) => {
+  const { statusCode, response } = await userSetResetPass(req.params, req.body);
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
+
 export const logout = async (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];

@@ -16,9 +16,17 @@ export const userExists = async (user) => {
 
   if (!emailUser) {
     return false;
-  } else if (emailUser.isblock) {
-    const data = await UserModel.findOne({ email: user, isblock: true });
-    return data;
+  }
+  return emailUser;
+};
+
+export const userTemporaryExists = async (user) => {
+  const emailUser = await UserModel.findOne({
+    email: user,
+    isblock: true,
+  });
+  if (!emailUser) {
+    return false;
   }
   return emailUser;
 };
@@ -26,7 +34,6 @@ export const userExists = async (user) => {
 export const emailVerfiedUser = async (user) => {
   const userEmail = await UserModel.findOne({
     email: user,
-    verified: false,
     status: false,
   })
     .lean()
@@ -162,31 +169,15 @@ export const userPassCodeUpdate = async (user_id, passcode) => {
 
   return userDetails;
 };
-export const setUserReset = async (user_id) => {
-  const userDetails = await UserModel.findByIdAndUpdate(user_id, {
-    flag: true,
-  });
-  return userDetails;
-};
-export const getTokenUsers = async (passcode) => {
-  const roleId = await UserModel.findOne({
+export const getSetResetPassUser = async (passcode) => {
+  const userData = await UserModel.findOne({
     passcode: passcode,
-    verified: false,
-  });
-  if (!roleId) {
-    return false;
-  }
-  return roleId;
-};
-export const getPasscodeUsers = async (data) => {
-  const roleId = await UserModel.findOne({
-    passcode: data,
     status: false,
   });
-  if (!roleId) {
+  if (!userData) {
     return false;
   }
-  return roleId;
+  return userData;
 };
 
 export const removeTokenUser = async (data) => {
@@ -198,7 +189,7 @@ export const removeTokenUser = async (data) => {
 };
 
 export const getPersistenaceUsers = async (data) => {
-  const roleId = await Persistence.find({ Role: data });
+  const roleId = await Persistence.find({ User: data });
   return roleId;
 };
 export const getJwtTokenUsers = async (data) => {
