@@ -70,5 +70,5 @@
 	"disable.the.user": "disable the user",
 	"enable.the.user": "enable in the user",
 	"user.is.temporary.blocked": "The user is temporarily blocked",
-	"": ""
+	"you.have.already.blocked":"you have already blocked"
 }
