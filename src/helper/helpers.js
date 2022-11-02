@@ -180,6 +180,9 @@ const responseMessages = {
   BIDDER_LIMIT_NOT_REQUIRED: "noNewBidderLimit.not.required",
   BIDDER_LIMIT_REQUIRED: "noNewBidderLimit.required",
   PRE_START_DATE: "pre.start.date",
+  SEARCH_MODULE: "search module",
+  MODULE_NOT_EXISTS: "module does not exists",
+  DATA_NOT_FOUND: "data not found.",
 };
 const privilage = [
   {
