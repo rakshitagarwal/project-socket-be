@@ -22,6 +22,7 @@ const { error, value: env } = Object.freeze(
     DEFAULT_LANGUAGE: process.env.DEFAULT_LANGUAGE,
     HOST: process.env.HOST,
     STATIC_PATH: process.env.STATIC_PATH,
+    LIVE_ULR: process.env.LIVE_ULR,
   })
 );
 
