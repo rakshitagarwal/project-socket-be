@@ -14,25 +14,24 @@ export const getProductById = async (id) => {
   const productMeta = await productModel
     .findById(id)
     .populate("ProductCategory", { name: 1, _id: 1 })
-    .where({ status: false, IsDeleted: false });
+    .where({ status: true, IsDeleted: true });
   return productMeta;
 };
 
 export const removeProduct = async (id) => {
   const productMeta = await productModel.findByIdAndUpdate(id, {
-    IsDeleted: true,
+    IsDeleted: false,
   });
   return productMeta;
 };
 
 export const getProducts = async (pages, limit) => {
-  const count = await productModel.find({ IsDeleted: false }).countDocuments();
+  const count = await productModel.find({ IsDeleted: true }).countDocuments();
 
-  let totalPages;
-  totalPages = Math.ceil(count / limit);
+  let totalPages = Math.ceil(count / limit);
 
   const products = await productModel
-    .find({ IsDeleted: false })
+    .find({ IsDeleted: true })
     .limit(limit)
     .skip(limit * pages)
     .populate("ProductCategory", { name: 1, _id: 0 })
@@ -53,15 +52,12 @@ export const search = async (pages, limit, category, type) => {
     return products;
   }
 
-  const count = await productModel.find({ IsDeleted: false }).countDocuments();
+  const count = await productModel.find({ IsDeleted: true }).countDocuments();
 
-  let totalPages;
-  totalPages = Math.ceil(count / limit);
-
-  totalPages = parseInt(count / limit);
+  let totalPages = parseInt(Math.ceil(count / limit));
 
   const product = await productModel
-    .find({ IsDeleted: false })
+    .find({ IsDeleted: true })
     .limit(limit)
     .skip(limit * pages)
     .populate("ProductCategory", false, { name: category, type: type })
@@ -77,7 +73,7 @@ export const search = async (pages, limit, category, type) => {
 };
 
 export const getProductByTitle = async (title) => {
-  const product = await productModel.findOne({ title: title, status: false });
+  const product = await productModel.findOne({ title: title, status: true });
   return product._id;
 };
 
@@ -88,11 +84,12 @@ export const inActiveProductByTitle = async (title) => {
 
 export const fetchAllCategory = async () => {
   const categories = await productCategoryModel
-    .find({ status: false })
+    .find({ status: true })
     .select({
       _id: 1,
       type: 1,
       name: 1,
+      type: 1,
     })
     .lean();
   return categories;
@@ -100,7 +97,7 @@ export const fetchAllCategory = async () => {
 
 export const validateStatus = async (id) => {
   const isActive = await productModel
-    .findOne({ _id: id, status: false })
+    .findOne({ _id: id, status: true })
     .select({ status: 1, _id: 0 })
     .lean();
 

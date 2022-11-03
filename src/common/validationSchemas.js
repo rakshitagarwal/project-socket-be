@@ -156,6 +156,7 @@ export const productSchema = Joi.object({
   sellingPrice: price.integer().greater(0).required().messages({
     required_error: "sellingPrice must be present in responses",
     validate_error: "sellingPrice must be a number in responses",
+    greater_error: "sellingPrice must be greater than purchase price",
   }),
   overHeadCost: price.integer().greater(0).required().messages({
     required_error: "overHeadCost must be present in responses",
@@ -170,7 +171,7 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  ProductCategory: Joi.string().required().messages({
+  ProductCategory: Joi.string().min(24).required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
   }),
@@ -384,7 +385,7 @@ export const auctionSchema = Joi.object({
   }),
 })
   .when(".bot", {
-    is: false,
+    is: true,
     then: Joi.object({
       botMaxPrice: number.required().messages({
         "bot.required": "BotMaxPrice is required",
@@ -394,7 +395,7 @@ export const auctionSchema = Joi.object({
     }),
   })
   .when(".registerationStatus", {
-    is: false,
+    is: true,
     then: Joi.object({
       auctionPreRegister: auctionPreRegister.required().messages({
         "auctionPreRegister.required": "AuctionPreRegister is required",
@@ -402,7 +403,7 @@ export const auctionSchema = Joi.object({
     }),
   })
   .when(".postAuctionStatus", {
-    is: false,
+    is: true,
     then: Joi.object({
       auctionPostRegister: auctionPostRegister.required().messages({
         auctionPostRegister: "AuctionPostRegister is required",

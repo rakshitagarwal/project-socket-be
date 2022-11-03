@@ -96,7 +96,13 @@ export const verifyJwtToken = (token, publicKey) => {
  * sent email with Dyanmic Template
  * @param {Object} payload - email template details, whom to send mail
  */
-export const sendEmail = (payload, eventName, randomPasscode, text) => {
+export const sendEmail = (
+  payload,
+  eventName,
+  randomPasscode,
+  text,
+  liveUrl
+) => {
   const verificationHTML = readFileSync(
     `assets/templates/${eventName}/index.html`,
     {
@@ -112,6 +118,7 @@ export const sendEmail = (payload, eventName, randomPasscode, text) => {
     date: payload.createdAt,
     randomPasscode: randomPasscode,
     text: text,
+    liveUrl: liveUrl,
   };
   const transport = nodemailer.createTransport({
     host: env.EMAIL_HOST,
@@ -263,7 +270,7 @@ export const calculatePrivilages = (previlageNum) => {
  * @returns {boolean} valid
  */
 export const validateObjectId = (objectId) => {
-  const valid = mongoose.Types.ObjectId.isValid(objectId);
+  const valid = mongoose.isObjectIdOrHexString(objectId);
   return valid;
 };
 

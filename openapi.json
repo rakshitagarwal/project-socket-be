@@ -26,6 +26,10 @@
     {
       "name": "Auctions",
       "description": "Auctions Operations"
+    },
+    {
+      "name": "Search",
+      "description": "Search Operations"
     }
   ],
   "servers": [
@@ -1271,7 +1275,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/500"
+            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"
@@ -1587,10 +1591,10 @@
         }
       }
     },
-    "/users/set-password/{passcode}": {
+    "/users/setreset/{passcode}": {
       "post": {
         "tags": ["Users"],
-        "description": "set password for user",
+        "description": "set or reset password for user",
         "parameters": [
           {
             "in": "header",
@@ -1743,88 +1747,6 @@
         }
       }
     },
-    "/users/password-reset/{passcode}": {
-      "post": {
-        "tags": ["Users"],
-        "description": "reset password for user",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Accept-Language",
-            "schema": {
-              "type": "string",
-              "enum": ["en", "fr", "de"],
-              "default": "en"
-            }
-          },
-          {
-            "in": "path",
-            "name": "passcode",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "password": {
-                    "type": "string",
-                    "format": "string",
-                    "nullable": false,
-                    "description": " password of the user"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful User Login",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {}
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/400"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          },
-          "default": {
-            "$ref": "#/components/responses/404"
-          }
-        }
-      }
-    },
     "/users/logout": {
       "post": {
         "tags": ["Users"],
@@ -1954,6 +1876,112 @@
           },
           "default": {
             "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/search/": {
+      "get": {
+        "description": "Search all module",
+        "tags": ["Search"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["User", "Product", "Error"],
+              "default":"User"
+            }
+          },
+          {
+            "in": "query",
+            "name": "searchText",
+            "schema": {
+              "type": "string",
+              "format": "Int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user"
+                      }
+                    },
+                    "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           }
         }
       }

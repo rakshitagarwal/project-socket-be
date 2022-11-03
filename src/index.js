@@ -12,6 +12,7 @@ import { checkAccess } from "./middleware/acl.js";
 import { uploadRouter } from "./upload/upload-routes.js";
 import { auctionRouter } from "./auction/auction-routes.js";
 import { isAuthenticated } from "./middleware/auth.js";
+
 export const v1Router = Router();
 
 v1Router.use(PRODUCT_PATHNAME, productRouter);

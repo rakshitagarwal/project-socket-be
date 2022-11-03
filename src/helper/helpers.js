@@ -137,6 +137,10 @@ const responseMessages = {
   USER_INVALID_LINK: "Invalid.link.or.expired.",
   USER_LOGOUT: "logout.Successfully",
   USER_LOGOUT_ALREADY: "logout.user",
+  USER_DISABLE: "disable.the.user",
+  USER_ENABLE: "enable.the.user",
+  USER_TEMPORARY_BLOCKED: "user.is.temporary.blocked",
+  USER_ALREADY_BLOCK:"you.have.already.blocked",
   PRODUCT_ADDED: "product.added",
   PRODUCT_DELETED: "product.deleted",
   PRODUCT_UPDATED: "product.updated",
@@ -176,6 +180,9 @@ const responseMessages = {
   BIDDER_LIMIT_NOT_REQUIRED: "noNewBidderLimit.not.required",
   BIDDER_LIMIT_REQUIRED: "noNewBidderLimit.required",
   PRE_START_DATE: "pre.start.date",
+  SEARCH_MODULE: "search module",
+  MODULE_NOT_EXISTS: "module does not exists",
+  DATA_NOT_FOUND: "data not found.",
 };
 const privilage = [
   {
