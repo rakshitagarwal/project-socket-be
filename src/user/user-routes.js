@@ -6,9 +6,8 @@ import {
   USER_PATH_ALLID,
   USER_FORGET,
   USER_PERMISSION,
-  USER_SETPASSWORD,
   USER_LOGOUT,
-  USER_RESET,
+  USER_SET_OR_RESET,
 } from "./../common/constants.js";
 import {
   login,
@@ -18,8 +17,7 @@ import {
   get,
   user_permission,
   user_forget,
-  reset_password,
-  user_setpassword,
+  user_SetReset_Password,
   logout,
 } from "./user-handlers.js";
 import { validateSchema } from "../middleware/validate.js";
@@ -28,7 +26,7 @@ import {
   idSchema,
   loginSchema,
   userUpdateSchema,
-  forgetPassword
+  forgetPassword,
 } from "./../common/validationSchemas.js";
 import { isAuthenticated } from "../middleware/auth.js";
 import { checkAccess } from "../middleware/acl.js";
@@ -50,7 +48,6 @@ userRouter
   )
   .get(USER_PATH_ALLID, [isAuthenticated, checkAccess], get)
   .post(USER_PERMISSION, user_permission)
-  .post(USER_SETPASSWORD, user_setpassword)
-  .post(USER_FORGET,validateSchema.body(forgetPassword), user_forget)
-  .post(USER_RESET, reset_password)
-  .post(USER_LOGOUT, [isAuthenticated, checkAccess], logout);
+  .post(USER_FORGET, validateSchema.body(forgetPassword), user_forget)
+  .post(USER_LOGOUT, [isAuthenticated, checkAccess], logout)
+  .post(USER_SET_OR_RESET, user_SetReset_Password);
