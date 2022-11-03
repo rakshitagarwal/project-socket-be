@@ -11,16 +11,37 @@
     "termsOfService": "Can be used by anyone"
   },
   "tags": [
-    { "name": "Users", "description": "Users operations" },
-    { "name": "Products", "description": "Products operations" },
-    { "name": "Uploads", "description": "Uploads Operations" },
-    { "name": "Auctions", "description": "Auctions Operations" }
+    {
+      "name": "Users",
+      "description": "Users operations"
+    },
+    {
+      "name": "Products",
+      "description": "Products operations"
+    },
+    {
+      "name": "Uploads",
+      "description": "Uploads Operations"
+    },
+    {
+      "name": "Auctions",
+      "description": "Auctions Operations"
+    },
+    {
+      "name": "Search",
+      "description": "Search Operations"
+    }
   ],
   "servers": [
     {
       "url": "{basePath}",
       "description": "Main Server",
-      "variables": { "basePath": { "default": "/v1", "enum": ["v1"] } }
+      "variables": {
+        "basePath": {
+          "default": "/v1",
+          "enum": ["v1"]
+        }
+      }
     }
   ],
   "components": {
@@ -73,9 +94,15 @@
                           "context": {
                             "type": "object",
                             "properties": {
-                              "label": { "type": "string" },
-                              "value": { "type": "string" },
-                              "key": { "type": "string" }
+                              "label": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              },
+                              "key": {
+                                "type": "string"
+                              }
                             }
                           }
                         }
@@ -128,9 +155,15 @@
                           "context": {
                             "type": "object",
                             "properties": {
-                              "label": { "type": "string" },
-                              "value": { "type": "string" },
-                              "key": { "type": "string" }
+                              "label": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              },
+                              "key": {
+                                "type": "string"
+                              }
                             }
                           }
                         }
@@ -164,7 +197,9 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "error": { "type": "array" }
+                    "error": {
+                      "type": "array"
+                    }
                   }
                 }
               }
@@ -362,7 +397,11 @@
     "/products/category/": {
       "get": {
         "description": "get single product",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Products"],
         "parameters": [
           {
@@ -423,7 +462,11 @@
     "/products/": {
       "post": {
         "tags": ["Products"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "description": "Add a new product",
         "parameters": [
           {
@@ -512,8 +555,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "metdata": {
                       "type": "object",
                       "additionalProperties": false
@@ -539,7 +586,11 @@
       },
       "get": {
         "description": "fetch All products",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Products"],
         "parameters": [
           {
@@ -594,10 +645,18 @@
                     "metdata": {
                       "additionalProperties": false,
                       "properties": {
-                        "limit": { "type": "number" },
-                        "currentPage": { "type": "number" },
-                        "totalPages": { "type": "number" },
-                        "recordCount": { "type": "number" }
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "recordCount": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -623,7 +682,11 @@
     "/products/{id}": {
       "delete": {
         "description": "Disbale the specific product",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Products"],
         "parameters": [
           {
@@ -653,7 +716,9 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
+                    "success": {
+                      "type": "boolean"
+                    },
                     "message": {
                       "type": "string"
                     },
@@ -682,7 +747,11 @@
       },
       "put": {
         "description": "Update the specific product",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Products"],
         "parameters": [
           {
@@ -776,8 +845,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "metdata": {
                       "type": "object",
                       "additionalProperties": false
@@ -803,7 +876,11 @@
       },
       "get": {
         "description": "get single product",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Products"],
         "parameters": [
           {
@@ -833,8 +910,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "$ref": "#/components/schemas/product"
                     },
@@ -866,7 +947,11 @@
       "get": {
         "description": "Search the product with name",
         "tags": ["Products"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -936,11 +1021,25 @@
                       "type": "object",
                       "additionalProperties": false,
                       "properties": {
-                        "limit": { "type": "number" },
-                        "currentPage": { "type": "number", "default": 0 },
-                        "totalPages": { "type": "number", "default": 5 },
-                        "recordCount": { "type": "number", "default": 0 },
-                        "searchText": { "type": "string", "default": "" }
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number",
+                          "default": 0
+                        },
+                        "totalPages": {
+                          "type": "number",
+                          "default": 5
+                        },
+                        "recordCount": {
+                          "type": "number",
+                          "default": 0
+                        },
+                        "searchText": {
+                          "type": "string",
+                          "default": ""
+                        }
                       }
                     }
                   }
@@ -1060,8 +1159,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1089,6 +1192,16 @@
       "get": {
         "description": "fetch All users",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1130,7 +1243,9 @@
                       "type": "boolean",
                       "default": true
                     },
-                    "message": { "type": "string" },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -1140,10 +1255,18 @@
                     "metdata": {
                       "additionalProperties": false,
                       "properties": {
-                        "limit": { "type": "number" },
-                        "currentPage": { "type": "number" },
-                        "totalPages": { "type": "number" },
-                        "count": { "type": "number" }
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -1152,7 +1275,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/500"
+            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"
@@ -1167,6 +1290,16 @@
       "delete": {
         "description": "Disbale the specific users",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1195,8 +1328,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1253,8 +1390,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "$ref": "#/components/schemas/user"
                     }
@@ -1274,6 +1415,16 @@
       "put": {
         "description": "Update the specific user",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1356,8 +1507,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1407,8 +1562,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1432,10 +1591,10 @@
         }
       }
     },
-    "/users/set-password/{passcode}": {
+    "/users/setreset/{passcode}": {
       "post": {
         "tags": ["Users"],
-        "description": "set password for user",
+        "description": "set or reset password for user",
         "parameters": [
           {
             "in": "header",
@@ -1483,8 +1642,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1556,8 +1719,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1569,84 +1736,6 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          },
-          "default": {
-            "$ref": "#/components/responses/404"
-          }
-        }
-      }
-    },
-    "/users/password-reset/{passcode}": {
-      "post": {
-        "tags": ["Users"],
-        "description": "reset password for user",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Accept-Language",
-            "schema": {
-              "type": "string",
-              "enum": ["en", "fr", "de"],
-              "default": "en"
-            }
-          },
-          {
-            "in": "path",
-            "name": "passcode",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "password": {
-                    "type": "string",
-                    "format": "string",
-                    "nullable": false,
-                    "description": " password of the user"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful User Login",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
-                    "data": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {}
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
             "$ref": "#/components/responses/400"
           },
           "500": {
@@ -1692,8 +1781,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1759,8 +1852,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1783,10 +1880,120 @@
         }
       }
     },
+    "/search/": {
+      "get": {
+        "description": "Search all module",
+        "tags": ["Search"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "moduleName",
+            "schema": {
+              "type": "string",
+              "enum": ["User", "Product", "Error"],
+              "default":"User"
+            }
+          },
+          {
+            "in": "query",
+            "name": "searchText",
+            "schema": {
+              "type": "string",
+              "format": "Int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number",
+              "format": "Int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user"
+                      }
+                    },
+                    "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
     "/uploads/": {
       "post": {
         "tags": ["Uploads"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Upload Single Video and Image",
         "parameters": [
           {
@@ -1831,7 +2038,9 @@
                       "type": "boolean",
                       "default": true
                     },
-                    "message": { "type": "string" },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -1871,7 +2080,11 @@
       },
       "put": {
         "tags": ["Uploads"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Updated Single Video and Image",
         "parameters": [
           {
@@ -1966,7 +2179,11 @@
       },
       "delete": {
         "tags": ["Uploads"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Delete Single Video and Image",
         "parameters": [
           {
@@ -2043,7 +2260,11 @@
         "tags": ["Uploads"],
         "deprecated": true,
         "summary": "Depricated Don't Use",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -2132,7 +2353,11 @@
     "/uploads/multiple/": {
       "post": {
         "tags": ["Uploads"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Multiple Image Uploads",
         "parameters": [
           {
@@ -2181,7 +2406,9 @@
                       "type": "boolean",
                       "default": true
                     },
-                    "message": { "type": "string" },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "additionalProperties": false,
@@ -2224,7 +2451,11 @@
       "post": {
         "tags": ["Auctions"],
         "description": "Add the Auctions",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2393,6 +2624,16 @@
                     "nullable": false,
                     "description": "status of the auctions"
                   },
+                  "terms&Condition": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "description": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
                   "Product": {
                     "type": "string",
                     "format": "string",
@@ -2419,8 +2660,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "metdata": {
                       "type": "object",
                       "additionalProperties": false
@@ -2468,7 +2713,11 @@
       },
       "get": {
         "description": "fetch All Auctions with auction type filter",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -2508,8 +2757,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -2658,6 +2911,16 @@
                             "default": "Active",
                             "description": "state of the auctions"
                           },
+                          "terms&Condition": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false
+                          },
+                          "description": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false
+                          },
                           "status": {
                             "type": "boolean",
                             "format": "boolean",
@@ -2683,10 +2946,18 @@
                     "metdata": {
                       "additionalProperties": false,
                       "properties": {
-                        "limit": { "type": "number" },
-                        "currentPage": { "type": "number" },
-                        "totalPages": { "type": "number" },
-                        "recordCount": { "type": "number" }
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "recordCount": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -2712,7 +2983,11 @@
     "/auctions/category/": {
       "get": {
         "description": "get All Auction category",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Auctions"],
         "responses": {
           "200": {
@@ -2762,7 +3037,11 @@
     "/auctions/{id}": {
       "put": {
         "description": "Update the specific Auctions",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -2935,6 +3214,16 @@
                     "default": "Active",
                     "description": "state of the auctions"
                   },
+                  "terms&Condition": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
+                  "description": {
+                    "type": "string",
+                    "format": "string",
+                    "nullable": false
+                  },
                   "status": {
                     "type": "boolean",
                     "format": "boolean",
@@ -2968,8 +3257,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {},
                     "metdata": {
                       "type": "object",
@@ -2996,7 +3289,11 @@
       },
       "get": {
         "description": "Fetch the specific Auctions",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -3017,8 +3314,12 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "message": { "type": "string" },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -3164,6 +3465,16 @@
                           "default": "Active",
                           "description": "state of the auctions"
                         },
+                        "terms&Condition": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false
+                        },
+                        "description": {
+                          "type": "string",
+                          "format": "string",
+                          "nullable": false
+                        },
                         "status": {
                           "type": "boolean",
                           "format": "boolean",
@@ -3183,15 +3494,6 @@
                           "nullable": false,
                           "description": "AuctionCategory in the auctions"
                         }
-                      }
-                    },
-                    "metdata": {
-                      "additionalProperties": false,
-                      "properties": {
-                        "limit": { "type": "number" },
-                        "currentPage": { "type": "number" },
-                        "totalPages": { "type": "number" },
-                        "recordCount": { "type": "number" }
                       }
                     }
                   }
@@ -3215,7 +3517,11 @@
       },
       "delete": {
         "description": "Disbale the specific Auction",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "tags": ["Auctions"],
         "parameters": [
           {
@@ -3236,7 +3542,9 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "success": { "type": "boolean" },
+                    "success": {
+                      "type": "boolean"
+                    },
                     "message": {
                       "type": "string"
                     },
@@ -3268,7 +3576,11 @@
       "get": {
         "tags": ["Auctions"],
         "description": "Search/Filter/Sort Auctions Details",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -3483,6 +3795,16 @@
                             "default": "Active",
                             "description": "state of the auctions"
                           },
+                          "terms&Condition": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false
+                          },
+                          "description": {
+                            "type": "string",
+                            "format": "string",
+                            "nullable": false
+                          },
                           "status": {
                             "type": "boolean",
                             "format": "boolean",
@@ -3509,13 +3831,33 @@
                       "type": "object",
                       "additionalProperties": false,
                       "properties": {
-                        "limit": { "type": "number" },
-                        "currentPage": { "type": "number", "default": 0 },
-                        "totalPages": { "type": "number", "default": 5 },
-                        "recordCount": { "type": "number", "default": 0 },
-                        "state": { "type": "string", "default": "" },
-                        "status": { "type": "string", "default": "" },
-                        "type": { "type": "string", "default": "" }
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number",
+                          "default": 0
+                        },
+                        "totalPages": {
+                          "type": "number",
+                          "default": 5
+                        },
+                        "recordCount": {
+                          "type": "number",
+                          "default": 0
+                        },
+                        "state": {
+                          "type": "string",
+                          "default": ""
+                        },
+                        "status": {
+                          "type": "string",
+                          "default": ""
+                        },
+                        "type": {
+                          "type": "string",
+                          "default": ""
+                        }
                       }
                     }
                   }

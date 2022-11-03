@@ -20,15 +20,7 @@ export const remove = async (req, res) => {
 };
 
 export const update = async (req, res) => {
-  let updateProductData = req.body;
-
-  if (req.file) {
-    updateProductData = { ...req?.body, image: req.file.path };
-  }
-  const { statusCode, response } = await updateProduct(
-    req.params.id,
-    updateProductData
-  );
+  const { statusCode, response } = await updateProduct(req.params.id, req.body);
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
@@ -46,6 +38,10 @@ export const selectProduct = async (req, res) => {
   res.status(statusCode).json(convertToSpecificLang(response, res));
 };
 
+/**
+ @description fetching all the products
+ @return {Response} res include all products to response 
+ **/
 export const selectCategories = async (req, res) => {
   const { statusCode, response } = await getCategories();
   res.status(statusCode).json(convertToSpecificLang(response, res));

@@ -10,9 +10,7 @@ import {
   userPassCodeUpdate,
   getRoleAccessToken,
   getUserByIdRole,
-  getTokenUsers,
   updatePass,
-  getPasscodeUsers,
   removeTokenUser,
   getPersistenaceUsers,
   getJwtTokenUsers,
@@ -23,6 +21,8 @@ import {
   roleSchemaName,
   roleSchemaFind,
   getAllUserRole,
+  getSetResetPassUser,
+  userTemporaryExists,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -34,6 +34,7 @@ import {
 } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
+import env from "../config/env.js";
 
 /**
  * @description login user into system
@@ -41,13 +42,16 @@ import { getPrivilagesForRole } from "../roles/role-queries.js";
  */
 export const checkCredentials = async function (user) {
   const emailCheck = await userExists(user.email);
-  if (!emailCheck) {
+  const userExistsTemp = await userTemporaryExists(user.email);
+  if (!emailCheck || userExistsTemp) {
     return createResponse(
       helpers.StatusCodes.UNAUTHORIZED,
-      helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
+      userExistsTemp
+        ? helpers.responseMessages.USER_TEMPORARY_BLOCKED
+        : helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
     );
   }
-  const { password, ...getUser } = emailCheck;
+  const { password, passcode, createdAt, updatedAt, ...getUser } = emailCheck;
   const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
   let PrivilageRole = [];
   getPrivilageRole.module.forEach((element) => {
@@ -150,7 +154,10 @@ export const deleteUser = async (id) => {
       helpers.responseMessages.USER_DELETE_SUCCESSFULL
     );
   }
-  return notFound();
+  return createResponse(
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.responseMessages.USER_INVALID
+  );
 };
 
 /**
@@ -161,33 +168,57 @@ export const deleteUser = async (id) => {
 export const updateUser = async (id, userdata) => {
   // Yes, it's a valid ObjectId, proceed with `findById` call.
   const userObjId = validateObjectId(id);
-  let userRoleId = await roleSchema(userdata.Role);
-
-  if (!userRoleId) {
+  const data = userdata.isblock ? userdata : userdata;
+  if (data.isblock && userObjId) {
+    const dataVerfied = await getUserByIdVerfied(id);
+    sendEmail(dataVerfied, "user-blocked");
+    if (!dataVerfied.isblock) {
+      await update(id, data);
+      return createResponse(
+        helpers.StatusCodes.OK,
+        helpers.responseMessages.USER_DISABLE
+      );
+    }
     return createResponse(
-      helpers.StatusCodes.UNAUTHORIZED,
-      helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.USER_ALREADY_BLOCK
+    );
+  } else if (data.isblock === false && userObjId) {
+    await update(id, data);
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.USER_ENABLE
     );
   }
-  if (userObjId) {
-    if (userdata.Role) {
-      userdata.Role = userRoleId;
-    }
 
-    await update(id, userdata);
+  if (userObjId) {
+    let userRoleId = await roleSchema(data.Role);
+    if (!userRoleId && !data.isblock) {
+      return createResponse(
+        helpers.StatusCodes.UNAUTHORIZED,
+        helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
+      );
+    }
+    if (data.Role) {
+      data.Role = userRoleId;
+    }
+    await update(id, data);
     const getUsersVerfied = await getUserByIdVerfied(id);
     const { password, email, Role, createdAt, passcode, ...userData } =
       getUsersVerfied;
     if (getUsersVerfied) {
       return createResponse(
         helpers.StatusCodes.OK,
-        helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
-        userData
+        data.isblock ? "" : helpers.responseMessages.USER_UPDATE_SUCCESSFULL,
+        !data.isblock ? userData : ""
       );
     }
     return notFound();
   }
-  return notFound();
+  return createResponse(
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.responseMessages.USER_INVALID
+  );
 };
 
 /**
@@ -198,11 +229,14 @@ export const updateUser = async (id, userdata) => {
  */
 export const getUser = async (page, limit, userid, roleName) => {
   // Yes, it's a valid ObjectId, proceed with `findById` call.
-  const userObjId = validateObjectId(userid);
-  if (userObjId) {
+  if (!page || !limit || !roleName) {
+    var userObjId = validateObjectId(userid);
+  }
+  if (userObjId && userid) {
     const userInfo = await getUserByIdVerfied(userid);
     const arr = [];
-    const { password, passcode, createdAt, ...userData } = userInfo;
+    const { password, passcode, isblock, updatedAt, createdAt, ...userData } =
+      userInfo;
     if (userInfo) {
       arr.push(userData);
       return createResponse(
@@ -214,6 +248,11 @@ export const getUser = async (page, limit, userid, roleName) => {
       );
     }
     return notFound();
+  } else if (userObjId === false && (page || limit || roleName) && userid) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.responseMessages.USER_INVALID
+    );
   } else if (page || limit || roleName) {
     const userRoleId = await roleSchemaName(roleName);
     if (userRoleId.name === roleName && roleName === "Admin") {
@@ -304,7 +343,7 @@ export const userForget = async (user) => {
   const userId = await getResetUserById(userData._id);
   if (userId) {
     const link = userId.passcode;
-    sendEmail(userData, "user-forget", randomCode, link);
+    sendEmail(userData, "user-forget", randomCode, link, env.LIVE_ULR);
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.USER_CHECK_EMAIL
@@ -316,54 +355,43 @@ export const userForget = async (user) => {
 /**
  * @param tokenId - token exists or not
  * @param user - request body user in password field
- * @description - user set password for verified the user.
+ * @description - user set or reset password for verified the user.
  */
-export const userSetpassword = async (tokenId, user) => {
-  const userData = await getTokenUsers(tokenId.passcode);
-  if (userData) {
-    const hashPass = hashPassword(user.password);
-    userData.password = hashPass;
-    userData.verified = true;
-    const checkUser = await updatePass(userData._id, userData);
+export const userSetResetPass = async (tokenId, user) => {
+  let userData = await getSetResetPassUser(tokenId.passcode, user);
+  if (!userData) {
+    return createResponse(
+      helpers.StatusCodes.BAD_REQUEST,
+      tokenId.passcode.length !== 64
+        ? helpers.responseMessages.USER_INVALID_LINK
+        : helpers.responseMessages.USER_ALREADY_USES
+    );
+  }
+  let hashPass = hashPassword(user.password);
+  let userRoleData = await getPersistenaceUsers(userData._id);
+  if (tokenId && user.password !== "") {
+    if (!userData.verified) {
+      userData.password = hashPass;
+      userData.verified = true;
+    }
+    if (
+      userData.verified ||
+      (typeof userRoleData.length <= 0 && userRoleData)
+    ) {
+      const arr = [];
+      userRoleData.forEach((data) => {
+        arr.push(data._id);
+      });
+      await removeTokenUser(arr);
+      if (userData || userData.passcode) {
+        userData.password = hashPass;
+        userData.passcode = null;
+      }
+    }
+    await updatePass(userData._id, userData);
     return createResponse(
       helpers.StatusCodes.ACCEPTED,
       helpers.responseMessages.USER_SET_PASSWORD_SUCCESSFUL
-    );
-  }
-  return createResponse(
-    helpers.StatusCodes.BAD_REQUEST,
-    helpers.responseMessages.USER_ALREADY_USES
-  );
-};
-
-/**
- * @param tokenId - token exists or not
- * @param user - request body user in password field
- * @description - user set password for verified the user.
- */
-export const resetPassword = async (tokenId, user) => {
-  const userData = await getPasscodeUsers(tokenId.passcode);
-  if (tokenId) {
-    const userRoleData = await getPersistenaceUsers(userData._id);
-    const arr = [];
-    userRoleData.forEach((data) => {
-      arr.push(data._id);
-    });
-    await removeTokenUser(arr);
-    if (userData || userData.passcode) {
-      const hashPass = hashPassword(user.password);
-      userData.password = hashPass;
-      userData.flag = true;
-      userData.passcode = null;
-      await updatePass(userData._id, userData);
-      return createResponse(
-        helpers.StatusCodes.ACCEPTED,
-        helpers.responseMessages.USER_RESET_SUCESSFULL
-      );
-    }
-    return createResponse(
-      helpers.StatusCodes.BAD_REQUEST,
-      helpers.responseMessages.USER_ALREADY_USES
     );
   }
   return notFound();

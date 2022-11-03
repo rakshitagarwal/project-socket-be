@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const { Schema } = mongoose;
 
 /**
@@ -27,7 +28,7 @@ const auctionCategory = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
   },
   schemaOptions
@@ -50,7 +51,7 @@ export const productCategory = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
   },
   schemaOptions
@@ -155,6 +156,11 @@ export const userSchema = new Schema(
       required: true,
       default: false,
     },
+    isblock: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
 
     Role: {
       type: Schema.Types.ObjectId,
@@ -235,11 +241,11 @@ export const productSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     ProductCategory: {
       type: Schema.Types.ObjectId,
@@ -279,7 +285,7 @@ const auctionSchema = new Schema(
     autoStart: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     openingPrice: {
       type: Number,
@@ -292,12 +298,11 @@ const auctionSchema = new Schema(
     },
     endDate: {
       type: Date,
-      required: true,
     },
     bot: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     botMaxPrice: {
       type: Number,
@@ -305,11 +310,11 @@ const auctionSchema = new Schema(
     },
     registerationStatus: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     postAuctionStatus: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     quantity: {
       type: Number,
@@ -325,14 +330,20 @@ const auctionSchema = new Schema(
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
     },
+    "terms&Condition": {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     Product: {
       type: Schema.Types.ObjectId,
@@ -371,12 +382,12 @@ const auctionPreRegisterSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     Auction: {
       type: Schema.Types.ObjectId,
@@ -396,11 +407,11 @@ const auctionPostRegisterSchema = new Schema(
     },
     status: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     Auction: {
       type: Schema.Types.ObjectId,

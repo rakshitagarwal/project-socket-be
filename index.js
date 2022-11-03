@@ -12,14 +12,10 @@ import { connectDB } from "./src/config/db.js";
 import logger from "./src/config/logger.js";
 import { PREFIX_VERSION } from "./src/common/constants.js";
 import cookieParser from "cookie-parser";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 import i18n from "i18n";
 import { authSchemas } from "./src/roles/role-schema.js";
 import { productCategoryModel } from "./src/product/product-schemas.js";
 import { auctionRole } from "./src/auction/auction-schemas.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const app = express();
 const PORT = env.PORT;
@@ -204,6 +200,14 @@ process.on("uncaughtException", (err) => {
   if (err) logger.error(err.stack);
   server.close(() => {
     console.log("Stopped server due to uncaughtException");
+    console.log(err);
+  });
+});
+
+process.on("unhandledRejection", (err) => {
+  if (err) logger.error(err.stack);
+  server.close(() => {
+    console.log("Stopped server due to unhandledRejection");
     console.log(err);
   });
 });

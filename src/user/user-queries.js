@@ -13,15 +13,27 @@ export const userExists = async (user) => {
   })
     .lean()
     .populate("Role", { name: 1 });
+
   if (!emailUser) {
     return false;
   }
   return emailUser;
 };
+
+export const userTemporaryExists = async (user) => {
+  const emailUser = await UserModel.findOne({
+    email: user,
+    isblock: true,
+  });
+  if (!emailUser) {
+    return false;
+  }
+  return emailUser;
+};
+
 export const emailVerfiedUser = async (user) => {
   const userEmail = await UserModel.findOne({
     email: user,
-    verified: false,
     status: false,
   })
     .lean()
@@ -66,7 +78,7 @@ export const getUserById = async (id) => {
 };
 export const getUserByIdVerfied = async (id) => {
   const userData = await UserModel.findById(id)
-    .find({ status: false, verified: true })
+    .find({ status: false })
     .lean()
     .populate("Role", { name: 1 });
   if (userData.length > 0) {
@@ -157,31 +169,15 @@ export const userPassCodeUpdate = async (user_id, passcode) => {
 
   return userDetails;
 };
-export const setUserReset = async (user_id) => {
-  const userDetails = await UserModel.findByIdAndUpdate(user_id, {
-    flag: true,
-  });
-  return userDetails;
-};
-export const getTokenUsers = async (passcode) => {
-  const roleId = await UserModel.findOne({
+export const getSetResetPassUser = async (passcode) => {
+  const userData = await UserModel.findOne({
     passcode: passcode,
-    verified: false,
-  });
-  if (!roleId) {
-    return false;
-  }
-  return roleId;
-};
-export const getPasscodeUsers = async (data) => {
-  const roleId = await UserModel.findOne({
-    passcode: data,
     status: false,
   });
-  if (!roleId) {
+  if (!userData) {
     return false;
   }
-  return roleId;
+  return userData;
 };
 
 export const removeTokenUser = async (data) => {
@@ -193,7 +189,7 @@ export const removeTokenUser = async (data) => {
 };
 
 export const getPersistenaceUsers = async (data) => {
-  const roleId = await Persistence.find({ Role: data });
+  const roleId = await Persistence.find({ User: data });
   return roleId;
 };
 export const getJwtTokenUsers = async (data) => {

@@ -1,5 +1,6 @@
 import BaseJoi from "joi";
 import JoiDate from "@joi/date";
+
 const Joi = BaseJoi.extend(JoiDate);
 
 const string = Joi.string();
@@ -123,14 +124,6 @@ export const envSchema = Joi.object({
     required_error: "DEFAULT_LANGUAGE must be present in environment variables",
     invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
   }),
-  LANGUAGE_PATH: string.required().messages({
-    required_error: "LANGUAGE_PATH must be present in environment variables",
-    invalid_type_error: "Invalid LANGUAGE_PATH in environment variables",
-  }),
-  DEFAULT_LANGUAGE: string.required().messages({
-    required_error: "DEFAULT_LANGUAGE must be present in environment variables",
-    invalid_type_error: "Invalid DEFAULT_LANGUAGE in environment variables",
-  }),
   HOST: string.required().messages({
     required_error: "HOST must be present in environment variables",
     invalid_type_error: "HOST type in environment variables",
@@ -163,6 +156,7 @@ export const productSchema = Joi.object({
   sellingPrice: price.integer().greater(0).required().messages({
     required_error: "sellingPrice must be present in responses",
     validate_error: "sellingPrice must be a number in responses",
+    greater_error: "sellingPrice must be greater than purchase price",
   }),
   overHeadCost: price.integer().greater(0).required().messages({
     required_error: "overHeadCost must be present in responses",
@@ -177,7 +171,7 @@ export const productSchema = Joi.object({
     required_error: "title must be present in responses",
     validate_error: "title must be a string in responses",
   }),
-  ProductCategory: Joi.string().required().messages({
+  ProductCategory: Joi.string().min(24).required().messages({
     required_error: "quantity must be present in responses",
     validate_error: "quantity must be a string in responses",
   }),
@@ -263,15 +257,16 @@ export const userSchema = Joi.object({
 });
 
 export const userUpdateSchema = Joi.object({
-  firstname: firstname.required(),
-  lastname: lastname.required(),
+  firstname: firstname.optional(),
+  lastname: lastname.optional(),
   email: Joi.string().optional().allow(""),
-  zip: zip.required(),
-  country: country.required(),
+  zip: zip.optional(),
+  country: country.optional(),
   gender: gender,
   age: age,
   mobile: mobile,
   profession: profession,
+  isblock: Joi.boolean().optional(),
   Role: Joi.string().optional().allow(""),
 });
 
@@ -355,14 +350,10 @@ export const auctionSchema = Joi.object({
     required_error: "startDate must be present in responses",
     validate_error: "startDate must be a string in responses",
   }),
-  endDate: date
-    .format("YYYY-MM-DD:HH:mm:SS")
-    .required()
-    .greater(Joi.ref("startDate"))
-    .messages({
-      required_error: "endDate must be present in responses",
-      validate_error: "endDate must be a string in responses",
-    }),
+  endDate: date.messages({
+    required_error: "endDate must be present in responses",
+    validate_error: "endDate must be a string in responses",
+  }),
   registerationStatus: boolean.required().messages({
     required_error: "registerationStatus must be present in responses",
     validate_error: "registerationStatus must be a number in responses",
@@ -370,9 +361,18 @@ export const auctionSchema = Joi.object({
   postAuctionStatus: boolean.required().messages({
     required_error: "postRegisterationStatus must be present in responses",
   }),
-  state: string.valid("Active", "Publish", "Cancel", "Closed").messages({
-    required_error: "state must be present in responses",
-    validate_error: "state must be a boolean in responses",
+  state: string
+    .required()
+    .valid("Active", "Publish", "Cancel", "Closed")
+    .messages({
+      required_error: "state must be present in responses",
+      validate_error: "state must be a boolean in responses",
+    }),
+  "terms&Condition": string.messages({
+    validate_error: "terms&Condition must be a boolean in responses",
+  }),
+  description: string.messages({
+    validate_error: "description must be a boolean in responses",
   }),
   status: boolean.allow().optional(),
   Product: string.required().messages({
@@ -385,7 +385,7 @@ export const auctionSchema = Joi.object({
   }),
 })
   .when(".bot", {
-    is: false,
+    is: true,
     then: Joi.object({
       botMaxPrice: number.required().messages({
         "bot.required": "BotMaxPrice is required",
@@ -395,7 +395,7 @@ export const auctionSchema = Joi.object({
     }),
   })
   .when(".registerationStatus", {
-    is: false,
+    is: true,
     then: Joi.object({
       auctionPreRegister: auctionPreRegister.required().messages({
         "auctionPreRegister.required": "AuctionPreRegister is required",
@@ -403,7 +403,7 @@ export const auctionSchema = Joi.object({
     }),
   })
   .when(".postAuctionStatus", {
-    is: false,
+    is: true,
     then: Joi.object({
       auctionPostRegister: auctionPostRegister.required().messages({
         auctionPostRegister: "AuctionPostRegister is required",

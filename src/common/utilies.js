@@ -3,7 +3,6 @@ import {
   ASSESTS_FILES_NAME,
   SUPPORTED_EXTENSION_FILE,
   SUPPORTED_EXTENSION_IMAGE,
-  SUPPORTED_EXTENSION_VIDEO,
 } from "./../config/settings.js";
 import { helpers } from "../helper/helpers.js";
 import jwt from "jsonwebtoken";
@@ -11,6 +10,7 @@ import multer from "multer";
 import env from "../config/env.js";
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
+
 const { compile } = handlebars;
 import logger from "../config/logger.js";
 import { generateKeyPair, createHash } from "crypto";
@@ -30,6 +30,8 @@ const jwtOptions = {
  * common response format
  * @param {Number} statusCode
  * @param {Object} data
+ * @param {String} message
+ * @param {Object} metaData
  * @returns statusCode and response
  */
 export const createResponse = (statusCode, message, data, metaData) => {
@@ -81,20 +83,26 @@ export const generateAccessToken = async (payload) => {
 /**
  * validate the Token
  * @param {String} token - User's JWTToken from headers
+ * @param {String} publicKey
  * @returns Object
  */
 export const verifyJwtToken = (token, publicKey) => {
   // TODO: take public key from database by comparing the JWT_TOKEN
-  const data = jwt.verify(token, publicKey, jwtOptions);
+  let data = jwt.verify(token, publicKey, jwtOptions);
   return data;
 };
 
 /**
  * sent email with Dyanmic Template
- *
  * @param {Object} payload - email template details, whom to send mail
  */
-export const sendEmail = (payload, eventName, randomPasscode, text) => {
+export const sendEmail = (
+  payload,
+  eventName,
+  randomPasscode,
+  text,
+  liveUrl
+) => {
   const verificationHTML = readFileSync(
     `assets/templates/${eventName}/index.html`,
     {
@@ -105,10 +113,12 @@ export const sendEmail = (payload, eventName, randomPasscode, text) => {
   const verificationTemplate = compile(verificationHTML);
 
   const templateVariable = {
-    name: payload.fullName,
+    name: payload.firstname,
+    email: payload.email,
     date: payload.createdAt,
     randomPasscode: randomPasscode,
     text: text,
+    liveUrl: liveUrl,
   };
   const transport = nodemailer.createTransport({
     host: env.EMAIL_HOST,
@@ -260,7 +270,7 @@ export const calculatePrivilages = (previlageNum) => {
  * @returns {boolean} valid
  */
 export const validateObjectId = (objectId) => {
-  const valid = mongoose.Types.ObjectId.isValid(objectId);
+  const valid = mongoose.isObjectIdOrHexString(objectId);
   return valid;
 };
 
