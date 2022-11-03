@@ -370,13 +370,10 @@ export const auctionSchema = Joi.object({
   postAuctionStatus: boolean.required().messages({
     required_error: "postRegisterationStatus must be present in responses",
   }),
-  state: string
-    .required()
-    .valid("Active", "Publish", "Cancel", "Closed")
-    .messages({
-      required_error: "state must be present in responses",
-      validate_error: "state must be a boolean in responses",
-    }),
+  state: string.valid("Active", "Publish", "Cancel", "Closed").messages({
+    required_error: "state must be present in responses",
+    validate_error: "state must be a boolean in responses",
+  }),
   status: boolean.allow().optional(),
   Product: string.required().messages({
     required_error: "Product must be present in responses",
