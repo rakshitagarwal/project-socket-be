@@ -34,6 +34,7 @@ import {
 } from "../common/utilies.js";
 import { helpers } from "../helper/helpers.js";
 import { getPrivilagesForRole } from "../roles/role-queries.js";
+import env from "../config/env.js";
 
 /**
  * @description login user into system
@@ -342,7 +343,7 @@ export const userForget = async (user) => {
   const userId = await getResetUserById(userData._id);
   if (userId) {
     const link = userId.passcode;
-   sendEmail(userData, "user-forget", randomCode, link);
+    sendEmail(userData, "user-forget", randomCode, link, env.LIVE_ULR);
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.USER_CHECK_EMAIL
