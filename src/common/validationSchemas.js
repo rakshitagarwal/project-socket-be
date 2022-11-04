@@ -369,7 +369,7 @@ export const auctionSchema = Joi.object({
     required_error: "state must be present in responses",
     validate_error: "state must be a boolean in responses",
   }),
-  "terms&Condition": string.messages({
+  termsAndCondition: string.messages({
     validate_error: "terms&Condition must be a boolean in responses",
   }),
   description: string.messages({
