@@ -14,7 +14,7 @@ export const getProductById = async (id) => {
   const productMeta = await productModel
     .findById(id)
     .populate("ProductCategory", { name: 1, _id: 1 })
-    .where({ status: true, IsDeleted: true });
+    .where({ IsDeleted: true });
   return productMeta;
 };
 
