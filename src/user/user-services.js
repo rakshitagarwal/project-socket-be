@@ -129,7 +129,7 @@ export const createUser = async (user) => {
     );
   }
   return createResponse(
-    helpers.StatusCodes.UNAUTHORIZED,
+    helpers.StatusCodes.BAD_REQUEST,
     helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
   );
 };
@@ -195,7 +195,7 @@ export const updateUser = async (id, userdata) => {
     let userRoleId = await roleSchema(data.Role);
     if (!userRoleId && !data.isblock) {
       return createResponse(
-        helpers.StatusCodes.UNAUTHORIZED,
+        helpers.StatusCodes.BAD_REQUEST,
         helpers.responseMessages.USER_REGISTER_ROLE_NOT_EXIST
       );
     }

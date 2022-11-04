@@ -140,7 +140,7 @@ const responseMessages = {
   USER_DISABLE: "disable.the.user",
   USER_ENABLE: "enable.the.user",
   USER_TEMPORARY_BLOCKED: "user.is.temporary.blocked",
-  USER_ALREADY_BLOCK:"you.have.already.blocked",
+  USER_ALREADY_BLOCK: "you.have.already.blocked",
   PRODUCT_ADDED: "product.added",
   PRODUCT_DELETED: "product.deleted",
   PRODUCT_UPDATED: "product.updated",
@@ -223,7 +223,7 @@ const privilageRole = [
         privilageNumber: 15,
       },
       {
-        name: "users",
+        name: "vendor",
         privilageNumber: 15,
       },
     ],
