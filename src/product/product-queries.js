@@ -34,7 +34,7 @@ export const getProducts = async (pages, limit) => {
     .find({ IsDeleted: true })
     .limit(limit)
     .skip(limit * pages)
-    .populate("ProductCategory", { name: 1, _id: 0 })
+    .populate("ProductCategory", { name: 1, _id: 1 })
     .lean();
 
   return {
