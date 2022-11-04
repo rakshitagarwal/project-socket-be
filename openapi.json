@@ -2624,7 +2624,7 @@
                     "nullable": false,
                     "description": "status of the auctions"
                   },
-                  "terms&Condition": {
+                  "termsAndCondition": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -2929,7 +2929,7 @@
                             "nullable": false,
                             "description": "status of the auctions"
                           },
-                          "terms&Condition": {
+                          "termsAndCondition": {
                             "type": "string",
                             "format": "string",
                             "nullable": false
@@ -3232,7 +3232,7 @@
                     "nullable": false,
                     "description": "status of the auctions"
                   },
-                  "terms&Condition": {
+                  "termsAndCondition": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -3494,7 +3494,7 @@
                           "nullable": false,
                           "description": "status of the auctions"
                         },
-                        "terms&Condition": {
+                        "termsAndCondition": {
                           "type": "string",
                           "format": "string",
                           "nullable": false
@@ -3835,7 +3835,7 @@
                             "nullable": false,
                             "description": "status of the auctions"
                           },
-                          "terms&Condition": {
+                          "termsAndCondition": {
                             "type": "string",
                             "format": "string",
                             "nullable": false

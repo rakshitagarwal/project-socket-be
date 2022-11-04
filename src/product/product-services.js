@@ -158,7 +158,7 @@ export const updateProduct = async (id, product) => {
     const { status } = product;
     if (status) {
       const auctionProduct = await checkProductAuction(id);
-      if (auctionProduct) {
+      if (auctionProduct.length > 0) {
         return createResponse(
           helpers.StatusCodes.NOT_ACCEPTABLE,
           helpers.responseMessages.PRODUCT_EXISTS
