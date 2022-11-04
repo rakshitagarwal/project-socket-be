@@ -132,6 +132,10 @@ export const envSchema = Joi.object({
     required_error: "STATIC_PATH must be present in environment variables",
     invalid_type_error: "STATIC_PATH type present in environment variables",
   }),
+  LIVE_ULR: string.required().messages({
+    required_error: "LIVE_ULR must be string",
+    invalid_type_error: "LIVE_ULR type must be in envariment variables",
+  }),
 });
 
 /**
@@ -361,13 +365,10 @@ export const auctionSchema = Joi.object({
   postAuctionStatus: boolean.required().messages({
     required_error: "postRegisterationStatus must be present in responses",
   }),
-  state: string
-    .required()
-    .valid("Active", "Publish", "Cancel", "Closed")
-    .messages({
-      required_error: "state must be present in responses",
-      validate_error: "state must be a boolean in responses",
-    }),
+  state: string.valid("Active", "Publish", "Cancel", "Closed").messages({
+    required_error: "state must be present in responses",
+    validate_error: "state must be a boolean in responses",
+  }),
   "terms&Condition": string.messages({
     validate_error: "terms&Condition must be a boolean in responses",
   }),
