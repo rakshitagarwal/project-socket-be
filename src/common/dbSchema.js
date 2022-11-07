@@ -330,7 +330,7 @@ const auctionSchema = new Schema(
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
     },
-    "terms&Condition": {
+    termsAndCondition: {
       type: String,
     },
     description: {

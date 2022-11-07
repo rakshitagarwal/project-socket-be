@@ -1362,6 +1362,16 @@
       "get": {
         "description": "get single user",
         "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": [
+              "Authorization",
+              "header",
+              "apiKey",
+              "JWT Authorization header"
+            ]
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1383,26 +1393,49 @@
         ],
         "responses": {
           "200": {
-            "description": "Get Single user",
+            "description": "Get Single user.....",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "success": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "default": true
                     },
                     "message": {
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/user"
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user"
+                      }
+                    },
+                    "metdata": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "limit": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "number"
+                        }
+                      }
                     }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"
@@ -2624,7 +2657,7 @@
                     "nullable": false,
                     "description": "status of the auctions"
                   },
-                  "terms&Condition": {
+                  "termsAndCondition": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -2929,7 +2962,7 @@
                             "nullable": false,
                             "description": "status of the auctions"
                           },
-                          "terms&Condition": {
+                          "termsAndCondition": {
                             "type": "string",
                             "format": "string",
                             "nullable": false
@@ -3232,7 +3265,7 @@
                     "nullable": false,
                     "description": "status of the auctions"
                   },
-                  "terms&Condition": {
+                  "termsAndCondition": {
                     "type": "string",
                     "format": "string",
                     "nullable": false
@@ -3494,7 +3527,7 @@
                           "nullable": false,
                           "description": "status of the auctions"
                         },
-                        "terms&Condition": {
+                        "termsAndCondition": {
                           "type": "string",
                           "format": "string",
                           "nullable": false
@@ -3835,7 +3868,7 @@
                             "nullable": false,
                             "description": "status of the auctions"
                           },
-                          "terms&Condition": {
+                          "termsAndCondition": {
                             "type": "string",
                             "format": "string",
                             "nullable": false
