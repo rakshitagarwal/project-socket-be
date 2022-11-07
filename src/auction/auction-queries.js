@@ -220,16 +220,12 @@ export const putAuction = async (id, data) => {
   }
 
   if (data.auctionPreRegister) {
-    console.log("Before", data.auctionPreRegister);
     const auction = await auctionModel.findByIdAndUpdate(id, data);
     const auctionPre = await auctionPreModel.findOneAndUpdate(
       { Auction: id },
       { ...data.auctionPreRegister, IsDeleted: true },
       { upsert: true, new: true }
     );
-
-    console.log("After", auctionPre);
-
     const auctionpost = await auctionPostModel.findOneAndUpdate(
       {
         Auction: id,
