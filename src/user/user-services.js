@@ -23,6 +23,7 @@ import {
   getAllUserRole,
   getSetResetPassUser,
   userTemporaryExists,
+  getRoleSchemaName,
 } from "./user-queries.js";
 import {
   calculatePrivilages,
@@ -103,6 +104,7 @@ export const createUser = async (user) => {
     );
   }
   const userRoleId = await roleSchema(user.Role);
+  const userRoleName = await roleSchemaName(user.Role);
   if (userRoleId) {
     user.Role = userRoleId;
     const usersMeta = await create(user);
@@ -117,7 +119,13 @@ export const createUser = async (user) => {
 
       const passCodeUser = await getUserById(userData._id);
       const link = passCodeUser.passcode;
-      // sendEmail(userData, "user-created", randomCode, link);
+
+      const selectTemplate =
+        userRoleName.name === "Player" || user.Role === "Player"
+          ? "player-user"
+          : "user-created";
+      sendEmail(userData, selectTemplate, randomCode, link, env.LIVE_ULR);
+
       return createResponse(
         helpers.StatusCodes.CREATED,
         helpers.responseMessages.USER_CHECK_EMAIL
@@ -358,7 +366,9 @@ export const userForget = async (user) => {
  * @description - user set or reset password for verified the user.
  */
 export const userSetResetPass = async (tokenId, user) => {
-  let userData = await getSetResetPassUser(tokenId.passcode, user);
+  let userData = await getSetResetPassUser(tokenId.passcode);
+  const userRoleId = await getRoleSchemaName(userData.Role);
+
   if (!userData) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
@@ -367,13 +377,13 @@ export const userSetResetPass = async (tokenId, user) => {
         : helpers.responseMessages.USER_ALREADY_USES
     );
   }
-  let hashPass = hashPassword(user.password);
+
   let userRoleData = await getPersistenaceUsers(userData._id);
-  if (tokenId && user.password !== "") {
-    if (!userData.verified) {
-      userData.password = hashPass;
-      userData.verified = true;
-    }
+  let randomCode = Math.round(Math.random() * 10000)
+    .toString()
+    .padStart(4, "0");
+  if (tokenId || !user.password) {
+    let hashPass = hashPassword(user.password ? user.password : randomCode);
     if (
       userData.verified ||
       (typeof userRoleData.length <= 0 && userRoleData)
@@ -383,11 +393,13 @@ export const userSetResetPass = async (tokenId, user) => {
         arr.push(data._id);
       });
       await removeTokenUser(arr);
-      if (userData || userData.passcode) {
-        userData.password = hashPass;
-        userData.passcode = null;
-      }
     }
+    if (userRoleId.name === "Player") {
+      sendEmail(userData, "player-user-verfiy", randomCode);
+    }
+    userData.password = hashPass;
+    userData.verified = true;
+    userData.passcode = null;
     await updatePass(userData._id, userData);
     return createResponse(
       helpers.StatusCodes.ACCEPTED,

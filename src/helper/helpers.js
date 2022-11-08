@@ -246,7 +246,7 @@ const privilageRoleVan = [
         privilageNumber: 7,
       },
       {
-        name: "users",
+        name: "vendor",
         privilageNumber: 7,
       },
     ],

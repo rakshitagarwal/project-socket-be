@@ -14,7 +14,7 @@ export const userExists = async (user) => {
     .lean()
     .populate("Role", { name: 1 });
 
-  if (!emailUser) {
+    if (!emailUser) {
     return false;
   }
   return emailUser;
@@ -52,6 +52,15 @@ export const roleSchema = async (user) => {
 
 export const roleSchemaName = async (user) => {
   const roleId = await UseRole.findOne({ name: user }).select({
+    name: 1,
+  });
+  if (!roleId) {
+    return false;
+  }
+  return roleId;
+};
+export const getRoleSchemaName = async (user) => {
+  const roleId = await UseRole.findOne({ _id: user }).select({
     name: 1,
   });
   if (!roleId) {

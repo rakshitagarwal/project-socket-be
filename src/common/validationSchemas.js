@@ -248,10 +248,10 @@ const role = Joi.string();
 
 export const userSchema = Joi.object({
   firstname: firstname.required(),
-  lastname: lastname.required(),
+  lastname: lastname,
   email: email.required(),
   password: password.allow("").optional(),
-  zip: zip.required(),
+  zip: zip.optional(),
   country: country.required(),
   gender: gender,
   age: age,

@@ -123,7 +123,6 @@ export const userSchema = new Schema(
     },
     lastname: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -134,7 +133,6 @@ export const userSchema = new Schema(
     },
     zip: {
       type: Number,
-      required: true,
     },
     country: {
       type: String,
