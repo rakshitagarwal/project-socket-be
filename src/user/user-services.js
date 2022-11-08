@@ -46,22 +46,28 @@ export const checkCredentials = async function (user) {
   const userExistsTemp = await userTemporaryExists(user.email);
   if (!emailCheck || userExistsTemp) {
     return createResponse(
-      helpers.StatusCodes.UNAUTHORIZED,
+      helpers.StatusCodes.BAD_REQUEST,
       userExistsTemp
         ? helpers.responseMessages.USER_TEMPORARY_BLOCKED
         : helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
     );
   }
-  const { password, passcode, createdAt, updatedAt, ...getUser } = emailCheck;
-  const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
+  const { password, passcode, createdAt, isblock, updatedAt, ...getUser } =
+    emailCheck;
   let PrivilageRole = [];
-  getPrivilageRole.module.forEach((element) => {
-    const calPrivilage = calculatePrivilages(element.privilageNumber);
-    element.ActionRole = calPrivilage;
-    delete element._id;
-    delete element.privilageNumber;
-    PrivilageRole.push(element);
-  });
+  if (user.Role !== "Player") {
+    const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
+    if (getPrivilageRole == null) {
+      return notFound();
+    }
+    getPrivilageRole.module.forEach((element) => {
+      const calPrivilage = calculatePrivilages(element.privilageNumber);
+      element.ActionRole = calPrivilage;
+      delete element._id;
+      delete element.privilageNumber;
+      PrivilageRole.push(element);
+    });
+  }
 
   //compare password into hash password
   if (emailCheck.password === hashPassword(user.password)) {
