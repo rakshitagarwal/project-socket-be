@@ -541,6 +541,19 @@ export const persistence = new Schema({
   },
 });
 
+const settings = new Schema({
+  currency: {
+    type: String,
+    require: true,
+    default: "$",
+  },
+  plays: {
+    type: Number,
+    require: true,
+    default: 0.1,
+  },
+});
+
 export const model = {
   roleSchema,
   privilageSchema,
@@ -552,4 +565,5 @@ export const model = {
   auctionSchema,
   auctionPreRegisterSchema,
   auctionPostRegisterSchema,
+  settings,
 };
