@@ -277,6 +277,7 @@ export const userUpdateSchema = Joi.object({
 export const loginSchema = Joi.object({
   email: Joi.required(),
   password: Joi.required(),
+  Role: Joi.string().optional().allow(""),
 });
 
 export const forgetPassword = Joi.object({
