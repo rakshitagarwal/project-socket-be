@@ -349,12 +349,25 @@
           "profession": {
             "type": "string"
           },
+          "isblock":{
+            "type": "boolean"
+          },
+          "verified":{
+            "type": "boolean"
+          },
           "status": {
             "type": "number"
           },
           "Role": {
-            "type": "string",
-            "title": "you have to pass ID"
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -1247,9 +1260,14 @@
                       "type": "string"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/user"
+                      "type": "object",
+                      "properties": {
+                        "userInfo":{
+                          "type":"array",
+                          "items":{
+                            "$ref": "#/components/schemas/user"
+                          }
+                        }
                       }
                     },
                     "metdata": {
@@ -1446,7 +1464,7 @@
         }
       },
       "put": {
-        "description": "Update the specific user",
+        "description": "Update the specific user and any vendor block this API, so you can used to 'isblock' then before sechema clear json data then put 'isblock' key field for block vendor",
         "tags": ["Users"],
         "security": [
           {
@@ -1548,12 +1566,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      }
+                      "$ref": "#/components/schemas/user"
                     }
                   }
                 }
@@ -1603,10 +1616,23 @@
                     },
                     "data": {
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
-                        "message": {
-                          "type": "string"
+                        "permission":{
+                          "type": "array",
+                          "items":{
+                            "type": "object",
+                            "properties": {
+                              "name":{
+                                "type": "string"
+                              },
+                              "ActionRole":{
+                                "type": "array",
+                                "items":{
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -1648,7 +1674,7 @@
           }
         ],
         "requestBody": {
-          "required": true,
+          
           "content": {
             "application/json": {
               "schema": {
@@ -1719,7 +1745,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -1737,6 +1762,12 @@
                     "format": "string",
                     "nullable": false,
                     "description": " password of the user"
+                  },
+                  "Role": {
+                    "type": "string",
+                    "format": "string",
+                    "description": " Role of Name to used in (Admin or Vendor)",
+                    "nullable": false
                   }
                 }
               }
@@ -1760,8 +1791,31 @@
                     },
                     "data": {
                       "type": "object",
-                      "additionalProperties": false,
-                      "properties": {}
+                      "properties": {
+                        "userInfo":{
+                          "$ref": "#/components/schemas/user"
+                        },
+                        "accessToken":{
+                          "type": "string"
+                        },
+                        "permission":{
+                          "type": "array",
+                          "items":{
+                            "type": "object",
+                            "properties": {
+                              "name":{
+                                "type": "string"
+                              },
+                              "ActionRole":{
+                                "type": "array",
+                                "items":{
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }

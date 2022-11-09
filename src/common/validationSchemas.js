@@ -248,10 +248,10 @@ const role = Joi.string();
 
 export const userSchema = Joi.object({
   firstname: firstname.required(),
-  lastname: lastname.required(),
+  lastname: lastname,
   email: email.required(),
   password: password.allow("").optional(),
-  zip: zip.required(),
+  zip: zip.optional(),
   country: country.required(),
   gender: gender,
   age: age,
@@ -277,6 +277,7 @@ export const userUpdateSchema = Joi.object({
 export const loginSchema = Joi.object({
   email: Joi.required(),
   password: Joi.required(),
+  Role: Joi.string().optional().allow(""),
 });
 
 export const forgetPassword = Joi.object({
