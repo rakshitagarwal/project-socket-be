@@ -271,13 +271,13 @@ export const userUpdateSchema = Joi.object({
   mobile: mobile,
   profession: profession,
   isblock: Joi.boolean().optional(),
-  Role: Joi.string().optional().allow(""),
+  Role: Joi.string().optional(),
 });
 
 export const loginSchema = Joi.object({
   email: Joi.required(),
   password: Joi.required(),
-  Role: Joi.string().optional().allow(""),
+  Role: Joi.string().optional(),
 });
 
 export const forgetPassword = Joi.object({
