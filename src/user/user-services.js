@@ -43,7 +43,9 @@ import env from "../config/env.js";
  */
 export const checkCredentials = async function (user) {
   const emailCheck = await userExists(user.email);
+
   const userExistsTemp = await userTemporaryExists(user.email);
+
   if (!emailCheck || userExistsTemp) {
     return createResponse(
       helpers.StatusCodes.BAD_REQUEST,
@@ -56,8 +58,9 @@ export const checkCredentials = async function (user) {
     emailCheck;
   let PrivilageRole = [];
   const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
+
   if (user.Role !== "Player") {
-    if (getPrivilageRole === null) {
+    if (getPrivilageRole.module[0].name === "player") {
       return notFound();
     }
     getPrivilageRole.module.forEach((element) => {
