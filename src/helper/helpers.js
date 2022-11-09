@@ -253,7 +253,7 @@ const privilageRoleVan = [
   },
 ];
 
-const roles = [{ name: "Admin" }, { name: "Vendor" }];
+const roles = [{ name: "Admin" }, { name: "Vendor" }, { name: "Player" }];
 
 /**
  * @description Product Category Master with all fields
