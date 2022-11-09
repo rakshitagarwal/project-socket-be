@@ -7,15 +7,16 @@
     <title>BigDeal Email Template</title>
   </head>
   <body>
+    Thanks for signing up with Global Vox!
     <h3>
       Welcome to the user
-      <b>{{ name }}</b>
-      you have created the user on
+      <b>{{ name }}</b><br>
       <b>{{ date }}</b>
       <br/>
       <p>
-        Please set your password then you login
-        <p><a href="{{liveUrl}}/v1/users/set-password/{{text}}">Click here </a></p>
+        please here
+        <a href="http://{{liveUrl}}/users/password-reset/{{text}}">Click here </a>
+        and then check your email to send the password.
       </p>
     </h3>
   </body>
