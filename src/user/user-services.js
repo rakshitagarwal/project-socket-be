@@ -55,9 +55,9 @@ export const checkCredentials = async function (user) {
   const { password, passcode, createdAt, isblock, updatedAt, ...getUser } =
     emailCheck;
   let PrivilageRole = [];
+  const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
   if (user.Role !== "Player") {
-    const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
-    if (getPrivilageRole == null) {
+    if (getPrivilageRole === null) {
       return notFound();
     }
     getPrivilageRole.module.forEach((element) => {

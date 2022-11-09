@@ -49,5 +49,5 @@ userRouter
   .get(USER_PATH_ALLID, [isAuthenticated, checkAccess], get)
   .post(USER_PERMISSION, user_permission)
   .post(USER_FORGET, validateSchema.body(forgetPassword), user_forget)
-  .post(USER_LOGOUT, [isAuthenticated, checkAccess], logout)
+  .post(USER_LOGOUT, isAuthenticated, logout)
   .post(USER_SET_OR_RESET, user_SetReset_Password);
