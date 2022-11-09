@@ -1653,7 +1653,7 @@
     "/users/setreset/{passcode}": {
       "post": {
         "tags": ["Users"],
-        "description": "set or reset password for user",
+        "description": "This API set a password for admin or vendor or player as well as a forgotten password used to set a password",
         "parameters": [
           {
             "in": "header",
@@ -1899,7 +1899,7 @@
     "/users/forget-password": {
       "post": {
         "tags": ["Users"],
-        "description": "User forget password",
+        "description": "this API forget a email for admin or vendor or player",
         "parameters": [
           {
             "in": "header",

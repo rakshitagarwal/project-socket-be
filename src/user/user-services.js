@@ -38,7 +38,7 @@ import { getPrivilagesForRole } from "../roles/role-queries.js";
 import env from "../config/env.js";
 
 /**
- * @description login user into system
+ * @description login admin or vendor or player into system
  * @param user user's request object
  */
 export const checkCredentials = async function (user) {
@@ -96,13 +96,12 @@ export const checkCredentials = async function (user) {
 };
 
 /**
- * @param user - user registration's request body
+ * @param user - admin or vendor or player registration's request body
  * @description register user into databse
  */
 export const createUser = async (user) => {
   const userEmailCheck = await emailVerfiedUser(user.email);
-  const { password, ...userdata } = user;
-  if (password) {
+  if (user.password) {
     user.password = hashPassword(user.password);
   }
 
@@ -360,7 +359,11 @@ export const userForget = async (user) => {
   const userId = await getResetUserById(userData._id);
   if (userId) {
     const link = userId.passcode;
-    sendEmail(userData, "user-forget", randomCode, link, env.LIVE_ULR);
+
+    const selectTemplate =
+      userData.Role.name === "Player" ? "player-user" : "user-created";
+    sendEmail(userData, selectTemplate, randomCode, link, env.LIVE_ULR);
+
     return createResponse(
       helpers.StatusCodes.OK,
       helpers.responseMessages.USER_CHECK_EMAIL
