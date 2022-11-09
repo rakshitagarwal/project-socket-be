@@ -95,56 +95,6 @@ export const checkCredentials = async function (user) {
   );
 };
 
-export const checkCredentialTEst = async function (user) {
-  const emailCheck = await userExists(user.email);
-  const userExistsTemp = await userTemporaryExists(user.email);
-  if (!emailCheck || userExistsTemp) {
-    return createResponse(
-      helpers.StatusCodes.BAD_REQUEST,
-      userExistsTemp
-        ? helpers.responseMessages.USER_TEMPORARY_BLOCKED
-        : helpers.responseMessages.LOGIN_USER_ALREADY_EXIST
-    );
-  }
-  const { password, passcode, createdAt, isblock, updatedAt, ...getUser } =
-    emailCheck;
-  let PrivilageRole = [];
-  const getPrivilageRole = await getPrivilagesForRole(getUser.Role);
-  if (user.Role !== "Player") {
-    if (getPrivilageRole === null) {
-      return notFound();
-    }
-    getPrivilageRole.module.forEach((element) => {
-      const calPrivilage = calculatePrivilages(element.privilageNumber);
-      element.ActionRole = calPrivilage;
-      delete element._id;
-      delete element.privilageNumber;
-      PrivilageRole.push(element);
-    });
-  }
-
-  //compare password into hash password
-  if (emailCheck.password === hashPassword(user.password)) {
-    const getAccessToken = await generateAccessToken(getUser);
-    getAccessToken.User = getUser._id;
-
-    const token = await persistence(getAccessToken);
-    const accessToken = token.accessToken;
-    return createResponse(
-      helpers.StatusCodes.CREATED,
-      helpers.responseMessages.USER_LOGIN,
-      {
-        userInfo: getUser,
-        accessToken: accessToken,
-        permission: PrivilageRole,
-      }
-    );
-  }
-  return createResponse(
-    helpers.StatusCodes.BAD_REQUEST,
-    helpers.responseMessages.LOGIN_WRONG_CREDENTIALS
-  );
-};
 /**
  * @param user - user registration's request body
  * @description register user into databse
