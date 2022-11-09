@@ -44,9 +44,14 @@ import { productCategoryModel } from "../product/product-schemas.js";
       const vendorRoleId = await authSchemas.roleSchema
         .findOne({ name: "Vendor" })
         .select({ _id: 1 });
+      const plyRoleId = await authSchemas.roleSchema
+        .findOne({ name: "Player" })
+        .select({ _id: 1 });
 
       const vandorData = helpers.privilageRole;
       const adminData = helpers.privilageRoleVan;
+      const ply = helpers.privilageRolePlayer;
+
       await authSchemas.rolePrivilage.deleteMany({});
       const PrvilageRoleAdmin = await authSchemas.rolePrivilage.insertMany({
         role: adminRoleId,
@@ -55,6 +60,10 @@ import { productCategoryModel } from "../product/product-schemas.js";
       const PrvilageRoleVandor = await authSchemas.rolePrivilage.insertMany({
         role: vendorRoleId,
         module: adminData[0].module,
+      });
+      await authSchemas.rolePrivilage.insertMany({
+        role: plyRoleId,
+        module: ply[0].module,
       });
       if (PrvilageRole.length > 0) {
         logger.info({

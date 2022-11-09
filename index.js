@@ -131,7 +131,7 @@ app.use("*", (req, res) => {
 
       const vandorData = helpers.privilageRole;
       const adminData = helpers.privilageRoleVan;
-      const ply = helpers.privilageRolePlayer ;
+      const ply = helpers.privilageRolePlayer;
 
       await authSchemas.rolePrivilage.deleteMany({});
       const PrvilageRoleAdmin = await authSchemas.rolePrivilage.insertMany({
