@@ -121,22 +121,26 @@ const responseMessages = {
   LOGIN_WRONG_CREDENTIALS: "login.wrong.credentials",
   LOGIN_USER_ALREADY_EXIST: "please.register.your.account.on.email",
   REGISTRATION_USER_ALREADY_EXIST: "registration.already.exist.email",
-  USER_REGISTER_CREATED_SUCC: "register.created.successfully",
+  USER_REGISTER_CREATED: "register.created.successfully",
   USER_REGISTER_ROLE_NOT_EXIST: "user.register.role.not.exist",
   USER_DELETE_SUCCESSFULL: "user.deleted.successfully",
   USER_UPDATE_SUCCESSFULL: "user.update.successfully",
   USER_GET_ID: "fetched.single.user",
   USER_GET_ALL: "all.user.show",
   USER_PERMISSION_ALLOW: "user.permission.allow",
-  USER_INVALID_ID: "invalid.user.id",
-  USER_CHECK_EMAIL_PASS: "please.check.your.email.then.set.your.password",
-  USER_SET_PASS_SUCESSFULL: "user.set.the.password.sucessfully",
+  USER_INVALID: "invalid.user.id",
+  USER_CHECK_EMAIL: "please.check.your.email.then.set.your.password",
+  USER_SET_PASSWORD_SUCCESSFUL: "user.set.the.password.sucessfully",
   USER_ALREADY_USES: "you.have.already.uses",
   USER_RESET_SUCESSFULL: "password.reset.sucessfully",
   USER_ALREADY_RESET_PASS: "you.have.already.reset.your.password",
   USER_INVALID_LINK: "Invalid.link.or.expired.",
   USER_LOGOUT: "logout.Successfully",
   USER_LOGOUT_ALREADY: "logout.user",
+  USER_DISABLE: "disable.the.user",
+  USER_ENABLE: "enable.the.user",
+  USER_TEMPORARY_BLOCKED: "user.is.temporary.blocked",
+  USER_ALREADY_BLOCK: "you.have.already.blocked",
   PRODUCT_ADDED: "product.added",
   PRODUCT_DELETED: "product.deleted",
   PRODUCT_UPDATED: "product.updated",
@@ -168,6 +172,17 @@ const responseMessages = {
   TOKEN_EXPIRED: "Protected resource, token expired",
   BOT_MAX_PRICE: "bot.price",
   SELLING_PRICE: "selling.price",
+  AUCTION_TYPE: "auction.type",
+  IMAGE_MAX_SIZE: "file.max.size",
+  VIDEO_MAX_SIZE: "video.max.size",
+  FILE_NOT_UPLOAD: "file.not.found",
+  UPLOAD_FILE_COUNT: "upload.file.count",
+  BIDDER_LIMIT_NOT_REQUIRED: "noNewBidderLimit.not.required",
+  BIDDER_LIMIT_REQUIRED: "noNewBidderLimit.required",
+  PRE_START_DATE: "pre.start.date",
+  SEARCH_MODULE: "search module",
+  MODULE_NOT_EXISTS: "module does not exists",
+  DATA_NOT_FOUND: "data not found.",
 };
 const privilage = [
   {
@@ -208,7 +223,7 @@ const privilageRole = [
         privilageNumber: 15,
       },
       {
-        name: "users",
+        name: "vendor",
         privilageNumber: 15,
       },
     ],
@@ -231,14 +246,14 @@ const privilageRoleVan = [
         privilageNumber: 7,
       },
       {
-        name: "users",
+        name: "vendor",
         privilageNumber: 7,
       },
     ],
   },
 ];
 
-const roles = [{ name: "Admin" }, { name: "Vendor" }];
+const roles = [{ name: "Admin" }, { name: "Vendor" }, { name: "Player" }];
 
 /**
  * @description Product Category Master with all fields

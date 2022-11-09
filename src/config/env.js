@@ -20,6 +20,9 @@ const { error, value: env } = Object.freeze(
     VIDEO_ALLOWED_SIZE: process.env.VIDEO_ALLOWED_SIZE,
     LANGUAGE_PATH: process.env.LANGUAGE_PATH,
     DEFAULT_LANGUAGE: process.env.DEFAULT_LANGUAGE,
+    HOST: process.env.HOST,
+    STATIC_PATH: process.env.STATIC_PATH,
+    LIVE_ULR: process.env.LIVE_ULR,
   })
 );
 

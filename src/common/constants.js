@@ -2,6 +2,7 @@
 export const USER_PATHNAME = "/users";
 export const PRODUCT_PATHNAME = "/products";
 export const AUCTION_PATHNAME = "/auctions";
+export const SETTING_PATHNAME = "/settings";
 export const SEARCH_PATHNAME = "/search";
 export const UPLOAD_PATHNAME = "/uploads";
 export const ROLE_PATHNAME = "/roles";
@@ -12,9 +13,8 @@ export const USER_PATH_ALLID = "/*/";
 // user paths
 export const USER_LOGIN = "/login";
 export const USER_LOGOUT = "/logout";
-export const USER_SETPASSWORD = "/set-password/:passcode";
 export const USER_FORGET = "/forget-password";
-export const USER_RESET = "/password-reset/:passcode";
+export const USER_SET_OR_RESET = "/setreset/:passcode";
 export const USER_REGISTER = "/";
 export const USER_PERMISSION = "/permission";
 const FETCH_USER_EMAIL = USER_PATHNAME + "/:email";

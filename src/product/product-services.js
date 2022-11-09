@@ -16,8 +16,8 @@ import { validateObjectId } from "./../common/utilies.js";
 export const createProduct = async (product) => {
   let { ProductCategory } = product;
 
+  // Validate ObjectID
   const validId = validateObjectId(ProductCategory);
-
   !validId &&
     createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
@@ -28,9 +28,9 @@ export const createProduct = async (product) => {
       }
     );
 
+  // Validate CategoryStatus
   const isActive = await getCategoryById(ProductCategory);
-
-  isActive &&
+  !isActive &&
     createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
       helpers.StatusMessages.NOT_ACCEPTABLE,
@@ -40,6 +40,7 @@ export const createProduct = async (product) => {
       }
     );
 
+  // validate the price
   if (product.sellingPrice < product.purchasePrice) {
     return createResponse(
       helpers.StatusCodes.NOT_ACCEPTABLE,
@@ -49,16 +50,16 @@ export const createProduct = async (product) => {
 
   const productMeta = await create(product);
 
-  if (productMeta !== undefined) {
+  if (!productMeta) {
     return createResponse(
-      helpers.StatusCodes.CREATED,
-      helpers.responseMessages.PRODUCT_ADDED
+      helpers.StatusCodes.BAD_REQUEST,
+      helpers.StatusMessages.BAD_REQUEST
     );
   }
 
   return createResponse(
-    helpers.StatusCodes.BAD_REQUEST,
-    helpers.StatusMessages.BAD_REQUEST
+    helpers.StatusCodes.CREATED,
+    helpers.responseMessages.PRODUCT_ADDED
   );
 };
 
@@ -85,30 +86,30 @@ export const deleteProduct = async (id) => {
 
   const productMeta = await getProductById(id);
 
-  if (productMeta) {
-    const metaData = await removeProduct(id);
-
-    if (metaData) {
-      return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.PRODUCT_DELETED
-      );
-    }
-
+  if (!productMeta) {
     return createResponse(
-      helpers.StatusCodes.BAD_REQUEST,
-      helpers.responseMessages.BAD_REQUEST
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND
+    );
+  }
+
+  const metaData = await removeProduct(id);
+  if (metaData) {
+    return createResponse(
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.PRODUCT_DELETED
     );
   }
 
   return createResponse(
-    helpers.StatusCodes.NOT_FOUND,
-    helpers.StatusMessages.NOT_FOUND
+    helpers.StatusCodes.BAD_REQUEST,
+    helpers.responseMessages.BAD_REQUEST
   );
 };
 
 export const updateProduct = async (id, product) => {
   const isValid = validateObjectId(id);
+  const { ProductCategory } = product;
 
   if (!isValid) {
     return createResponse(
@@ -120,13 +121,44 @@ export const updateProduct = async (id, product) => {
     );
   }
 
-  const productMeta = await getProductById(id);
+  // Validate ObjectID
+  const validId = validateObjectId(ProductCategory);
+  !validId &&
+    createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.StatusMessages.NOT_ACCEPTABLE,
+      {},
+      {
+        error: helpers.responseMessages.PRODUCT_OBJECTID,
+      }
+    );
 
+  // Validate CategoryStatus
+  const isActive = await getCategoryById(ProductCategory);
+  !isActive &&
+    createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.StatusMessages.NOT_ACCEPTABLE,
+      {},
+      {
+        error: helpers.responseMessages.PRODUCT_OBJECTID,
+      }
+    );
+
+  // validate the price
+  if (product.sellingPrice < product.purchasePrice) {
+    return createResponse(
+      helpers.StatusCodes.NOT_ACCEPTABLE,
+      helpers.responseMessages.SELLING_PRICE
+    );
+  }
+
+  const productMeta = await getProductById(id);
   if (productMeta) {
     const { status } = product;
     if (status) {
       const auctionProduct = await checkProductAuction(id);
-      if (auctionProduct) {
+      if (auctionProduct.length > 0) {
         return createResponse(
           helpers.StatusCodes.NOT_ACCEPTABLE,
           helpers.responseMessages.PRODUCT_EXISTS
@@ -135,15 +167,16 @@ export const updateProduct = async (id, product) => {
     }
 
     const updateProduct = await update(id, product);
-    if (updateProduct) {
+    if (!updateProduct) {
       return createResponse(
-        helpers.StatusCodes.OK,
-        helpers.responseMessages.PRODUCT_UPDATED
+        helpers.StatusCodes.BAD_REQUEST,
+        helpers.StatusMessages.BAD_REQUEST
       );
     }
+
     return createResponse(
-      helpers.StatusCodes.BAD_REQUEST,
-      helpers.StatusMessages.BAD_REQUEST
+      helpers.StatusCodes.OK,
+      helpers.responseMessages.PRODUCT_UPDATED
     );
   }
 
@@ -195,17 +228,17 @@ export const getProduct = async (id) => {
 
   const products = await getProductById(id);
 
-  if (products) {
+  if (!products) {
     return createResponse(
-      helpers.StatusCodes.OK,
-      helpers.responseMessages.PRODUCT_SINGLE_FETCHED,
-      products
+      helpers.StatusCodes.NOT_FOUND,
+      helpers.StatusMessages.NOT_FOUND
     );
   }
 
   return createResponse(
-    helpers.StatusCodes.NOT_FOUND,
-    helpers.StatusMessages.NOT_FOUND
+    helpers.StatusCodes.OK,
+    helpers.responseMessages.PRODUCT_SINGLE_FETCHED,
+    products
   );
 };
 

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const { Schema } = mongoose;
 
 /**
@@ -27,7 +28,7 @@ const auctionCategory = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
   },
   schemaOptions
@@ -50,7 +51,7 @@ export const productCategory = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
   },
   schemaOptions
@@ -122,7 +123,6 @@ export const userSchema = new Schema(
     },
     lastname: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -133,7 +133,6 @@ export const userSchema = new Schema(
     },
     zip: {
       type: Number,
-      required: true,
     },
     country: {
       type: String,
@@ -151,6 +150,11 @@ export const userSchema = new Schema(
       default: false,
     },
     status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isblock: {
       type: Boolean,
       required: true,
       default: false,
@@ -199,10 +203,13 @@ export const productSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     image: {
-      type: String,
+      type: [
+        {
+          type: String,
+        },
+      ],
       required: true,
     },
     purchasePrice: {
@@ -232,11 +239,11 @@ export const productSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     ProductCategory: {
       type: Schema.Types.ObjectId,
@@ -254,7 +261,11 @@ const auctionSchema = new Schema(
       required: true,
     },
     bannerImage: {
-      type: String,
+      type: [
+        {
+          type: String,
+        },
+      ],
     },
     bannerVideo: {
       type: String,
@@ -272,7 +283,7 @@ const auctionSchema = new Schema(
     autoStart: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     openingPrice: {
       type: Number,
@@ -285,12 +296,11 @@ const auctionSchema = new Schema(
     },
     endDate: {
       type: Date,
-      required: true,
     },
     bot: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     botMaxPrice: {
       type: Number,
@@ -298,11 +308,11 @@ const auctionSchema = new Schema(
     },
     registerationStatus: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     postAuctionStatus: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     quantity: {
       type: Number,
@@ -315,18 +325,23 @@ const auctionSchema = new Schema(
     },
     state: {
       type: String,
-      required: true,
       default: "Active",
       enum: ["Active", "Publish", "Cancel", "Closed"],
+    },
+    termsAndCondition: {
+      type: String,
+    },
+    description: {
+      type: String,
     },
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     Product: {
       type: Schema.Types.ObjectId,
@@ -365,12 +380,12 @@ const auctionPreRegisterSchema = new Schema(
     status: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
       required: true,
-      default: false,
+      default: true,
     },
     Auction: {
       type: Schema.Types.ObjectId,
@@ -390,11 +405,11 @@ const auctionPostRegisterSchema = new Schema(
     },
     status: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     IsDeleted: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     Auction: {
       type: Schema.Types.ObjectId,
@@ -526,6 +541,19 @@ export const persistence = new Schema({
   },
 });
 
+const settings = new Schema({
+  currency: {
+    type: String,
+    require: true,
+    default: "$",
+  },
+  plays: {
+    type: Number,
+    require: true,
+    default: 0.1,
+  },
+});
+
 export const model = {
   roleSchema,
   privilageSchema,
@@ -537,4 +565,5 @@ export const model = {
   auctionSchema,
   auctionPreRegisterSchema,
   auctionPostRegisterSchema,
+  settings,
 };
