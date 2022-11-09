@@ -253,6 +253,17 @@ const privilageRoleVan = [
   },
 ];
 
+const privilageRolePlayer = [
+  {
+    module: [
+      {
+        name: "player",
+        privilageNumber: 15,
+      },
+    ],
+  },
+];
+
 const roles = [{ name: "Admin" }, { name: "Vendor" }, { name: "Player" }];
 
 /**
@@ -301,4 +312,5 @@ export const helpers = {
   privilageRole,
   privilageRoleVan,
   productCategory,
+  privilageRolePlayer,
 };
