@@ -349,10 +349,10 @@
           "profession": {
             "type": "string"
           },
-          "isblock":{
+          "isblock": {
             "type": "boolean"
           },
-          "verified":{
+          "verified": {
             "type": "boolean"
           },
           "status": {
@@ -1262,9 +1262,9 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "userInfo":{
-                          "type":"array",
-                          "items":{
+                        "userInfo": {
+                          "type": "array",
+                          "items": {
                             "$ref": "#/components/schemas/user"
                           }
                         }
@@ -1617,17 +1617,17 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "permission":{
+                        "permission": {
                           "type": "array",
-                          "items":{
+                          "items": {
                             "type": "object",
                             "properties": {
-                              "name":{
+                              "name": {
                                 "type": "string"
                               },
-                              "ActionRole":{
+                              "ActionRole": {
                                 "type": "array",
-                                "items":{
+                                "items": {
                                   "type": "string"
                                 }
                               }
@@ -1674,7 +1674,6 @@
           }
         ],
         "requestBody": {
-          
           "content": {
             "application/json": {
               "schema": {
@@ -1792,23 +1791,23 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "userInfo":{
+                        "userInfo": {
                           "$ref": "#/components/schemas/user"
                         },
-                        "accessToken":{
+                        "accessToken": {
                           "type": "string"
                         },
-                        "permission":{
+                        "permission": {
                           "type": "array",
-                          "items":{
+                          "items": {
                             "type": "object",
                             "properties": {
-                              "name":{
+                              "name": {
                                 "type": "string"
                               },
-                              "ActionRole":{
+                              "ActionRole": {
                                 "type": "array",
-                                "items":{
+                                "items": {
                                   "type": "string"
                                 }
                               }
