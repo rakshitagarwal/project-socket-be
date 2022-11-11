@@ -30,6 +30,10 @@
     {
       "name": "Search",
       "description": "Search Operations"
+    },
+    {
+      "name": "Location",
+      "description": "Location Operations"
     }
   ],
   "servers": [
@@ -397,6 +401,27 @@
             "type": "string"
           },
           "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Track": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "dial_code": {
+            "type": "string"
+          },
+          "code": {
             "type": "string"
           },
           "status": {
@@ -3996,6 +4021,84 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/track/location": {
+      "get": {
+        "description": "Track for location ",
+        "tags": ["Location"],
+        "responses": {
+          "200": {
+            "description": "Track for location ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/track/countries": {
+      "get": {
+        "description": "Track for Country",
+        "tags": ["Location"],
+        "responses": {
+          "200": {
+            "description": "Track for Country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Track"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           }
         }
       }
