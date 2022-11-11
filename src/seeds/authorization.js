@@ -80,7 +80,7 @@ import { productCategoryModel } from "../product/product-schemas.js";
     await auctionRole.auctionCategory.deleteMany({});
     const auctionCategory = await auctionRole.auctionCategory.insertMany({
       name: "English",
-      description: "This is an english acution",
+      description: "This is an english auction",
     });
 
     if (auctionCategory.length > 0) {
