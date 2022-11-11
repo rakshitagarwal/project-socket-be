@@ -130,7 +130,7 @@ export const sendEmail = (
   transport
     .sendMail({
       from: env.FROM_EMAIL,
-      to: "hetul491@gmail.com",
+      to: payload.email,
       subject: "BigDeal - Let's Start",
       html: verificationTemplate(templateVariable),
       text: text,

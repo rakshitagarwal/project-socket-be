@@ -180,9 +180,12 @@ const responseMessages = {
   BIDDER_LIMIT_NOT_REQUIRED: "noNewBidderLimit.not.required",
   BIDDER_LIMIT_REQUIRED: "noNewBidderLimit.required",
   PRE_START_DATE: "pre.start.date",
-  SEARCH_MODULE: "search module",
-  MODULE_NOT_EXISTS: "module does not exists",
-  DATA_NOT_FOUND: "data not found.",
+  SEARCH_MODULE: "search.module",
+  MODULE_NOT_EXISTS: "module.does.not.exists",
+  DATA_NOT_FOUND: "data.not.found.",
+  IP_NOT_FETCH_ADDR: "Cannot.fetch.IP.address",
+  IP_NOT_FETCH_LOCATION: "Cannot.fetch.IP.location",
+  COUNTRY_CODE: "Country.name.or.code",
 };
 const privilage = [
   {
@@ -215,7 +218,7 @@ const privilageRole = [
         privilageNumber: 15,
       },
       {
-        name: "acutions",
+        name: "auctions",
         privilageNumber: 15,
       },
       {
@@ -223,7 +226,7 @@ const privilageRole = [
         privilageNumber: 15,
       },
       {
-        name: "vendor",
+        name: "vendors",
         privilageNumber: 15,
       },
     ],
@@ -238,7 +241,7 @@ const privilageRoleVan = [
         privilageNumber: 7,
       },
       {
-        name: "acutions",
+        name: "auctions",
         privilageNumber: 7,
       },
       {
@@ -246,7 +249,7 @@ const privilageRoleVan = [
         privilageNumber: 7,
       },
       {
-        name: "vendor",
+        name: "vendors",
         privilageNumber: 7,
       },
     ],

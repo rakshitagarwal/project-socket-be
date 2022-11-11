@@ -554,6 +554,25 @@ const settings = new Schema({
   },
 });
 
+export const country = new Schema({
+  name: {
+    type: String,
+    require: true,
+  },
+  dial_code: {
+    type: String,
+    require: true,
+  },
+  code: {
+    type: String,
+    require: true,
+  },
+  status: {
+    type: String,
+    require: true,
+  },
+});
+
 export const model = {
   roleSchema,
   privilageSchema,
