@@ -16,6 +16,8 @@ import i18n from "i18n";
 import { authSchemas } from "./src/roles/role-schema.js";
 import { productCategoryModel } from "./src/product/product-schemas.js";
 import { auctionRole } from "./src/auction/auction-schemas.js";
+import { CountryModel } from "./src/location/location-schemas.js";
+import { countrydata } from "./src/common/CountryCodes.js";
 
 export const app = express();
 const PORT = env.PORT;
@@ -87,6 +89,7 @@ app.use("*", (req, res) => {
   const prodCategoryCount = await productCategoryModel.countDocuments();
   const aucCategoryCount = await auctionRole.auctionCategory.countDocuments();
   const rolePrivilageCount = await authSchemas.rolePrivilage.countDocuments();
+  const countryDataAll = await CountryModel.countDocuments();
 
   const rolesSchema = async () => {
     try {
@@ -161,7 +164,7 @@ app.use("*", (req, res) => {
     await auctionRole.auctionCategory.deleteMany({});
     const auctionCategory = await auctionRole.auctionCategory.insertMany({
       name: "English",
-      description: "This is an english acution",
+      description: "This is an english auctions",
     });
 
     if (auctionCategory.length > 0) {
@@ -184,19 +187,31 @@ app.use("*", (req, res) => {
       });
     }
   };
+  const countryData = async () => {
+    await CountryModel.deleteMany({});
+    const country = await CountryModel.insertMany(countrydata);
+    if (country > 0) {
+      logger.info({
+        type: "info",
+        message: "country add",
+      });
+    }
+  };
 
   if (
     roleCount <= 0 &&
     privilageCout <= 0 &&
     prodCategoryCount <= 0 &&
     aucCategoryCount <= 0 &&
-    rolePrivilageCount <= 0
+    rolePrivilageCount <= 0 &&
+    countryDataAll <= 0
   ) {
     await rolesSchema();
     await privilageSchema();
     await privilage();
     await productCategorySchema();
     await auctionCategorySchema();
+    await countryData();
   }
 })();
 

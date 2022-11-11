@@ -10,6 +10,7 @@ export const ID_POSTFIX = "/:id";
 export const PREFIX_VERSION = "/v1";
 export const USER_PATH = "/";
 export const USER_PATH_ALLID = "/*/";
+export const TRACK = "/track";
 // user paths
 export const USER_LOGIN = "/login";
 export const USER_LOGOUT = "/logout";
