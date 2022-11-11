@@ -10,7 +10,7 @@ import multer from "multer";
 import env from "../config/env.js";
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
-
+import nodemailerSendgrid from "nodemailer-sendgrid";
 const { compile } = handlebars;
 import logger from "../config/logger.js";
 import { generateKeyPair, createHash } from "crypto";
@@ -120,18 +120,17 @@ export const sendEmail = (
     text: text,
     liveUrl: liveUrl,
   };
-  const transport = nodemailer.createTransport({
-    host: env.EMAIL_HOST,
-    port: env.EMAIL_PORT,
-    auth: {
-      pass: env.EMAIL_PASSWORD,
-      user: env.EMAIL_USERNAME,
-    },
-  });
+
+  const transport = nodemailer.createTransport(
+    nodemailerSendgrid({
+      apiKey: `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`,
+    })
+  );
+
   transport
     .sendMail({
       from: env.FROM_EMAIL,
-      to: payload.email,
+      to: "hetul491@gmail.com",
       subject: "BigDeal - Let's Start",
       html: verificationTemplate(templateVariable),
       text: text,

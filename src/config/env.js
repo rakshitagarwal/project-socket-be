@@ -13,7 +13,6 @@ const { error, value: env } = Object.freeze(
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     EMAIL_PORT: process.env.EMAIL_PORT,
     EMAIL_HOST: process.env.EMAIL_HOST,
-    FROM_EMAIL: process.env.FROM_EMAIL,
     DB_NAME: process.env.DB_NAME,
     FILE_STORAGE_PATH: process.env.FILE_STORAGE_PATH,
     FILE_ALLOWED_SIZE: process.env.FILE_ALLOWED_SIZE,
@@ -23,6 +22,7 @@ const { error, value: env } = Object.freeze(
     HOST: process.env.HOST,
     STATIC_PATH: process.env.STATIC_PATH,
     LIVE_ULR: process.env.LIVE_ULR,
+    FROM_EMAIL: process.env.FROM_EMAIL,
   })
 );
 

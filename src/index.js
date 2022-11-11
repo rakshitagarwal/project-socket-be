@@ -18,8 +18,8 @@ import { checkAccess } from "./middleware/acl.js";
 import { isAuthenticated } from "./middleware/auth.js";
 export const v1Router = Router();
 
-v1Router.use(PRODUCT_PATHNAME, productRouter);
-v1Router.use(UPLOAD_PATHNAME, uploadRouter);
+v1Router.use(PRODUCT_PATHNAME, [isAuthenticated, checkAccess], productRouter);
+v1Router.use(UPLOAD_PATHNAME, [isAuthenticated, checkAccess], uploadRouter);
 v1Router.use(USER_PATHNAME, userRouter);
 v1Router.use(AUCTION_PATHNAME, [isAuthenticated, checkAccess], auctionRouter);
 v1Router.use(SETTING_PATHNAME, settingRouter);
