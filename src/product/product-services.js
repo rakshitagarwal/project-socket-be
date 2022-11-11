@@ -55,12 +55,12 @@ export const createProduct = async (product) => {
       helpers.StatusCodes.BAD_REQUEST,
       helpers.StatusMessages.BAD_REQUEST
     );
+  } else {
+    return createResponse(
+      helpers.StatusCodes.CREATED,
+      helpers.responseMessages.PRODUCT_ADDED
+    );
   }
-
-  return createResponse(
-    helpers.StatusCodes.CREATED,
-    helpers.responseMessages.PRODUCT_ADDED
-  );
 };
 
 export const deleteProduct = async (id) => {
