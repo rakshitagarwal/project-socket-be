@@ -23,7 +23,6 @@ const { error, value: env } = Object.freeze(
     STATIC_PATH: process.env.STATIC_PATH,
     LIVE_ULR: process.env.LIVE_ULR,
     FROM_EMAIL: process.env.FROM_EMAIL,
-    SG_API_KEY: process.env.SG_API_KEY,
   })
 );
 

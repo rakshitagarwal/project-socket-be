@@ -123,7 +123,7 @@ export const sendEmail = (
 
   const transport = nodemailer.createTransport(
     nodemailerSendgrid({
-      apiKey: `${env.SG_API_KEY}`,
+      apiKey: `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`,
     })
   );
 

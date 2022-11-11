@@ -136,10 +136,6 @@ export const envSchema = Joi.object({
     required_error: "LIVE_ULR must be string",
     invalid_type_error: "LIVE_ULR type must be in envariment variables",
   }),
-  SG_API_KEY: string.required().messages({
-    required_error: "SG_API_KEY must be string",
-    invalid_type_error: "SG_API_KEY type must be in envariment variables",
-  }),
 });
 
 /**
