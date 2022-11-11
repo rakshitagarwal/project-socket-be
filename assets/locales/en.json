@@ -72,5 +72,7 @@
 	"user.is.temporary.blocked": "The user is temporarily blocked",
 	"you.have.already.blocked": "you have already blocked",
 	"Country name or code": "Country name or code",
-	"Cannot fetch IP location": "Cannot fetch IP location"
+	"Cannot fetch IP location": "Cannot fetch IP location",
+	"Cannot.fetch.IP.location": "Cannot.fetch.IP.location",
+	"Country.name.or.code": "Country.name.or.code"
 }
