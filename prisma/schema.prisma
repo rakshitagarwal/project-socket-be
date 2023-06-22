@@ -111,9 +111,8 @@ model MasterProductCategory {
 model Products {
   id                  String                @id @default(uuid())
   name                String
-  description         String                @db.Text
+  description         String?                @db.Text
   image_path          String
-  product_sku         String
   status              Boolean               @default(true)
   is_deleted          Boolean               @default(false)
   created_at          DateTime              @db.Timestamptz()
@@ -145,16 +144,17 @@ model MasterAuctionCategory {
 model Auctions {
   id                     String                @id @default(uuid())
   title                  String
+  description            String?
   image_path             String
   video_path             String
   bid_increment_price    Float
   plays_consumed_on_bid  Int
   opening_price          Float
-  new_participants_limit Int
+  new_participants_limit Int?
   start_date             DateTime              @db.Date
   registeration_count    BigInt
   registeration_fees     Int
-  terms_and_conditions   String                @db.Text
+  terms_and_conditions   String?                @db.Text
   status                 Boolean               @default(true)
   is_deleted             Boolean               @default(false)
   created_at             DateTime              @db.Timestamptz()
