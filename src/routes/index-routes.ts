@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { ENDPOINTS } from "../common/constants";
+import { auctionRouter } from "../modules/auction/auction-routes";
+
+/**
+ * Index Routes
+ * @description versioning of the router to set-up for modules
+ */
+export const v1Router = Router();
+
+v1Router.use(ENDPOINTS.AUCTIONS, auctionRouter);

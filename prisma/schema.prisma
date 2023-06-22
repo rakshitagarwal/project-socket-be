@@ -1,0 +1,170 @@
+generator client {
+  provider   = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MasterRole {
+  id         String   @id @default(uuid())
+  name       String
+  status     Boolean  @default(true)
+  is_deleted Boolean  @default(false)
+  created_at DateTime @db.Timestamptz()
+  updated_at DateTime @db.Timestamptz()
+  users      User[]
+
+  @@map("master_roles")
+}
+
+model User {
+  id                String              @id @default(uuid())
+  first_name        String
+  last_name         String
+  email             String
+  country           String
+  mobile_no         String
+  password          String
+  is_verified       Boolean             @default(false)
+  role_id           String
+  status            Boolean             @default(true)
+  is_deleted        Boolean             @default(false)
+  created_at        DateTime            @db.Timestamptz()
+  updated_at        DateTime            @db.Timestamptz()
+  roles             MasterRole          @relation(fields: [role_id], references: [id])
+  userPersistent    UserPersistent[]
+  TermsAndCondition TermsAndCondition[]
+  medias            Media[]
+  products          Products[]
+  auctions          Auctions[]
+
+  @@unique([email])
+  @@index([email])
+  @@map("users")
+}
+
+model UserPersistent {
+  id            String   @id @default(uuid())
+  public_key    String   @db.Text
+  access_token  String   @db.Text
+  refresh_token String   @db.Text
+  ip_address    String
+  user_agent    String
+  user_id       String
+  created_at    DateTime @db.Timestamptz()
+  updated_at    DateTime @db.Timestamptz()
+  users         User     @relation(fields: [user_id], references: [id])
+
+  @@index([public_key])
+  @@map("user_persistent")
+}
+
+model TermsAndCondition {
+  id         String   @id @default(uuid())
+  title      String
+  content    String   @db.Text
+  status     Boolean  @default(true)
+  is_deleted Boolean  @default(false)
+  created_at DateTime @db.Timestamptz()
+  updated_at DateTime @db.Timestamptz()
+  created_by String
+  users      User     @relation(fields: [created_by], references: [id])
+
+  @@index([title, content])
+  @@map("terms_conditions")
+}
+
+model Media {
+  id         String     @id @default(uuid())
+  name       String
+  size       BigInt
+  type       String
+  local_path String
+  tag        String
+  mime_type  String
+  status     Boolean    @default(true)
+  is_deleted Boolean    @default(false)
+  created_at DateTime   @db.Timestamptz()
+  updated_at DateTime   @db.Timestamptz()
+  created_by String
+  products   Products[]
+  users      User       @relation(fields: [created_by], references: [id])
+
+  @@map("media")
+}
+
+model MasterProductCategory {
+  id         String     @id @default(uuid())
+  name       String
+  status     Boolean    @default(true)
+  is_deleted Boolean    @default(false)
+  created_at DateTime   @db.Timestamptz()
+  updated_at DateTime   @db.Timestamptz()
+  products   Products[]
+
+  @@index([name])
+  @@map("master_product_categories")
+}
+
+model Products {
+  id                  String                @id @default(uuid())
+  name                String
+  description         String                @db.Text
+  image_path          String
+  product_sku         String
+  status              Boolean               @default(true)
+  is_deleted          Boolean               @default(false)
+  created_at          DateTime              @db.Timestamptz()
+  updated_at          DateTime              @db.Timestamptz()
+  product_category_id String
+  created_by          String
+  media               Media                 @relation(fields: [image_path], references: [id])
+  users               User                  @relation(fields: [created_by], references: [id])
+  productCategories   MasterProductCategory @relation(fields: [product_category_id], references: [id])
+  auctions            Auctions[]
+
+  @@index([name])
+  @@map("products")
+}
+
+model MasterAuctionCategory {
+  id         String     @id @default(uuid())
+  name       String
+  status     Boolean    @default(true)
+  is_deleted Boolean    @default(false)
+  created_at DateTime   @db.Timestamptz()
+  updated_at DateTime   @db.Timestamptz()
+  auctions   Auctions[]
+
+  @@index([name])
+  @@map("master_auction_categories")
+}
+
+model Auctions {
+  id                     String                @id @default(uuid())
+  title                  String
+  image_path             String
+  video_path             String
+  bid_increment_price    Float
+  plays_consumed_on_bid  Int
+  opening_price          Float
+  new_participants_limit Int
+  start_date             DateTime              @db.Date
+  registeration_count    BigInt
+  registeration_fees     Int
+  terms_and_conditions   String                @db.Text
+  status                 Boolean               @default(true)
+  is_deleted             Boolean               @default(false)
+  created_at             DateTime              @db.Timestamptz()
+  updated_at             DateTime              @db.Timestamptz()
+  auction_category_id    String
+  product_id             String
+  created_by             String
+  users                  User                  @relation(fields: [created_by], references: [id])
+  auctionCategory        MasterAuctionCategory @relation(fields: [auction_category_id], references: [id])
+  products               Products              @relation(fields: [product_id], references: [id])
+
+  @@index([title])
+}

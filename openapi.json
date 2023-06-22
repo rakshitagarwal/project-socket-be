@@ -1,0 +1,18 @@
+{
+    "openapi": "3.0.2",
+    "security": [],
+    "info": {
+        "title": "BigDeal Api",
+        "description": "API for BigDeal",
+        "version": "1.0.0"
+    },
+    "tags": [{ "name": "users", "description": "User Operations" }],
+    "servers": [
+        {
+            "url": "{basePath}",
+            "description": "Main Server",
+            "variables": { "basePath": { "default": "/v1", "enum": ["/v1"] } }
+        }
+    ],
+    "paths": {}
+}
