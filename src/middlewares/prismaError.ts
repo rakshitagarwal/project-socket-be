@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { responseBuilder } from "../common/responses";
 import logger from "../config/logger";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { Prisma } from "@prisma/client";
 
 /**
  * Error handler middleware.
@@ -17,7 +17,7 @@ export const prismaErrorHandler = (
     res: Response,
     _next: NextFunction
 ) => {
-    if (err instanceof PrismaClientKnownRequestError) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
         const response = responseBuilder
             .error(500)
             .message(err.message)
