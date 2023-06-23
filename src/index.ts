@@ -17,6 +17,7 @@ import { generateDocs } from "./utils/generate-docs";
 import { responseBuilder } from "./common/responses";
 import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
+import startServer from "./utils/start-server";
 
 const app = express();
 
@@ -71,6 +72,12 @@ app.use(commonErrorHandler);
 /**
  * Http Server listening 🚀
  */
-app.listen(env.PORT, "0.0.0.0", () => {
-    console.log(`🚀 Server listening on http://localhost:${env.PORT} 🚀`);
-});
+startServer()
+    .then((data) => {
+        console.log(data);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+
+export default app;
