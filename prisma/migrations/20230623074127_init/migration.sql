@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "master_roles" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL,
@@ -13,11 +13,11 @@ CREATE TABLE "master_roles" (
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
-    "first_name" TEXT NOT NULL,
-    "last_name" TEXT NOT NULL,
+    "first_name" TEXT,
+    "last_name" TEXT,
     "email" TEXT NOT NULL,
     "country" TEXT NOT NULL,
-    "mobile_no" TEXT NOT NULL,
+    "mobile_no" TEXT,
     "password" TEXT NOT NULL,
     "is_verified" BOOLEAN NOT NULL DEFAULT false,
     "role_id" TEXT NOT NULL,
@@ -27,6 +27,18 @@ CREATE TABLE "users" (
     "updated_at" TIMESTAMPTZ NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UserOTP" (
+    "id" TEXT NOT NULL,
+    "otp" INTEGER NOT NULL,
+    "expiry_seconds" BIGINT NOT NULL,
+    "otp_type" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL,
+    "user_id" TEXT NOT NULL,
+
+    CONSTRAINT "UserOTP_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -61,7 +73,7 @@ CREATE TABLE "terms_conditions" (
 -- CreateTable
 CREATE TABLE "media" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
     "size" BIGINT NOT NULL,
     "type" TEXT NOT NULL,
     "local_path" TEXT NOT NULL,
@@ -79,7 +91,7 @@ CREATE TABLE "media" (
 -- CreateTable
 CREATE TABLE "master_product_categories" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL,
@@ -91,10 +103,8 @@ CREATE TABLE "master_product_categories" (
 -- CreateTable
 CREATE TABLE "products" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "image_path" TEXT NOT NULL,
-    "product_sku" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL,
@@ -106,9 +116,22 @@ CREATE TABLE "products" (
 );
 
 -- CreateTable
+CREATE TABLE "product_media" (
+    "id" TEXT NOT NULL,
+    "product_id" TEXT NOT NULL,
+    "media_id" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMPTZ NOT NULL,
+    "updated_at" TIMESTAMPTZ NOT NULL,
+
+    CONSTRAINT "product_media_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "master_auction_categories" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL,
@@ -118,9 +141,10 @@ CREATE TABLE "master_auction_categories" (
 );
 
 -- CreateTable
-CREATE TABLE "Auctions" (
+CREATE TABLE "auctions" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "image_path" TEXT NOT NULL,
     "video_path" TEXT NOT NULL,
     "bid_increment_price" DOUBLE PRECISION NOT NULL,
@@ -130,7 +154,7 @@ CREATE TABLE "Auctions" (
     "start_date" DATE NOT NULL,
     "registeration_count" BIGINT NOT NULL,
     "registeration_fees" INTEGER NOT NULL,
-    "terms_and_conditions" TEXT NOT NULL,
+    "terms_and_conditions" TEXT,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL,
@@ -139,7 +163,7 @@ CREATE TABLE "Auctions" (
     "product_id" TEXT NOT NULL,
     "created_by" TEXT NOT NULL,
 
-    CONSTRAINT "Auctions_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "auctions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -149,25 +173,31 @@ CREATE INDEX "users_email_idx" ON "users"("email");
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE INDEX "user_persistent_public_key_idx" ON "user_persistent"("public_key");
+CREATE INDEX "user_persistent_public_key_access_token_idx" ON "user_persistent"("public_key", "access_token");
 
 -- CreateIndex
 CREATE INDEX "terms_conditions_title_content_idx" ON "terms_conditions"("title", "content");
 
 -- CreateIndex
-CREATE INDEX "master_product_categories_name_idx" ON "master_product_categories"("name");
+CREATE INDEX "media_filename_type_idx" ON "media"("filename", "type");
 
 -- CreateIndex
-CREATE INDEX "products_name_idx" ON "products"("name");
+CREATE INDEX "master_product_categories_title_idx" ON "master_product_categories"("title");
 
 -- CreateIndex
-CREATE INDEX "master_auction_categories_name_idx" ON "master_auction_categories"("name");
+CREATE INDEX "products_title_idx" ON "products"("title");
 
 -- CreateIndex
-CREATE INDEX "Auctions_title_idx" ON "Auctions"("title");
+CREATE INDEX "master_auction_categories_title_idx" ON "master_auction_categories"("title");
+
+-- CreateIndex
+CREATE INDEX "auctions_title_idx" ON "auctions"("title");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "master_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserOTP" ADD CONSTRAINT "UserOTP_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_persistent" ADD CONSTRAINT "user_persistent_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -179,19 +209,22 @@ ALTER TABLE "terms_conditions" ADD CONSTRAINT "terms_conditions_created_by_fkey"
 ALTER TABLE "media" ADD CONSTRAINT "media_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "products" ADD CONSTRAINT "products_image_path_fkey" FOREIGN KEY ("image_path") REFERENCES "media"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_product_category_id_fkey" FOREIGN KEY ("product_category_id") REFERENCES "master_product_categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Auctions" ADD CONSTRAINT "Auctions_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "product_media" ADD CONSTRAINT "product_media_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Auctions" ADD CONSTRAINT "Auctions_auction_category_id_fkey" FOREIGN KEY ("auction_category_id") REFERENCES "master_auction_categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "product_media" ADD CONSTRAINT "product_media_media_id_fkey" FOREIGN KEY ("media_id") REFERENCES "media"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Auctions" ADD CONSTRAINT "Auctions_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "auctions" ADD CONSTRAINT "auctions_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auctions" ADD CONSTRAINT "auctions_auction_category_id_fkey" FOREIGN KEY ("auction_category_id") REFERENCES "master_auction_categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auctions" ADD CONSTRAINT "auctions_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

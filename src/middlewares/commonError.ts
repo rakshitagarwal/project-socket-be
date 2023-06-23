@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { responseBuilder } from "../common/responses";
 import logger from "../config/logger";
+import env from "../config/env";
 
 /**
  * Error handler middleware.
@@ -16,9 +17,9 @@ export const commonErrorHandler = (
     res: Response,
     _next: NextFunction
 ) => {
-    const response = responseBuilder.internalserverError("", {}, err);
+    const response = responseBuilder.internalserverError();
     logger.error(
-        `${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        `${env.NODE_ENV} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack}`
     );
     res.status(response.code).json(response);
 };
