@@ -178,7 +178,7 @@ model Auctions {
   bid_increment_price    Float
   plays_consumed_on_bid  Int
   opening_price          Float
-  new_participants_limit Int
+  new_participants_limit Int?
   start_date             DateTime              @db.Date
   registeration_count    BigInt
   registeration_fees     Int
