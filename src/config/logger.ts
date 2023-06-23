@@ -7,7 +7,7 @@ import env from "./env";
  */
 const logger = winston.createLogger({
     level: "info",
-    format: winston.format.json(),
+    format: winston.format.combine(winston.format.timestamp()),
     defaultMeta: { service: "backend-service" },
     handleRejections: true,
     transports: [
@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== "production") {
     logger.add(
         new winston.transports.Console({
             level: "debug",
-            format: winston.format.simple(),
+            format: winston.format.timestamp(),
         })
     );
 }

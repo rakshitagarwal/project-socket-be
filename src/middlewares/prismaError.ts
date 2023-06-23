@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { responseBuilder } from "../common/responses";
 import logger from "../config/logger";
 import { Prisma } from "@prisma/client";
+import env from "../config/env";
 
 /**
  * Error handler middleware.
@@ -26,7 +27,7 @@ export const prismaErrorHandler = (
             .build();
 
         logger.error(
-            `${err.code} - ${err.clientVersion} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+            `${env.NODE_ENV} - ${err.code} - ${err.clientVersion} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack}`
         );
         res.status(response.code).json(response);
     }

@@ -40,6 +40,9 @@ const envSchema = z.object({
     API_VERSION: z.string({
         required_error: "API_VERSION must be present in environment variable",
     }),
+    NODE_ENV: z.string({
+        required_error: "NODE_ENV must be present in environment variable",
+    }),
 });
 
 const env = Object.freeze(envSchema.parse(process.env));
