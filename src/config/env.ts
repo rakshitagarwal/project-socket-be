@@ -43,6 +43,25 @@ const envSchema = z.object({
     NODE_ENV: z.string({
         required_error: "NODE_ENV must be present in environment variable",
     }),
+    EMAIL_HOST: z.string({
+        required_error: "EMAIL_HOST must be present in environment variable",
+    }),
+    EMAIL_PORT: z.preprocess(
+        (x) => +(x as string),
+        z.number({
+            required_error: "EMAIL_PORT must be present in environment variables",
+            invalid_type_error: "Invalid EMAIL_PORT in environment variables",
+        })
+    ),
+    FROM_EMAIL: z.string({
+        required_error: "FROM_EMAIL must be present in environment variable",
+    }),
+    EMAIL_PASSWORD: z.string({
+        required_error: "EMAIL_PASSWORD must be present in environment variable",
+    }),
+    EMAIL_SERVICE: z.string({
+        required_error: "EMAIL_SERVICE must be present in environment variable",
+    }),
 });
 
 const env = Object.freeze(envSchema.parse(process.env));
