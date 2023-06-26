@@ -6,8 +6,8 @@ const roleId = z.object({
     id: z.string({ required_error: "id is required", invalid_type_error: "id must be string" }),
 })
 const rolepagination = z.object({
-    page: z.preprocess((val) => parseInt(val as string), z.number({ invalid_type_error: "page must be string" })).optional(),
-    limit: z.preprocess((val) => parseInt(val as string), z.number({ invalid_type_error: "limit must be string" })).optional(),
+    page: z.string({ invalid_type_error: "page must be string" }).optional(),
+    limit: z.string({ invalid_type_error: "limit must be string" }).optional(),
     search: z.string().regex(/^[a-zA-Z0-9._-]+$/).optional()
 })
 const roleSchemas = {

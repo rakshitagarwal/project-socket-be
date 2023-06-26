@@ -7,5 +7,5 @@ import roleSchemas from "./role-schemas"
 export const roleRoutes: Router = Router()
 
 roleRoutes.post(ENDPOINTS.BASE, [validateRequest.body(roleSchemas.role)], asyncHandler(roleHanders.createNewRole))
-roleRoutes.post(ENDPOINTS.ID, [validateRequest.params(roleSchemas.roleId)], asyncHandler(roleHanders.fetchRole))
-roleRoutes.post(ENDPOINTS.BASE, [validateRequest.query], asyncHandler(roleHanders.fetchAllRoles))
+roleRoutes.get(ENDPOINTS.ID, [validateRequest.params(roleSchemas.roleId)], asyncHandler(roleHanders.fetchRole))
+roleRoutes.get(ENDPOINTS.BASE, [validateRequest.query(roleSchemas.rolepagination)], asyncHandler(roleHanders.fetchAllRoles))

@@ -10,7 +10,7 @@ export const ENDPOINTS = {
     LOGOUT: "/logout",
     RESET_PASSWORD: "/reset-password",
     VERIFY: "/verify",
-    ID: "/id",
+    ID: "/:id",
 };
 
 export const TEMPLATE = {
