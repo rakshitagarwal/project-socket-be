@@ -100,20 +100,15 @@
                                         "nullable": false,
                                         "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
                                     },
-                                    "changes": {
-                                        "type": "object",
-                                        "properties": {
-                                            "title": {
-                                                "type": "string",
-                                                "format": "string",
-                                                "nullable": false,
-                                                "description": "name in product category"
-                                              },
-                                            "status": {
-                                                "type": "boolean",
-                                                "example": "true"
-                                            }
-                                        }
+                                    "title": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "nullable": false,
+                                        "description": "name in product category"
+                                      },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": "true"
                                     }
                                 }
                             }
@@ -174,7 +169,7 @@
                       },
                       {
                         "in": "query",
-                        "name": "searchText",
+                        "name": "filterText",
                         "schema": {
                             "type": "string"
                         }
@@ -242,25 +237,20 @@
                                         "nullable": false,
                                         "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
                                     },
-                                    "changes": {
-                                        "type": "object",
-                                        "properties": {
-                                            "title": {
-                                                "type": "string",
-                                                "format": "string",
-                                                "nullable": false,
-                                                "description": "name in product"
-                                              },
-                                            "status": {
-                                                "type": "boolean",
-                                                "example": "true"
-                                            },
-                                            "product-category-id": {
-                                                "type": "string",
-                                                "nullable": false,
-                                                "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
-                                            }
-                                        }
+                                    "title": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "nullable": false,
+                                        "description": "name in product"
+                                      },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    },
+                                    "product-category-id": {
+                                        "type": "string",
+                                        "nullable": false,
+                                        "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
                                     }
                                 }
                             }
