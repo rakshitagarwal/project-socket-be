@@ -6,7 +6,10 @@
         "description": "API for BigDeal",
         "version": "1.0.0"
     },
-    "tags": [{ "name": "users", "description": "User Operations" }],
+    "tags": [{ "name": "users", "description": "User Operations" }, 
+             { "name": "product-category", "description": "Product Category Operations" },
+             { "name": "product", "description": "Product Operations" }
+            ],
     "servers": [
         {
             "url": "{basePath}",
@@ -15,5 +18,297 @@
         }
     ],
     "components": {},
-    "paths": {}
+    "paths": {
+        "/product-category": {
+            "get":{
+                "tags": ["product-category"],
+                "description": "Get the product category for product",
+                "summary": "Get the product category",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ]
+                
+            },
+            "post":{
+                "tags": ["product-category"],
+                "description": "Add the product category for product",
+                "summary": "add the product category",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "type": "string",
+                              "format": "string",
+                              "nullable": false,
+                              "description": "name in product category"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+            },
+            "patch": {
+                "tags": ["product-category"],
+                "summary": "update the product category",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "nullable": false,
+                                        "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
+                                    },
+                                    "changes": {
+                                        "type": "object",
+                                        "properties": {
+                                            "title": {
+                                                "type": "string",
+                                                "format": "string",
+                                                "nullable": false,
+                                                "description": "name in product category"
+                                              },
+                                            "status": {
+                                                "type": "boolean",
+                                                "example": "true"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            
+            }
+        },
+        "/product-category/{id}": {
+            "get":{
+                "tags": ["product-category"],
+                "summary": "get the product category Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ]
+            }
+        },
+        "/product": {
+            "get":{
+                "tags": ["product"],
+                "summary": "Get the product",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "searchText",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+                
+            },
+            "post":{
+                "tags": ["product"],
+                "description": "Add the product for product",
+                "summary": "add the product",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "type": "string",
+                              "format": "string",
+                              "nullable": false,
+                              "description": "title in product"
+                            },
+                            "description": {
+                                "type": "string",
+                                "format": "string",
+                                "nullable": false,
+                                "description": "description product"
+                            },
+                            "product-category-id": {
+                                "type": "string",
+                                "nullable": false,
+                                "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+            },
+            "patch": {
+                "tags": ["product"],
+                "summary": "update the product",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "nullable": false,
+                                        "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
+                                    },
+                                    "changes": {
+                                        "type": "object",
+                                        "properties": {
+                                            "title": {
+                                                "type": "string",
+                                                "format": "string",
+                                                "nullable": false,
+                                                "description": "name in product"
+                                              },
+                                            "status": {
+                                                "type": "boolean",
+                                                "example": "true"
+                                            },
+                                            "product-category-id": {
+                                                "type": "string",
+                                                "nullable": false,
+                                                "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            
+            }
+        },
+        "/product/{id}": {
+            "get":{
+                "tags": ["product"],
+                "summary": "get the product Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ]
+            },
+            "delete":{
+                "tags": ["product"],
+                "summary": "get the product Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ]
+            }
+        }   
+    }
 }
