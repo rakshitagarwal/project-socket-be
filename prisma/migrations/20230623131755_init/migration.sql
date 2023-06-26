@@ -4,8 +4,8 @@ CREATE TABLE "master_roles" (
     "title" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "master_roles_pkey" PRIMARY KEY ("id")
 );
@@ -23,22 +23,22 @@ CREATE TABLE "users" (
     "role_id" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "UserOTP" (
+CREATE TABLE "user_otp" (
     "id" TEXT NOT NULL,
     "otp" INTEGER NOT NULL,
-    "expiry_seconds" BIGINT NOT NULL,
+    "expiry_seconds" BIGINT,
     "otp_type" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_id" TEXT NOT NULL,
 
-    CONSTRAINT "UserOTP_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_otp_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -50,8 +50,8 @@ CREATE TABLE "user_persistent" (
     "ip_address" TEXT NOT NULL,
     "user_agent" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "user_persistent_pkey" PRIMARY KEY ("id")
 );
@@ -63,8 +63,8 @@ CREATE TABLE "terms_conditions" (
     "content" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" TEXT NOT NULL,
 
     CONSTRAINT "terms_conditions_pkey" PRIMARY KEY ("id")
@@ -81,8 +81,8 @@ CREATE TABLE "media" (
     "mime_type" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" TEXT NOT NULL,
 
     CONSTRAINT "media_pkey" PRIMARY KEY ("id")
@@ -94,8 +94,8 @@ CREATE TABLE "master_product_categories" (
     "title" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "master_product_categories_pkey" PRIMARY KEY ("id")
 );
@@ -107,8 +107,8 @@ CREATE TABLE "products" (
     "description" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "product_category_id" TEXT NOT NULL,
     "created_by" TEXT NOT NULL,
 
@@ -122,8 +122,8 @@ CREATE TABLE "product_media" (
     "media_id" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "product_media_pkey" PRIMARY KEY ("id")
 );
@@ -134,8 +134,8 @@ CREATE TABLE "master_auction_categories" (
     "title" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "master_auction_categories_pkey" PRIMARY KEY ("id")
 );
@@ -150,15 +150,15 @@ CREATE TABLE "auctions" (
     "bid_increment_price" DOUBLE PRECISION NOT NULL,
     "plays_consumed_on_bid" INTEGER NOT NULL,
     "opening_price" DOUBLE PRECISION NOT NULL,
-    "new_participants_limit" INTEGER NOT NULL,
+    "new_participants_limit" INTEGER,
     "start_date" DATE NOT NULL,
     "registeration_count" BIGINT NOT NULL,
     "registeration_fees" INTEGER NOT NULL,
     "terms_and_conditions" TEXT,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMPTZ NOT NULL,
-    "updated_at" TIMESTAMPTZ NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "auction_category_id" TEXT NOT NULL,
     "product_id" TEXT NOT NULL,
     "created_by" TEXT NOT NULL,
@@ -171,6 +171,9 @@ CREATE INDEX "users_email_idx" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE INDEX "user_otp_otp_idx" ON "user_otp"("otp");
 
 -- CreateIndex
 CREATE INDEX "user_persistent_public_key_access_token_idx" ON "user_persistent"("public_key", "access_token");
@@ -197,7 +200,7 @@ CREATE INDEX "auctions_title_idx" ON "auctions"("title");
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "master_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserOTP" ADD CONSTRAINT "UserOTP_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_otp" ADD CONSTRAINT "user_otp_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_persistent" ADD CONSTRAINT "user_persistent_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
