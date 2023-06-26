@@ -1,6 +1,8 @@
 import env from '../config/env';
 import nodemailer from "nodemailer"
 import logger from '../config/logger';
+import { compile } from "handlebars"
+import fs from "fs"
 export interface Imail {
     email: string
     template: string
@@ -15,6 +17,8 @@ export interface Imail {
  * @returns 
  */
 export async function mailService(props: Imail) {
+    const htmlTemplate = fs.readFileSync(`assets/templates/${props.template}`, { encoding: "utf8" })
+    const template = compile(htmlTemplate)
     const transporter = nodemailer.createTransport({
         service: env.EMAIL_SERVICE,
         auth: {
@@ -30,7 +34,7 @@ export async function mailService(props: Imail) {
         to: props.email,
         subject: props.subject,
         text: "",
-        html: props.template
+        html: template({ userName: props.user_name, passcode: props.otp })
     }
 
     return transporter.sendMail(mailOptions, (err, info) => {
