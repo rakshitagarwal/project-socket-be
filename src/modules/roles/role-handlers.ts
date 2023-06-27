@@ -4,7 +4,7 @@ import { IrolePagination } from "./typings/role-types"
 
 /**
  * @description get the specified role
- * @param req { Request } - request object contain the role title
+ * @param req { Request } - request object contain the role id
  * @param res { Response }
  */
 
