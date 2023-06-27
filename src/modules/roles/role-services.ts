@@ -11,7 +11,7 @@ import { MESSAGES } from "../../common/constants"
  * @returns {Promise}
  */
 const fetchRole = async (payload: IroleQuery) => {
-    const role = await roleQueries.fetchRole({ title: payload.title })
+    const role = await roleQueries.fetchRole({ id: payload.id })
     if (!role) {
         return responseBuilder.notFoundError()
     }
