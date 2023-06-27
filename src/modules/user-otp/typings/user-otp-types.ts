@@ -1,4 +1,4 @@
-export interface IoptQuery {
+export interface IotpQuery {
     user_id: string
     otp: number
     otp_type?: string

@@ -1,6 +1,6 @@
 import { db } from "../../config/db"
-import { IoptQuery, IotpId } from "./typings/user-otp-types"
-const findUserOtp = async (query: IoptQuery) => {
+import { IotpQuery, IotpId } from "./typings/user-otp-types"
+const findUserOtp = async (query: IotpQuery) => {
     const otp = await db.userOTP.findFirst({ where: query })
     return otp
 }
