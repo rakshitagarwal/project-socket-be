@@ -26,7 +26,44 @@ const update = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
-export const auctionCategooryHandler = {
+/**
+ * @param {Request} req - Request Object
+ * @param {Response} res - Response Object
+ * @description - get the single auction category with all details
+ * @return {Promise<Response>}
+ */
+const get = async (req: Request, res: Response) => {
+    const response = await auctionCatgoryService.get(req.params.id as string);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @param {Request} _req - Request Object
+ * @param {Response} res - Response Object
+ * @description - get auction catgories with all detials
+ * @return {Promise<Response>}
+ */
+const getAll = async (_req: Request, res: Response) => {
+    const response = await auctionCatgoryService.getAll();
+    res.status(response.code).json(response);
+};
+
+/**
+ *
+ * @param {Request} req - Request Object
+ * @param {Response} res - Response Object
+ * @description - remove the multiple auction categories
+ * @returns {Promise<Response>}
+ */
+const removeCategories = async (req: Request, res: Response) => {
+    const response = await auctionCatgoryService.removeCategories(req.body);
+    res.status(response.code).json(response);
+};
+
+export const auctionCategoryHandler = {
     add,
     update,
+    get,
+    getAll,
+    removeCategories,
 };
