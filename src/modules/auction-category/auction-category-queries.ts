@@ -27,9 +27,10 @@ const IsExistsActive = async (id: string) => {
     const query = await db.masterAuctionCategory.findFirst({
         where: {
             id,
+            is_deleted: false,
+            status: true,
         },
     });
-
     return query;
 };
 
