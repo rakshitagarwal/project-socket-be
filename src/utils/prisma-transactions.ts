@@ -1,7 +1,13 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import logger from "../config/logger";
 import env from "../config/env";
+
+/**
+ * @description- this function is use to handle a multiple query runnings in a transaction
+ * @param callback - callback function
+ * @returns {Promise}
+ */
 
 export async function prismaTransaction(callback: any) {
     let result: any | undefined;

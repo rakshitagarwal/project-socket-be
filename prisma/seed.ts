@@ -48,6 +48,7 @@ async function startSeed() {
                 email: "admin929@yopmail.com",
                 password: "admin@12345",
                 country: "India",
+                is_verified:true,
                 role_id: roleAdmin?.id as string,
             },
         });

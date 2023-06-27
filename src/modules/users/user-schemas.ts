@@ -9,7 +9,26 @@ const register = z.object({
     mobile_no: z.string({ invalid_type_error: "mobile_no must be string" })
 })
 
+const emailVerifcation = z.object({
+    otp: z.string({ invalid_type_error: "otp must be string", required_error: "otp is required" }),
+    email: z.string({ required_error: "email is required", invalid_type_error: "email must be string" }).email({ message: "Invalid email address" }).trim().toLowerCase(),
+    otp_type: z.string({ invalid_type_error: "otp_type must be string" }).optional(),
+})
+
+const adminLogin = z.object({
+    email: z.string({ required_error: "email is required", invalid_type_error: "email must be string" }).email({ message: "Invalid email address" }).trim().toLowerCase(),
+    password: z.string({ required_error: "password is required", invalid_type_error: "Password must be string" }),
+})
+
+const login = z.object({
+    email: z.string({ required_error: "email is required", invalid_type_error: "email must be string" }).email({ message: "Invalid email address" }).trim().toLowerCase(),
+})
+
+
 const userSchemas = {
-    register
+    register,
+    emailVerifcation,
+    login,
+    adminLogin
 }
 export default userSchemas
