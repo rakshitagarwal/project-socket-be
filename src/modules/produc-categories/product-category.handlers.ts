@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import prodCategoryServices from '../productcategories/prodcategory.services';
+import prodCategoryServices from './product-category.services';
 import asyncHandler from 'express-async-handler';
 
 class ProductCategoryHandler {
@@ -14,13 +14,21 @@ class ProductCategoryHandler {
         res.status(response.code).json(response);
     })
     /**
-  * @description get all or single Product Category
-  * @param { Request } req request object
-  * @param { Response } res response object
-  * @returns { undefined }
-  */
+     * @description get all or single Product Category
+     * @param { Request } req request object
+     * @param { Response } res response object
+     */
     get = asyncHandler(async (req: Request, res: Response) => {
         const response = await prodCategoryServices.get(req.params.id);
+        res.status(response.code).json(response);
+    })
+    /**
+     * @description handler to update new Product Category
+     * @param { Request } req - request object
+     * @param { Response } res - response object
+     */
+    update = asyncHandler(async (req: Request, res: Response) => {
+        const response = await prodCategoryServices.update(req.body);
         res.status(response.code).json(response);
     })
 }

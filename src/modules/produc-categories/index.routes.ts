@@ -1,6 +1,6 @@
 import { AsyncRouter } from 'express-async-router';
 import { ENDPOINTS } from '../../common/constants';
-import { prodCategoryHandler } from './prodcategory.handlers';
+import { prodCategoryHandler } from './product-category.handlers';
 
 export const productCategoryRoutes = AsyncRouter();
 
@@ -11,6 +11,7 @@ productCategoryRoutes.post(
 productCategoryRoutes.get(ENDPOINTS.BASE + ':id?',
     prodCategoryHandler.get
 );
+productCategoryRoutes.patch(ENDPOINTS.BASE, prodCategoryHandler.update)
 
 
 
