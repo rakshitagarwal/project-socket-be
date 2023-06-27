@@ -6,7 +6,7 @@ export interface Iuser {
     mobile_no: string
     role_id: string
     status: boolean
-    password: string
+    password?: string
 }
 export interface IuserQuery {
     email?: string

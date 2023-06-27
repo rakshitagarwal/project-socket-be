@@ -8,7 +8,7 @@ import eventService from "../../utils/event-service"
 import { TEMPLATE, MESSAGES, OTP_TYPE } from "../../common/constants"
 import roleQueries from "../roles/role-queries"
 import otpQuery from "../user-otp/user-otp-queries"
-import { hashPassword, generateAccessToken } from "../../utils/index"
+import { generateAccessToken } from "../../utils/index"
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries"
 
 /**
@@ -21,14 +21,14 @@ const register = async (body: Iuser) => {
     if ((isRole?.title)?.toLocaleLowerCase() == "admin") {
         return responseBuilder.conflictError(MESSAGES.USERS.ADMIN_EXIST)
     }
+    if (!isRole) {
+        return responseBuilder.notFoundError(MESSAGES.ROLE.ROlE_NOT_EXIST)
+    }
     const isUser = await userQueries.fetchUser({ email: body.email })
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST)
     }
     await prismaTransaction(async (prisma: PrismaClient) => {
-        if (body.password) {
-            body.password = hashPassword(body.password)
-        }
         const user = await prisma.user.create({ data: body })
         const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
         await prisma.userOTP.create({ data: { user_id: user.id, otp: Number(passcode), otp_type: OTP_TYPE.EMAIL_VERIFICATION } })
@@ -57,7 +57,6 @@ const otpVerifcation = async (body: IotpVerification) => {
         }
         const accessToken = generateAccessToken({ id: isUser.id })
         await otpQuery.deleteOtp({ id: isOtp.id })
-        delete (isUser as Partial<Pick<Iuser, "password">>).password;
         await tokenPersistanceQuery.createTokenPersistence({ ...accessToken, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
         return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: accessToken.access_token, refreshToken: accessToken.refresh_token })
     } else {
@@ -76,7 +75,7 @@ const adminLogin = async (body: Ilogin) => {
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
     }
-    const isPassword = bcrypt.compareSync(body.password, isUser.password)
+    const isPassword = bcrypt.compareSync(body.password, isUser?.password as string)
     if (!isPassword) {
         return responseBuilder.notFoundError(MESSAGES.USERS.INVALID_CREDENTIAL)
     }
@@ -108,9 +107,9 @@ const playerLogin = async (body: IplayerLogin) => {
  * @param - user access token
  */
 const logout = async (body: ItokenQuery) => {
-    const istoken = await tokenPersistanceQuery.deletePersistentToken({ access_token:body.access_token})
+    const istoken = await tokenPersistanceQuery.deletePersistentToken({ access_token: body.access_token })
     console.log(istoken)
-    if(!istoken){
+    if (!istoken) {
         return responseBuilder.notFoundError()
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGOUT)

@@ -42,6 +42,7 @@ export const MESSAGES = {
     ROLE:{
         ROLE_EXIST:"admin already exists",
         FOUND_ROLE:"role found successfully",
-        ROLE_ADDED:"role added successfully"
+        ROLE_ADDED:"role added successfully",
+        ROlE_NOT_EXIST:"role not found"
     }
 }
