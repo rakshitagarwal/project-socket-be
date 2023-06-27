@@ -1,11 +1,12 @@
-import { responseBuilder } from "../../common/responses";
+import { responseBuilder, sanitize } from "../../common/responses";
 import { addReqBody, ProductCategory } from './typings/prodcategory.type';
 import productCategoryQueries from './product-category.queries';
 import { productCategoryMessage } from '../../common/constants';
 const prodCategoryServices = (() => {
-    const add = async function (
-        newReqBody: addReqBody,
-    ) {
+
+    const add = async function (newReqBody: addReqBody) {
+
+        newReqBody.title = sanitize(newReqBody.title)
         const isExist = await productCategoryQueries.getTitle(newReqBody.title);
         if (!isExist) {
             const { id } = await productCategoryQueries.addNew(newReqBody);
@@ -14,6 +15,7 @@ const prodCategoryServices = (() => {
         }
         return responseBuilder.badRequestError(productCategoryMessage.ADD.ALREADY_EXIST);
     };
+
     const get = async function (id: string | undefined) {
         if (id) {
             const result = await productCategoryQueries.getById(id);
@@ -52,7 +54,6 @@ const prodCategoryServices = (() => {
         return responseBuilder.okSuccess(productCategoryMessage.UPDATE.SUCCESS, [data]
         );
     };
-
 
     return {
         add,

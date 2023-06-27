@@ -13,8 +13,11 @@ const prodCategoryQueries = (() => {
         const queryResult = await db.masterProductCategory.findFirst({
             where: {
                 AND: {
-                    title: title,
-                    status: true,
+                    title: {
+                        contains: title ? title : '',
+                        mode: 'insensitive'
+                    },
+                    status: true
                 },
             },
             select: {
@@ -55,6 +58,7 @@ const prodCategoryQueries = (() => {
                 created_at: false,
                 updated_at: false,
             },
+            orderBy: { updated_at: 'desc' },
         });
         return { queryResult };
     };

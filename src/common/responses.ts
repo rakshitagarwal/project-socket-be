@@ -279,3 +279,12 @@ class ResponseBuilder {
 }
 
 export const responseBuilder = new ResponseBuilder();
+
+export const sanitize = function (data: string): string {
+    const words = data.trim().split(' ');
+    const sanitizedWords: string[] = [];
+    words.forEach((word) => {
+        word.length ? sanitizedWords.push(word) : null;
+    });
+    return sanitizedWords.join(' ');
+};
