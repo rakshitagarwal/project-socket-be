@@ -6,14 +6,12 @@ import { productMessage } from '../../common/constants';
 const productServices = (() => {
 
     const add = async function (newReqBody: addReqBody) {
+        
 
-        newReqBody.title = sanitize(newReqBody.title);
-        const isExist = await productQueries.getTitle(newReqBody.title);
-        if (!isExist) {
-            const { id } = await productQueries.addNew(newReqBody);
-            return responseBuilder.okSuccess(productMessage.ADD.SUCCESS, { id }
-            );
-        }
+        const { id } = await productQueries.addNew(newReqBody);
+        return responseBuilder.okSuccess(productMessage.ADD.SUCCESS, { id }
+        );
+
         return responseBuilder.badRequestError(productMessage.ADD.ALREADY_EXIST);
     };
 

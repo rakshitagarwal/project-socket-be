@@ -10,6 +10,8 @@ class ProductHandler {
      * @param { Response } res - response object
      */
     add = asyncHandler(async (req: Request, res: Response) => {
+        console.log("hhhhhhhhhhh", res.locals);
+
         const response = await productServices.add(req.body);
         res.status(response.code).json(response);
     })
