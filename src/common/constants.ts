@@ -11,7 +11,21 @@ export const ENDPOINTS = {
     RESET_PASSWORD: "/reset-password",
     VERIFY: "/verify",
     ID: "/:id",
+    MEDIA: "/media/",
+    UPLOAD: "/upload/",
+    UPDATE: "/update/",
+    DELETE: "/delete/",
 };
+
+export const ALLOWED_MIMETYPES = [
+    "image/png",
+    "image/jpg",
+    "image/jpeg",
+    "video/mp4",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+];
 
 export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
@@ -44,5 +58,21 @@ export const MESSAGES = {
         FOUND_ROLE:"role found successfully",
         ROLE_ADDED:"role added successfully",
         ROlE_NOT_EXIST:"role not found"
+    },
+    MEDIA: {
+        REQUEST_MEDIA: "requested media",
+        MEDIA_NOT_ATTACHED: "media not attached",
+        MEDIA_ID: "media id not provided",
+        MEDIA_UPDATE_SUCCESS: "media updated successfully",
+        MEDIA_DELETE_SUCCESS: "media deleted successfully",
+        MEDIA_DELETE_FAIL : "media delete failed",
+        MEDIA_CREATE_SUCCESS: "media created successfully",
+        MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
+        MEDIA_SINGLE_INVALID: "media file more than 1",
+        MEDIA_FILES_INVALID: "media files invalid",
+        MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed"
+    },
+    ALL: {
+        MULTER_ERROR: "multer error"
     }
 }

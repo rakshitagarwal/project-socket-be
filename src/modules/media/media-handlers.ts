@@ -1,0 +1,66 @@
+import { Response, Request } from "express";
+import { mediaServiceProvider } from "./media-services";
+import { IFileMetaInfo } from "./typings/media.type";
+
+/**
+ * @description Add a new media.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {object} response gets data from services and is sent to api call with code and json.
+ */
+const uploadMedia = async (req: Request, res: Response) => {
+    const response = await mediaServiceProvider.uploadMedia(req.file as unknown as IFileMetaInfo);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description Add a new media.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {object} response gets data from services and is sent to api call with code and json.
+ */
+const uploadMultipleMedia = async (req: Request, res: Response) => {
+        const response = await mediaServiceProvider.uploadMultipleMedia(req.files as unknown as IFileMetaInfo[]);
+        res.status(response.code).json(response);
+};
+
+/**
+ * @description used to retrieve all media or one specific media
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {object} response gets data from services and is sent to api call with code and json.
+ */
+const getAllMedia = async (req: Request, res: Response) => {
+    const response = await mediaServiceProvider.getAllMedia(req.params.id);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description updates the status of media in database.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {object} response gets data from services and is sent to api call with code and json.
+ */
+const updateMediaStatus = async (req: Request, res: Response) => {
+    const response = await mediaServiceProvider.updateMediaStatus(req.params.id as unknown as string);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description deletes a media entry and media file.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {object} response gets data from services and is sent to api call with code and json.
+ */
+const deleteMedia = async (req: Request, res: Response) => {
+    const response = await mediaServiceProvider.deleteMedia(req.params.id as unknown as string);
+    res.status(response.code).json(response);
+};
+
+export const mediaHandler = {
+    uploadMedia,
+    getAllMedia,
+    deleteMedia,
+    updateMediaStatus,
+    uploadMultipleMedia,
+};
