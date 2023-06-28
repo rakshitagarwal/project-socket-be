@@ -16,7 +16,7 @@ const prodCategoryServices = (() => {
         return responseBuilder.badRequestError(productCategoryMessage.ADD.ALREADY_EXIST);
     };
 
-    const get = async function (id: string | undefined) {
+    const get = async function (id: string | undefined, moduleInfo: { title: string },) {
         if (id) {
             const result = await productCategoryQueries.getById(id);
             return result
@@ -28,7 +28,14 @@ const prodCategoryServices = (() => {
                     productCategoryMessage.GET.NOT_FOUND
                 );
         }
-        const { queryResult } = await productCategoryQueries.getAll();
+        // const where: { [key: string]: string | boolean } = {
+        //     is_deleted: false,
+        // };
+        // if (moduleInfo.title) {
+        //     const data = await productCategoryQueries.getTitle(moduleInfo.title)
+        //     console.log(data);
+        // }
+        const { queryResult } = await productCategoryQueries.getAll(moduleInfo.title as string);
         return responseBuilder.okSuccess(productCategoryMessage.GET.ALL, queryResult, {});
     };
 

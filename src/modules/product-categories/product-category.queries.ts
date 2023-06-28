@@ -46,10 +46,16 @@ const prodCategoryQueries = (() => {
         return queryResult ? queryResult : false
         // return queryResult;
     };
-    const getAll = async function () {
+    const getAll = async function (title :string) {
         const queryResult = await db.masterProductCategory.findMany({
             where: {
-                status: true,
+                AND: {
+                    title: {
+                        contains: title ? title : '',
+                        mode: 'insensitive'
+                    },
+                    status: true
+                },
             },
             select: {
                 id: true,

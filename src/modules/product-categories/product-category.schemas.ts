@@ -15,7 +15,7 @@ const schema = (() => {
         status: z.boolean().optional(),
     })
     const ZGetId = z.object({
-        id: z.string().uuid(),
+        id: z.string().uuid().optional(),
     });
 
     return {
