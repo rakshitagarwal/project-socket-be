@@ -212,6 +212,22 @@ class ResponseBuilder {
     }
 
     /**
+     * @description https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409
+     * @param {object} msg response message
+     * @param {object} data response metadata
+     * @param {object} metadata response metadata
+     * @returns {IResponseBody} response body
+     */
+
+    conflictError(
+        msg = "Data already exist!",
+        data = {},
+        metadata: object = {}
+    ): IResponseBody {
+        this.error(409).message(msg).data(data).metaData(metadata);
+        return this.build();
+    }
+    /**
      * @description https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/501
      * @param {object} msg response message
      * @param {object} data response metadata

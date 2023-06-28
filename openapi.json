@@ -17,7 +17,6 @@
             "variables": { "basePath": { "default": "/v1", "enum": ["/v1"] } }
         }
     ],
-    "components": {},
     "paths": {
         "/product-category": {
             "get":{
