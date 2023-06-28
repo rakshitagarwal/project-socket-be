@@ -109,7 +109,6 @@ const playerLogin = async (body: IplayerLogin) => {
  */
 const logout = async (body: ItokenQuery) => {
     const istoken = await tokenPersistanceQuery.deletePersistentToken({ access_token: body.access_token })
-    console.log(istoken)
     if (!istoken) {
         return responseBuilder.notFoundError()
     }
