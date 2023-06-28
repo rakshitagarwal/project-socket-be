@@ -8,7 +8,7 @@ import eventService from "../../utils/event-service"
 import { TEMPLATE, MESSAGES, OTP_TYPE } from "../../common/constants"
 import roleQueries from "../roles/role-queries"
 import otpQuery from "../user-otp/user-otp-queries"
-import { generateAccessToken } from "../../utils/index"
+import { generateAccessToken } from "../../common/helper"
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries"
 
 /**
@@ -102,13 +102,13 @@ const playerLogin = async (body: IplayerLogin) => {
     })
     return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL)
 }
-/**.
+
+/**
  * @description - user logout for user.
  * @param - user access token
  */
 const logout = async (body: ItokenQuery) => {
     const istoken = await tokenPersistanceQuery.deletePersistentToken({ access_token: body.access_token })
-    console.log(istoken)
     if (!istoken) {
         return responseBuilder.notFoundError()
     }

@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
-import { Imail, mailService } from "./mail-service"
+import { mailService } from "./mail-service"
+import {Imail} from "./typing/utils-types"
 const eventService: EventEmitter = new EventEmitter();
 
 /**

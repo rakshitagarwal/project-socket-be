@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { responseBuilder } from "../common/responses";
-import { verify } from "jsonwebtoken"
+import { verify, TokenExpiredError, JsonWebTokenError, NotBeforeError } from "jsonwebtoken"
 import tokenPersistanceQuery from "../modules/token-persistent/token-persistent-queries"
-
-interface IToken{
+import { MESSAGES } from "../common/constants";
+interface IToken {
     id: string
 }
 /**
@@ -25,8 +25,37 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
         return res.status(response.code).json(response);
     }
     return verify(token as string, publicKey.public_key as string, (err: unknown, decode) => {
-        if (err instanceof Error) {
-            return res.status(response.code).json(response);
+        if (err instanceof TokenExpiredError) {
+            const response = responseBuilder.unauthorizedError(
+                MESSAGES.JWT.JWT_EXPIRED,
+                {},
+                err.stack
+            );
+            return res
+                .status(response.code)
+                .json(response);
+        }
+
+        if (err instanceof NotBeforeError) {
+            const response = responseBuilder.unauthorizedError(
+                MESSAGES.JWT.JWT_NOT_ACTIVE,
+                {},
+                err.stack
+            );
+            return res
+                .status(response.code)
+                .json(response);
+        }
+
+        if (err instanceof JsonWebTokenError) {
+            const response = responseBuilder.unauthorizedError(
+                MESSAGES.JWT.JWT_MALFORMED,
+                {},
+                err.stack
+            );
+            return res
+                .status(response.code)
+                .json(response);
         }
         res.locals = decode as Record<string, string | number> & IToken;
         next()
