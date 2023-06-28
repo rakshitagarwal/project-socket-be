@@ -30,6 +30,7 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
         }
         res.locals = decode as Record<string, string | number> & IToken;
         next()
+        return
     })
 }
 

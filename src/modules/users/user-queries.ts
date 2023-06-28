@@ -2,7 +2,7 @@ import { db } from "../../config/db"
 import { IuserQuery, IupdateUser } from "./typings/user-types"
 
 const fetchUser = async (query: IuserQuery) => {
-    const user = await db.user.findFirst({ where: query })
+    const user = await db.user.findFirst({ where: { ...query, is_deleted: false } })
     return user
 }
 const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
