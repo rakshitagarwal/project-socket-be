@@ -22,12 +22,27 @@ const adminLogin = z.object({
 const login = z.object({
     email: z.string({ required_error: "email is required", invalid_type_error: "email must be string" }).email({ message: "Invalid email address" }).trim().toLowerCase(),
 })
+const userId = z.object({
+    id: z.string({ required_error: "id is required", invalid_type_error: "id must be string" })
+})
 
+const updateUser=z.object({
+    first_name: z.string({ invalid_type_error: "first_name must be string" }).optional(),
+    last_name: z.string({ invalid_type_error: "last_name must be string" }).optional(),
+    country: z.string({ required_error: "country is required", invalid_type_error: "country must be string" }).optional(),
+    mobile_no: z.string({ invalid_type_error: "mobile_no must be string" }).optional()
+})
+const refreshToken = z.object({
+    refreshToken: z.string({ required_error: "refresh_token is required", invalid_type_error: "refresh_token must be string" })
+})
 
 const userSchemas = {
     register,
     emailVerifcation,
     login,
-    adminLogin
+    adminLogin,
+    userId,
+    updateUser,
+    refreshToken
 }
 export default userSchemas

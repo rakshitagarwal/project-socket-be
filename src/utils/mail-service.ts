@@ -2,7 +2,7 @@ import env from '../config/env';
 import nodemailer from "nodemailer"
 import logger from '../config/logger';
 import { compile } from "handlebars"
-import {Imail} from "./typing/utils-types"
+import { Imail } from "./typing/utils-types"
 import fs from "fs"
 
 /**
@@ -35,6 +35,6 @@ export async function mailService(props: Imail) {
         if (err) {
             logger.error(`${env.NODE_ENV} - ${err.name} - ${err.message} - ${err.stack}`);
         }
-        logger.info(info)
+        logger.info(`accepted : ${info.accepted} messageId :${info.messageId}`)
     })
 }

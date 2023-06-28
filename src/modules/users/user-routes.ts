@@ -13,3 +13,6 @@ userRouter.patch(ENDPOINTS.VERIFY, [validateRequest.body(userSchemas.emailVerifc
 userRouter.post(ENDPOINTS.ADMIN_LOGIN, [validateRequest.body(userSchemas.adminLogin)], asyncHandler(userHandlers.adminLogin))
 userRouter.post(ENDPOINTS.LOGIN, [validateRequest.body(userSchemas.login)], asyncHandler(userHandlers.playerLogin))
 userRouter.put(ENDPOINTS.LOGOUT, [isAuthenticated], asyncHandler(userHandlers.logout))
+userRouter.get(ENDPOINTS.REFRESH_TOKEN,[validateRequest.body(userSchemas.refreshToken),isAuthenticated],asyncHandler(userHandlers.refreshToken))
+userRouter.get(ENDPOINTS.ID,[isAuthenticated,validateRequest.params(userSchemas.userId)], asyncHandler(userHandlers.getUserDetail))
+userRouter.put(ENDPOINTS.ID,[isAuthenticated,validateRequest.params(userSchemas.userId),validateRequest.body(userSchemas.updateUser)], asyncHandler(userHandlers.updateUser))

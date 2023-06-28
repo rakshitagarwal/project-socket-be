@@ -9,6 +9,7 @@ export const ENDPOINTS = {
     ADMIN_LOGIN: "/admin/login",
     LOGOUT: "/logout",
     RESET_PASSWORD: "/reset-password",
+    REFRESH_TOKEN: "/refresh-token",
     VERIFY: "/verify",
     ID: "/:id",
 };
@@ -37,7 +38,8 @@ export const MESSAGES = {
        INVALID_CREDENTIAL:"Invalid credentials",
        ADMIN_EXIST:"admin already exists",
        USER_VERIFIED:"user verified",
-       VERIFICATION_ERROR:"Please verify your email"
+       VERIFICATION_ERROR:"Please verify your email",
+       USER_FOUND:"user found successfully",
     },
     ROLE:{
         ROLE_EXIST:"admin already exists",
@@ -48,6 +50,9 @@ export const MESSAGES = {
     JWT:{
         JWT_EXPIRED:"jwt expired",
         JWT_NOT_ACTIVE:"jwt not active",
-        JWT_MALFORMED:"jwt malformed"
+        JWT_MALFORMED:"jwt malformed",
+        TOKEN_NOT_FOUND:"token not found",
+        TOKEN_NOT_EXPIRED:"token not expired",
+        DATA_FOUND:"data found",
     }
 }

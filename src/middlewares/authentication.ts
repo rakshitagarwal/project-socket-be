@@ -3,9 +3,7 @@ import { responseBuilder } from "../common/responses";
 import { verify, TokenExpiredError, JsonWebTokenError, NotBeforeError } from "jsonwebtoken"
 import tokenPersistanceQuery from "../modules/token-persistent/token-persistent-queries"
 import { MESSAGES } from "../common/constants";
-interface IToken {
-    id: string
-}
+import { Itoken } from "./typings/middleware-types"
 /**
  * verify JWT_TOKEN from headers
  * @param {Object} req
@@ -14,7 +12,42 @@ interface IToken {
  * @returns Object
  */
 
-const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    const userToken = await tokenPersistanceQuery.findPersistentToken({ refresh_token: req.body.refreshToken })    
+    if (!userToken) {
+        const response= responseBuilder.notFoundError(MESSAGES.JWT.TOKEN_NOT_FOUND)
+        return res.status(response.code).json(response);
+    }    
+    return verify(req.body.refreshToken as string, userToken.public_key as string, (err: unknown, _decode) => {
+        if (err instanceof TokenExpiredError) {
+            const response = responseBuilder.unauthorizedError(MESSAGES.JWT.JWT_EXPIRED, {}, err.stack);
+            return res.status(response.code).json(response);
+        }
+        return verify(userToken.access_token as string, userToken.public_key as string, (err: unknown, _decode) => {
+            if (err instanceof TokenExpiredError) {
+                next()
+                return
+            }
+            const response = responseBuilder.badRequestError(MESSAGES.JWT.TOKEN_NOT_EXPIRED);
+            return res.status(response.code).json(response);
+
+        })
+    })
+
+}
+
+/**
+ * verify JWT_TOKEN from headers
+ * @param {Object} req
+ * @param {Object} res
+ * @param {function} next
+ * @returns Object
+ */
+
+const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {    
+    if (req.body.refreshToken) {
+        return refreshToken(req, res, next)
+    }
     const response = responseBuilder.unauthorizedError()
     if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer')) {
         return res.status(response.code).json(response);
@@ -57,7 +90,7 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
                 .status(response.code)
                 .json(response);
         }
-        res.locals = decode as Record<string, string | number> & IToken;
+        res.locals = decode as Record<string, string | number> & Itoken;
         next()
         return
     })
