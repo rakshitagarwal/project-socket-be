@@ -19,7 +19,9 @@ class ProductCategoryHandler {
      * @param { Response } res response object
      */
     get = asyncHandler(async (req: Request, res: Response) => {
-        const response = await prodCategoryServices.get(req.params.id);
+        const response = await prodCategoryServices.get(req.params.id, {
+            title: req.query.title ? (req.query.title as string) : '',
+        });
         res.status(response.code).json(response);
     })
     /**

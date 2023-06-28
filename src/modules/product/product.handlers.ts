@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import productServices from './product.services';
 import asyncHandler from 'express-async-handler';
+import { IPagination } from './typings/product.type';
 
 class ProductHandler {
 
@@ -10,9 +11,8 @@ class ProductHandler {
      * @param { Response } res - response object
      */
     add = asyncHandler(async (req: Request, res: Response) => {
-        console.log("hhhhhhhhhhh", res.locals);
 
-        const response = await productServices.add(req.body);
+        const response = await productServices.add(req.body, res.locals.id as string);
         res.status(response.code).json(response);
     })
     /**
@@ -21,7 +21,13 @@ class ProductHandler {
      * @param { Response } res response object
      */
     get = asyncHandler(async (req: Request, res: Response) => {
-        const response = await productServices.get(req.params.id);
+
+
+        const response = await productServices.get(
+            req.params.id, {
+            title: req.query.title ? (req.query.title as string) : '',
+        }, req.query as unknown as IPagination);
+
         res.status(response.code).json(response);
     })
     /**

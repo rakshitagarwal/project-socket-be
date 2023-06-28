@@ -1,5 +1,5 @@
 import { db } from '../../config/db';
-import { addReqBody, Product, } from './typings/product.type';
+import { addReqBody, IPagination, Product, } from './typings/product.type';
 
 const productQueries = (() => {
     const addNew = async function (product: addReqBody) {
@@ -8,12 +8,12 @@ const productQueries = (() => {
                 title: product.title,
                 description: product.description,
                 product_category_id: product.product_category_id,
-                created_by: "123"
+                created_by: product.userId
             },
         }); return queryResult;
     };
     const getTitle = async function (title: string) {
-        const queryResult = await db.masterProductCategory.findFirst({
+        const queryResult = await db.product.findFirst({
             where: {
                 AND: {
                     title: {
@@ -32,7 +32,7 @@ const productQueries = (() => {
         return queryResult;
     };
     const getById = async function (id: string) {
-        const queryResult = await db.masterProductCategory.findFirst({
+        const queryResult = await db.product.findFirst({
             where: {
                 AND: {
                     id: id,
@@ -49,31 +49,55 @@ const productQueries = (() => {
         return queryResult ? queryResult : false
         // return queryResult;
     };
-    const getAll = async function () {
-        const queryResult = await db.masterProductCategory.findMany({
+    const getAllProduct = async function (
+        metainfo: IPagination,
+        where: { [key: string]: string | boolean | object }
+    ) {
+        const totalCount = await db.product.count({
             where: {
-                status: true,
+                title: {
+                    contains: where.title
+                        ? (where.title as string)
+                        : '',
+                    mode: 'insensitive',
+                },
+                is_deleted: false,
+            },
+        });
+        console.log(totalCount);
+        const queryResult = await db.product.findMany({
+            where: {
+                title: {
+                    contains: where.title
+                        ? (where.title as string)
+                        : '',
+                    mode: 'insensitive',
+                },
+                is_deleted: false,
             },
             select: {
                 id: true,
                 title: true,
+                description: true,
                 status: true,
-                created_at: false,
-                updated_at: false,
             },
             orderBy: { updated_at: 'desc' },
+            skip: parseInt(`${metainfo.pageNum}`) * parseInt(`${metainfo.recordLimit}`) || 0,
+            take: parseInt(`${metainfo.recordLimit}`) || 10,
         });
-        return { queryResult };
+        return {
+            queryResult,
+            totalCount,
+        };
     };
     const update = async function (updateInfo: Product) {
         if (updateInfo.id) {
-            const queryResult = await db.masterProductCategory.update({
+            const queryResult = await db.product.update({
                 where: {
                     id: updateInfo?.id,
                 },
                 data: {
                     ...updateInfo.changeDetails,
-                    // updated_by: updateInfo.updated_by,
                 },
                 select: {
                     id: true,
@@ -86,7 +110,7 @@ const productQueries = (() => {
         } return false;
     };
     const getProdCategoryById = async function (id: string) {
-        const queryResult = await db.masterProductCategory.findFirst({
+        const queryResult = await db.product.findFirst({
             where: {
                 AND: {
                     id: id,
@@ -106,7 +130,8 @@ const productQueries = (() => {
         addNew,
         getTitle,
         getById,
-        getAll,
+        // getAll,
+        getAllProduct,
         update,
         getProdCategoryById
     };

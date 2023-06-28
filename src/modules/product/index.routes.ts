@@ -7,7 +7,7 @@ export const productRoutes = AsyncRouter();
 
 productRoutes.post(
     ENDPOINTS.BASE,
-    // validateRequest.body(schema.ZNewAdd),
+    validateRequest.body(schema.ZNewAdd),
     productHandler.add
 );
 productRoutes.get(ENDPOINTS.BASE + ':id?',

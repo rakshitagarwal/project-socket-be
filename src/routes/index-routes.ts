@@ -6,7 +6,7 @@ import { userRoutes } from "../modules/users/user-routes";
 import { roleRoutes } from "../modules/roles/role-routes";
 import { productRoutes } from '../modules/product/index.routes';
 
-
+import isAuthenticated from '../middlewares/authentication';
 /**
  * Index Routes
  * @description versioning of the router to set-up for modules
@@ -15,7 +15,7 @@ export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRoutes)
 v1Router.use(ENDPOINTS.USERS, userRoutes)
 v1Router.use(ENDPOINTS.AUCTIONS, auctionRouter);
-v1Router.use(ENDPOINTS.PRODUCT_CATEGORY, productCategoryRoutes);
-v1Router.use(ENDPOINTS.PRODUCT,[], productRoutes);
+v1Router.use(ENDPOINTS.PRODUCT_CATEGORY, [isAuthenticated], productCategoryRoutes);
+v1Router.use(ENDPOINTS.PRODUCT, [isAuthenticated], productRoutes);
 
 

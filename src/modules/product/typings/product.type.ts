@@ -3,6 +3,7 @@ export type addReqBody = {
     title: string;
     description: string;
     product_category_id: string;
+    userId: string;
 };
 
 interface IProduct {
@@ -16,6 +17,11 @@ interface IProduct {
     updated_by?: string;
     created_at?: Date;
     updated_at?: Date;
+}
+
+export interface IPagination {
+    pageNum: number;
+    recordLimit: number;
 }
 
 export class Product implements IProduct {
