@@ -56,13 +56,46 @@ const logout = async (req: Request, res: Response) => {
     res.status(response.code).json(response)
 }
 
+/**
+ * @description handles specific user details
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
 
+const getUserDetail = async (req: Request, res: Response) => {
+    const response = await userService.getUser(req.params)
+    res.status(response.code).json(response)
+}
+
+/**
+ * @description handles  user update data
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
+const updateUser =async(req: Request, res: Response)=>{
+    const response = await userService.updateUser(req.params,req.body);
+    res.status(response.code).json(response)
+}
+
+/**
+ * @description handle user refresh token request
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
+
+const refreshToken = async(req: Request, res: Response)=>{
+    const response = await userService.refreshToken({ ...req.body, user_agent: req.useragent?.source, ip_address: req.ip })
+    res.status(response.code).json(response)
+}
 const userHandlers = {
     register,
     otpVerification,
     adminLogin,
     playerLogin,
-    logout
+    logout,
+    getUserDetail,
+    updateUser,
+    refreshToken
 }
 
 export default userHandlers

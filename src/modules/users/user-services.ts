@@ -1,4 +1,4 @@
-import { Iuser, IotpVerification, Ilogin, IplayerLogin, ItokenQuery } from "./typings/user-types"
+import { Iuser, IotpVerification, Ilogin, IplayerLogin, ItokenQuery, IuserQuery, IupdateUser, IrefreshToken } from "./typings/user-types"
 import userQueries from "./user-queries"
 import bcrypt from "bcrypt"
 import { responseBuilder } from "../../common/responses"
@@ -12,8 +12,8 @@ import { generateAccessToken } from "../../common/helper"
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries"
 
 /**
- * @param user - admin or player registration's request body
  * @description register user into databse
+ * @param body - admin or player registration's request body
  */
 
 const register = async (body: Iuser) => {
@@ -39,7 +39,7 @@ const register = async (body: Iuser) => {
 
 /**
  * @description verfify the email address or login player with verification
- * @param user user's request object
+ * @param body user's request object
  */
 
 const otpVerifcation = async (body: IotpVerification) => {
@@ -55,10 +55,10 @@ const otpVerifcation = async (body: IotpVerification) => {
         if (!isUser.is_verified) {
             return responseBuilder.badRequestError(MESSAGES.USERS.VERIFICATION_ERROR)
         }
-        const accessToken = generateAccessToken({ id: isUser.id })
+        const tokenInfo = generateAccessToken({ id: isUser.id })
         await otpQuery.deleteOtp({ id: isOtp.id })
-        await tokenPersistanceQuery.createTokenPersistence({ ...accessToken, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
-        return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: accessToken.access_token, refreshToken: accessToken.refresh_token })
+        await tokenPersistanceQuery.createTokenPersistence({ ...tokenInfo, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
+        return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: tokenInfo.access_token, refreshToken: tokenInfo.refresh_token })
     } else {
         await otpQuery.deleteOtp({ id: isOtp.id })
         await userQueries.updateUser({ id: isUser.id }, { is_verified: true })
@@ -67,7 +67,7 @@ const otpVerifcation = async (body: IotpVerification) => {
 }
 /**
  * @description login admin 
- * @param user user's request object
+ * @param body user's request object
  */
 
 const adminLogin = async (body: Ilogin) => {
@@ -80,14 +80,14 @@ const adminLogin = async (body: Ilogin) => {
         return responseBuilder.notFoundError(MESSAGES.USERS.INVALID_CREDENTIAL)
     }
     delete (isUser as Partial<Pick<Iuser, "password">>).password;
-    const accessToken = generateAccessToken({ id: isUser.id })
-    await tokenPersistanceQuery.createTokenPersistence({ ...accessToken, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
-    return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: accessToken.access_token, refreshToken: accessToken.refresh_token })
+    const tokenInfo = generateAccessToken({ id: isUser.id })
+    await tokenPersistanceQuery.createTokenPersistence({ ...tokenInfo, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: tokenInfo.access_token, refreshToken: tokenInfo.refresh_token })
 }
 
 /**
  * @description login playes and sent mail on current user
- * @param user user's request object
+ * @param body user's request object
  */
 
 const playerLogin = async (body: IplayerLogin) => {
@@ -105,7 +105,7 @@ const playerLogin = async (body: IplayerLogin) => {
 
 /**
  * @description - user logout for user.
- * @param - user access token
+ * @param body - user access token
  */
 const logout = async (body: ItokenQuery) => {
     const istoken = await tokenPersistanceQuery.deletePersistentToken({ access_token: body.access_token })
@@ -115,12 +115,60 @@ const logout = async (body: ItokenQuery) => {
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGOUT)
 }
 
+
+/**
+ * @description fetch user into database
+ * @param param - param containing user id
+ */
+const getUser = async (param: IuserQuery) => {
+    const user = await userQueries.fetchUser({ id: param.id })
+    if (!user) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    delete (user as Partial<Pick<Iuser, "password">>).password;
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, user)
+}
+
+/**
+ * @param parmas -param containing user id
+ * @param body - user's request body
+ * @description update user into databse
+ */
+
+const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
+    const user = await userQueries.updateUser({ id: parmas.id }, body);
+    if (!user) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND)
+}
+
+/**
+ * @description fetch the access token with refresh token
+ * @param body - body contain req access token information
+ */
+const refreshToken = async (body: IrefreshToken) => {
+    const isToken = await tokenPersistanceQuery.findPersistentToken({ refresh_token: body.refresh_token })
+    if (!isToken) {
+        return responseBuilder.notFoundError(MESSAGES.JWT.TOKEN_NOT_FOUND)
+    }
+    const tokenInfo = generateAccessToken({ id: isToken.user_id })
+    await tokenPersistanceQuery.deletePersistentToken({ refresh_token: body.refresh_token })
+    await tokenPersistanceQuery.createTokenPersistence({ ...tokenInfo, user_agent: body.user_agent, user_id: isToken.user_id, ip_address: body.ip_address })
+    return responseBuilder.okSuccess(MESSAGES.JWT.DATA_FOUND, { accessToken: tokenInfo.access_token, refreshToken: tokenInfo.refresh_token })
+
+}
+
+
 const userService = {
     register,
     otpVerifcation,
     adminLogin,
     playerLogin,
-    logout
+    logout,
+    getUser,
+    updateUser,
+    refreshToken
 }
 
 export default userService

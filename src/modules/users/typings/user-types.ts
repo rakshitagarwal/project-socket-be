@@ -8,6 +8,7 @@ export interface Iuser {
     status: boolean
     password?: string
 }
+
 export interface IuserQuery {
     email?: string
     id?: string
@@ -18,7 +19,7 @@ export interface Ilogin {
     ip_address: string
     user_agent: string
 }
-export interface IplayerLogin{
+export interface IplayerLogin {
     email: string
 }
 
@@ -38,6 +39,19 @@ export interface IotpVerification {
     user_agent: string
 }
 
-export interface ItokenQuery{
+export interface ItokenQuery {
     access_token?: string
+}
+
+export interface IupdateUser {
+    first_name?: string
+    last_name?: string
+    country?: string
+    mobile_id?: string
+}
+
+export interface IrefreshToken{
+    refresh_token: string
+    ip_address: string
+    user_agent: string
 }
