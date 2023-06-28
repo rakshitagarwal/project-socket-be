@@ -44,5 +44,10 @@ export const MESSAGES = {
         FOUND_ROLE:"role found successfully",
         ROLE_ADDED:"role added successfully",
         ROlE_NOT_EXIST:"role not found"
+    },
+    JWT:{
+        JWT_EXPIRED:"jwt expired",
+        JWT_NOT_ACTIVE:"jwt not active",
+        JWT_MALFORMED:"jwt malformed"
     }
 }
