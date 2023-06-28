@@ -7,5 +7,5 @@ pipelines:
                   name: Push Docker Image
                   script:
                       - docker login -u $docker_username -p $docker_password
-                      - docker build -t globalvox/bigdeal-admin:$backend_tag .
-                      - docker push globalvox/bigdeal-admin:$backend_tag
+                      - docker build -t globalvox/bigdeal:$backend_tag .
+                      - docker push globalvox/bigdeal:$backend_tag
