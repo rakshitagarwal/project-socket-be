@@ -1,5 +1,5 @@
 import { responseBuilder, sanitize } from "../../common/responses";
-import { addReqBody, ProductCategory } from './typings/prodcategory.type';
+import { addReqBody, ProductCategory } from './typings/product-category.type';
 import productCategoryQueries from './product-category.queries';
 import { productCategoryMessage } from '../../common/constants';
 const prodCategoryServices = (() => {

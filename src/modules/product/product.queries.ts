@@ -1,11 +1,14 @@
 import { db } from '../../config/db';
-import { addReqBody, ProductCategory } from './typings/prodcategory.type';
+import { addReqBody, Product, } from './typings/product.type';
 
-const prodCategoryQueries = (() => {
-    const addNew = async function (prodCategory: addReqBody) {
-        const queryResult = await db.masterProductCategory.create({
+const productQueries = (() => {
+    const addNew = async function (product: addReqBody) {
+        const queryResult = await db.product.create({
             data: {
-                title: prodCategory.title
+                title: product.title,
+                description: product.description,
+                product_category_id: product.product_category_id,
+                created_by: "123"
             },
         }); return queryResult;
     };
@@ -62,7 +65,7 @@ const prodCategoryQueries = (() => {
         });
         return { queryResult };
     };
-    const update = async function (updateInfo: ProductCategory) {
+    const update = async function (updateInfo: Product) {
         if (updateInfo.id) {
             const queryResult = await db.masterProductCategory.update({
                 where: {
@@ -109,4 +112,4 @@ const prodCategoryQueries = (() => {
     };
 })();
 
-export default prodCategoryQueries;
+export default productQueries;

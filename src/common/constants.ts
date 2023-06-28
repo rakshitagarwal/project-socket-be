@@ -20,3 +20,18 @@ export const productCategoryMessage = {
         SUCCESS: 'product category update success',
     },
 }
+export const productMessage = {
+
+    ADD: {
+        SUCCESS: 'product add success',
+        ALREADY_EXIST: 'product title already exist',
+    },
+    GET: {
+        REQUESTED: 'get product requested!',
+        ALL: 'get all product !',
+        NOT_FOUND: 'product id not found',
+    },
+    UPDATE: {
+        SUCCESS: 'product update success',
+    },
+}

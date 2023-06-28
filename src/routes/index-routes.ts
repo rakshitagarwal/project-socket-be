@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ENDPOINTS } from "../common/constants";
 import { auctionRouter } from "../modules/auction/auction-routes";
-import { productCategoryRoutes } from '../modules/produc-categories/index.routes';
+import { productCategoryRoutes } from '../modules/product-categories/index.routes';
 
 /**
  * Index Routes
