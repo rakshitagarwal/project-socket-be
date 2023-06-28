@@ -1,24 +1,26 @@
 import z from "zod";
 
-const IAuctionCategory = z.object({
+const UUID = z
+    .string({
+        required_error: "id is required in the auction category!",
+        invalid_type_error: "id should be string!",
+    })
+    .uuid({
+        message: "uuid is not proper!",
+    });
+
+const ZAuctionCategory = z.object({
     title: z.string({
         required_error: "title is required!",
         invalid_type_error: "title should be string!",
     }),
 });
 
-const IVerifyUUID = z.object({
-    id: z
-        .string({
-            required_error: "id is required in the auction category!",
-            invalid_type_error: "id should be string!",
-        })
-        .uuid({
-            message: "uuid is not proper!",
-        }),
+const ZVerifyUUID = z.object({
+    id: UUID,
 });
 
-const IPutAuctionCategory = z.object({
+const ZPutAuctionCategory = z.object({
     title: z
         .string({
             required_error: "title is required!",
@@ -28,13 +30,25 @@ const IPutAuctionCategory = z.object({
     status: z
         .boolean({
             required_error: "status is required!",
-            invalid_type_error: "title should be boolean!",
+            invalid_type_error: "status should be boolean!",
         })
         .optional(),
 });
 
+const ZDelete = z.object({
+    ids: z
+        .array(UUID, {
+            required_error: "ids is required!",
+            invalid_type_error: "ids should be string!",
+        })
+        .min(1, {
+            message: "minimum one id is required!",
+        }),
+});
+
 export const auctionCategorySchemas = {
-    IAuctionCategory,
-    IPutAuctionCategory,
-    IVerifyUUID,
+    ZAuctionCategory,
+    ZPutAuctionCategory,
+    ZVerifyUUID,
+    ZDelete,
 };

@@ -6,3 +6,7 @@ export interface IPutAuctionCategory {
     title: string;
     status: boolean;
 }
+
+export interface IDeleteIds {
+    ids: [string];
+}
