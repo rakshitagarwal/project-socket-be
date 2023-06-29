@@ -52,9 +52,7 @@ const ZSearch = z.object({
             required_error: "ids is required!",
             invalid_type_error: "ids should be string!",
         })
-        .min(1, {
-            message: "minimum 1 id is required!",
-        }),
+        .default(""),
 });
 
 export const auctionCategorySchemas = {
