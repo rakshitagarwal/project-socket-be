@@ -50,3 +50,6 @@ Thumbs.db
 
 # Environment variables
 .env
+
+Dockerfile
+bitbucket-pipelines.yml

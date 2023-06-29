@@ -17,19 +17,20 @@ import { hashPassword } from "../../common/helper"
  */
 
 const register = async (body: Iuser) => {
-    const isRole = await roleQueries.fetchRole({ id: body.role_id })
+    const { role, ...payload } = body
+    const isRole = await roleQueries.fetchRole({ title: role })
     if ((isRole?.title)?.toLocaleLowerCase() == "admin") {
         return responseBuilder.conflictError(MESSAGES.USERS.ADMIN_EXIST)
     }
     if (!isRole) {
         return responseBuilder.notFoundError(MESSAGES.ROLE.ROlE_NOT_EXIST)
     }
-    const isUser = await userQueries.fetchUser({ email: body.email })
+    const isUser = await userQueries.fetchUser({ email: payload.email })
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST)
     }
     await prismaTransaction(async (prisma: PrismaClient) => {
-        const user = await prisma.user.create({ data: body })
+        const user = await prisma.user.create({ data: { ...payload, role_id: isRole.id } })
         const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
         await prisma.userOTP.create({ data: { user_id: user.id, otp: Number(passcode), otp_type: OTP_TYPE.EMAIL_VERIFICATION } })
         eventService.emit('send-user-mail', { email: user.email, otp: passcode, user_name: `${user.first_name} ${user.last_name}`, subject: "Email verification", template: TEMPLATE.EMAIL_VERIFICATION })

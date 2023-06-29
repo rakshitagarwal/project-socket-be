@@ -1,10 +1,6 @@
 {
     "root": true,
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
-    ],
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -20,21 +16,7 @@
             "error",
             { "argsIgnorePattern": "^_" }
         ],
-        "node/no-unsupported-features/es-syntax": "off",
-        "node/no-missing-import": [
-            "error",
-            {
-                "allowModules": ["express-serve-static-core"],
-                "resolvePaths": ["src"],
-                "tryExtensions": [".ts", ".js", ".json"]
-            }
-        ],
-        "node/no-unpublished-import": [
-            "error",
-            {
-                "allowModules": ["handlebars", "supertest"]
-            }
-        ]
+        "node/no-unsupported-features/es-syntax": "off"
     },
     "ignorePatterns": ["dist"]
 }

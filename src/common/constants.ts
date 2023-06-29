@@ -1,7 +1,8 @@
 export const ENDPOINTS = {
+    BASE: "/",
     DOCS: "/docs",
     AUCTIONS: "/auction",
-    BASE: "/",
+    AUCTION_CATEGORY: "/auction-category",
     ROLE: "/role",
     USERS: "/user",
     LOGIN: "/login",
@@ -16,13 +17,22 @@ export const ENDPOINTS = {
     ID: "/:id",
 };
 
+export const AUCTION_CATEGORY_MESSAGES = {
+    ADD: "auctionCategory created!",
+    NOT_EXISTS: "auctionCategory id not found!",
+    UPDATE: "auctionCategory updated!",
+    NOT_FOUND: "auctionCategory not found!",
+    GET_SINGLE: "auctionCategory found!",
+    DELETE: "auctionCategory deleted!",
+};
+
 export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP:"login_otp.html",
     FORGET_PASSWORD: "forget_password.html"
 }
 
-export const OTP_TYPE={
+export const OTP_TYPE = {
     EMAIL_VERIFICATION: "email_verification",
     LOGIN_TYPE: "login_type",
     FORGET_PASSWORD: "forget_password"
@@ -30,8 +40,8 @@ export const OTP_TYPE={
 }
 
 export const MESSAGES = {
-    OTP:{
-        INVALID_OTP: "Invalid otp"
+    OTP: {
+        INVALID_OTP: "Invalid otp",
     },
     USERS: {
        CHECK_MAIL:"Please check your email",
