@@ -76,7 +76,9 @@ export const MESSAGES = {
         MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
         MEDIA_SINGLE_INVALID: "media file more than 1",
         MEDIA_FILES_INVALID: "media files invalid",
-        MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed"
+        MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed",
+        MEDIA_MIN_ID: "atleast one media id should be provided",
+        MEDIA_NOT_FOUND: "media id not found or not valid"
     },
     ALL: {
         MULTER_ERROR: "multer error"
