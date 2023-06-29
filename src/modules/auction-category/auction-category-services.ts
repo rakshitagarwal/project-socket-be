@@ -49,15 +49,18 @@ const get = async (id: string) => {
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    return responseBuilder.okSuccess(AUCTION_CATEGORY_MESSAGES.GET_SINGLE);
+    return responseBuilder.okSuccess(
+        AUCTION_CATEGORY_MESSAGES.GET_SINGLE,
+        isExists
+    );
 };
 
 /**
  * @description - getting the details of the auction category
  * @returns response build which contains {code, message, data, metadata}
  */
-const getAll = async () => {
-    const allDetails = await auctionCatgoryQueries.getAll();
+const getAll = async (search: string) => {
+    const allDetails = await auctionCatgoryQueries.getAll(search);
     return responseBuilder.okSuccess(
         AUCTION_CATEGORY_MESSAGES.GET_SINGLE,
         allDetails
@@ -71,7 +74,10 @@ const getAll = async () => {
  */
 const removeCategories = async (data: IDeleteIds) => {
     const IsExists = await auctionCatgoryQueries.isIdExists(data);
-    if (!IsExists.length) return responseBuilder.notFoundError();
+    if (!IsExists.length)
+        return responseBuilder.notFoundError(
+            AUCTION_CATEGORY_MESSAGES.NOT_FOUND
+        );
     const removeDetail = await auctionCatgoryQueries.removeAll(data);
     if (removeDetail.count) return responseBuilder.okSuccess();
     return responseBuilder.internalserverError();
