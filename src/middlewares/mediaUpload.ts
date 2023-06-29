@@ -31,10 +31,10 @@ export const storeMultipleMedia = (req: Request, res: Response, next: NextFuncti
             return res.status(500).json({ message: MESSAGES.ALL.MULTER_ERROR });
         }
 
-        const files = req.files || [];
+        const files = req.files;
         const test = JSON.parse(JSON.stringify(files));
         const testMapped = test.map((_: string, i: number) => i);
-        if (!(files.length as number)) {
+        if (!(files?.length as number)) {
             logger.error(MESSAGES.MEDIA.MEDIA_FILES_INVALID);
             return res.status(400).json({message: MESSAGES.MEDIA.MEDIA_FILES_INVALID,});
         }
