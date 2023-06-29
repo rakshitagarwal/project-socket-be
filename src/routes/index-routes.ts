@@ -4,7 +4,7 @@ import { auctionRouter } from "../modules/auction/auction-routes";
 import { userRoutes } from "../modules/users/user-routes";
 import { roleRoutes } from "../modules/roles/role-routes";
 import { mediaRouter } from "../modules/media/media-routes";
-
+import isAuthenticated from "../middlewares/authentication";
 /**
  * Index Routes
  * @description versioning of the router to set-up for modules
@@ -13,4 +13,4 @@ export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRoutes)
 v1Router.use(ENDPOINTS.USERS, userRoutes)
 v1Router.use(ENDPOINTS.AUCTIONS, auctionRouter);
-v1Router.use(ENDPOINTS.MEDIA, mediaRouter);
+v1Router.use(ENDPOINTS.MEDIA, isAuthenticated ,mediaRouter);

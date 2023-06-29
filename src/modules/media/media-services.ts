@@ -10,10 +10,10 @@ export const mediaServiceProvider = (() => {
  * @param {IFileMetaInfo} listOfFilesMetaData - The media file is passed from body using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const uploadMedia = async function (listOfFilesMetaData: IFileMetaInfo) {      
+const uploadMedia = async function (listOfFilesMetaData: IFileMetaInfo, userId: string) {      
     if (listOfFilesMetaData === undefined) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);          
     const fileData = JSON.parse(JSON.stringify(listOfFilesMetaData));
-
+    
     const mediaResult = await mediaQueries.addMediaInfo({
         filename: listOfFilesMetaData.filename,
         type: (fileData?.mimetype as string).includes("image")? "image": "video",
@@ -21,22 +21,22 @@ const uploadMedia = async function (listOfFilesMetaData: IFileMetaInfo) {
         tag: "media",
         mime_type: fileData.mimetype,
         size: listOfFilesMetaData.size,
-    });
+    }, userId);
     return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
 };
 
 /**
- * @description uploadMedia is used to add a media in local storage and assign id to it .
- * @param {IFileMetaInfo} listOfFilesMetaData - The media file is passed from body using this variable
+ * @description uploadMultipleMedia is used to add multiple media in local storage and assign ids to them.
+ * @param {IFileMetaInfo} listOfFilesMetaData[] - The media files are passed using this variable to queries
  * @returns {object} - the response object using responseBuilder.
  */
-const uploadMultipleMedia = async function (listOfFilesMetaData: IFileMetaInfo[]) {          
+const uploadMultipleMedia = async function (listOfFilesMetaData: IFileMetaInfo[],  userId: string) {          
     if (listOfFilesMetaData === undefined) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
     const fileData = JSON.parse(JSON.stringify(listOfFilesMetaData));
     const data = [];
     for(let i = 0; i < listOfFilesMetaData.length; i++){
         const filename= listOfFilesMetaData[i]?.filename;
-        const type= (fileData[i]?.mimetype as string).includes("image")? "image": "video";
+        const type= "image";
         const local_path= listOfFilesMetaData[i]?.path;
         const tag= "media";
         const mime_type= fileData[i]?.mimetype;
@@ -44,7 +44,7 @@ const uploadMultipleMedia = async function (listOfFilesMetaData: IFileMetaInfo[]
         const oneElement = {filename, type, local_path, tag, mime_type, size };
         data.push(oneElement);
     }
-    const mediaResult = await mediaQueries.addMultipleMedia(data);
+    const mediaResult = await mediaQueries.addMultipleMedia(data, userId);
     return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult.data);
 };
 

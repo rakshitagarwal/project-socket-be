@@ -2,7 +2,7 @@ import { db } from "../../config/db";
 import { IFileMetaInfo } from "./typings/media.type";
 
 const mediaQueries = (() => {
-    const addMediaInfo = async function (videoData: IFileMetaInfo) {
+    const addMediaInfo = async function (videoData: IFileMetaInfo, userId: string) {        
         const queryResult = await db.media.create({
             data: {
                 filename: videoData.filename as string,
@@ -11,7 +11,7 @@ const mediaQueries = (() => {
                 local_path: videoData.local_path as string,
                 tag: videoData.tag as string,
                 mime_type: videoData.mime_type as string,
-                created_by: "bc30c4fb-eee7-4cfd-a69b-8ac166e5f3b3",
+                created_by: userId as string,
             },
             select: {
                 id: true,
@@ -21,12 +21,14 @@ const mediaQueries = (() => {
                 local_path: true,
                 tag: true,
                 mime_type: true,
+                status: true,
+                created_by: true,
             },
         });
         return queryResult;
     };
 
-    const addMultipleMedia = async function (videoData: IFileMetaInfo[]) {
+    const addMultipleMedia = async function (videoData: IFileMetaInfo[], userId: string) {
         const data = [];
          for(let i = 0; i < videoData.length; i++) {
             const filename= videoData[i]?.filename as string;
@@ -35,7 +37,7 @@ const mediaQueries = (() => {
             const local_path= videoData[i]?.local_path as string;
             const tag= videoData[i]?.tag as string;
             const mime_type= videoData[i]?.mime_type as string;
-            const created_by= "bc30c4fb-eee7-4cfd-a69b-8ac166e5f3b3";
+            const created_by= userId as string;
             const dataElement = {filename, type, local_path, tag, mime_type, size, created_by };
             data.push(dataElement);
          }
@@ -55,6 +57,7 @@ const mediaQueries = (() => {
                 tag: true,
                 mime_type: true,
                 status: true,
+                created_by: true,
             },
         });
         return queryResult;
@@ -72,6 +75,7 @@ const mediaQueries = (() => {
                 tag: true,
                 mime_type: true,
                 status: true,
+                created_by: true,
             },
         });
         return queryResult;
