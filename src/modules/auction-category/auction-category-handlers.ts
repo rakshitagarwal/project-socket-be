@@ -38,13 +38,15 @@ const get = async (req: Request, res: Response) => {
 };
 
 /**
- * @param {Request} _req - Request Object
+ * @param {Request} req - Request Object
  * @param {Response} res - Response Object
  * @description - get auction catgories with all detials
  * @return {Promise<Response>}
  */
-const getAll = async (_req: Request, res: Response) => {
-    const response = await auctionCatgoryService.getAll();
+const getAll = async (req: Request, res: Response) => {
+    const response = await auctionCatgoryService.getAll(
+        req.query.search as string
+    );
     res.status(response.code).json(response);
 };
 
@@ -57,6 +59,7 @@ const getAll = async (_req: Request, res: Response) => {
  */
 const removeCategories = async (req: Request, res: Response) => {
     const response = await auctionCatgoryService.removeCategories(req.body);
+    console.log(req.body);
     res.status(response.code).json(response);
 };
 

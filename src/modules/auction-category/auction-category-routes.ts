@@ -21,18 +21,19 @@ auctionCategoryRouter.put(
 );
 
 auctionCategoryRouter.get(
+    ENDPOINTS.BASE + "all",
+    validateRequest.query(auctionCategorySchemas.ZSearch),
+    handleAsync(auctionCategoryHandler.getAll)
+);
+
+auctionCategoryRouter.get(
     ENDPOINTS.BASE + ":id?",
     validateRequest.params(auctionCategorySchemas.ZVerifyUUID),
     handleAsync(auctionCategoryHandler.get)
 );
 
-auctionCategoryRouter.get(
-    ENDPOINTS.BASE,
-    handleAsync(auctionCategoryHandler.getAll)
-);
-
 auctionCategoryRouter.delete(
-    ENDPOINTS.BASE + ":id",
+    ENDPOINTS.BASE + ":id?",
     validateRequest.body(auctionCategorySchemas.ZDelete),
     handleAsync(auctionCategoryHandler.removeCategories)
 );

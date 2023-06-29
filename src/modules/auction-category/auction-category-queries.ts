@@ -27,8 +27,16 @@ const create = async (data: IAuctionCategory) => {
 const IsExistsActive = async (id: string) => {
     const query = await db.masterAuctionCategory.findFirst({
         where: {
-            id,
-            is_deleted: false,
+            AND: {
+                id,
+                is_deleted: false,
+            },
+        },
+        select: {
+            id: true,
+            title: true,
+            status: true,
+            is_deleted: true,
         },
     });
     return query;
@@ -51,8 +59,15 @@ const update = async (id: string, data: IPutAuctionCategory) => {
  * @description - get {id, title} of the auction category
  * @returns - sending the base details of the auction category
  */
-const getAll = async () => {
+const getAll = async (search: string) => {
     const query = await db.masterAuctionCategory.findMany({
+        where: {
+            title: {
+                mode: "insensitive",
+                contains: search ? search : "",
+            },
+            is_deleted: false,
+        },
         select: {
             id: true,
             title: true,
@@ -64,22 +79,42 @@ const getAll = async () => {
     return query;
 };
 
+/**
+ * Remove all data from the auction category
+ * @param {IDeleteIds} data - multiple ids of the auction category
+ * @returns - count of deleted records
+ */
 const removeAll = async (data: IDeleteIds) => {
-    const query = await db.masterAuctionCategory.deleteMany({
+    const query = await db.masterAuctionCategory.updateMany({
         where: {
-            id: {
-                in: data.ids,
+            AND: {
+                id: {
+                    in: data.ids,
+                },
+                is_deleted: false,
             },
+        },
+        data: {
+            is_deleted: true,
         },
     });
     return query;
 };
 
+/**
+ * verify if multiple Id exists or not
+ * @param {IDeleteIds} data - of array which contain string
+ * @returns queries for the sending the multiple data in masterAuctionCategory
+ */
 const isIdExists = async (data: IDeleteIds) => {
+    console.log(data.ids);
     const query = await db.masterAuctionCategory.findMany({
         where: {
-            id: {
-                in: data.ids,
+            AND: {
+                id: {
+                    in: data.ids,
+                },
+                is_deleted: false,
             },
         },
     });

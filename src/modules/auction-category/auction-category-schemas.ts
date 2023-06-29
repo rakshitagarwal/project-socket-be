@@ -42,7 +42,18 @@ const ZDelete = z.object({
             invalid_type_error: "ids should be string!",
         })
         .min(1, {
-            message: "minimum one id is required!",
+            message: "minimum 1 Id is required!",
+        }),
+});
+
+const ZSearch = z.object({
+    search: z
+        .string({
+            required_error: "ids is required!",
+            invalid_type_error: "ids should be string!",
+        })
+        .min(1, {
+            message: "minimum 1 id is required!",
         }),
 });
 
@@ -51,4 +62,5 @@ export const auctionCategorySchemas = {
     ZPutAuctionCategory,
     ZVerifyUUID,
     ZDelete,
+    ZSearch,
 };
