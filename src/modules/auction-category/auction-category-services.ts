@@ -28,7 +28,7 @@ const add = async (auctionCategory: IAuctionCategory) => {
 const update = async (id: string, auctionCategory: IPutAuctionCategory) => {
     const isExists = await auctionCatgoryQueries.IsExistsActive(id);
     if (!isExists?.id) {
-        return responseBuilder.badRequestError(
+        return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_EXISTS
         );
     }
