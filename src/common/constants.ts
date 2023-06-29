@@ -47,6 +47,7 @@ export const MESSAGES = {
         ADMIN_EXIST: "admin already exists",
         USER_VERIFIED: "user verified",
         VERIFICATION_ERROR: "Please verify your email",
+        SIGNUP:"user register successfully!"
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
