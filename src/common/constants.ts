@@ -12,10 +12,7 @@ export const ENDPOINTS = {
     RESET_PASSWORD: "/reset-password",
     VERIFY: "/verify",
     ID: "/:id",
-    MEDIA: "/media/",
-    UPLOAD: "/upload/",
-    UPDATE: "/update/",
-    DELETE: "/delete/",
+    MEDIA: "/media",
 };
 
 export const ALLOWED_MIMETYPES = [
