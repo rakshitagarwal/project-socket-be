@@ -6,7 +6,14 @@
         "description": "API for BigDeal",
         "version": "1.0.0"
     },
-    "tags": [{ "name": "users", "description": "User Operations" }],
+    "tags": [
+        { "name": "users", "description": "User's Operation" },
+        { "name": "auctions", "description": "Auction's Operation" },
+        {
+            "name": "auction-category",
+            "description": "auction-category Operation"
+        }
+    ],
     "servers": [
         {
             "url": "{basePath}",
@@ -14,5 +21,6 @@
             "variables": { "basePath": { "default": "/v1", "enum": ["/v1"] } }
         }
     ],
+    "components": {},
     "paths": {}
 }

@@ -13,11 +13,11 @@ const validateRequest = (() => {
     ) => {
         const parsedBody = await schema.safeParseAsync(data);
         if (!parsedBody.success) {
-            const response = responseBuilder.badRequestError(
-                parsedBody.error.message,
-                {},
-                parsedBody.error.issues
-            );
+            const response = responseBuilder
+                .error(400)
+                .message("Bad Request")
+                .metaData(parsedBody.error)
+                .build();
 
             res.status(response.code).json(response);
             return;
