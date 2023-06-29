@@ -1,7 +1,7 @@
 
 import { Request, Response } from "express"
 import userService from "./user-services"
-import {IuserPagination} from "./typings/user-types"
+import { IuserPagination } from "./typings/user-types"
 /**
  * @description handles admin  or player registration
  * @param req { Request } - admin  or player's request object
@@ -113,7 +113,7 @@ const forgetPassword = async (req: Request, res: Response) => {
 
 /**
  * @description this API is used to update a user's password
- * @param req { Request } -  request object
+ * @param req { Request } - request object
  * @param res { Response }
  */
 
@@ -122,10 +122,22 @@ const updatePassword = async (req: Request, res: Response) => {
     res.status(response.code).json(response)
 }
 
+/**
+ * @description This API set a password for admin 
+ * @param req { Request } - request object
+ * @param res { Response }
+ */
+
 const resetPassword = async (req: Request, res: Response) => {
     const response = await userService.resetPassword(req.body)
     res.status(response.code).json(response)
 }
+
+/**
+ * @description This API fetch all player records
+ * @param req { Request } - request object
+ * @param res { Response }
+ */
 
 const getAllusers = async (req: Request, res: Response) => {
     const response = await userService.fetchAllUsers(req.query as unknown as IuserPagination)

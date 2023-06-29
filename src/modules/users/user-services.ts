@@ -140,7 +140,7 @@ const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
     if (!user) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
     }
-    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND)
+    return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER)
 }
 
 /**
@@ -165,12 +165,17 @@ const refreshToken = async (body: IrefreshToken) => {
  */
 const deleteUser = async (param: IuserQuery) => {
     const user = await userQueries.updateUser({ id: param.id }, { is_deleted: true })
-    if (!user) {
+    if (!user || user.is_deleted) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
     }
-    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, user)
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_DELETED)
 }
 
+/**
+ * @description - this service is used to sent otp mail for forget password
+ * @param body - this body contains the player email
+ * @returns 
+ */
 const forgetPassword = async (body: IplayerLogin) => {
     const isUser = await userQueries.fetchUser({ email: body.email })
     if (!isUser) {
@@ -184,6 +189,11 @@ const forgetPassword = async (body: IplayerLogin) => {
     return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL)
 }
 
+/**
+ * @description - this service is used to update a user's password
+ * @param body - this body contains the email otp and newPassword
+ * @returns 
+ */
 const updatePassword = async (body: IupdatePassword) => {
     const isUser = await userQueries.fetchUser({ email: body.email })
     if (!isUser) {
@@ -197,7 +207,11 @@ const updatePassword = async (body: IupdatePassword) => {
     await userQueries.updateUser({ id: isUser.id }, { password: password })
     return responseBuilder.okSuccess(MESSAGES.USERS.PASSWORD_UPDATED)
 }
-
+/**
+ * @description - this service is used for reset user password
+ * @param body - this body contains the old password  new password and email address
+ * @returns 
+ */
 const resetPassword = async (body: IresetPassword) => {
     const isUser = await userQueries.fetchUser({ email: body.email })
     if (!isUser) {
@@ -211,10 +225,14 @@ const resetPassword = async (body: IresetPassword) => {
     await userQueries.updateUser({ id: isUser.id }, { password })
     return responseBuilder.okSuccess(MESSAGES.USERS.PASSWORD_UPDATED)
 }
+/**
+ * @description This API fetch all player records
+ * @param {object} query  - query contain the page limit and search fields
+ */
 const fetchAllUsers = async (query: IuserPagination) => {
     const filter = []
-    const page = parseInt(query.page)
-    const limit = parseInt(query.limit)
+    const page = parseInt(query.page)||0
+    const limit = parseInt(query.limit)||10
     if (query.search) {
         filter.push(
             { first_name: { contains: query.search, mode: 'insensitive' } },

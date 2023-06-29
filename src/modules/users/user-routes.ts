@@ -44,6 +44,12 @@ userRouter.get(
     asyncHandler(userHandlers.getUserDetail)
 );
 userRouter.put(
+    ENDPOINTS.RESET_PASSWORD,
+    [isAuthenticated, validateRequest.body(userSchemas.resetPassword)],
+    asyncHandler(userHandlers.resetPassword)
+);
+
+userRouter.put(
     ENDPOINTS.ID,
     [
         isAuthenticated,
@@ -59,7 +65,7 @@ userRouter.delete(
     asyncHandler(userHandlers.removeUser)
 );
 
-userRouter.put(
+userRouter.post(
     ENDPOINTS.FORGET_PASSWORD,
     [validateRequest.body(userSchemas.login)],
     asyncHandler(userHandlers.forgetPassword)
@@ -70,11 +76,7 @@ userRouter.patch(
     [validateRequest.body(userSchemas.updatePassword)],
     asyncHandler(userHandlers.updatePassword)
 );
-userRouter.put(
-    ENDPOINTS.RESET_PASSWORD,
-    [isAuthenticated, validateRequest.body(userSchemas.resetPassword)],
-    asyncHandler(userHandlers.resetPassword)
-);
+
 
 userRouter.get(
     ENDPOINTS.BASE,

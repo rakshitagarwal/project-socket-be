@@ -9,7 +9,7 @@ export const ENDPOINTS = {
     ADMIN_LOGIN: "/admin/login",
     LOGOUT: "/logout",
     RESET_PASSWORD: "/reset-password",
-    FORGET_PASSWORD: "/forgot-password",
+    FORGET_PASSWORD: "/forget-password",
     UPDATE_PASSWORD:"/update-password",
     REFRESH_TOKEN: "/refresh-token",
     VERIFY: "/verify",
@@ -45,7 +45,9 @@ export const MESSAGES = {
        VERIFICATION_ERROR:"Please verify your email",
        USER_FOUND:"user found successfully",
        PASSWORD_UPDATED:"password updated",
-       WORNG_PASSWORD:"Invalid old password"
+       WORNG_PASSWORD:"Invalid old password",
+       UPDATE_USER:"user update successfully",
+       USER_DELETED:"user deleted",
     },
     ROLE:{
         ROLE_EXIST:"admin already exists",
