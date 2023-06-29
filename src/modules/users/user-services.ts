@@ -1,4 +1,4 @@
-import { Iuser, IotpVerification, Ilogin, IplayerLogin, ItokenQuery, IuserQuery, IupdateUser, IrefreshToken } from "./typings/user-types"
+import { Iuser, IotpVerification, Ilogin, IplayerLogin, ItokenQuery, IuserQuery, IupdateUser, IrefreshToken, IupdatePassword, IresetPassword, IuserPagination } from "./typings/user-types"
 import userQueries from "./user-queries"
 import bcrypt from "bcrypt"
 import { responseBuilder } from "../../common/responses"
@@ -10,7 +10,7 @@ import roleQueries from "../roles/role-queries"
 import otpQuery from "../user-otp/user-otp-queries"
 import { generateAccessToken } from "../../common/helper"
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries"
-
+import { hashPassword } from "../../common/helper"
 /**
  * @description register user into databse
  * @param body - admin or player registration's request body
@@ -156,9 +156,75 @@ const refreshToken = async (body: IrefreshToken) => {
     await tokenPersistanceQuery.deletePersistentToken({ refresh_token: body.refresh_token })
     await tokenPersistanceQuery.createTokenPersistence({ ...tokenInfo, user_agent: body.user_agent, user_id: isToken.user_id, ip_address: body.ip_address })
     return responseBuilder.okSuccess(MESSAGES.JWT.DATA_FOUND, { accessToken: tokenInfo.access_token, refreshToken: tokenInfo.refresh_token })
-
 }
 
+
+/**
+ * @description delete user into database
+ * @param param - param containing user id
+ */
+const deleteUser = async (param: IuserQuery) => {
+    const user = await userQueries.updateUser({ id: param.id }, { is_deleted: true })
+    if (!user) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, user)
+}
+
+const forgetPassword = async (body: IplayerLogin) => {
+    const isUser = await userQueries.fetchUser({ email: body.email })
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    await prismaTransaction(async (prisma: PrismaClient) => {
+        const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
+        await prisma.userOTP.create({ data: { user_id: isUser.id, otp: Number(passcode), otp_type: OTP_TYPE.FORGET_PASSWORD } })
+        eventService.emit('send-user-mail', { email: isUser.email, otp: passcode, user_name: `${isUser.first_name} ${isUser.last_name}`, subject: "Forget password", template: TEMPLATE.FORGET_PASSWORD })
+    })
+    return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL)
+}
+
+const updatePassword = async (body: IupdatePassword) => {
+    const isUser = await userQueries.fetchUser({ email: body.email })
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    const isOtp = await otpQuery.findUserOtp({ otp: Number(body.otp), user_id: isUser.id })
+    if (!isOtp) {
+        return responseBuilder.badRequestError(MESSAGES.OTP.INVALID_OTP)
+    }
+    const password = hashPassword(body.newPassword)
+    await userQueries.updateUser({ id: isUser.id }, { password: password })
+    return responseBuilder.okSuccess(MESSAGES.USERS.PASSWORD_UPDATED)
+}
+
+const resetPassword = async (body: IresetPassword) => {
+    const isUser = await userQueries.fetchUser({ email: body.email })
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    const isPassword = bcrypt.compareSync(body.oldPassword, isUser?.password as string)
+    if (!isPassword) {
+        return responseBuilder.badRequestError(MESSAGES.USERS.WORNG_PASSWORD)
+    }
+    const password = hashPassword(body.newPassword)
+    await userQueries.updateUser({ id: isUser.id }, { password })
+    return responseBuilder.okSuccess(MESSAGES.USERS.PASSWORD_UPDATED)
+}
+const fetchAllUsers = async (query: IuserPagination) => {
+    const filter = []
+    const page = parseInt(query.page)
+    const limit = parseInt(query.limit)
+    if (query.search) {
+        filter.push(
+            { first_name: { contains: query.search, mode: 'insensitive' } },
+            { last_name: { contains: query.search, mode: 'insensitive' } },
+            { country: { contains: query.search, mode: 'insensitive' } }
+        )
+    }
+    const result = await userQueries.fetchAllUsers({ page, limit, filter })
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, result.user, { limit, page, totalRecord: result.count, totalPage: Math.ceil(result.count / limit), search: query.search })
+}
 
 const userService = {
     register,
@@ -168,7 +234,12 @@ const userService = {
     logout,
     getUser,
     updateUser,
-    refreshToken
+    refreshToken,
+    deleteUser,
+    forgetPassword,
+    updatePassword,
+    resetPassword,
+    fetchAllUsers
 }
 
 export default userService

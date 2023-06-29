@@ -9,6 +9,8 @@ export const ENDPOINTS = {
     ADMIN_LOGIN: "/admin/login",
     LOGOUT: "/logout",
     RESET_PASSWORD: "/reset-password",
+    FORGET_PASSWORD: "/forgot-password",
+    UPDATE_PASSWORD:"/update-password",
     REFRESH_TOKEN: "/refresh-token",
     VERIFY: "/verify",
     ID: "/:id",
@@ -16,12 +18,14 @@ export const ENDPOINTS = {
 
 export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
-    LOGIN_OTP:"login_otp.html"
+    LOGIN_OTP:"login_otp.html",
+    FORGET_PASSWORD: "forget_password.html"
 }
 
 export const OTP_TYPE={
     EMAIL_VERIFICATION: "email_verification",
-    LOGIN_TYPE: "login_type"
+    LOGIN_TYPE: "login_type",
+    FORGET_PASSWORD: "forget_password"
 
 }
 
@@ -40,6 +44,8 @@ export const MESSAGES = {
        USER_VERIFIED:"user verified",
        VERIFICATION_ERROR:"Please verify your email",
        USER_FOUND:"user found successfully",
+       PASSWORD_UPDATED:"password updated",
+       WORNG_PASSWORD:"Invalid old password"
     },
     ROLE:{
         ROLE_EXIST:"admin already exists",

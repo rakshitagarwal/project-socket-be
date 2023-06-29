@@ -1,7 +1,7 @@
 
 import { Request, Response } from "express"
 import userService from "./user-services"
-
+import {IuserPagination} from "./typings/user-types"
 /**
  * @description handles admin  or player registration
  * @param req { Request } - admin  or player's request object
@@ -72,8 +72,8 @@ const getUserDetail = async (req: Request, res: Response) => {
  * @param req { Request } - user's request object
  * @param res { Response }
  */
-const updateUser =async(req: Request, res: Response)=>{
-    const response = await userService.updateUser(req.params,req.body);
+const updateUser = async (req: Request, res: Response) => {
+    const response = await userService.updateUser(req.params, req.body);
     res.status(response.code).json(response)
 }
 
@@ -83,8 +83,52 @@ const updateUser =async(req: Request, res: Response)=>{
  * @param res { Response }
  */
 
-const refreshToken = async(req: Request, res: Response)=>{
+const refreshToken = async (req: Request, res: Response) => {
     const response = await userService.refreshToken({ ...req.body, user_agent: req.useragent?.source, ip_address: req.ip })
+    res.status(response.code).json(response)
+}
+
+/**
+ * @description handles specific user details
+ * @param req { Request } - user's request object
+ * @param res { Response }
+ */
+
+const removeUser = async (req: Request, res: Response) => {
+    const response = await userService.deleteUser(req.params)
+    res.status(response.code).json(response)
+}
+
+
+/**
+ * @description this API forget a email for admin
+ * @param req { Request } - request object
+ * @param res { Response }
+ */
+
+const forgetPassword = async (req: Request, res: Response) => {
+    const response = await userService.forgetPassword(req.body)
+    res.status(response.code).json(response)
+}
+
+/**
+ * @description this API is used to update a user's password
+ * @param req { Request } -  request object
+ * @param res { Response }
+ */
+
+const updatePassword = async (req: Request, res: Response) => {
+    const response = await userService.updatePassword(req.body)
+    res.status(response.code).json(response)
+}
+
+const resetPassword = async (req: Request, res: Response) => {
+    const response = await userService.resetPassword(req.body)
+    res.status(response.code).json(response)
+}
+
+const getAllusers = async (req: Request, res: Response) => {
+    const response = await userService.fetchAllUsers(req.query as unknown as IuserPagination)
     res.status(response.code).json(response)
 }
 const userHandlers = {
@@ -95,7 +139,12 @@ const userHandlers = {
     logout,
     getUserDetail,
     updateUser,
-    refreshToken
+    refreshToken,
+    removeUser,
+    forgetPassword,
+    updatePassword,
+    resetPassword,
+    getAllusers
 }
 
 export default userHandlers

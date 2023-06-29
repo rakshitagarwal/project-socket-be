@@ -36,6 +36,21 @@ const refreshToken = z.object({
     refreshToken: z.string({ required_error: "refresh_token is required", invalid_type_error: "refresh_token must be string" })
 })
 
+const updatePassword = z.object({
+    otp: z.string({ invalid_type_error: "otp must be string", required_error: "otp is required" }),
+    email: z.string({ required_error: "email is required", invalid_type_error: "email must be string" }).email({ message: "Invalid email address" }).trim().toLowerCase(),
+    newPassword: z.string({ required_error: "newPassword is required", invalid_type_error: "newPassword must be string" }),
+})
+const resetPassword = z.object({
+    email: z.string({ required_error: "email is required", invalid_type_error: "email must be string" }).email({ message: "Invalid email address" }).trim().toLowerCase(),
+    oldPassword: z.string({ invalid_type_error: "oldPassword must be string", required_error: "oldPassword is required" }),
+    newPassword: z.string({ required_error: "newPassword is required", invalid_type_error: "newPassword must be string" }),
+})
+const pagination = z.object({
+    page: z.string({ invalid_type_error: "page must be string" }).optional(),
+    limit: z.string({ invalid_type_error: "limit must be string" }).optional(),
+    search: z.string().regex(/^[a-zA-Z0-9._-]+$/).optional()
+})
 const userSchemas = {
     register,
     emailVerifcation,
@@ -43,6 +58,9 @@ const userSchemas = {
     adminLogin,
     userId,
     updateUser,
-    refreshToken
+    refreshToken,
+    updatePassword,
+    resetPassword,
+    pagination
 }
 export default userSchemas

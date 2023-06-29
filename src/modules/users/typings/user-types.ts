@@ -30,7 +30,10 @@ export interface IupdateUser {
     mobile_no?: string
     status?: boolean
     is_verified?: boolean
+    is_deleted?: boolean,
+    password?: string
 }
+
 export interface IotpVerification {
     otp: string
     email: string
@@ -50,8 +53,30 @@ export interface IupdateUser {
     mobile_id?: string
 }
 
-export interface IrefreshToken{
+export interface IrefreshToken {
     refresh_token: string
     ip_address: string
     user_agent: string
+}
+
+export interface IupdatePassword {
+    email: string
+    otp: string
+    newPassword: string
+}
+
+export interface IresetPassword {
+    oldPassword: string
+    newPassword: string
+    email: string
+}
+export interface IuserPagination {
+    limit: string
+    page: string
+    search?: string
+}
+export interface IuserPaginationQuery {
+    limit: number
+    page: number
+    filter?: Array<object>
 }
