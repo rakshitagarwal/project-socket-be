@@ -58,6 +58,7 @@ export const MESSAGES = {
        WORNG_PASSWORD:"Invalid old password",
        UPDATE_USER:"user update successfully",
        USER_DELETED:"user deleted",
+       SIGNUP:"user register successfully!"
     },
     ROLE:{
         ROLE_EXIST:"admin already exists",
