@@ -5,12 +5,12 @@ import { storeOneMedia, storeMultipleMedia } from "../../middlewares/mediaUpload
 
 export const mediaRouter = Router();
 
-mediaRouter.post(ENDPOINTS.UPLOAD, storeOneMedia, mediaHandler.uploadMedia);
+mediaRouter.post(ENDPOINTS.BASE, storeOneMedia, mediaHandler.uploadMedia);
 
-mediaRouter.post(ENDPOINTS.UPLOAD + "multiple", storeMultipleMedia, mediaHandler.uploadMultipleMedia);
+mediaRouter.post(ENDPOINTS.BASE + "multiple", storeMultipleMedia, mediaHandler.uploadMultipleMedia);
 
 mediaRouter.get(ENDPOINTS.BASE + ":id?", mediaHandler.getAllMedia);
 
-mediaRouter.patch(ENDPOINTS.UPDATE + ':id?', mediaHandler.updateMediaStatus);
+mediaRouter.patch(ENDPOINTS.BASE + ':id', mediaHandler.updateMediaStatus);
 
-mediaRouter.delete(ENDPOINTS.DELETE + ':id?', mediaHandler.deleteMedia);
+mediaRouter.delete(ENDPOINTS.BASE + ':id', mediaHandler.deleteMedia);
