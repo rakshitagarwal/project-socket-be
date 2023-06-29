@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
-import { mediaServiceProvider } from "./media-services";
-import { IFileMetaInfo } from "./typings/media.type";
+import mediaServiceProvider from "./media-services";
+import IFileMetaInfo from "./typings/media.type";
 
 /**
  * @description Add a new media.
@@ -17,7 +17,7 @@ const uploadMedia = async (req: Request, res: Response) => {
 };
 
 /**
- * @description Add a new media.
+ * @description Add multiple media files(images).
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.
@@ -42,15 +42,13 @@ const getAllMedia = async (req: Request, res: Response) => {
 };
 
 /**
- * @description updates the status of media in database.
+ * @description updates the status of media file.
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const updateMediaStatus = async (req: Request, res: Response) => {
-    const response = await mediaServiceProvider.updateMediaStatus(
-        req.params.id as unknown as string
-    );
+    const response = await mediaServiceProvider.updateMediaStatus(req.params.id as unknown as string);
     res.status(response.code).json(response);
 };
 
@@ -61,16 +59,15 @@ const updateMediaStatus = async (req: Request, res: Response) => {
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const deleteMedia = async (req: Request, res: Response) => {
-    const response = await mediaServiceProvider.deleteMedia(
-        req.params.id as unknown as string
-    );
+    const response = await mediaServiceProvider.deleteMedia(req.body as unknown as object);
     res.status(response.code).json(response);
 };
 
-export const mediaHandler = {
+const mediaHandler = {
     uploadMedia,
     getAllMedia,
     deleteMedia,
     updateMediaStatus,
     uploadMultipleMedia,
 };
+export default mediaHandler;

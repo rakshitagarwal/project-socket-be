@@ -1,16 +1,12 @@
-import  {Router}  from "express";
+import { Router } from "express";
 import { ENDPOINTS } from "../../common/constants";
-import { mediaHandler } from "./media-handlers";
+import mediaHandler from "./media-handlers";
 import { storeOneMedia, storeMultipleMedia } from "../../middlewares/mediaUpload";
 
 export const mediaRouter = Router();
 
 mediaRouter.post(ENDPOINTS.BASE, storeOneMedia, mediaHandler.uploadMedia);
-
 mediaRouter.post(ENDPOINTS.BASE + "multiple", storeMultipleMedia, mediaHandler.uploadMultipleMedia);
-
 mediaRouter.get(ENDPOINTS.BASE + ":id?", mediaHandler.getAllMedia);
-
 mediaRouter.patch(ENDPOINTS.BASE + ':id', mediaHandler.updateMediaStatus);
-
-mediaRouter.delete(ENDPOINTS.BASE + ':id', mediaHandler.deleteMedia);
+mediaRouter.delete(ENDPOINTS.BASE , mediaHandler.deleteMedia);
