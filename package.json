@@ -5,7 +5,7 @@
     "main": "./dist/src/index.js",
     "scripts": {
         "start:dev": "export NODE_ENV=development && ts-node-dev --respawn --transpile-only --exit-child --watch src src/index.ts",
-        "start:prod": "npx prisma migrate deploy && export NODE_ENV=production && node .",
+        "start:prod": "rm -rf dist && tsc && npx prisma migrate deploy && npx prisma db seed && export NODE_ENV=production && node .",
         "build": "rm -rf dist && tsc",
         "lint": "eslint .",
         "migrate": "npx prisma migrate",
