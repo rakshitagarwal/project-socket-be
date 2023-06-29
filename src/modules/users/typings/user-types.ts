@@ -4,7 +4,7 @@ export interface Iuser {
     email: string
     country: string
     mobile_no: string
-    role_id: string
+    role: string
     status: boolean
     password?: string
 }
