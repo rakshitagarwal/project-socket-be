@@ -31,11 +31,9 @@ const register = async (body: Iuser) => {
     }
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({ data: { ...payload, role_id: isRole.id } })
-        const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
-        await prisma.userOTP.create({ data: { user_id: user.id, otp: Number(passcode), otp_type: OTP_TYPE.EMAIL_VERIFICATION } })
-        eventService.emit('send-user-mail', { email: user.email, otp: passcode, user_name: `${user.first_name} ${user.last_name}`, subject: "Email verification", template: TEMPLATE.EMAIL_VERIFICATION })
+        eventService.emit('send-user-mail', { email: user.email, user_name: `${user.first_name} ${user.last_name}`, subject: "Welcome to Big Deal", template: TEMPLATE.EMAIL_VERIFICATION })
     })
-    return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL)
+    return responseBuilder.createdSuccess(MESSAGES.USERS.SIGNUP)
 }
 
 /**
@@ -52,19 +50,11 @@ const otpVerifcation = async (body: IotpVerification) => {
     if (!isOtp) {
         return responseBuilder.badRequestError(MESSAGES.OTP.INVALID_OTP)
     }
-    if (isOtp.otp_type == OTP_TYPE.LOGIN_TYPE) {
-        if (!isUser.is_verified) {
-            return responseBuilder.badRequestError(MESSAGES.USERS.VERIFICATION_ERROR)
-        }
-        const accessToken = generateAccessToken({ id: isUser.id })
-        await otpQuery.deleteOtp({ id: isOtp.id })
-        await tokenPersistanceQuery.createTokenPersistence({ ...accessToken, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
-        return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: accessToken.access_token, refreshToken: accessToken.refresh_token })
-    } else {
-        await otpQuery.deleteOtp({ id: isOtp.id })
-        await userQueries.updateUser({ id: isUser.id }, { is_verified: true })
-        return responseBuilder.okSuccess(MESSAGES.USERS.USER_VERIFIED)
-    }
+    const accessToken = generateAccessToken({ id: isUser.id })
+    await otpQuery.deleteOtp({ id: isOtp.id })
+    await tokenPersistanceQuery.createTokenPersistence({ ...accessToken, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: accessToken.access_token, refreshToken: accessToken.refresh_token })
+
 }
 /**
  * @description login admin 
@@ -101,7 +91,7 @@ const playerLogin = async (body: IplayerLogin) => {
         await prisma.userOTP.create({ data: { user_id: isUser.id, otp: Number(passcode), otp_type: OTP_TYPE.LOGIN_TYPE } })
         eventService.emit('send-user-mail', { email: isUser.email, otp: passcode, user_name: `${isUser.first_name} ${isUser.last_name}`, subject: "Login Passcode", template: TEMPLATE.LOGIN_OTP })
     })
-    return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL)
+    return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL)
 }
 /**.
  * @description - user logout for user.
