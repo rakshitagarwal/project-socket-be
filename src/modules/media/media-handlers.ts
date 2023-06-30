@@ -3,7 +3,7 @@ import mediaServiceProvider from "./media-services";
 import IFileMetaInfo from "./typings/media.type";
 
 /**
- * @description Add a new media.
+ * @description Add one media entry (image/video).
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.
@@ -17,7 +17,7 @@ const uploadMedia = async (req: Request, res: Response) => {
 };
 
 /**
- * @description Add multiple media files(images).
+ * @description Add multiple media entries(images).
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.
@@ -53,7 +53,7 @@ const updateMediaStatus = async (req: Request, res: Response) => {
 };
 
 /**
- * @description deletes a media entry and media file.
+ * @description pass ids or one id of media entries for change in is_deleted status.
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.

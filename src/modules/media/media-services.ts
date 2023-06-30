@@ -5,7 +5,7 @@ import IFileMetaInfo from "./typings/media.type";
 import fs from "fs";
 
 /**
- * @description uploadMedia is used to add a media in local storage and assign id to it .
+ * @description uploadMedia is used to add one media entry in the database
  * @param {IFileMetaInfo} reqFileData - The media file is passed from body using this variable
  * @returns {object} - the response object using responseBuilder.
  */
@@ -27,8 +27,8 @@ const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
 };
 
 /**
- * @description uploadMultipleMedia is used to add multiple media in local storage and assign ids to them.
- * @param {IFileMetaInfo} reqFileData[] - The media files are passed using this variable to queries
+ * @description uploadMultipleMedia is used to add multiple media entries in the databse.
+ * @param {IFileMetaInfo} reqFileData[] - The media files are passed using this variable to queries.
  * @returns {object} - the response object using responseBuilder.
  */
 const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {
@@ -52,8 +52,8 @@ const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string)
 };
 
 /**
- * @description getAllMedia is used to retrieve one media or all media based on id passed or not .
- * @param {string | undefined} mediaId id is passed to specify which media file to retrieve.
+ * @description getAllMedia retrieves one media or all media based on id passed or not.
+ * @param {string | undefined} mediaId id passed to specify which media file to retrieve.
  * @returns {object} - the response object using responseBuilder.
  */
 const getAllMedia = async (mediaId: string | undefined) => {
@@ -93,7 +93,7 @@ const deleteMedia = async (ids: object) => {
     if (allIds.length < 1) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_MIN_ID);
 
     const media = await mediaQueries.findManyMedias(allIds);
-    if (media.length === allIds.length) await mediaQueries.deleteMediaById(allIds);
+    if (media.length === allIds.length) await mediaQueries.deleteMediaByIds(allIds);
     media.map((item) => fs.unlinkSync(`${item?.local_path}`));
     return responseBuilder.okSuccess(MESSAGES.MEDIA.MEDIA_DELETE_SUCCESS);
 };
