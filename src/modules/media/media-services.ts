@@ -86,7 +86,7 @@ const updateMediaStatus = async (id: string) => {
  * @param {string} ids - ids are passed to specify which media files soft delete will happen.
  * @returns {object} - the response object using responseBuilder.
  */
-const deleteMedia = async (deleteIds: Iid) => {
+const deleteMedia = async (deleteIds: Iid) => {    
     if (!deleteIds) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_ID);
     if (deleteIds.ids.length < 1) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_MIN_ID);
     

@@ -67,9 +67,7 @@ export const storeMultipleMedia = (req: Request,res: Response,next: NextFunction
         }
 
         const testMapped = test.map((_: string, i: number) => i);
-        if (testMapped.length < 5) {
-            console.log(testMapped.length);
-            
+        if (testMapped.length < 5) {            
             testMapped.map((i: number) => fs.unlinkSync(test[i].path));
             logger.error(MESSAGES.MEDIA.MEDIA_NOT_ALLOWED);
             const response = responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ALLOWED);
