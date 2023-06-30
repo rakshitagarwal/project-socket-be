@@ -1,9 +1,10 @@
 export const ENDPOINTS = {
-    BASE: '/',
+    BASE: "/",
     DOCS: "/docs",
     AUCTIONS: "/auction",
     PRODUCT_CATEGORY: "/product-category",
 
+    AUCTION_CATEGORY: "/auction-category",
     ROLE: "/role",
     USERS: "/user",
     LOGIN: "/login",
@@ -31,7 +32,16 @@ export const productCategoryMessage = {
         SUCCESS: 'product category update success',
     },
 }
+export const AUCTION_CATEGORY_MESSAGES = {
+    ADD: "auctionCategory created!",
+    NOT_EXISTS: "auctionCategory id not found!",
+    UPDATE: "auctionCategory updated!",
+    NOT_FOUND: "auctionCategory not found!",
+    GET_SINGLE: "auctionCategory found!",
+    DELETE: "auctionCategory deleted!",
+};
 export const productMessage = {
+
 
     ADD: {
         SUCCESS: 'product add success',
@@ -53,9 +63,8 @@ export const TEMPLATE = {
 
 export const OTP_TYPE = {
     EMAIL_VERIFICATION: "email_verification",
-    LOGIN_TYPE: "login_type"
-
-}
+    LOGIN_TYPE: "login_type",
+};
 
 export const MESSAGES = {
     OTP: {
