@@ -2,9 +2,9 @@ import { db } from "../../config/db";
 import {IFileMetaInfo} from "./typings/media.type";
 
 /**
- * @description uploadMedia is used to add a media in local storage and assign id to it .
- * @param {IFileMetaInfo} videoData - The media file is passed from body using this variable
- * @returns {queryResult} - the response object using responseBuilder.
+ * @description addMediaInfo is used to add one media entry in the database .
+ * @param {IFileMetaInfo} videoData - The media file is passed from service layer using videoData.
+ * @returns {queryResult} - the result of execution of query.
  */
 const addMediaInfo = async function (videoData: IFileMetaInfo) {    
     const queryResult = await db.media.create({
@@ -31,9 +31,9 @@ const addMediaInfo = async function (videoData: IFileMetaInfo) {
 };
 
 /**
- * @description uploadMedia is used to add a media in local storage and assign id to it .
- * @param {IFileMetaInfo} videoData[] - The media file is passed from body using this variable
- * @returns {queryResult} - the response object using responseBuilder.
+ * @description addMultipleMedia is used to add multiple media entries in the database.
+ * @param {IFileMetaInfo} videoData[] - media files data is passed from services using videoData.
+ * @returns {queryResult} - the result of execution of query.
  */
 const addMultipleMedia = async function (videoData: IFileMetaInfo[]) {
     const data = videoData.map((item) => ({
@@ -52,7 +52,7 @@ const addMultipleMedia = async function (videoData: IFileMetaInfo[]) {
 
 /**
  * @description allMedias is used to get all media entries whose is_deleted is false.
- * @returns {queryResult} - the response object using responseBuilder.
+ * @returns {queryResult} - the result of execution of query.
  */
 const allMedias = async function () {
     const queryResult = await db.media.findMany({
@@ -70,10 +70,15 @@ const allMedias = async function () {
     return queryResult;
 };
 
-const findManyMedias = async function (id: string) {
+/**
+ * @description findManyMedias is used to find many media entries from the database.
+ * @param {string} ids - The ids of media entries is passed using ids as variable.
+ * @returns {queryResult} - the result of execution of query.
+ */
+const findManyMedias = async function (ids: string) {
     const queryResult = await db.media.findMany({
         where: { id:{
-            in: id
+            in: ids
         }, is_deleted: false },   
         select: {
             id: true,
@@ -90,8 +95,8 @@ const findManyMedias = async function (id: string) {
 
 /**
  * @description getMediaById is used to get one media if its is_deleted is false.
- * @param {string} id - The media file is passed from body using this variable
- * @returns {queryResult} - the response object using responseBuilder.
+ * @param {string} id - The id of one media is passed using this variable.
+ * @returns {queryResult} - the result of execution of query.
  */
 const getMediaById = async function (id: string) {
     const queryResult = await db.media.findFirst({
@@ -111,9 +116,9 @@ const getMediaById = async function (id: string) {
 };
 
 /**
- * @description updateMediaStatusById is used to add a media in local storage and assign id to it .
- * @param {string} id- The media file is passed from body using this variable
- * @returns {queryResult} - the response object using responseBuilder.
+ * @description updateMediaStatusById is used to change status of media entry in database.
+ * @param {string} id- The id of one media is passed using this variable.
+ * @returns {queryResult} - the result of execution of query.
  */
 const updateMediaStatusById = async function (id: string, status: boolean) {
     const queryResult = await db.media.update({
@@ -134,17 +139,16 @@ const updateMediaStatusById = async function (id: string, status: boolean) {
 };
 
 /**
- * @description deleteMediaById is used to soft delete many media
- * @param {IFileMetaInfo} videoData[] - The media file is passed from body using this variable
- * @returns {queryResult} - the response object using responseBuilder.
+ * @description deleteMediaByIds is used to soft delete many media entries in database.
+ * @param {string} ids- The ids of media entries are passed from body using this variable.
+ * @returns {queryResult} - the result of execution of query.
  */
-const deleteMediaById = async function (id: string) {
+const deleteMediaByIds = async function (ids: string) {
     const queryResult = await db.media.updateMany({
         where: { id:{
-            in: id
+            in: ids
         } },
         data: { 
-            status: false, 
             is_deleted: true  
         },
     });
@@ -155,10 +159,10 @@ const mediaQueries = {
     addMediaInfo,
     addMultipleMedia,
     allMedias,
+    findManyMedias,
     getMediaById,
-    deleteMediaById,
     updateMediaStatusById,
-    findManyMedias
+    deleteMediaByIds
 };
 
 export default mediaQueries;
