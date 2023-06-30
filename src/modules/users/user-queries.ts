@@ -18,8 +18,6 @@ const fetchUser = async (query: IuserQuery) => {
             country: true,
             mobile_no: true,
             id: true,
-            role_id: true,
-            is_verified: true,
             roles: {
                 select: {
                     id: true,

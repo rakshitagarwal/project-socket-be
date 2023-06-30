@@ -47,7 +47,7 @@ const otpVerifcation = async (body: IotpVerification) => {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
     }
     const isOtp = await otpQuery.findUserOtp({ otp: Number(body.otp), user_id: isUser.id })
-    if (!isOtp) {
+    if (!isOtp || isOtp.otp_type !== OTP_TYPE.LOGIN_TYPE) {
         return responseBuilder.badRequestError(MESSAGES.OTP.INVALID_OTP)
     }
     const tokenInfo = generateAccessToken({ id: isUser.id })
@@ -155,8 +155,12 @@ const refreshToken = async (body: IrefreshToken) => {
  * @param param - param containing user id
  */
 const deleteUser = async (param: IuserQuery) => {
-    const user = await userQueries.updateUser({ id: param.id }, { is_deleted: true })
-    if (!user || user.is_deleted) {
+    const user = await userQueries.fetchUser({ id: param.id })
+    if (!user) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    const isupdate = await userQueries.updateUser({ id: param.id }, { is_deleted: true })
+    if (isupdate.is_deleted) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_DELETED)

@@ -42,6 +42,7 @@ export const OTP_TYPE = {
 export const MESSAGES = {
     OTP: {
         INVALID_OTP: "Invalid otp",
+        
     },
     USERS: {
        CHECK_MAIL:"Please check your email",
