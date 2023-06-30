@@ -1,9 +1,9 @@
-import { AsyncRouter } from 'express-async-router';
+import Router from 'express';
 import { ENDPOINTS } from '../../common/constants';
-import { productHandler } from './product.handlers';
+import productHandler from './product-handlers';
 import validateRequest from '../../middlewares/validateRequest';
-import schema from './product.schemas';
-export const productRoutes = AsyncRouter();
+import schema from './product-schemas';
+export const productRoutes = Router();
 
 productRoutes.post(
     ENDPOINTS.BASE,
@@ -17,7 +17,3 @@ productRoutes.get(ENDPOINTS.BASE + ':id?',
 productRoutes.patch(ENDPOINTS.BASE,
     validateRequest.body(schema.ZUpdate),
     productHandler.update);
-
-
-
-

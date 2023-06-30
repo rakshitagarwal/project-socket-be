@@ -3,15 +3,14 @@ import { z } from 'zod';
 const schema = (() => {
 
     const ZString = z.string();
-    const title = z.string().min(1);
 
     const ZNewAdd = z.object({
-        title: title,
+        title: z.string().min(1, 'title must be at least one characters long'),
     });
 
     const ZUpdate = z.object({
         id: ZString.uuid(),
-        title: title.optional(),
+        title: z.string().min(1, 'title must be at least one characters long').optional(),
         status: z.boolean().optional(),
     })
     const ZGetId = z.object({
