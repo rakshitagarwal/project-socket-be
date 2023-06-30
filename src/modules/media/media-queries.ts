@@ -1,5 +1,5 @@
 import { db } from "../../config/db";
-import IFileMetaInfo from "./typings/media.type";
+import {IFileMetaInfo} from "./typings/media.type";
 
 /**
  * @description uploadMedia is used to add a media in local storage and assign id to it .
@@ -25,9 +25,6 @@ const addMediaInfo = async function (videoData: IFileMetaInfo) {
             local_path: true,
             tag: true,
             mime_type: true,
-            status: true,
-            created_by: true,
-            is_deleted: true,
         },
     });
     return queryResult;
@@ -68,14 +65,12 @@ const allMedias = async function () {
             local_path: true,
             tag: true,
             mime_type: true,
-            status: true,
-            created_by: true,
         },
     });
     return queryResult;
 };
 
-const findManyMedias = async function (id: string[]) {
+const findManyMedias = async function (id: string) {
     const queryResult = await db.media.findMany({
         where: { id:{
             in: id
@@ -88,8 +83,6 @@ const findManyMedias = async function (id: string[]) {
             local_path: true,
             tag: true,
             mime_type: true,
-            status: true,
-            created_by: true,
         },
     });
     return queryResult;
@@ -112,8 +105,6 @@ const getMediaById = async function (id: string) {
             tag: true,
             mime_type: true,
             status: true,
-            created_by: true,
-            is_deleted: true,
         },
     });
     return queryResult;
@@ -128,6 +119,16 @@ const updateMediaStatusById = async function (id: string, status: boolean) {
     const queryResult = await db.media.update({
         where: { id },
         data: { status: !status },
+        select: {
+            id: true,
+            filename: true,
+            size: true,
+            type: true,
+            local_path: true,
+            tag: true,
+            mime_type: true,
+            status: true,
+        },
     });
     return queryResult;
 };

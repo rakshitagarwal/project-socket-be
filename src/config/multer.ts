@@ -6,8 +6,7 @@ import { Request } from "express";
 export const uploadMultiple = multer({
     storage: multer.diskStorage({
         destination: (_req, _file, cb) => {
-            if (!fs.existsSync("uploads"))
-                fs.mkdirSync("uploads", { recursive: true });
+            if (!fs.existsSync("uploads")) fs.mkdirSync("uploads", { recursive: true });
             cb(null, `uploads`);
         },
         filename: (_req, file, cb) => {
@@ -15,23 +14,18 @@ export const uploadMultiple = multer({
         },
     }),
     limits: {
-      files:10,
-      fileSize: 20000000,
+        files: 10,
+        fileSize: 20000000, // 20 mb
     },
-    fileFilter: (_req: Request, file, cb) => {
-      if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
-        cb(null, true);
-      } else {
-        cb(null, false);
-    }
-  }
+    fileFilter: (_req: Request, _file, cb) => {
+            cb(null, true);
+    },
 });
 
 export const uploadOne = multer({
     storage: multer.diskStorage({
         destination: (_req, _file, cb) => {
-            if (!fs.existsSync("uploads"))
-                fs.mkdirSync("uploads", { recursive: true });
+            if (!fs.existsSync("uploads")) fs.mkdirSync("uploads", { recursive: true });
             cb(null, `uploads`);
         },
         filename: (_req, file, cb) => {
@@ -40,7 +34,7 @@ export const uploadOne = multer({
     }),
     limits: {
         files: 1,
-        fileSize: 20000000,
+        fileSize: 20000000, // 20 mb
     },
     fileFilter: (_req: Request, file, cb) => {
         if (ALLOWED_MIMETYPES.includes(file.mimetype)) {

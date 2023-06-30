@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import mediaServiceProvider from "./media-services";
-import IFileMetaInfo from "./typings/media.type";
+import {IFileMetaInfo, Iid} from "./typings/media.type";
 
 /**
  * @description Add a new media.
@@ -59,7 +59,7 @@ const updateMediaStatus = async (req: Request, res: Response) => {
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const deleteMedia = async (req: Request, res: Response) => {
-    const response = await mediaServiceProvider.deleteMedia(req.body as unknown as object);
+    const response = await mediaServiceProvider.deleteMedia(req.body as unknown as Iid);
     res.status(response.code).json(response);
 };
 

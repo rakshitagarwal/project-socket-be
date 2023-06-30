@@ -1,4 +1,4 @@
-export default interface IFileMetaInfo {
+export interface IFileMetaInfo {
     filename: string | undefined;
     size?: number;
     type?: string;
@@ -7,4 +7,9 @@ export default interface IFileMetaInfo {
     tag?: string;
     mime_type?: string;
     created_by?: string;
+    mimetype?: string;
+}
+
+export interface Iid {
+    ids: string;
 }

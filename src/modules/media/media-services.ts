@@ -1,7 +1,7 @@
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import mediaQueries from "./media-queries";
-import IFileMetaInfo from "./typings/media.type";
+import {IFileMetaInfo, Iid} from "./typings/media.type";
 import fs from "fs";
 
 /**
@@ -11,13 +11,13 @@ import fs from "fs";
  */
 const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
     if (!reqFileData) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
-    const temp = JSON.parse(JSON.stringify(reqFileData));
+    
     const fileData = {
         filename: reqFileData.filename,
-        type: (temp?.mimetype as string).includes("image") ? "image" : "video",
+        type: (reqFileData?.mimetype as string).includes("image") ? "image" : "video",
         local_path: reqFileData.path,
         tag: "media",
-        mime_type: temp.mimetype,
+        mime_type: reqFileData.mimetype,
         size: reqFileData.size,
         created_by: userId,
     };
@@ -33,7 +33,7 @@ const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
  */
 const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {
     if (!reqFileData) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
-    const temp = JSON.parse(JSON.stringify(reqFileData));
+    
     const filesData = [];
     for (let i = 0; i < reqFileData.length; i++) {
         filesData.push({
@@ -41,7 +41,7 @@ const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string)
             type: "image",
             local_path: reqFileData[i]?.path,
             tag: "media",
-            mime_type: temp[i]?.mimetype,
+            mime_type: reqFileData[i]?.mimetype,
             size: reqFileData[i]?.size,
             created_by: userId,
         });
@@ -86,14 +86,12 @@ const updateMediaStatus = async (id: string) => {
  * @param {string} ids - ids are passed to specify which media files soft delete will happen.
  * @returns {object} - the response object using responseBuilder.
  */
-const deleteMedia = async (ids: object) => {
-    if (!ids) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_ID);
-    const temp = JSON.parse(JSON.stringify(ids));
-    const allIds = temp.id;
-    if (allIds.length < 1) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_MIN_ID);
-
-    const media = await mediaQueries.findManyMedias(allIds);
-    if (media.length === allIds.length) await mediaQueries.deleteMediaById(allIds);
+const deleteMedia = async (deleteIds: Iid) => {
+    if (!deleteIds) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_ID);
+    if (deleteIds.ids.length < 1) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_MIN_ID);
+    
+    const media = await mediaQueries.findManyMedias(deleteIds.ids);
+    if (media.length === deleteIds.ids.length) await mediaQueries.deleteMediaById(deleteIds.ids);
     media.map((item) => fs.unlinkSync(`${item?.local_path}`));
     return responseBuilder.okSuccess(MESSAGES.MEDIA.MEDIA_DELETE_SUCCESS);
 };

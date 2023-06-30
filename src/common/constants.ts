@@ -13,6 +13,7 @@ export const ENDPOINTS = {
     VERIFY: "/verify",
     ID: "/:id",
     MEDIA: "/media",
+    MULTIPLE: "/multiple",
 };
 
 export const ALLOWED_MIMETYPES = [
