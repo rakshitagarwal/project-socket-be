@@ -20,8 +20,7 @@ const fetchUser = async (query: IuserQuery) => {
             id: true,
             roles: {
                 select: {
-                    id: true,
-                    title: true,
+                    title: true
                 }
             }
 
@@ -73,8 +72,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
             mobile_no: true,
             roles: {
                 select: {
-                    id: true,
-                    title: true,
+                    title: true
                 },
             }
         }

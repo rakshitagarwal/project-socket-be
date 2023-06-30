@@ -49,7 +49,6 @@ export interface ItokenQuery {
 export interface IupdateUser {
     first_name?: string
     last_name?: string
-    country?: string
     mobile_id?: string
 }
 

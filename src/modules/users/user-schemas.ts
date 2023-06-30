@@ -29,7 +29,6 @@ const userId = z.object({
 const updateUser = z.object({
     first_name: z.string({ invalid_type_error: "first_name must be string" }).optional(),
     last_name: z.string({ invalid_type_error: "last_name must be string" }).optional(),
-    country: z.string({ required_error: "country is required", invalid_type_error: "country must be string" }).optional(),
     mobile_no: z.string({ invalid_type_error: "mobile_no must be string" }).optional()
 }).strict()
 

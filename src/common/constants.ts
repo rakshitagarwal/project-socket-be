@@ -42,15 +42,15 @@ export const OTP_TYPE = {
 export const MESSAGES = {
     OTP: {
         INVALID_OTP: "Invalid otp",
-        
+
     },
     USERS: {
-       CHECK_MAIL:"Please check your email",
-       USER_LOGIN:"user logged",
-       USER_LOGOUT:"user logged out",
-       USER_NOT_FOUND:"user not found",
+       CHECK_MAIL:"please check your email",
+       USER_LOGIN:"user login successfully",
+       USER_LOGOUT:"user logout successfully",
+       USER_NOT_FOUND:"Account not found. Please sign-up to login.",
        USER_EXIST:"user already exists",
-       INVALID_CREDENTIAL:"Invalid credentials",
+       INVALID_CREDENTIAL:"invalid credentials",
        ADMIN_EXIST:"admin already exists",
        USER_VERIFIED:"user verified",
        VERIFICATION_ERROR:"Please verify your email",

@@ -52,6 +52,7 @@ const otpVerifcation = async (body: IotpVerification) => {
     }
     const tokenInfo = generateAccessToken({ id: isUser.id })
     await otpQuery.deleteOtp({ id: isOtp.id })
+    delete (isUser as Partial<Pick<Iuser, "password">>).password;
     await tokenPersistanceQuery.createTokenPersistence({ ...tokenInfo, user_agent: body.user_agent, user_id: isUser.id, ip_address: body.ip_address })
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, { ...isUser, accessToken: tokenInfo.access_token, refreshToken: tokenInfo.refresh_token })
 
@@ -127,6 +128,10 @@ const getUser = async (param: IuserQuery) => {
  */
 
 const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
+    const isUser = await userQueries.fetchUser({ id: parmas.id })
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
     const user = await userQueries.updateUser({ id: parmas.id }, body);
     if (!user) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
@@ -210,6 +215,9 @@ const updatePassword = async (body: IupdatePassword) => {
 const resetPassword = async (body: IresetPassword) => {
     const isUser = await userQueries.fetchUser({ email: body.email })
     if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
+    }
+    if(!isUser?.password){
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND)
     }
     const isPassword = bcrypt.compareSync(body.oldPassword, isUser?.password as string)
