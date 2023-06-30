@@ -12,17 +12,13 @@ export const hashPassword = (password: string) => {
     return hasData
 }
 
-
-interface Itoken {
-    id: string
-}
 /**
  * generate JWT_Token on payload
  * @param {Object} payload - user details
  * @returns {String} jwtToken
  */
 
-export const generateAccessToken = (payload: Itoken) => {
+export const generateAccessToken = (payload: {id: string}) => {
     const key = generateKeyPairSync("rsa", {
         modulusLength: 2048,
         publicKeyEncoding: {
