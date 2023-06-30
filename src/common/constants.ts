@@ -12,6 +12,7 @@ export const ENDPOINTS = {
     RESET_PASSWORD: "/reset-password",
     VERIFY: "/verify",
     ID: "/:id",
+    TERM_CONDITION: "/term-condition",
 };
 
 export const AUCTION_CATEGORY_MESSAGES = {
@@ -55,4 +56,11 @@ export const MESSAGES = {
         ROLE_ADDED: "role added successfully",
         ROlE_NOT_EXIST: "role not found",
     },
+    TERM_CONDITION:{
+        CREATED:"term and condition added successfully!",
+        UPDATED:"term and condition updated successfully!",
+        DELETED:"term and condition deleted successfully!",
+        NOT_FOUND:"term and condition not found!",
+        FOUNDED:"term and condition found successfully!",
+    }
 };
