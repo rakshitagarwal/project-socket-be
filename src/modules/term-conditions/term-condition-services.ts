@@ -21,17 +21,17 @@ const create = async (body: Icreate) => {
 
 /**
  * @description - update the term and condition information 
- * @param {string} param - contains the unique identification
+ * @param {string} id - contains the unique identification
  * @param body - contains req.body data for term and conditions
  * @returns {Promise}
  */
 
-const update=async (params:Iid,body:Iupdate)=>{
-    const isTermAndCondition= await termAndConditionQuery.findOne(params)
+const update=async (id:Iid,body:Iupdate)=>{
+    const isTermAndCondition= await termAndConditionQuery.findOne(id)
     if(!isTermAndCondition){
         return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
     }
-    const result= await termAndConditionQuery.update(params,body)
+    const result= await termAndConditionQuery.update(id,body)
     if(!result){
         return responseBuilder.expectationField()
     }

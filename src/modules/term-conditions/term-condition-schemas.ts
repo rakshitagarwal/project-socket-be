@@ -1,13 +1,13 @@
 import { z } from 'zod'
 
 const create = z.object({
-    title: z.string({ invalid_type_error: "title must be string", required_error: "title is required" }),
-    content: z.string({ required_error: "content is required", invalid_type_error: "content must be string" })
+    title: z.string({ invalid_type_error: "title must be string", required_error: "title is required" }).min(1),
+    content: z.string({ required_error: "content is required", invalid_type_error: "content must be string" }).min(5)
 }).strict()
 
 const update = z.object({
-    title: z.string({ invalid_type_error: "title must be string" }).optional(),
-    content: z.string({ invalid_type_error: "content must be string" }).optional(),
+    title: z.string({ invalid_type_error: "title must be string" }).min(1).optional(),
+    content: z.string({ invalid_type_error: "content must be string" }).min(5).optional(),
     status: z.boolean({ invalid_type_error: "status must be boolean" }).optional()
 }).strict()
 
