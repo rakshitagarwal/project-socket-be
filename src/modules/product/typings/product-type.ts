@@ -3,6 +3,7 @@ export type addReqBody = {
     title: string;
     description: string;
     product_category_id: string;
+    landing_image: string;
     userId: string;
 };
 export type updateReqBody = {
@@ -10,6 +11,7 @@ export type updateReqBody = {
     title: string;
     description: string;
     product_category_id: string;
+    landing_image: string;
     userId: string;
 };
 
@@ -17,6 +19,6 @@ export interface IPagination {
     pageNum: number;
     recordLimit: number;
 }
-export interface Ids{
-    ids:Array<string>
+export interface Ids {
+    ids: Array<string>
 }

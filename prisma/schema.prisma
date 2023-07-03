@@ -49,7 +49,7 @@ model User {
 model UserOTP {
   id             String   @id @default(uuid())
   otp            Int      @db.Integer
-  expiry_seconds BigInt?   @db.BigInt
+  expiry_seconds BigInt?  @db.BigInt
   otp_type       String
   created_at     DateTime @default(now()) @db.Timestamptz()
   user_id        String
@@ -106,6 +106,7 @@ model Media {
   users         User           @relation(fields: [created_by], references: [id])
   productMedias ProductMedia[]
   auctionMedias AuctionMedia[]
+  Products      Products[]
 
   @@index([filename, type])
   @@map("media")
@@ -128,6 +129,7 @@ model Products {
   id                  String                @id @default(uuid())
   title               String
   description         String                @db.Text
+  landing_image       String
   status              Boolean               @default(true)
   is_deleted          Boolean               @default(false)
   created_at          DateTime              @default(now()) @db.Timestamptz()
@@ -136,10 +138,12 @@ model Products {
   created_by          String
   users               User                  @relation(fields: [created_by], references: [id])
   productCategories   MasterProductCategory @relation(fields: [product_category_id], references: [id])
-  auctions            Auctions[]
-  productMedias       ProductMedia[]
+  medias              Media                 @relation(fields: [landing_image], references: [id])
 
-  @@index([title])
+  auctions      Auctions[]
+  productMedias ProductMedia[]
+
+  @@index([title, landing_image])
   @@map("products")
 }
 

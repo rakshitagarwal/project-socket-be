@@ -2,10 +2,13 @@ import { db } from '../../config/db';
 import { addReqBody, IPagination, updateReqBody, } from './typings/product-type';
 
 const addNew = async (product: addReqBody) => {
+    console.log("^^^^^", product);
+
     const queryResult = await db.product.create({
         data: {
             title: product.title,
             description: product.description,
+            landing_image: product.landing_image,
             product_category_id: product.product_category_id,
             created_by: product.userId
         },

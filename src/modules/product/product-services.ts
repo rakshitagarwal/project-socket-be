@@ -1,14 +1,20 @@
 import { responseBuilder } from "../../common/responses";
 import { addReqBody, Ids, IPagination, updateReqBody } from './typings/product-type';
 import productQueries from './product-queries';
-import { productCategoryMessage, productMessage } from '../../common/constants';
+import { productCategoryMessage, productMessage, MESSAGES } from '../../common/constants';
 import productCategoryQueries from '../product-categories/product-category-queries';
+import mediaQuery from '../media/media-queries';
+
 
 const add = async (newReqBody: addReqBody, userId: string) => {
 
     const isExistId = await productCategoryQueries.getById(newReqBody.product_category_id);
     if (!isExistId) {
         return responseBuilder.badRequestError(productCategoryMessage.GET.NOT_FOUND);
+    }
+    const isExistIdMedia = await mediaQuery.getMediaById(newReqBody.landing_image);
+    if (!isExistIdMedia) {
+        return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
     }
     newReqBody.userId = userId
     const { id } = await productQueries.addNew(newReqBody);
