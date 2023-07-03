@@ -118,6 +118,7 @@ const isIdExists = async (data: IDeleteIds) => {
             },
         },
     });
+    console.log(query);
     return query;
 };
 

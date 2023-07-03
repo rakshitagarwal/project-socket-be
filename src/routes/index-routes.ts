@@ -13,9 +13,5 @@ import isAuthenticated from "../middlewares/authentication";
 export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRoutes);
 v1Router.use(ENDPOINTS.USERS, userRoutes);
-v1Router.use(ENDPOINTS.AUCTIONS, auctionRouter);
-v1Router.use(
-    ENDPOINTS.AUCTION_CATEGORY,
-    [isAuthenticated],
-    auctionCategoryRouter
-);
+v1Router.use(ENDPOINTS.AUCTIONS, isAuthenticated, auctionRouter);
+v1Router.use(ENDPOINTS.AUCTION_CATEGORY, auctionCategoryRouter);
