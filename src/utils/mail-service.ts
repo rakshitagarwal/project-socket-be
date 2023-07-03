@@ -2,14 +2,8 @@ import env from '../config/env';
 import nodemailer from "nodemailer"
 import logger from '../config/logger';
 import { compile } from "handlebars"
+import { Imail } from "./typing/utils-types"
 import fs from "fs"
-export interface Imail {
-    email: string
-    template: string
-    subject: string
-    otp?: string
-    user_name: string
-}
 
 /**
  * @description - this function is used to send an email to the user with the given email, subject and template 
@@ -41,6 +35,6 @@ export async function mailService(props: Imail) {
         if (err) {
             logger.error(`${env.NODE_ENV} - ${err.name} - ${err.message} - ${err.stack}`);
         }
-        logger.info(info)
+        logger.info(`accepted : ${info.accepted} messageId :${info.messageId}`)
     })
 }
