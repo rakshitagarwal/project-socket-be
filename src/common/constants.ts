@@ -19,7 +19,23 @@ export const ENDPOINTS = {
     ID: "/:id",
     PRODUCT: "/product",
 
+    MEDIA: "/media",
 };
+export const ALLOWED_MIMETYPES = [
+    "image/png",
+    "image/jpg",
+    "image/jpeg",
+    "video/mp4",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+];
+
+export const ALLOWED_IMAGE_MIMETYPES = [
+    "image/png",
+    "image/jpg",
+    "image/jpeg"
+];
 export const productCategoryMessage = {
 
     ADD: {
@@ -44,7 +60,6 @@ export const AUCTION_CATEGORY_MESSAGES = {
     DELETE: "auctionCategory deleted!",
 };
 export const productMessage = {
-
 
     ADD: {
         SUCCESS: 'product add success',
@@ -102,6 +117,25 @@ export const MESSAGES = {
         FOUND_ROLE: "role found successfully",
         ROLE_ADDED: "role added successfully",
         ROlE_NOT_EXIST: "role not found"
+    },
+    MEDIA: {
+        REQUEST_MEDIA: "requested media",
+        MEDIA_NOT_ATTACHED: "media not attached",
+        MEDIA_ID: "media id not provided",
+        MEDIA_UPDATE_SUCCESS: "media updated successfully",
+        MEDIA_DELETE_SUCCESS: "media deleted successfully",
+        MEDIA_DELETE_FAIL: "media delete failed",
+        MEDIA_CREATE_SUCCESS: "media created successfully",
+        MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
+        MEDIA_SINGLE_INVALID: "media file more than 1",
+        MEDIA_FILES_INVALID: "media files invalid",
+        MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed",
+        MEDIA_MIN_ID: "atleast one media id should be provided",
+        MEDIA_NOT_FOUND: "media id not found or not valid",
+        MEDIA_IDS_NOT_FOUND: "some media ids were not found"
+    },
+    ALL: {
+        MULTER_ERROR: "multer error"
     },
     JWT: {
         JWT_EXPIRED: "jwt expired",

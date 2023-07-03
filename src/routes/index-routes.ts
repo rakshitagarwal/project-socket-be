@@ -7,6 +7,7 @@ import { userRouter } from "../modules/users/user-routes";
 import { roleRouter } from "../modules/roles/role-routes";
 import { productRoutes } from '../modules/product/product-routes';
 import isAuthenticated from "../middlewares/authentication";
+import { mediaRouter } from "../modules/media/media-routes";
 
 /**
  * Index Routes
@@ -20,8 +21,5 @@ v1Router.use(ENDPOINTS.PRODUCT_CATEGORY, [isAuthenticated], productCategoryRoute
 v1Router.use(ENDPOINTS.PRODUCT, [isAuthenticated], productRoutes);
 
 
-v1Router.use(
-    ENDPOINTS.AUCTION_CATEGORY,
-    [isAuthenticated],
-    auctionCategoryRouter
-);
+v1Router.use(ENDPOINTS.MEDIA, isAuthenticated ,mediaRouter);
+v1Router.use(ENDPOINTS.AUCTION_CATEGORY,[isAuthenticated],auctionCategoryRouter);
