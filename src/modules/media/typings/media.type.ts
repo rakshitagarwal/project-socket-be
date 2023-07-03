@@ -1,5 +1,5 @@
 export interface IFileMetaInfo {
-    filename: string | undefined;
+    filename?: string;
     size?: number;
     type?: string;
     local_path?: string;
@@ -12,4 +12,14 @@ export interface IFileMetaInfo {
 
 export interface Iid {
     ids: string;
+}
+
+export interface IMediaQuery {
+    filename:string,
+    size: number,
+    type:string,
+    local_path:  string,
+    tag: string,
+    mime_type: string,
+    created_by: string
 }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import { uploadMultiple, uploadOne } from "../config/multer";
 import { MulterError } from "multer";
-import { MESSAGES } from "../common/constants";
+import { ALLOWED_IMAGE_MIMETYPES, MESSAGES } from "../common/constants";
 import logger from "../config/logger";
 import { responseBuilder } from "../common/responses";
 
@@ -16,7 +16,7 @@ const uploadSingle = uploadOne.single("media");
  * @param {NextFunction} next - The media file is passed from body using this variable
  * @returns {response} - the response object using responseBuilder.
  */
-export const storeOneMedia = (req: Request,res: Response,next: NextFunction) => {
+export const storeOneMedia = (req: Request, res: Response, next: NextFunction) => {
     uploadSingle(req, res, function (err) {
         if (err instanceof MulterError) {
             logger.error(MESSAGES.MEDIA.MEDIA_SINGLE_INVALID, err);
@@ -27,6 +27,12 @@ export const storeOneMedia = (req: Request,res: Response,next: NextFunction) => 
             const response = responseBuilder.badRequestError(err.message);
             return res.status(response.code).json(response);
         }
+        if(!req.files){
+            logger.error(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
+            const response = responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
+            return res.status(response.code).json(response);
+        }
+        
         return next();
     });
 };
@@ -38,7 +44,7 @@ export const storeOneMedia = (req: Request,res: Response,next: NextFunction) => 
  * @param {NextFunction} next - The next object.
  * @returns {response} - the response object using responseBuilder.
  */
-export const storeMultipleMedia = (req: Request,res: Response,next: NextFunction) => {
+export const storeMultipleMedia = (req: Request, res: Response, next: NextFunction) => {
     uploadArray(req, res, function (err) {
         if (err instanceof MulterError) {
             logger.error(MESSAGES.ALL.MULTER_ERROR, err);
@@ -51,24 +57,24 @@ export const storeMultipleMedia = (req: Request,res: Response,next: NextFunction
         }
 
         const files = req.files;
-        const test = JSON.parse(JSON.stringify(files));
-        let invalidMedia = false;
-        const allowedExt = ['image/jpg' ,'image/jpeg', 'image/png'];
-        for(let i=0; i< test.length; i++) {
-            if(!allowedExt.includes(test[i].mimetype)) invalidMedia = true;
+        const multipleFiles = JSON.parse(JSON.stringify(files));
+        if (!multipleFiles.length) {
+            logger.error(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
+            const response = responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
+            return res.status(response.code).json(response);
         }
-        if(invalidMedia){
-            for(let i=0; i< test.length; i++) {
-                fs.unlinkSync(test[i].path);
-            }
+        const invalidMedia = multipleFiles
+            .map((file: { mimetype: string }) => !ALLOWED_IMAGE_MIMETYPES.includes(file.mimetype))
+            .some((result: boolean) => result);
+
+        if (invalidMedia) {
+            multipleFiles.map((file: { path: string }) => fs.unlinkSync(file.path));
             logger.error(MESSAGES.MEDIA.MEDIA_FILES_INVALID);
             const response = responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_FILES_INVALID);
             return res.status(response.code).json(response);
         }
-
-        const testMapped = test.map((_: string, i: number) => i);
-        if (testMapped.length < 5) {            
-            testMapped.map((i: number) => fs.unlinkSync(test[i].path));
+        if (multipleFiles.length < 5) {
+            multipleFiles.map((file: { path: string }) => fs.unlinkSync(file.path));
             logger.error(MESSAGES.MEDIA.MEDIA_NOT_ALLOWED);
             const response = responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ALLOWED);
             return res.status(response.code).json(response);

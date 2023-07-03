@@ -16,7 +16,6 @@ export const ENDPOINTS = {
     VERIFY: "/verify",
     ID: "/:id",
     MEDIA: "/media",
-    MULTIPLE: "/multiple",
 };
 
 export const ALLOWED_MIMETYPES = [
@@ -28,6 +27,13 @@ export const ALLOWED_MIMETYPES = [
     "video/quicktime",
     "video/x-msvideo",
 ];
+
+export const ALLOWED_IMAGE_MIMETYPES = [
+    "image/png",
+    "image/jpg",
+    "image/jpeg"
+];
+
 export const AUCTION_CATEGORY_MESSAGES = {
     ADD: "auctionCategory created!",
     NOT_EXISTS: "auctionCategory id not found!",
@@ -91,7 +97,8 @@ export const MESSAGES = {
         MEDIA_FILES_INVALID: "media files invalid",
         MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed",
         MEDIA_MIN_ID: "atleast one media id should be provided",
-        MEDIA_NOT_FOUND: "media id not found or not valid"
+        MEDIA_NOT_FOUND: "media id not found or not valid",
+        MEDIA_IDS_NOT_FOUND: "some media ids were not found"
     },
     ALL: {
         MULTER_ERROR: "multer error"
