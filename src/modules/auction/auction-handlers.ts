@@ -14,7 +14,13 @@ const getById = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+const getAll = async (_req: Request, res: Response) => {        
+    const response = await auctionService.getAll();
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
+    getAll,
 };
