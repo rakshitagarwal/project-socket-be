@@ -13,7 +13,7 @@ const add = asyncHandler(async (req: Request, res: Response) => {
 })
 /**
  * @description get all or single Product Category
- * @param { Request } req request object
+ * @param { Request } req request object 
  * @param { Response } res response object
  */
 const get = asyncHandler(async (req: Request, res: Response) => {
