@@ -17,9 +17,6 @@ export const uploadMultiple = multer({
         files: 10,
         fileSize: 20000000, // 20 mb
     },
-    fileFilter: (_req: Request, _file, cb) => {
-            cb(null, true);
-    },
 });
 
 export const uploadOne = multer({

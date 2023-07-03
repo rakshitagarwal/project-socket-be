@@ -1,22 +1,14 @@
 import { db } from "../../config/db";
-import {IFileMetaInfo} from "./typings/media.type";
+import { IMediaQuery } from "./typings/media.type";
 
 /**
  * @description addMediaInfo is used to add one media entry in the database .
- * @param {IFileMetaInfo} videoData - The media file is passed from service layer using videoData.
+ * @param {IMediaQuery} mediaData - The media file is passed from service layer using videoData.
  * @returns {queryResult} - the result of execution of query.
  */
-const addMediaInfo = async function (videoData: IFileMetaInfo) {    
+const addMediaInfo = async function (mediaData: IMediaQuery) {
     const queryResult = await db.media.create({
-        data: {
-            filename: videoData.filename as string,
-            size: videoData.size as number,
-            type: videoData.type as string,
-            local_path: videoData.local_path as string,
-            tag: videoData.tag as string,
-            mime_type: videoData.mime_type as string,
-            created_by: videoData.created_by as string,
-        },
+        data: mediaData,
         select: {
             id: true,
             filename: true,
@@ -32,22 +24,13 @@ const addMediaInfo = async function (videoData: IFileMetaInfo) {
 
 /**
  * @description addMultipleMedia is used to add multiple media entries in the database.
- * @param {IFileMetaInfo} videoData[] - media files data is passed from services using videoData.
+ * @param {IMediaQuery} mediaData[] - media files data is passed from services using videoData.
  * @returns {queryResult} - the result of execution of query.
  */
-const addMultipleMedia = async function (videoData: IFileMetaInfo[]) {
-    const data = videoData.map((item) => ({
-        filename: item?.filename as string,
-        type: item?.type as string,
-        local_path: item?.local_path as string,
-        tag: item?.tag as string,
-        mime_type: item?.mime_type as string,
-        size: item?.size as number,
-        created_by: item?.created_by as string,
-    }));
-    
-    const queryResult = await db.media.createMany({data: data});
-    return { queryResult, data };
+const addMultipleMedia = async function (mediaData: IMediaQuery[]) {
+    const queryResult = await db.media.createMany({ data: mediaData });
+    if (queryResult) return mediaData;
+    return queryResult;
 };
 
 /**
@@ -56,7 +39,7 @@ const addMultipleMedia = async function (videoData: IFileMetaInfo[]) {
  */
 const allMedias = async function () {
     const queryResult = await db.media.findMany({
-        where: {  is_deleted: false },   
+        where: { is_deleted: false },
         select: {
             id: true,
             filename: true,
@@ -77,9 +60,12 @@ const allMedias = async function () {
  */
 const findManyMedias = async function (ids: string) {
     const queryResult = await db.media.findMany({
-        where: { id:{
-            in: ids
-        }, is_deleted: false },   
+        where: {
+            id: {
+                in: ids,
+            },
+            is_deleted: false,
+        },
         select: {
             id: true,
             filename: true,
@@ -100,7 +86,7 @@ const findManyMedias = async function (ids: string) {
  */
 const getMediaById = async function (id: string) {
     const queryResult = await db.media.findFirst({
-        where: { id, is_deleted: false },   
+        where: { id, is_deleted: false },
         select: {
             id: true,
             filename: true,
@@ -145,11 +131,13 @@ const updateMediaStatusById = async function (id: string, status: boolean) {
  */
 const deleteMediaByIds = async function (ids: string) {
     const queryResult = await db.media.updateMany({
-        where: { id:{
-            in: ids
-        } },
-        data: { 
-            is_deleted: true  
+        where: {
+            id: {
+                in: ids,
+            },
+        },
+        data: {
+            is_deleted: true,
         },
     });
     return queryResult;
@@ -162,7 +150,7 @@ const mediaQueries = {
     findManyMedias,
     getMediaById,
     updateMediaStatusById,
-    deleteMediaByIds
+    deleteMediaByIds,
 };
 
 export default mediaQueries;

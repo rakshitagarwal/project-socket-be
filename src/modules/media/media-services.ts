@@ -1,7 +1,7 @@
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import mediaQueries from "./media-queries";
-import {IFileMetaInfo, Iid} from "./typings/media.type";
+import {IFileMetaInfo, Iid, IMediaQuery} from "./typings/media.type";
 import fs from "fs";
 
 /**
@@ -9,12 +9,10 @@ import fs from "fs";
  * @param {IFileMetaInfo} reqFileData - The media file is passed from body using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
-    if (!reqFileData) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
-    
+const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {    
     const fileData = {
         filename: reqFileData.filename,
-        type: (reqFileData?.mimetype as string).includes("image") ? "image" : "video",
+        type: (reqFileData?.mimetype as string).split('/')[0],
         local_path: reqFileData.path,
         tag: "media",
         mime_type: reqFileData.mimetype,
@@ -22,7 +20,7 @@ const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
         created_by: userId,
     };
 
-    const mediaResult = await mediaQueries.addMediaInfo(fileData);
+    const mediaResult = await mediaQueries.addMediaInfo(fileData as IMediaQuery);
     return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
 };
 
@@ -31,14 +29,12 @@ const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
  * @param {IFileMetaInfo} reqFileData[] - The media files are passed using this variable to queries.
  * @returns {object} - the response object using responseBuilder.
  */
-const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {
-    if (!reqFileData) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
-    
+const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {    
     const filesData = [];
     for (let i = 0; i < reqFileData.length; i++) {
         filesData.push({
             filename: reqFileData[i]?.filename,
-            type: "image",
+            type: reqFileData[i]?.mimetype?.split('/')[0],
             local_path: reqFileData[i]?.path,
             tag: "media",
             mime_type: reqFileData[i]?.mimetype,
@@ -47,8 +43,8 @@ const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string)
         });
     }
 
-    const mediaResult = await mediaQueries.addMultipleMedia(filesData);
-    return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult.data);
+    const mediaResult = await mediaQueries.addMultipleMedia(filesData as IMediaQuery[]);
+    return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
 };
 
 /**
@@ -72,7 +68,6 @@ const getAllMedia = async (mediaId: string | undefined) => {
  * @returns {object} - the response object using responseBuilder.
  */
 const updateMediaStatus = async (id: string) => {
-    if (!id) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_ID);
     const media = await mediaQueries.getMediaById(id);
     if (media) {
         const result = await mediaQueries.updateMediaStatusById(id, media.status);
@@ -86,11 +81,9 @@ const updateMediaStatus = async (id: string) => {
  * @param {string} ids - ids are passed to specify which media files soft delete will happen.
  * @returns {object} - the response object using responseBuilder.
  */
-const deleteMedia = async (deleteIds: Iid) => {    
-    if (!deleteIds) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_ID);
-    if (deleteIds.ids.length < 1) return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_MIN_ID);
-    
+const deleteMedia = async (deleteIds: Iid) => {        
     const media = await mediaQueries.findManyMedias(deleteIds.ids);
+    if (media.length !== deleteIds.ids.length) return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_IDS_NOT_FOUND);
     if (media.length === deleteIds.ids.length) await mediaQueries.deleteMediaByIds(deleteIds.ids);
     media.map((item) => fs.unlinkSync(`${item?.local_path}`));
     return responseBuilder.okSuccess(MESSAGES.MEDIA.MEDIA_DELETE_SUCCESS);

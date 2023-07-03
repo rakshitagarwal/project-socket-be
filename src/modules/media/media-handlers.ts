@@ -9,10 +9,7 @@ import {IFileMetaInfo, Iid} from "./typings/media.type";
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const uploadMedia = async (req: Request, res: Response) => {
-    const response = await mediaServiceProvider.uploadMedia(
-        req.file as unknown as IFileMetaInfo,
-        res.locals.id as string
-    );
+    const response = await mediaServiceProvider.uploadMedia(req.file as unknown as IFileMetaInfo,res.locals.id as string);
     res.status(response.code).json(response);
 };
 
@@ -23,10 +20,7 @@ const uploadMedia = async (req: Request, res: Response) => {
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const uploadMultipleMedia = async (req: Request, res: Response) => {
-    const response = await mediaServiceProvider.uploadMultipleMedia(
-        req.files as unknown as IFileMetaInfo[],
-        res.locals.id as string
-    );
+    const response = await mediaServiceProvider.uploadMultipleMedia(req.files as unknown as IFileMetaInfo[],res.locals.id as string);
     res.status(response.code).json(response);
 };
 

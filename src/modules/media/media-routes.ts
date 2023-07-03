@@ -8,7 +8,7 @@ import mediaSchema from "./media-schemas";
 export const mediaRouter = Router();
 
 mediaRouter.post(ENDPOINTS.BASE, storeOneMedia, mediaHandler.uploadMedia);
-mediaRouter.post(ENDPOINTS.MULTIPLE, storeMultipleMedia, mediaHandler.uploadMultipleMedia);
+mediaRouter.post(ENDPOINTS.BASE + "multiple", storeMultipleMedia, mediaHandler.uploadMultipleMedia);
 mediaRouter.get(ENDPOINTS.BASE + ":id?", mediaHandler.getAllMedia);
-mediaRouter.patch(ENDPOINTS.ID, mediaHandler.updateMediaStatus);
-mediaRouter.delete(ENDPOINTS.BASE ,validateRequest.body(mediaSchema.requestBodySchema), mediaHandler.deleteMedia);
+mediaRouter.patch(ENDPOINTS.BASE + ":id", validateRequest.params(mediaSchema.uuidSchema), mediaHandler.updateMediaStatus);
+mediaRouter.delete(ENDPOINTS.BASE , validateRequest.body(mediaSchema.requestBodySchema), mediaHandler.deleteMedia);
