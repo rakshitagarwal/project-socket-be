@@ -1,6 +1,6 @@
 import termAndConditionService from "./term-condition-services"
 import { Request, Response } from "express"
-
+import { Ipagination } from "./typings/term-condition-types"
 /**
  * @description handles new terms and conditions  requests 
  * @param req { Request } - term and condition request object
@@ -13,7 +13,7 @@ const create = async (req: Request, res: Response) => {
 
 
 /**
- * @description handle to update update specifice request
+ * @description handle to  update specifice request
  * @param req { Request } - term and condition request object
  * @param res { Response }
  */
@@ -23,8 +23,42 @@ const update = async (req: Request, res: Response) => {
     res.status(response.code).json(response)
 }
 
+/**
+ * @description handle to delete specifice request
+ * @param req { Request } - term and condition request object
+ * @param res { Response }
+ */
+const deleteById = async (req: Request, res: Response) => {
+    const response = await termAndConditionService.deleteOne(req.params)
+    res.status(response.code).json(response)
+}
+
+/**
+ * @description handle to fetch specifice request
+ * @param req { Request } - term and condition request object
+ * @param res { Response }
+ */
+const getBYId = async (req: Request, res: Response) => {
+    const response = await termAndConditionService.fetchOne(req.params)
+    res.status(response.code).json(response)
+}
+
+/**
+ * @description handle to fetch all term and condition
+ * @param req { Request } - term and condition request object
+ * @param res { Response }
+ */
+
+const getAllTermAndCondition = async (req: Request, res: Response) => {
+    const response = await termAndConditionService.fetchAll(req.query as unknown as Ipagination)
+    res.status(response.code).json(response)
+}
+
 const termAndConditionHandlers = {
     create,
-    update
+    update,
+    deleteById,
+    getBYId,
+    getAllTermAndCondition
 }
 export default termAndConditionHandlers

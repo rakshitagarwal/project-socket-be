@@ -14,9 +14,17 @@ const update = z.object({
 const Id=z.object({
     id: z.string({ invalid_type_error: "id must be string", required_error: "id is required" }).min(1),
 }).strict()
+
+const pagination = z.object({
+    page: z.string({ invalid_type_error: "page must be string" }).optional(),
+    limit: z.string({ invalid_type_error: "limit must be string" }).optional(),
+    search: z.string().regex(/^[a-zA-Z0-9._-]+$/).optional()
+}).strict()
+
 const terAndConditonSchema = {
     update,
     create,
-    Id
+    Id,
+    pagination
 }
 export default terAndConditonSchema

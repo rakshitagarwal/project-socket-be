@@ -1,5 +1,5 @@
 import termAndConditionQuery from "./term-condition-queries"
-import { Icreate, Iupdate, Iid } from "./typings/term-condition-types"
+import { Icreate, Iupdate, Iid, Ipagination } from "./typings/term-condition-types"
 import { responseBuilder } from "../../common/responses"
 import { MESSAGES } from "../../common/constants"
 
@@ -13,7 +13,7 @@ import { MESSAGES } from "../../common/constants"
 
 const create = async (body: Icreate) => {
     const result = await termAndConditionQuery.create(body)
-    if(!result){
+    if (!result) {
         return responseBuilder.expectationField()
     }
     return responseBuilder.createdSuccess(MESSAGES.TERM_CONDITION.CREATED)
@@ -26,20 +26,69 @@ const create = async (body: Icreate) => {
  * @returns {Promise}
  */
 
-const update=async (id:Iid,body:Iupdate)=>{
-    const isTermAndCondition= await termAndConditionQuery.findOne(id)
-    if(!isTermAndCondition){
+const update = async (id: Iid, body: Iupdate) => {
+    const isTermAndCondition = await termAndConditionQuery.findOne(id)
+    if (!isTermAndCondition) {
         return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
     }
-    const result= await termAndConditionQuery.update(id,body)
-    if(!result){
+    const result = await termAndConditionQuery.update(id, body)
+    if (!result) {
         return responseBuilder.expectationField()
     }
     return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.UPDATED)
 }
 
-const termAndConditionService={
+/**
+ * @description - fetch the term and condition information 
+ * @param {string} id - contains the unique identification
+ * @returns {Promise}
+ */
+const fetchOne = async (id: Iid) => {
+    const isTermAndCondition = await termAndConditionQuery.findOne(id)
+    if (!isTermAndCondition) {
+        return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
+    }
+    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.FOUNDED, isTermAndCondition)
+}
+
+/**
+ * @description - delete the term and condition information 
+ * @param {string} id - contains the unique identification
+ * @returns {Promise}
+ */
+const deleteOne = async (id: Iid) => {
+    const isTermAndCondition = await termAndConditionQuery.findOne(id)
+    if (!isTermAndCondition) {
+        return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
+    }
+    await termAndConditionQuery.update(id,{is_deleted: true})
+    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.DELETED)
+}
+
+/**
+ * @description This API fetch all T&C records
+ * @param {object} query  - query contain the page limit and search fields
+ */
+
+const fetchAll = async (query: Ipagination) => {
+    const filter = []
+    const page = parseInt(query.page) || 0
+    const limit = parseInt(query.limit) || 10
+    if (query.search) {
+        filter.push(
+            { title: { contains: query.search, mode: 'insensitive' } },
+        )
+    }
+    const result = await termAndConditionQuery.findAll({ page, limit, filter })
+    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.FOUNDED, result.termCondition, { limit, page, totalRecord: result.count, totalPage: Math.ceil(result.count / limit), search: query.search })
+
+}
+
+const termAndConditionService = {
     create,
-    update
+    update,
+    fetchOne,
+    deleteOne,
+    fetchAll
 }
 export default termAndConditionService

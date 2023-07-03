@@ -4,12 +4,24 @@ export interface Iupdate {
     status?: boolean;
     is_deleted?: boolean;
 }
-export interface Icreate{
+export interface Icreate {
     title: string;
     content: string;
     created_by: string;
 }
 
-export interface Iid{
+export interface Iid {
     id?: string;
+}
+
+export interface Ipagination {
+    limit: string
+    page: string
+    search: string
+}
+
+export interface IpaginationQuery {
+    limit: number
+    page: number
+    filter: Array<Object>
 }
