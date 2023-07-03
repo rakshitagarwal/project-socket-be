@@ -38,9 +38,20 @@ const update = asyncHandler(async (req: Request, res: Response) => {
     const response = await productServices.update(req.body);
     res.status(response.code).json(response);
 })
+/**
+ * @description handler to multiple Delete new Product 
+ * @param { Request } req - request object
+ * @param { Response } res - response object
+ */
+const removeAll = asyncHandler(async (req: Request, res: Response) => {
+
+    const response = await productServices.removeAll(req.body);
+    res.status(response.code).json(response);
+})
 const productHandler = {
     add,
     update,
-    get
+    get,
+    removeAll
 }
 export default productHandler

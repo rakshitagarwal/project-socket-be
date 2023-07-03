@@ -9,7 +9,6 @@ const schema = (() => {
     const ZNewAdd = z.object({
         title: title,
         description: description
-
     });
 
     const ZUpdate = z.object({
@@ -21,11 +20,16 @@ const schema = (() => {
     const ZGetId = z.object({
         id: z.string().uuid().optional(),
     });
+    const ZDelete = z.object({
+        ids: z.array(z.string().uuid()),
+        description: description
+    });
 
     return {
         ZNewAdd,
         ZUpdate,
-        ZGetId
+        ZGetId,
+        ZDelete
     };
 })();
 

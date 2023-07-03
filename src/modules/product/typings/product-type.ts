@@ -17,4 +17,6 @@ export interface IPagination {
     pageNum: number;
     recordLimit: number;
 }
-
+export interface Ids{
+    ids:Array<string>
+}

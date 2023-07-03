@@ -20,7 +20,6 @@ const getTitle = async (title: string) => {
                     contains: title ? title : '',
                     mode: 'insensitive'
                 },
-                status: true,
                 is_deleted: false
             },
         },
@@ -67,7 +66,6 @@ const getAllProduct = async (
                 mode: 'insensitive',
             },
             is_deleted: false,
-            status: true
         },
     });
     const queryResult = await db.product.findMany({
@@ -131,13 +129,50 @@ const getProdCategoryById = async (id: string) => {
     return queryResult
 };
 
+const removeAll = async function (ids: string[]) {
+
+    const queryResult = await db.product.updateMany({
+        where: {
+            AND: {
+                id: {
+                    in: ids,
+                },
+                is_deleted: false,
+            },
+        },
+        data: {
+            is_deleted: true,
+            status: false,
+
+        },
+    });
+    return queryResult;
+};
+
+const findAll = async function (ids: string[]) {
+
+    const queryResult = await db.product.findMany({
+        where: {
+            AND: {
+                id: {
+                    in: ids,
+                },
+                is_deleted: false,
+            },
+        }
+    });
+    return queryResult;
+};
+
 const productQueries = {
     addNew,
     getTitle,
     getById,
     getAllProduct,
     update,
-    getProdCategoryById
+    getProdCategoryById,
+    removeAll,
+    findAll
 };
 
 export default productQueries;

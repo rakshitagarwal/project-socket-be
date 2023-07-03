@@ -1,5 +1,5 @@
 import { responseBuilder } from "../../common/responses";
-import { addReqBody, IPagination, updateReqBody } from './typings/product-type';
+import { addReqBody, Ids, IPagination, updateReqBody } from './typings/product-type';
 import productQueries from './product-queries';
 import { productCategoryMessage, productMessage } from '../../common/constants';
 import productCategoryQueries from '../product-categories/product-category-queries';
@@ -24,7 +24,7 @@ const get = async (id: string | undefined,
         return result
             ? responseBuilder.okSuccess(
                 productMessage.GET.REQUESTED,
-                [result]
+                result
             )
             : responseBuilder.badRequestError(
                 productMessage.GET.NOT_FOUND
@@ -57,9 +57,20 @@ const update = async (newReqBody: addReqBody) => {
     );
 };
 
+const removeAll = async (collectionId: Ids) => {
+
+    const existMultipleId = await productQueries.findAll(collectionId.ids);
+    if (existMultipleId.length < 0) {
+        return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    }
+    await productQueries.removeAll(collectionId.ids);
+    return responseBuilder.createdSuccess(productMessage.DELETE.SUCCESS);
+};
+
 const productServices = {
     add,
     get,
-    update
+    update,
+    removeAll
 };
 export default productServices;

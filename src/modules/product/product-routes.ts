@@ -17,3 +17,9 @@ productRoutes.get(ENDPOINTS.BASE + ':id?',
 productRoutes.patch(ENDPOINTS.BASE,
     validateRequest.body(schema.ZUpdate),
     productHandler.update);
+
+productRoutes.delete(
+    ENDPOINTS.BASE,
+    validateRequest.body(schema.ZDelete),
+    productHandler.removeAll
+);
