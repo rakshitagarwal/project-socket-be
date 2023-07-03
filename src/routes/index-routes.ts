@@ -5,6 +5,7 @@ import { auctionCategoryRouter } from "../modules/auction-category/auction-categ
 import { userRouter } from "../modules/users/user-routes";
 import { roleRouter } from "../modules/roles/role-routes";
 import isAuthenticated from "../middlewares/authentication";
+import { mediaRouter } from "../modules/media/media-routes";
 
 /**
  * Index Routes
@@ -14,8 +15,5 @@ export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRouter);
 v1Router.use(ENDPOINTS.USERS, userRouter);
 v1Router.use(ENDPOINTS.AUCTIONS, auctionRouter);
-v1Router.use(
-    ENDPOINTS.AUCTION_CATEGORY,
-    [isAuthenticated],
-    auctionCategoryRouter
-);
+v1Router.use(ENDPOINTS.MEDIA, isAuthenticated ,mediaRouter);
+v1Router.use(ENDPOINTS.AUCTION_CATEGORY,[isAuthenticated],auctionCategoryRouter);
