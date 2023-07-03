@@ -31,6 +31,9 @@ const update = async (id: Iid, body: Iupdate) => {
     if (!isTermAndCondition) {
         return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
     }
+    if(!isTermAndCondition.status){
+        return responseBuilder.badRequestError(MESSAGES.TERM_CONDITION.INACTIVE_STATUS)
+    }
     const result = await termAndConditionQuery.update(id, body)
     if (!result) {
         return responseBuilder.expectationField()

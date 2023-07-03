@@ -23,7 +23,7 @@ termAndConditionRouter.put(
 termAndConditionRouter.get(
     ENDPOINTS.ID,
     [validateRequest.params(termAndConditonSchema.Id)],
-    asyncHandler(termAndConditionHandlers.getBYId)
+    asyncHandler(termAndConditionHandlers.getById)
 );
 termAndConditionRouter.delete(
     ENDPOINTS.ID,

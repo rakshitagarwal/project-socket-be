@@ -38,7 +38,7 @@ const deleteById = async (req: Request, res: Response) => {
  * @param req { Request } - term and condition request object
  * @param res { Response }
  */
-const getBYId = async (req: Request, res: Response) => {
+const getById = async (req: Request, res: Response) => {
     const response = await termAndConditionService.fetchOne(req.params)
     res.status(response.code).json(response)
 }
@@ -58,7 +58,7 @@ const termAndConditionHandlers = {
     create,
     update,
     deleteById,
-    getBYId,
+    getById,
     getAllTermAndCondition
 }
 export default termAndConditionHandlers
