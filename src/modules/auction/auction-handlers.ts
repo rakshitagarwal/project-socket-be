@@ -9,6 +9,12 @@ const create = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+const getById = async (req: Request, res: Response) => {    
+    const response = await auctionService.getById(req.params.id as string,);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
+    getById,
 };

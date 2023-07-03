@@ -35,6 +35,40 @@ const create = async (auction: IAuction, userId: string) => {
     return query;
 };
 
+/**
+ * Auction Creation
+ * @param {IAuction} auction - values regarding the auction data
+ * @param {string} userId = UUID regarding the created_by
+ * @returns the UUID for auction creation
+ */
+const getById = async function (id: string) {
+    const query = await db.auction.findFirst({
+        where: { id },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            image_path: true,
+            video_path: true,
+            bid_increment_price: true,
+            plays_consumed_on_bid: true,
+            opening_price: true,
+            new_participants_limit: true,
+            start_date: true,
+            registeration_count: true,
+            registeration_fees: true,
+            terms_and_conditions: true,
+            status: true,
+            is_deleted: true,
+            auction_category_id: true,
+            product_id: true,
+            created_by: true,
+        },
+    });
+    return query;
+};
+
 export const auctionQueries = {
     create,
+    getById,
 };

@@ -35,6 +35,20 @@ const create = async (auction: IAuction, userId: string) => {
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
+/**
+ * Auction Creation
+ * @param {IAuction} auction - auction request body details
+ * @description creation of the auction with products
+ * @param {string} userId - user ObjectID
+ * @returns - response builder with { code, success, message, data, metadata }
+ */
+const getById = async (auctionId: string ) => {
+        const media = await auctionQueries.getById(auctionId);
+        if (media) return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [media]);
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+};
+
 export const auctionService = {
     create,
+    getById,
 };

@@ -47,6 +47,7 @@ export const AUCTION_MESSAGES = {
     CREATE: "auction created!",
     NOT_FOUND: "auction not found!",
     NOT_CREATED: "auction not created!, something went wrong",
+    FOUND: "auction found!",
 };
 
 export const TEMPLATE = {

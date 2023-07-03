@@ -91,6 +91,13 @@ const ZAuctionAdd = z
     })
     .strict();
 
+const uuidSchema = z
+    .object({
+        id: z.string().uuid(),
+    })
+    .strict();
+
 export const auctionSchemas = {
     ZAuctionAdd,
+    uuidSchema,
 };
