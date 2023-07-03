@@ -27,7 +27,7 @@ export const storeOneMedia = (req: Request, res: Response, next: NextFunction) =
             const response = responseBuilder.badRequestError(err.message);
             return res.status(response.code).json(response);
         }
-        if(!req.files){
+        if(!req.file){
             logger.error(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
             const response = responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_ATTACHED);
             return res.status(response.code).json(response);
