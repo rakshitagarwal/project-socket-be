@@ -23,6 +23,12 @@ export const AUCTION_CATEGORY_MESSAGES = {
     DELETE: "auctionCategory deleted!",
 };
 
+export const AUCTION_MESSAGES = {
+    CREATE: "auction created!",
+    NOT_FOUND: "auction not found!",
+    NOT_CREATED: "auction not created!, something went wrong",
+};
+
 export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP: "login_otp.html",

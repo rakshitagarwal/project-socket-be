@@ -181,9 +181,11 @@ model Auctions {
   opening_price          Float
   new_participants_limit Int?
   start_date             DateTime              @db.Date
-  registeration_count    BigInt
-  registeration_fees     Int
+  is_preRegistered       Boolean               @default(false)
+  registeration_count    Int?
+  registeration_fees     Int?
   terms_and_conditions   String?               @db.Text
+  state                  String                @db.Text
   status                 Boolean               @default(true)
   is_deleted             Boolean               @default(false)
   created_at             DateTime              @default(now()) @db.Timestamptz()
