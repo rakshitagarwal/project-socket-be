@@ -93,7 +93,7 @@ model TermsAndCondition {
 model Media {
   id            String         @id @default(uuid())
   filename      String
-  size          BigInt
+  size          Int
   type          String
   local_path    String
   tag           String
