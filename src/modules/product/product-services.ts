@@ -54,6 +54,7 @@ const update = async (newReqBody: addReqBody) => {
 
 const removeAll = async (collectionId: Ids) => {
     const ids = collectionId.ids;
+    if(!ids.length) return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
     const findProducts = await productQueries.findAll(ids);
     if (!findProducts) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
     const allIds = findProducts.map(oneProduct =>  oneProduct.landing_image);
