@@ -143,6 +143,22 @@ const deleteMediaByIds = async function (ids: string) {
     return queryResult;
 };
 
+/**
+ * GET Multiple Media By Id
+ * @param {[string]} ids - Mutiple Auction Ids
+ * @returns {Promise<IMediaQuery>}
+ */
+const getMultipleActiveMediaByIds = async (ids: string[]) => {
+    const query = await db.media.findMany({
+        where: {
+            id: {
+                in: ids,
+            },
+        },
+    });
+    return query;
+};
+
 const mediaQueries = {
     addMediaInfo,
     addMultipleMedia,
@@ -151,6 +167,7 @@ const mediaQueries = {
     getMediaById,
     updateMediaStatusById,
     deleteMediaByIds,
+    getMultipleActiveMediaByIds,
 };
 
 export default mediaQueries;

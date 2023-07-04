@@ -91,6 +91,7 @@ const ZAuctionAdd = z
     })
     .strict();
 
+<<<<<<< HEAD
 const uuidSchema = z
     .object({
         id: z.string().uuid(),
@@ -100,4 +101,38 @@ const uuidSchema = z
 export const auctionSchemas = {
     ZAuctionAdd,
     uuidSchema,
+=======
+const ZAuctionId = z.object({
+    id: z
+        .string({
+            required_error: "id is required!",
+            invalid_type_error: "id should be string!",
+        })
+        .uuid({
+            message: "Auction Id should be UUID!",
+        }),
+});
+
+const ZDeleteId = z.object({
+    ids: z
+        .array(
+            z.string({
+                required_error: "id is required!",
+                invalid_type_error: "id should be string!",
+            }),
+            {
+                required_error: "ids is required!",
+                invalid_type_error: "ids should be array of string!",
+            }
+        )
+        .min(1, {
+            message: "minimum one Ids is required!",
+        }),
+});
+
+export const auctionSchemas = {
+    ZAuctionAdd,
+    ZAuctionId,
+    ZDeleteId,
+>>>>>>> TBD-417-final-auction-module
 };

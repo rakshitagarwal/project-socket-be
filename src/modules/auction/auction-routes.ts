@@ -23,3 +23,15 @@ auctionRouter.get(
     ENDPOINTS.BASE,
     handleAsync(auctionHandler.getAll)
 );
+
+auctionRouter.put(
+    ENDPOINTS.BASE + ":id",
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.update)
+);
+
+auctionRouter.delete(
+    ENDPOINTS.BASE + ":id",
+    validateRequest.body(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.remove)
+);
