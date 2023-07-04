@@ -2,12 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import {
     AUCTION_CATEGORY_MESSAGES,
     AUCTION_MESSAGES,
+    MESSAGES,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
 import { IAuction } from "./typings/auction-types";
+import mediaQueries from "../media/media-queries";
 
 /**
  * Auction Creation
@@ -17,18 +19,22 @@ import { IAuction } from "./typings/auction-types";
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const create = async (auction: IAuction, userId: string) => {
-    // TODO: verify, auction category id and  product id and video id and image id
-    const promises = await Promise.allSettled([
-        auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
-    ]);
-    const data = promises.some((promise) => {
-        if (promise.status === "fulfilled") return true;
-        return false;
-    });
-    if (!data)
+    const isAuctionCategoryFound = await auctionCatgoryQueries.IsExistsActive(
+        auction.auction_category_id
+    );
+    if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(
-            AUCTION_CATEGORY_MESSAGES.NOT_EXISTS
+            AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
+    const isMediaFound = await mediaQueries.getMultipleActiveMediaByIds([
+        auction.auction_image,
+        auction.auction_video,
+    ]);
+    if (isMediaFound.length)
+        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    /**
+     * TODO: verify, PRODUCT_ID
+     */
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
         return responseBuilder.internalserverError(
@@ -45,18 +51,22 @@ const create = async (auction: IAuction, userId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const update = async (auction: IAuction, auctionId: string, userId: string) => {
-    const promises = await Promise.allSettled([
-        auctionQueries.getActiveAuctioById(auctionId),
-        auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
-    ]);
-    const data = promises.some((promise) => {
-        if (promise.status === "fulfilled") return true;
-        return false;
-    });
-    if (!data)
+    const isAuctionCategoryFound = await auctionCatgoryQueries.IsExistsActive(
+        auction.auction_category_id
+    );
+    if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(
-            AUCTION_CATEGORY_MESSAGES.NOT_EXISTS
+            AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
+    const isMediaFound = await mediaQueries.getMultipleActiveMediaByIds([
+        auction.auction_image,
+        auction.auction_video,
+    ]);
+    if (isMediaFound.length)
+        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    /**
+     * TODO: Verify ,PRODUCT_ID
+     */
     const isTransactionDone = await prismaTransaction(
         async (prisma: PrismaClient) => {
             const createdAuction = await auctionQueries.update(
