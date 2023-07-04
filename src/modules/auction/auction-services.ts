@@ -75,7 +75,23 @@ const update = async (auction: IAuction, auctionId: string, userId: string) => {
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
+/**
+ * Remove Auction By Id
+ * @param {string} id - auction ID
+ * @returns - return {code, message, data, metadata} from responseBuilder
+ */
+const remove = async (id: [string]) => {
+    const isExists = await auctionQueries.getMultipleActiveById(id);
+    if (!isExists)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    const isDeleted = await auctionQueries.remove(id);
+    if (isDeleted.count)
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
+    return responseBuilder.internalserverError();
+};
+
 export const auctionService = {
     create,
     update,
+    remove,
 };

@@ -18,3 +18,9 @@ auctionRouter.put(
     validateRequest.params(auctionSchemas.ZAuctionId),
     handleAsync(auctionHandler.update)
 );
+
+auctionRouter.delete(
+    ENDPOINTS.BASE + ":id",
+    validateRequest.body(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.remove)
+);

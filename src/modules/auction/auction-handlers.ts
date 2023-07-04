@@ -30,7 +30,19 @@ const update = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * Auction Remove By Id
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ * @return {Promise<Response>}
+ */
+const remove = async (req: Request, res: Response) => {
+    const response = await auctionService.remove(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     update,
+    remove,
 };

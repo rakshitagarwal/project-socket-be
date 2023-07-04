@@ -89,6 +89,25 @@ const getActiveAuctioById = async (id: string) => {
 };
 
 /**
+ * Get multiple auctions
+ * @param {[string]} id - multiple auction ID
+ * @returns {[Promise<IAuction>]}
+ */
+const getMultipleActiveById = async (id: [string]) => {
+    const query = await db.auction.findMany({
+        where: {
+            AND: {
+                id: {
+                    in: id,
+                },
+                is_deleted: false,
+            },
+        },
+    });
+    return query;
+};
+
+/**
  * Auction Update By Id with Transaction
  * @param {PrismaClient} prisma - prisma for db transaction
  * @param {IAuction} auction - auction Data
@@ -129,8 +148,32 @@ const update = async (
     return query;
 };
 
+/**
+ * Remove Auction By ID
+ * @param {string} id - Auction ID
+ * @returns {Promise<IAuction>} - return the auction detials
+ */
+const remove = async (id: [string]) => {
+    const query = await db.auction.updateMany({
+        where: {
+            AND: {
+                id: {
+                    in: id,
+                },
+                is_deleted: false,
+            },
+        },
+        data: {
+            is_deleted: true,
+        },
+    });
+    return query;
+};
+
 export const auctionQueries = {
     create,
     getActiveAuctioById,
     update,
+    remove,
+    getMultipleActiveById,
 };
