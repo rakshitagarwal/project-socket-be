@@ -58,7 +58,7 @@ const allMedias = async function () {
  * @param {string} ids - The ids of media entries is passed using ids as variable.
  * @returns {queryResult} - the result of execution of query.
  */
-const findManyMedias = async function (ids: string) {
+const findManyMedias = async function (ids: string | string[]) {
     const queryResult = await db.media.findMany({
         where: {
             id: {
@@ -129,7 +129,7 @@ const updateMediaStatusById = async function (id: string, status: boolean) {
  * @param {string} ids- The ids of media entries are passed from body using this variable.
  * @returns {queryResult} - the result of execution of query.
  */
-const deleteMediaByIds = async function (ids: string) {
+const deleteMediaByIds = async function (ids: string | string[]) {
     const queryResult = await db.media.updateMany({
         where: {
             id: {

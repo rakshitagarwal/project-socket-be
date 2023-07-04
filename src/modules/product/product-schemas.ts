@@ -27,7 +27,6 @@ const schema = (() => {
     });
     const ZDelete = z.object({
         ids: z.array(z.string().uuid()),
-        description: description
     });
 
     return {

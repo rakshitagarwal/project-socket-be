@@ -2,8 +2,6 @@ import { db } from '../../config/db';
 import { addReqBody, IPagination, updateReqBody, } from './typings/product-type';
 
 const addNew = async (product: addReqBody) => {
-    console.log("^^^^^", product);
-
     const queryResult = await db.product.create({
         data: {
             title: product.title,
@@ -51,6 +49,7 @@ const getById = async (id: string) => {
             title: true,
             description: true,
             status: true,
+            landing_image: true,
             updated_at: true,
         },
     });
@@ -132,8 +131,7 @@ const getProdCategoryById = async (id: string) => {
     return queryResult
 };
 
-const removeAll = async function (ids: string[]) {
-
+const removeAll = async function (ids: string[]) {    
     const queryResult = await db.product.updateMany({
         where: {
             AND: {
@@ -146,7 +144,6 @@ const removeAll = async function (ids: string[]) {
         data: {
             is_deleted: true,
             status: false,
-
         },
     });
     return queryResult;
