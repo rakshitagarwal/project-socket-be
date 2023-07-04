@@ -6,7 +6,7 @@ const schema = (() => {
     const title = z.string().min(1);
     const description = z.string();
     const product_category_id = z.string().uuid();
-    const landing_image = z.string().uuid()
+    const landing_image = z.string().uuid();
 
     const ZNewAdd = z.object({
         title: title,
