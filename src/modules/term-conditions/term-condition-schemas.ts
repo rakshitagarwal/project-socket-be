@@ -11,13 +11,13 @@ const update = z.object({
     status: z.boolean({ invalid_type_error: "status must be boolean" }).optional()
 }).strict()
 
-const Id=z.object({
+const Id = z.object({
     id: z.string({ invalid_type_error: "id must be string", required_error: "id is required" }).min(1),
 }).strict()
 
 const pagination = z.object({
-    page: z.string({ invalid_type_error: "page must be string" }).optional(),
-    limit: z.string({ invalid_type_error: "limit must be string" }).optional(),
+    page: z.preprocess((val) => parseInt(val as string), z.number({ invalid_type_error: "page must be number" })).optional(),
+    limit: z.preprocess((val) => parseInt(val as string), z.number({ invalid_type_error: "limit must be number" })).optional(),
     search: z.string().regex(/^[a-zA-Z0-9._-]+$/).optional()
 }).strict()
 

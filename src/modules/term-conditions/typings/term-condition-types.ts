@@ -15,8 +15,8 @@ export interface Iid {
 }
 
 export interface Ipagination {
-    limit: string
-    page: string
+    limit: number
+    page: number
     search: string
 }
 

@@ -19,7 +19,7 @@ import { hashPassword } from "../../common/helper"
 const register = async (body: Iuser) => {
     const { role, ...payload } = body
     const isRole = await roleQueries.fetchRole({ title: role })
-    if ((isRole?.title)?.toLocaleLowerCase() == "admin") {
+    if ((isRole?.title)?.toLocaleLowerCase() === "admin") {
         return responseBuilder.conflictError(MESSAGES.USERS.ADMIN_EXIST)
     }
     if (!isRole) {
