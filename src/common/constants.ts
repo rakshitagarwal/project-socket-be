@@ -69,12 +69,15 @@ export const productMessage = {
         REQUESTED: 'get product requested!',
         ALL: 'get all product !',
         NOT_FOUND: 'product id not found',
+        SOME_NOT_FOUND: 'product id not found',
+        PRODUCT_MEDIA_NOT_FOUND: 'Product Medias not found'
     },
     UPDATE: {
         SUCCESS: 'product update success',
     },
     DELETE: {
-        SUCCESS: 'product remove success'
+        SUCCESS: 'product remove success',
+        FAIL: 'product remove failed',
     }
 }
 export const TEMPLATE = {

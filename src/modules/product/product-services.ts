@@ -55,16 +55,16 @@ const update = async (newReqBody: addReqBody) => {
 const removeAll = async (collectionId: Ids) => {
     const ids = collectionId.ids;
     const findProducts = await productQueries.findAll(ids);
-    if (!findProducts) return responseBuilder.notFoundError("Products not found");
+    if (!findProducts) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
     const allIds = findProducts.map(oneProduct =>  oneProduct.landing_image);
     const medias = await mediaQueries.findManyMedias(allIds);
-    if (!medias) return responseBuilder.notFoundError("Product Medias not found");
+    if (!medias) return responseBuilder.notFoundError(productMessage.GET.PRODUCT_MEDIA_NOT_FOUND);
     if (medias.length === ids.length) {
         const deleteProducts = await productQueries.removeAll(ids);
         const deleteMedias = await mediaQueries.deleteMediaByIds(allIds);
         if(deleteProducts && deleteMedias) return responseBuilder.okSuccess(productMessage.DELETE.SUCCESS);
     }
-    return responseBuilder.internalserverError("Error deleting overall");
+    return responseBuilder.internalserverError(productMessage.DELETE.FAIL);
 };
 
 const productServices = {
