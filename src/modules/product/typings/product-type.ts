@@ -16,9 +16,24 @@ export type updateReqBody = {
 };
 
 export interface IPagination {
-    pageNum: number;
-    recordLimit: number;
+    page: string;
+    limit: string;
+    search?: string;
+}
+
+export interface IPaginationQuery {
+    page: number;
+    limit: number;
+    filter: Array<Object>
 }
 export interface Ids {
     ids: Array<string>
+}
+export interface Iid {
+    id: string;
+}
+
+export interface IgetRequest {
+    query: IPagination,
+    params: Iid
 }

@@ -29,12 +29,17 @@ const schema = (() => {
         ids: z.array(z.string().uuid()),
         description: description
     });
-
+    const Zpagination = z.object({
+        page: z.preprocess((val) => parseInt(z.string().parse(val), 10), z.number({ invalid_type_error: "page must be number" })).default(0),
+        limit: z.preprocess((val) => parseInt(z.string().parse(val), 10), z.number({ invalid_type_error: "limit must be number" })).default(10),
+        search: z.string().regex(/^[a-zA-Z0-9._-]+$/).optional()
+    }).strict()
     return {
         ZNewAdd,
         ZUpdate,
         ZGetId,
-        ZDelete
+        ZDelete,
+        Zpagination
     };
 })();
 

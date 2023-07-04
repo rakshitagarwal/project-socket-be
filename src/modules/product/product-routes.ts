@@ -11,7 +11,7 @@ productRoutes.post(
     productHandler.add
 );
 productRoutes.get(ENDPOINTS.BASE + ':id?',
-    validateRequest.params(schema.ZGetId),
+    [validateRequest.params(schema.ZGetId),validateRequest.query(schema.Zpagination)],
     productHandler.get
 );
 productRoutes.patch(ENDPOINTS.BASE,
