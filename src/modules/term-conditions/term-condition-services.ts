@@ -75,8 +75,8 @@ const deleteOne = async (id: Iid) => {
 
 const fetchAll = async (query: Ipagination) => {
     const filter = []
-    const page = query.page || 0
-    const limit = query.limit || 10
+    const page = parseInt(query.page) || 0
+    const limit = parseInt(query.limit) || 10
     if (query.search) {
         filter.push(
             { title: { contains: query.search, mode: 'insensitive' } },
