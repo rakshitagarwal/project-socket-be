@@ -15,7 +15,25 @@ export const ENDPOINTS = {
     REFRESH_TOKEN: "/refresh-token",
     VERIFY: "/verify",
     ID: "/:id",
+    TERM_CONDITION: "/term-condition",
+    MEDIA: "/media",
 };
+
+export const ALLOWED_MIMETYPES = [
+    "image/png",
+    "image/jpg",
+    "image/jpeg",
+    "video/mp4",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+];
+
+export const ALLOWED_IMAGE_MIMETYPES = [
+    "image/png",
+    "image/jpg",
+    "image/jpeg"
+];
 
 export const AUCTION_CATEGORY_MESSAGES = {
     ADD: "auctionCategory created!",
@@ -67,6 +85,25 @@ export const MESSAGES = {
         ROLE_ADDED:"role added successfully",
         ROlE_NOT_EXIST:"role not found"
     },
+    MEDIA: {
+        REQUEST_MEDIA: "requested media",
+        MEDIA_NOT_ATTACHED: "media not attached",
+        MEDIA_ID: "media id not provided",
+        MEDIA_UPDATE_SUCCESS: "media updated successfully",
+        MEDIA_DELETE_SUCCESS: "media deleted successfully",
+        MEDIA_DELETE_FAIL : "media delete failed",
+        MEDIA_CREATE_SUCCESS: "media created successfully",
+        MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
+        MEDIA_SINGLE_INVALID: "media file more than 1",
+        MEDIA_FILES_INVALID: "media files invalid",
+        MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed",
+        MEDIA_MIN_ID: "atleast one media id should be provided",
+        MEDIA_NOT_FOUND: "media id not found or not valid",
+        MEDIA_IDS_NOT_FOUND: "some media ids were not found"
+    },
+    ALL: {
+        MULTER_ERROR: "multer error"
+    },
     JWT:{
         JWT_EXPIRED:"jwt expired",
         JWT_NOT_ACTIVE:"jwt not active",
@@ -74,5 +111,13 @@ export const MESSAGES = {
         TOKEN_NOT_FOUND:"token not found",
         TOKEN_NOT_EXPIRED:"token not expired",
         DATA_FOUND:"data found",
+    },
+    TERM_CONDITION:{
+        CREATED:"term and condition added successfully!",
+        UPDATED:"term and condition updated successfully!",
+        DELETED:"term and condition deleted successfully!",
+        NOT_FOUND:"term and condition not found!",
+        FOUNDED:"term and condition found successfully!",
+        INACTIVE_STATUS:"status is not active"
     }
 }
