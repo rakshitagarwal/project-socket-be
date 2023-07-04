@@ -91,6 +91,18 @@ const ZAuctionAdd = z
     })
     .strict();
 
+const ZAuctionId = z.object({
+    id: z
+        .string({
+            required_error: "id is required!",
+            invalid_type_error: "id should be string!",
+        })
+        .uuid({
+            message: "Auction Id should be UUID!",
+        }),
+});
+
 export const auctionSchemas = {
     ZAuctionAdd,
+    ZAuctionId,
 };

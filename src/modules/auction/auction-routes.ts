@@ -12,3 +12,9 @@ auctionRouter.post(
     validateRequest.body(auctionSchemas.ZAuctionAdd),
     handleAsync(auctionHandler.create)
 );
+
+auctionRouter.put(
+    ENDPOINTS.BASE + ":id",
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.update)
+);

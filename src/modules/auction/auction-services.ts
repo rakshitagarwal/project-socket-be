@@ -1,8 +1,10 @@
+import { PrismaClient } from "@prisma/client";
 import {
     AUCTION_CATEGORY_MESSAGES,
     AUCTION_MESSAGES,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
+import { prismaTransaction } from "../../utils/prisma-transactions";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
 import { IAuction } from "./typings/auction-types";
@@ -35,6 +37,45 @@ const create = async (auction: IAuction, userId: string) => {
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
+/**
+ * Auction Update
+ * @param {IAuction} auction - keys regarding the auction details
+ * @param {string} auctionId -  auction Id for updating details
+ * @param {string} userId - for updating the created_by
+ * @returns - response builder with { code, success, message, data, metadata }
+ */
+const update = async (auction: IAuction, auctionId: string, userId: string) => {
+    const promises = await Promise.allSettled([
+        auctionQueries.getActiveAuctioById(auctionId),
+        auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
+    ]);
+    const data = promises.some((promise) => {
+        if (promise.status === "fulfilled") return true;
+        return false;
+    });
+    if (!data)
+        return responseBuilder.notFoundError(
+            AUCTION_CATEGORY_MESSAGES.NOT_EXISTS
+        );
+    const isTransactionDone = await prismaTransaction(
+        async (prisma: PrismaClient) => {
+            const createdAuction = await auctionQueries.update(
+                prisma,
+                auction,
+                auctionId,
+                userId
+            );
+            return createdAuction;
+        }
+    );
+    if (!isTransactionDone)
+        return responseBuilder.internalserverError(
+            AUCTION_MESSAGES.NOT_CREATED
+        );
+    return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
+};
+
 export const auctionService = {
     create,
+    update,
 };
