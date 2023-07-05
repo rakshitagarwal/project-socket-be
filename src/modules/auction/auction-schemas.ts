@@ -91,12 +91,6 @@ const ZAuctionAdd = z
     })
     .strict();
 
-const Id = z
-    .object({
-        id: z.string().uuid(),
-    })
-    .strict();
-
 const ZAuctionId = z.object({
     id: z
         .string({
@@ -150,6 +144,5 @@ export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
     ZDeleteId,
-    Id,
     pagination,
 };
