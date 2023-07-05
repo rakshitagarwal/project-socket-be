@@ -91,17 +91,12 @@ const ZAuctionAdd = z
     })
     .strict();
 
-<<<<<<< HEAD
 const uuidSchema = z
     .object({
         id: z.string().uuid(),
     })
     .strict();
 
-export const auctionSchemas = {
-    ZAuctionAdd,
-    uuidSchema,
-=======
 const ZAuctionId = z.object({
     id: z
         .string({
@@ -134,5 +129,5 @@ export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
     ZDeleteId,
->>>>>>> TBD-417-final-auction-module
+    uuidSchema,
 };
