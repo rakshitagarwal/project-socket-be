@@ -8,7 +8,7 @@ import { responseBuilder } from "../../common/responses";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
-import { IAuction } from "./typings/auction-types";
+import { IAuction, Ipagination } from "./typings/auction-types";
 import mediaQueries from "../media/media-queries";
 
 /**
@@ -51,8 +51,8 @@ const create = async (auction: IAuction, userId: string) => {
  */
 const getById = async (auctionId: string) => {
     const auction = await auctionQueries.getById(auctionId);
-    if (auction) return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction]);
-    return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    if (!auction) return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction]);
 };
 
 /**
@@ -60,11 +60,26 @@ const getById = async (auctionId: string) => {
  * @description retrieval of all auctions
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const getAll = async () => {
-    const auctions = await auctionQueries.getAll();
-    if (auctions) return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auctions);
-    return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-}
+const getAll = async (query: Ipagination) => {
+    const filter = [];
+    const page = parseInt(query.page) || 0;
+    const limit = parseInt(query.limit) || 10;
+    if (query.search) {
+        filter.push({ title: { contains: query.search, mode: "insensitive" } });
+    }
+    const auctions = await auctionQueries.getAll({ page, limit, filter });
+    return responseBuilder.okSuccess(
+        AUCTION_MESSAGES.FOUND,
+        auctions.queryResult,
+        {
+            limit,
+            page,
+            totalRecord: auctions.count,
+            totalPage: Math.ceil(auctions.count / limit),
+            search: query.search,
+        }
+    );
+};
 /**
  * Auction Update
  * @param {IAuction} auction - keys regarding the auction details

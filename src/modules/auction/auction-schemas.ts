@@ -91,7 +91,7 @@ const ZAuctionAdd = z
     })
     .strict();
 
-const uuidSchema = z
+const Id = z
     .object({
         id: z.string().uuid(),
     })
@@ -125,9 +125,31 @@ const ZDeleteId = z.object({
         }),
 });
 
+const pagination = z
+    .object({
+        page: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "page must be number" })
+            )
+            .optional(),
+        limit: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "limit must be number" })
+            )
+            .optional(),
+        search: z
+            .string()
+            .regex(/^[a-zA-Z0-9._-]+$/)
+            .optional(),
+    })
+    .strict();
+
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
     ZDeleteId,
-    uuidSchema,
+    Id,
+    pagination,
 };

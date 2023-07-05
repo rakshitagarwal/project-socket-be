@@ -15,12 +15,13 @@ auctionRouter.post(
 
 auctionRouter.get(
     ENDPOINTS.BASE + ":id",
-    validateRequest.params(auctionSchemas.uuidSchema),
+    validateRequest.params(auctionSchemas.Id),
     handleAsync(auctionHandler.getById)
 );
 
 auctionRouter.get(
     ENDPOINTS.BASE,
+    [validateRequest.query(auctionSchemas.pagination)],
     handleAsync(auctionHandler.getAll)
 );
 
