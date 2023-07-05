@@ -1,5 +1,5 @@
 import { db } from '../../config/db';
-import { addReqBody, IPagination, IProductMedia, updateReqBody, } from './typings/product-type';
+import { addReqBody, IPaginationQuery, IProductMedia, updateReqBody, } from './typings/product-type';
 
 const addNew = async (product: addReqBody) => {
     const queryResult = await db.product.create({
@@ -50,44 +50,78 @@ const getById = async (id: string) => {
             description: true,
             status: true,
             updated_at: true,
+            productCategories: {
+                select: {
+                    id: true,
+                    title: true
+                }
+            },
+            medias: {
+                select: {
+                    id: true,
+                    type: true,
+                    size: true,
+                    filename: true,
+                    local_path: true,
+                    mime_type: true,
+                    status: true,
+                    updated_at: true,
+                }
+            }
         },
     });
     return queryResult
 };
-const getAllProduct = async (
-    metaInfo: IPagination,
-    where: { [key: string]: string | boolean | object }
-) => {
+const getAllProduct = async (query: IPaginationQuery) => {
     const totalCount = await db.product.count({
         where: {
-            title: {
-                contains: where.title
-                    ? (where.title as string)
-                    : '',
-                mode: 'insensitive',
-            },
-            is_deleted: false,
+            AND: [
+                { is_deleted: false },
+                {
+                    OR: query.filter
+                }
+            ],
+
+
         },
     });
     const queryResult = await db.product.findMany({
         where: {
-            title: {
-                contains: where.title
-                    ? (where.title as string)
-                    : '',
-                mode: 'insensitive',
-            },
-            is_deleted: false,
+            AND: [
+                { is_deleted: false },
+                {
+                    OR: query.filter
+                }
+            ],
         },
         select: {
             id: true,
             title: true,
             description: true,
             status: true,
+            updated_at: true,
+            productCategories: {
+                select: {
+                    id: true,
+                    title: true
+                }
+            },
+            medias: {
+                select: {
+                    id: true,
+                    type: true,
+                    size: true,
+                    filename: true,
+                    local_path: true,
+                    mime_type: true,
+                    status: true,
+                    updated_at: true,
+                }
+            }
         },
         orderBy: { updated_at: 'desc' },
-        skip: parseInt(`${metaInfo.pageNum}`) * parseInt(`${metaInfo.recordLimit}`) || 0,
-        take: parseInt(`${metaInfo.recordLimit}`) || 10,
+        skip: query.limit * query.page,
+        take: query.limit
     });
     return {
         queryResult,

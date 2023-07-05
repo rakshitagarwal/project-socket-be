@@ -1,5 +1,5 @@
 import { responseBuilder } from "../../common/responses";
-import { addReqBody, Ids, IPagination, IProductMedia, updateReqBody } from './typings/product-type';
+import { addReqBody, Ids, IPagination, IProductMedia, updateReqBody, Iid } from './typings/product-type';
 import productQueries from './product-queries';
 import { productCategoryMessage, productMessage, MESSAGES } from '../../common/constants';
 import productCategoryQueries from '../product-categories/product-category-queries';
@@ -45,31 +45,30 @@ const add = async (newReqBody: addReqBody, userId: string) => {
     );
 };
 
-const get = async (id: string | undefined,
-    moduleInfo: { title: string }, metaInfo: IPagination) => {
 
+
+const get = async ({ id }: Iid, query: IPagination) => {
     if (id) {
         const result = await productQueries.getById(id);
-        return result
-            ? responseBuilder.okSuccess(
-                productMessage.GET.REQUESTED,
-                result
-            )
-            : responseBuilder.badRequestError(
-                productMessage.GET.NOT_FOUND
-            );
+        if (!result) {
+            return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND)
+        }
+        return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result)
     }
-    const { queryResult, totalCount } = await productQueries.getAllProduct(
-        metaInfo,
-        moduleInfo
-    );
-    return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult,
-        {
-            limit: metaInfo.recordLimit,
-            currentPage: metaInfo.pageNum,
-            totalRecords: totalCount,
-            totalPages: Math.ceil(totalCount / metaInfo.recordLimit),
-        });
+    const limit = parseInt(query.limit) || 10
+    const page = parseInt(query.page) || 0
+    const filter = []
+    if (query.search) {
+        filter.push({ title: { contains: query.search, mode: 'insensitive' } },)
+    }
+    const { queryResult, totalCount } = await productQueries.getAllProduct({ limit, filter, page });
+    return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
+        limit,
+        page,
+        totalRecord: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        search: query.search || ''
+    });
 };
 
 const update = async (newReqBody: addReqBody) => {

@@ -19,8 +19,15 @@ export type updateReqBody = {
 };
 
 export interface IPagination {
-    pageNum: number;
-    recordLimit: number;
+    page: string;
+    limit: string;
+    search?: string;
+}
+
+export interface IPaginationQuery {
+    page: number;
+    limit: number;
+    filter: Array<object>
 }
 export interface Ids {
     ids: Array<string>
@@ -30,3 +37,6 @@ export type IProductMedia = {
     media_id: string,
     product_id: string
 }[];
+export interface Iid {
+    id: string;
+}
