@@ -5,7 +5,6 @@ export type addReqBody = {
     product_category_id: string;
     landing_image: string;
     userId: string;
-    // media_id: string
     media_id: Array<string>
 
 };
@@ -16,7 +15,6 @@ export type updateReqBody = {
     product_category_id: string;
     landing_image: string;
     userId: string;
-    // media_id: string
     media_id: Array<string>
 };
 
