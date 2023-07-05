@@ -21,7 +21,7 @@ auctionRouter.get(
 
 auctionRouter.get(
     ENDPOINTS.BASE,
-    [validateRequest.query(auctionSchemas.pagination)],
+    [validateRequest.query(auctionSchemas.Zpagination)],
     handleAsync(auctionHandler.getAll)
 );
 

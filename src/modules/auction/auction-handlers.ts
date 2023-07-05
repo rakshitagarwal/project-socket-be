@@ -23,7 +23,7 @@ const create = async (req: Request, res: Response) => {
  * @return {Promise<Response>}
  */
 const getById = async (req: Request, res: Response) => {    
-    const response = await auctionService.getById(req.params.id as string,);
+    const response = await auctionService.getById(req.params.id as string);
     res.status(response.code).json(response);
 };
 

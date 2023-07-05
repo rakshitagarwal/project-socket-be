@@ -49,8 +49,8 @@ const create = async (auction: IAuction, userId: string) => {
  * @param {string} auctionId - auction ObjectID
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const getById = async (auctionId: string) => {
-    const auction = await auctionQueries.getById(auctionId);
+const getById = async (auctionId: string) => {    
+    const auction = await auctionQueries.getActiveAuctioById(auctionId);
     if (!auction) return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction]);
 };
@@ -80,6 +80,7 @@ const getAll = async (query: Ipagination) => {
         }
     );
 };
+
 /**
  * Auction Update
  * @param {IAuction} auction - keys regarding the auction details

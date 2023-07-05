@@ -12,5 +12,5 @@ export interface Ipagination {
 export interface IpaginationQuery {
     limit: number
     page: number
-    filter: Array<Object>
+    filter: Array<object>
 }
