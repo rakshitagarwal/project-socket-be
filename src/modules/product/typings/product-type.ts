@@ -5,6 +5,9 @@ export type addReqBody = {
     product_category_id: string;
     landing_image: string;
     userId: string;
+    // media_id: string
+    media_id: Array<string>
+
 };
 export type updateReqBody = {
     id: string;
@@ -13,6 +16,8 @@ export type updateReqBody = {
     product_category_id: string;
     landing_image: string;
     userId: string;
+    // media_id: string
+    media_id: Array<string>
 };
 
 export interface IPagination {
@@ -22,3 +27,8 @@ export interface IPagination {
 export interface Ids {
     ids: Array<string>
 }
+
+export type IProductMedia = {
+    media_id: string,
+    product_id: string
+}[];

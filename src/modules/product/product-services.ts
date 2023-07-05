@@ -1,24 +1,47 @@
 import { responseBuilder } from "../../common/responses";
-import { addReqBody, Ids, IPagination, updateReqBody } from './typings/product-type';
+import { addReqBody, Ids, IPagination, IProductMedia, updateReqBody } from './typings/product-type';
 import productQueries from './product-queries';
 import { productCategoryMessage, productMessage, MESSAGES } from '../../common/constants';
 import productCategoryQueries from '../product-categories/product-category-queries';
 import mediaQuery from '../media/media-queries';
+import { prismaTransaction } from "../../utils/prisma-transactions";
 
 
 const add = async (newReqBody: addReqBody, userId: string) => {
 
-    const isExistId = await productCategoryQueries.getById(newReqBody.product_category_id);
+    const [isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
+        productCategoryQueries.getById(newReqBody.product_category_id),
+        mediaQuery.getMediaById(newReqBody.landing_image),
+        productQueries.findProductMediaAllId(newReqBody.media_id)
+    ]);
+
     if (!isExistId) {
-        return responseBuilder.badRequestError(productCategoryMessage.GET.NOT_FOUND);
+        return responseBuilder.notFoundError(productCategoryMessage.GET.NOT_FOUND);
     }
-    const isExistIdMedia = await mediaQuery.getMediaById(newReqBody.landing_image);
-    if (!isExistIdMedia) {
-        return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    if (!isExistIdLandImg) {
+        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
     }
-    newReqBody.userId = userId
-    const { id } = await productQueries.addNew(newReqBody);
-    return responseBuilder.okSuccess(productMessage.ADD.SUCCESS, { id }
+    if (isExistIdMedia.length !== newReqBody.media_id.length) {
+        return responseBuilder.notFoundError(productMessage.GET.PRODUCT_MEDIA_IDS);
+    }
+
+    const resultTransactions = await prismaTransaction(async () => {
+        newReqBody.userId = userId
+        const queryResult = await productQueries.addNew(newReqBody);
+        const productId: string = queryResult.id
+        const arrId: IProductMedia = [];
+        newReqBody.media_id.forEach((element) => {
+            arrId.push({ media_id: element, product_id: productId })
+        });
+        const productMediaQuery = await productQueries.addProductMediaNew(arrId);
+        const promise = [queryResult, productMediaQuery]
+        return promise
+    })
+    if (!resultTransactions) {
+        return responseBuilder.badRequestError(productMessage.UPDATE.TRANSACTION_FAIL)
+    }
+    return responseBuilder.createdSuccess(
+        productMessage.ADD.SUCCESS,
     );
 };
 
@@ -50,16 +73,47 @@ const get = async (id: string | undefined,
 };
 
 const update = async (newReqBody: addReqBody) => {
-    // check if product category is exist
-    const isExistId = await productQueries.getById(newReqBody.id);
 
+    const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
+        productQueries.getById(newReqBody.id), productCategoryQueries.getById(newReqBody.product_category_id),
+        mediaQuery.getMediaById(newReqBody.landing_image),
+        productQueries.findProductMediaAllId(newReqBody.media_id)
+    ]);
+    if (!isExistProductId) {
+        return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    }
     if (!isExistId) {
-        return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
+        return responseBuilder.notFoundError(productCategoryMessage.GET.NOT_FOUND);
+    }
+    if (!isExistIdLandImg) {
+        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    }
+    if (isExistIdMedia.length !== newReqBody.media_id.length) {
+        return responseBuilder.notFoundError(productMessage.GET.PRODUCT_MEDIA_IDS);
     }
 
-    const { id, ...payload } = newReqBody;
-    const data = await productQueries.update(id as string, payload as updateReqBody);
-    return responseBuilder.okSuccess(productMessage.UPDATE.SUCCESS, [data]
+    let productUpdate;
+    const resultTransactions = await prismaTransaction(async () => {
+        const { id, media_id, ...payload } = newReqBody;
+
+        const arrId: IProductMedia = [];
+        media_id.forEach((element) => {
+            arrId.push({ media_id: element, product_id: id })
+        });
+
+        const productMediaRemoveQuery = await productQueries.updateProductMedia(id);
+        const mediaData = await mediaQuery.deleteMediaByIds(media_id)
+        const productMediaQuery = await productQueries.addProductMediaNew(arrId);
+        productUpdate = await productQueries.update(id as string, payload as updateReqBody);
+        const promise = [productMediaQuery, productMediaRemoveQuery, mediaData, productUpdate]
+        return promise
+    })
+    if (!resultTransactions) {
+        return responseBuilder.badRequestError(productMessage.UPDATE.TRANSACTION_FAIL)
+    }
+    return responseBuilder.okSuccess(
+        productMessage.UPDATE.SUCCESS,
+        productUpdate
     );
 };
 
