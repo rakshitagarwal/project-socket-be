@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { auctionService } from "./auction-services";
+import { Ipagination } from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -20,8 +21,8 @@ const getById = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
-const getAll = async (_req: Request, res: Response) => {        
-    const response = await auctionService.getAll();
+const getAll = async (req: Request, res: Response) => {        
+    const response = await auctionService.getAll(req.query as unknown as Ipagination);
     res.status(response.code).json(response);
 }
 
