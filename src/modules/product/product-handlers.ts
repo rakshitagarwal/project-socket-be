@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import productServices from './product-services';
 import asyncHandler from 'express-async-handler';
-import { IPagination } from './typings/product-type';
+import { IPagination, Iid } from './typings/product-type';
 
 
 /**
@@ -20,13 +20,7 @@ const add = asyncHandler(async (req: Request, res: Response) => {
  * @param { Response } res response object
  */
 const get = asyncHandler(async (req: Request, res: Response) => {
-
-
-    const response = await productServices.get(
-        req.params.id, {
-        title: req.query.title ? (req.query.title as string) : '',
-    }, req.query as unknown as IPagination);
-
+    const response = await productServices.get(req.params as unknown as Iid, req.query as unknown as IPagination);
     res.status(response.code).json(response);
 })
 /**
