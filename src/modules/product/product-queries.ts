@@ -1,5 +1,10 @@
-import { db } from '../../config/db';
-import { addReqBody, IPagination, IProductMedia, updateReqBody, } from './typings/product-type';
+import { db } from "../../config/db";
+import {
+    addReqBody,
+    IPagination,
+    IProductMedia,
+    updateReqBody,
+} from "./typings/product-type";
 
 const addNew = async (product: addReqBody) => {
     const queryResult = await db.product.create({
@@ -8,9 +13,10 @@ const addNew = async (product: addReqBody) => {
             description: product.description,
             landing_image: product.landing_image,
             product_category_id: product.product_category_id,
-            created_by: product.userId
+            created_by: product.userId,
         },
-    }); return queryResult;
+    });
+    return queryResult;
 };
 
 const getTitle = async (title: string) => {
@@ -18,10 +24,10 @@ const getTitle = async (title: string) => {
         where: {
             AND: {
                 title: {
-                    contains: title ? title : '',
-                    mode: 'insensitive'
+                    contains: title ? title : "",
+                    mode: "insensitive",
                 },
-                is_deleted: false
+                is_deleted: false,
             },
         },
         select: {
@@ -41,7 +47,7 @@ const getById = async (id: string) => {
             AND: {
                 id: id,
                 status: true,
-                is_deleted: false
+                is_deleted: false,
             },
         },
         select: {
@@ -53,8 +59,10 @@ const getById = async (id: string) => {
             updated_at: true,
         },
     });
-    return queryResult
+    return queryResult;
 };
+
+
 const getAllProduct = async (
     metaInfo: IPagination,
     where: { [key: string]: string | boolean | object }
@@ -62,10 +70,8 @@ const getAllProduct = async (
     const totalCount = await db.product.count({
         where: {
             title: {
-                contains: where.title
-                    ? (where.title as string)
-                    : '',
-                mode: 'insensitive',
+                contains: where.title ? (where.title as string) : "",
+                mode: "insensitive",
             },
             is_deleted: false,
         },
@@ -73,10 +79,8 @@ const getAllProduct = async (
     const queryResult = await db.product.findMany({
         where: {
             title: {
-                contains: where.title
-                    ? (where.title as string)
-                    : '',
-                mode: 'insensitive',
+                contains: where.title ? (where.title as string) : "",
+                mode: "insensitive",
             },
             is_deleted: false,
         },
@@ -86,8 +90,10 @@ const getAllProduct = async (
             description: true,
             status: true,
         },
-        orderBy: { updated_at: 'desc' },
-        skip: parseInt(`${metaInfo.pageNum}`) * parseInt(`${metaInfo.recordLimit}`) || 0,
+        orderBy: { updated_at: "desc" },
+        skip:
+            parseInt(`${metaInfo.pageNum}`) *
+                parseInt(`${metaInfo.recordLimit}`) || 0,
         take: parseInt(`${metaInfo.recordLimit}`) || 10,
     });
     return {
@@ -107,13 +113,13 @@ const update = async (id: string, updateInfo: updateReqBody) => {
             status: false,
             created_at: false,
             updated_at: false,
-        }
-    }); return queryResult;
+        },
+    });
+    return queryResult;
 };
 
 const removeAll = async function (ids: string[]) {
-
-    const queryResult = await db.product.updateMany({
+    const queryResult = await db.product.deleteMany({
         where: {
             AND: {
                 id: {
@@ -122,10 +128,7 @@ const removeAll = async function (ids: string[]) {
                 is_deleted: false,
             },
         },
-        data: {
-            is_deleted: true,
-            status: false,
-        },
+
     });
     return queryResult;
 };
@@ -137,16 +140,16 @@ const findAll = async function (ids: string[]) {
                 id: {
                     in: ids,
                 },
-                is_deleted: false,
+                // is_deleted: false,
             },
-        }
+        },
     });
     return queryResult;
 };
 
 //---- Product Media Query-----------------
 const findProductMediaAllId = async function (ids: string[]) {
-    const queryResult = await db.media.findMany({
+    const queryResult = await db.productMedia.findMany({
         where: {
             AND: {
                 id: {
@@ -154,29 +157,53 @@ const findProductMediaAllId = async function (ids: string[]) {
                 },
                 is_deleted: false,
             },
-        }
+        },
+    });
+    return queryResult;
+};
+
+const findProductMediaAll = async function (ids: string[]) {
+    const queryResult = await db.productMedia.findMany({
+        where: {
+            AND: {
+                product_id: {
+                    in: ids,
+                },
+                is_deleted: false,
+            },
+        },
+    });
+    return queryResult;
+};
+
+const deleteManyProductMedia = async function (ids: string[]) {
+    const queryResult = await db.productMedia.deleteMany({
+        where: {
+            id: {
+                in: ids,
+            },
+        },
     });
     return queryResult;
 };
 
 const addProductMediaNew = async (product: IProductMedia) => {
-
     const addProductMediaNew = await db.productMedia.createMany({
         data: product,
-    })
-    return addProductMediaNew
+    });
+    return addProductMediaNew;
 };
 const updateProductMedia = async (id: string) => {
-
     const queryResult = await db.productMedia.updateMany({
         where: {
             AND: {
                 product_id: id,
-                is_deleted: false
-            }
+                is_deleted: false,
+            },
         },
-        data: { status: false, is_deleted: true }
-    }); return queryResult;
+        data: { status: false, is_deleted: true },
+    });
+    return queryResult;
 };
 
 const productQueries = {
@@ -188,8 +215,10 @@ const productQueries = {
     removeAll,
     findAll,
     findProductMediaAllId,
+    findProductMediaAll,
     addProductMediaNew,
-    updateProductMedia
+    updateProductMedia,
+    deleteManyProductMedia,
 };
 
 export default productQueries;
