@@ -70,10 +70,12 @@ export const productMessage = {
         ALL: 'get all product !',
         NOT_FOUND: 'product id not found',
         SOME_NOT_FOUND: 'product id not found',
-        PRODUCT_MEDIA_NOT_FOUND: 'Product Medias not found'
+        PRODUCT_MEDIA_NOT_FOUND: 'Product Medias not found',
+        PRODUCT_MEDIA_IDS: 'product media ids not exists'
     },
     UPDATE: {
         SUCCESS: 'product update success',
+        TRANSACTION_FAIL: " Prisma has failed due to a conflict between two or more transactions"
     },
     DELETE: {
         SUCCESS: 'product remove success',

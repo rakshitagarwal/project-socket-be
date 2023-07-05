@@ -1,5 +1,5 @@
 import { db } from '../../config/db';
-import { addReqBody, IPagination, updateReqBody, } from './typings/product-type';
+import { addReqBody, IPagination, IProductMedia, updateReqBody, } from './typings/product-type';
 
 const addNew = async (product: addReqBody) => {
     const queryResult = await db.product.create({
@@ -111,27 +111,8 @@ const update = async (id: string, updateInfo: updateReqBody) => {
     }); return queryResult;
 };
 
-const getProdCategoryById = async (id: string) => {
-    const queryResult = await db.product.findFirst({
-        where: {
-            AND: {
-                id: id,
-                status: true,
-                is_deleted: false
-            },
-        },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            status: true,
-            updated_at: true,
-        },
-    });
-    return queryResult
-};
+const removeAll = async function (ids: string[]) {
 
-const removeAll = async function (ids: string[]) {    
     const queryResult = await db.product.updateMany({
         where: {
             AND: {
@@ -150,7 +131,6 @@ const removeAll = async function (ids: string[]) {
 };
 
 const findAll = async function (ids: string[]) {
-
     const queryResult = await db.product.findMany({
         where: {
             AND: {
@@ -164,15 +144,52 @@ const findAll = async function (ids: string[]) {
     return queryResult;
 };
 
+//---- Product Media Query-----------------
+const findProductMediaAllId = async function (ids: string[]) {
+    const queryResult = await db.media.findMany({
+        where: {
+            AND: {
+                id: {
+                    in: ids,
+                },
+                is_deleted: false,
+            },
+        }
+    });
+    return queryResult;
+};
+
+const addProductMediaNew = async (product: IProductMedia) => {
+
+    const addProductMediaNew = await db.productMedia.createMany({
+        data: product,
+    })
+    return addProductMediaNew
+};
+const updateProductMedia = async (id: string) => {
+
+    const queryResult = await db.productMedia.updateMany({
+        where: {
+            AND: {
+                product_id: id,
+                is_deleted: false
+            }
+        },
+        data: { status: false, is_deleted: true }
+    }); return queryResult;
+};
+
 const productQueries = {
     addNew,
     getTitle,
     getById,
     getAllProduct,
     update,
-    getProdCategoryById,
     removeAll,
-    findAll
+    findAll,
+    findProductMediaAllId,
+    addProductMediaNew,
+    updateProductMedia
 };
 
 export default productQueries;

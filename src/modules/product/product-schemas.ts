@@ -12,22 +12,27 @@ const schema = (() => {
         title: title,
         description: description.optional(),
         product_category_id: product_category_id,
-        landing_image: landing_image
-    });
-
+        landing_image: landing_image,
+        media_id: z.array(z.string().uuid()),
+    }).strict();
 
     const ZUpdate = z.object({
         id: ZString.uuid(),
         title: title.optional(),
         description: description.optional(),
+        product_category_id: product_category_id,
+        landing_image: landing_image,
+        media_id: z.array(z.string().uuid()),
         status: z.boolean().optional(),
-    })
+    }).strict()
+
     const ZGetId = z.object({
         id: z.string().uuid().optional(),
-    });
+    }).strict();
+
     const ZDelete = z.object({
         ids: z.array(z.string().uuid()),
-    });
+    }).strict();
 
     return {
         ZNewAdd,
