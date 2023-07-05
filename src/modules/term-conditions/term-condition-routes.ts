@@ -12,6 +12,7 @@ termAndConditionRouter.post(
     [validateRequest.body(termAndConditonSchema.create)],
     asyncHandler(termAndConditionHandlers.create)
 );
+
 termAndConditionRouter.put(
     ENDPOINTS.ID,
     [
@@ -21,17 +22,17 @@ termAndConditionRouter.put(
     asyncHandler(termAndConditionHandlers.update)
 );
 termAndConditionRouter.get(
-    ENDPOINTS.ID,
-    [validateRequest.params(termAndConditonSchema.Id)],
-    asyncHandler(termAndConditionHandlers.getById)
-);
-termAndConditionRouter.delete(
-    ENDPOINTS.ID,
-    [validateRequest.params(termAndConditonSchema.Id)],
-    asyncHandler(termAndConditionHandlers.deleteById)
-);
-termAndConditionRouter.get(
     ENDPOINTS.BASE,
-    [validateRequest.query(termAndConditonSchema.pagination)],
-    asyncHandler(termAndConditionHandlers.getAllTermAndCondition)
+    asyncHandler(termAndConditionHandlers.findTermAndCondition)
 );
+// termAndConditionRouter.delete(
+//     ENDPOINTS.ID,
+//     [validateRequest.params(termAndConditonSchema.Id)],
+//     asyncHandler(termAndConditionHandlers.deleteById)
+// );
+
+// termAndConditionRouter.get(
+//     ENDPOINTS.BASE,
+//     [validateRequest.query(termAndConditonSchema.pagination)],
+//     asyncHandler(termAndConditionHandlers.getAllTermAndCondition)
+// );

@@ -72,6 +72,10 @@ const deleteOne = async (id: Iid) => {
  * @description This API fetch all T&C records
  * @param {object} query  - query contain the page limit and search fields
  */
+const findTermAndCondition = async () => {
+    const result = await termAndConditionQuery.findTermAndCondition()
+    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.FOUNDED, result as object)
+}
 
 const fetchAll = async (query: Ipagination) => {
     const filter = []
@@ -92,6 +96,7 @@ const termAndConditionService = {
     update,
     fetchOne,
     deleteOne,
-    fetchAll
+    fetchAll,
+    findTermAndCondition
 }
 export default termAndConditionService
