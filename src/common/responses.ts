@@ -284,6 +284,21 @@ class ResponseBuilder {
     }
 
     /**
+     * @description https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/417
+     * @param {string} msg response message
+     * @param {object} data response data
+     * @param {object} metadata response metadata
+     * @returns {IResponseBody} response body
+     */
+    expectationField(
+        msg = "Expectation faild!",
+        data = {},
+        metadata: object = {}
+    ): IResponseBody {
+        this.error(417).message(msg).data(data).metaData(metadata);
+        return this.build();
+    }
+    /**
      * @description build response
      * @returns {IResponseBody} response body
      */

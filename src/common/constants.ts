@@ -19,6 +19,7 @@ export const ENDPOINTS = {
     ID: "/:id",
     PRODUCT: "/product",
 
+    TERM_CONDITION: "/term-condition",
     MEDIA: "/media",
 };
 export const ALLOWED_MIMETYPES = [
@@ -149,5 +150,14 @@ export const MESSAGES = {
         TOKEN_NOT_FOUND: "token not found",
         TOKEN_NOT_EXPIRED: "token not expired",
         DATA_FOUND: "data found",
+    },
+    TERM_CONDITION: {
+        CREATED: "term and condition added successfully!",
+        UPDATED: "term and condition updated successfully!",
+        DELETED: "term and condition deleted successfully!",
+        NOT_FOUND: "term and condition not found!",
+        FOUNDED: "term and condition found successfully!",
+        INACTIVE_STATUS: "status is not active",
+        CONFLICT: "term and condition already exists"
     }
 }

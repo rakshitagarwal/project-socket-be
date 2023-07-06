@@ -77,7 +77,6 @@ model UserPersistent {
 
 model TermsAndCondition {
   id         String   @id @default(uuid())
-  title      String
   content    String   @db.Text
   status     Boolean  @default(true)
   is_deleted Boolean  @default(false)
@@ -86,7 +85,7 @@ model TermsAndCondition {
   created_by String
   users      User     @relation(fields: [created_by], references: [id])
 
-  @@index([title, content])
+  @@index([ content])
   @@map("terms_conditions")
 }
 
