@@ -49,9 +49,10 @@ const create = async (auction: IAuction, userId: string) => {
  * @param {string} auctionId - auction ObjectID
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const getById = async (auctionId: string) => {    
+const getById = async (auctionId: string) => {
     const auction = await auctionQueries.getActiveAuctioById(auctionId);
-    if (!auction) return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    if (!auction)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction]);
 };
 
@@ -61,14 +62,14 @@ const getById = async (auctionId: string) => {
  * @param {IPagination} query - pagination query
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const getAll = async (query: IPagination) => {    
+const getAll = async (query: IPagination) => {
     const filter = [];
     const page = Number(query.page) || 0;
     const limit = Number(query.limit) || 10;
     if (query.search) {
         filter.push({ title: { contains: query.search, mode: "insensitive" } });
     }
-    const auctions = await auctionQueries.getAll({ page , limit, filter });
+    const auctions = await auctionQueries.getAll({ page, limit, filter });
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
@@ -84,6 +85,7 @@ const getAll = async (query: IPagination) => {
 
 /**
  * Auction Update
+ * @description auction updation with the data
  * @param {IAuction} auction - keys regarding the auction details
  * @param {string} auctionId -  auction Id for updating details
  * @param {string} userId - for updating the created_by
