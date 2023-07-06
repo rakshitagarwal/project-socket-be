@@ -58,16 +58,20 @@ const getById = async (id: string) => {
                     title: true
                 }
             },
-            medias: {
+            productMedias: {
                 select: {
-                    id: true,
-                    type: true,
-                    size: true,
-                    filename: true,
-                    local_path: true,
-                    mime_type: true,
-                    status: true,
-                    updated_at: true,
+                    medias: {
+                        select: {
+                            id: true,
+                            type: true,
+                            size: true,
+                            filename: true,
+                            local_path: true,
+                            mime_type: true,
+                            status: true,
+                            updated_at: true,
+                        }
+                    }
                 }
             }
         },
@@ -100,6 +104,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
             id: true,
             title: true,
             description: true,
+            landing_image: true,
             status: true,
             updated_at: true,
             productCategories: {
@@ -108,16 +113,20 @@ const getAllProduct = async (query: IPaginationQuery) => {
                     title: true
                 }
             },
-            medias: {
+            productMedias: {
                 select: {
-                    id: true,
-                    type: true,
-                    size: true,
-                    filename: true,
-                    local_path: true,
-                    mime_type: true,
-                    status: true,
-                    updated_at: true,
+                    medias: {
+                        select: {
+                            id: true,
+                            type: true,
+                            size: true,
+                            filename: true,
+                            local_path: true,
+                            mime_type: true,
+                            status: true,
+                            updated_at: true,
+                        }
+                    }
                 }
             }
         },
@@ -139,7 +148,24 @@ const update = async (id: string, updateInfo: updateReqBody) => {
             id: true,
             title: true,
             description: true,
+            landing_image: true,
             status: false,
+            productMedias: {
+                select: {
+                    medias: {
+                        select: {
+                            id: true,
+                            type: true,
+                            size: true,
+                            filename: true,
+                            local_path: true,
+                            mime_type: true,
+                            status: true,
+                            updated_at: true,
+                        }
+                    }
+                }
+            },
             created_at: false,
             updated_at: false,
         },
@@ -169,7 +195,7 @@ const findAll = async function (ids: string[]) {
                 id: {
                     in: ids,
                 },
-                // is_deleted: false,
+                is_deleted: false,
             },
         },
     });
@@ -177,8 +203,9 @@ const findAll = async function (ids: string[]) {
 };
 
 //---- Product Media Query-----------------
+
 const findProductMediaAllId = async function (ids: string[]) {
-    const queryResult = await db.productMedia.findMany({
+    const queryResult = await db.media.findMany({
         where: {
             AND: {
                 id: {
@@ -187,6 +214,20 @@ const findProductMediaAllId = async function (ids: string[]) {
                 is_deleted: false,
             },
         },
+    });
+    return queryResult;
+};
+const findProductMediaAllIds = async function (id: string) {
+    const queryResult = await db.productMedia.findMany({
+        where: {
+            AND: {
+                product_id: id,
+                is_deleted: false,
+            },
+        },
+        select: {
+            media_id: true
+        }
     });
     return queryResult;
 };
@@ -223,14 +264,13 @@ const addProductMediaNew = async (product: IProductMedia) => {
     return addProductMediaNew;
 };
 const updateProductMedia = async (id: string) => {
-    const queryResult = await db.productMedia.updateMany({
+    const queryResult = await db.productMedia.deleteMany({
         where: {
             AND: {
                 product_id: id,
                 is_deleted: false,
             },
         },
-        data: { status: false, is_deleted: true },
     });
     return queryResult;
 };
@@ -248,6 +288,7 @@ const productQueries = {
     addProductMediaNew,
     updateProductMedia,
     deleteManyProductMedia,
+    findProductMediaAllIds
 };
 
 export default productQueries;
