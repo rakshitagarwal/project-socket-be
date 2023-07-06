@@ -3,7 +3,6 @@ import productServices from './product-services';
 import asyncHandler from 'express-async-handler';
 import { IPagination, Iid } from './typings/product-type';
 
-
 /**
  * @description handler to add new Product 
  * @param { Request } req - request object
@@ -14,6 +13,7 @@ const add = asyncHandler(async (req: Request, res: Response) => {
     const response = await productServices.add(req.body, res.locals.id as string);
     res.status(response.code).json(response);
 })
+
 /**
  * @description get all or single Product 
  * @param { Request } req request object

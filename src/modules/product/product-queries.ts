@@ -7,6 +7,7 @@ const addNew = async (product: addReqBody) => {
             title: product.title,
             description: product.description,
             landing_image: product.landing_image,
+            price: product.price,
             product_category_id: product.product_category_id,
             created_by: product.userId,
         },
@@ -30,7 +31,8 @@ const getTitle = async (title: string) => {
             status: true,
             title: true,
             description: true,
-            updated_at: true,
+            price: true,
+            updated_at: false,
         },
     });
     return queryResult;
@@ -49,6 +51,7 @@ const getById = async (id: string) => {
             id: true,
             title: true,
             description: true,
+            price: true,
             status: true,
             landing_image: true,
             updated_at: true,
@@ -87,10 +90,9 @@ const getAllProduct = async (query: IPaginationQuery) => {
                     OR: query.filter
                 }
             ],
-
-
         },
     });
+
     const queryResult = await db.product.findMany({
         where: {
             AND: [
@@ -104,6 +106,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
             id: true,
             title: true,
             description: true,
+            price: true,
             landing_image: true,
             status: true,
             updated_at: true,
@@ -148,6 +151,7 @@ const update = async (id: string, updateInfo: updateReqBody) => {
             id: true,
             title: true,
             description: true,
+            price: true,
             landing_image: true,
             status: false,
             productMedias: {

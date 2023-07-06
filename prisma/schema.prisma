@@ -85,7 +85,7 @@ model TermsAndCondition {
   created_by String
   users      User     @relation(fields: [created_by], references: [id])
 
-  @@index([ content])
+  @@index([content])
   @@map("terms_conditions")
 }
 
@@ -129,6 +129,7 @@ model Products {
   title               String
   description         String                @db.Text
   landing_image       String
+  price               Int
   status              Boolean               @default(true)
   is_deleted          Boolean               @default(false)
   created_at          DateTime              @default(now()) @db.Timestamptz()

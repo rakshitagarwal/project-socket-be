@@ -7,12 +7,14 @@ const schema = (() => {
     const description = z.string();
     const product_category_id = z.string().uuid();
     const landing_image = z.string().uuid();
+    const price = z.number()
 
     const ZNewAdd = z.object({
         title: title,
         description: description.optional(),
         product_category_id: product_category_id,
         landing_image: landing_image,
+        price: price,
         media_id: z.array(z.string().uuid()),
     }).strict();
 
@@ -20,6 +22,7 @@ const schema = (() => {
         id: ZString.uuid(),
         title: title.optional(),
         description: description.optional(),
+        price: price.optional(),
         product_category_id: product_category_id,
         landing_image: landing_image,
         media_id: z.array(z.string().uuid()),
