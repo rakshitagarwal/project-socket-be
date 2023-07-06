@@ -12,6 +12,10 @@ import { MESSAGES } from "../../common/constants"
  */
 
 const create = async (body: Icreate) => {
+    const isTermAndCondition = await termAndConditionQuery.findTermAndCondition()
+    if(isTermAndCondition){
+        return responseBuilder.conflictError(MESSAGES.TERM_CONDITION.CONFLICT)
+    }
     const result = await termAndConditionQuery.create(body)
     if (!result) {
         return responseBuilder.expectationField()
@@ -31,7 +35,7 @@ const update = async (id: Iid, body: Iupdate) => {
     if (!isTermAndCondition) {
         return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
     }
-    if(!isTermAndCondition.status){
+    if (!isTermAndCondition.status) {
         return responseBuilder.badRequestError(MESSAGES.TERM_CONDITION.INACTIVE_STATUS)
     }
     const result = await termAndConditionQuery.update(id, body)
@@ -64,7 +68,7 @@ const deleteOne = async (id: Iid) => {
     if (!isTermAndCondition) {
         return responseBuilder.notFoundError(MESSAGES.TERM_CONDITION.NOT_FOUND)
     }
-    await termAndConditionQuery.update(id,{is_deleted: true})
+    await termAndConditionQuery.update(id, { is_deleted: true })
     return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.DELETED)
 }
 
@@ -72,6 +76,10 @@ const deleteOne = async (id: Iid) => {
  * @description This API fetch all T&C records
  * @param {object} query  - query contain the page limit and search fields
  */
+const findTermAndCondition = async () => {
+    const result = await termAndConditionQuery.findTermAndCondition()
+    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.FOUNDED, result as object)
+}
 
 const fetchAll = async (query: Ipagination) => {
     const filter = []
@@ -92,6 +100,7 @@ const termAndConditionService = {
     update,
     fetchOne,
     deleteOne,
-    fetchAll
+    fetchAll,
+    findTermAndCondition
 }
 export default termAndConditionService

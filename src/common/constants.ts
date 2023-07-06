@@ -123,5 +123,6 @@ export const MESSAGES = {
         NOT_FOUND: "term and condition not found!",
         FOUNDED: "term and condition found successfully!",
         INACTIVE_STATUS: "status is not active",
+        CONFLICT: "term and condition already exists",
     },
 };

@@ -21,7 +21,6 @@ const findOne = async (query: Iid) => {
     const termCondition = await db.termsAndConditions.findFirst({
         where: { ...query, is_deleted: false }, select: {
             id: true,
-            title: true,
             content: true,
             status: true,
             updated_at: true
@@ -60,7 +59,6 @@ const findAll = async (query: IpaginationQuery) => {
         skip: query.page * query.limit,
         select: {
             id: true,
-            title: true,
             content: true,
             updated_at: true,
         }
@@ -77,10 +75,21 @@ const findAll = async (query: IpaginationQuery) => {
     })
     return { termCondition, count }
 }
+const findTermAndCondition = async () => {
+    const termCondition = await db.termsAndConditions.findFirst({
+        select: {
+            id: true,
+            content: true,
+            updated_at: true,
+        }
+    })
+    return termCondition
+}
 const termAndConditionQuery = {
     update,
     create,
     findOne,
-    findAll
+    findAll,
+    findTermAndCondition
 }
 export default termAndConditionQuery
