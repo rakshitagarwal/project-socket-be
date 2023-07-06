@@ -13,6 +13,18 @@ auctionRouter.post(
     handleAsync(auctionHandler.create)
 );
 
+auctionRouter.get(
+    ENDPOINTS.BASE + ":id",
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.getById)
+);
+
+auctionRouter.get(
+    ENDPOINTS.BASE,
+    [validateRequest.query(auctionSchemas.Zpagination)],
+    handleAsync(auctionHandler.getAll)
+);
+
 auctionRouter.put(
     ENDPOINTS.BASE + ":id",
     validateRequest.params(auctionSchemas.ZAuctionId),

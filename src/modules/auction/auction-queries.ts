@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
-import { IAuction } from "./typings/auction-types";
+import { IAuction, IPagination } from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -41,8 +41,7 @@ const create = async (auction: IAuction, userId: string) => {
  * @param {string} id - auction id
  * @returns {Promise<IAuction>}
  */
-
-const getActiveAuctioById = async (id: string) => {
+const getActiveAuctioById = async (id: string) => {    
     const query = await db.auction.findFirst({
         where: {
             id,
@@ -53,16 +52,16 @@ const getActiveAuctioById = async (id: string) => {
             id: true,
             title: true,
             description: true,
+            image_path: true,
+            video_path: true,
             bid_increment_price: true,
             plays_consumed_on_bid: true,
             opening_price: true,
             new_participants_limit: true,
             start_date: true,
-            is_preRegistered: true,
-            registeration_fees: true,
             registeration_count: true,
+            registeration_fees: true,
             terms_and_conditions: true,
-            state: true,
             status: true,
             auctionCategory: {
                 select: {
@@ -108,6 +107,54 @@ const getMultipleActiveById = async (id: [string]) => {
 };
 
 /**
+ * Auction Retrieve
+ * @description retrieval of all auctions
+ * @returns - all auction entities
+ */
+const getAll = async (query: IPagination) => {
+    const queryResult = await db.auction.findMany({
+        where: {
+            AND: [
+                {
+                    is_deleted: false,
+                },
+                { OR: query.filter }
+            ],
+        },
+        take: Number(query.limit),
+        skip: Number(query.page) * Number(query.limit),
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            image_path: true,
+            video_path: true,
+            bid_increment_price: true,
+            plays_consumed_on_bid: true,
+            opening_price: true,
+            new_participants_limit: true,
+            start_date: true,
+            registeration_count: true,
+            registeration_fees: true,
+            terms_and_conditions: true,
+            auctionCategory: true,
+            products: true
+        },
+    });
+    const count = await db.termsAndConditions.count({
+        where: {
+            AND: [
+                {
+                    is_deleted: false,
+                },
+                { OR: query.filter }
+            ],
+        }
+    })
+    return {queryResult, count};
+};
+
+/**            
  * Auction Update By Id with Transaction
  * @param {PrismaClient} prisma - prisma for db transaction
  * @param {IAuction} auction - auction Data
@@ -137,7 +184,7 @@ const update = async (
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,
             start_date: auction.start_date,
-            is_preRegistered: auction.is_pregistered,
+            is_preRegistered: auction.is_pregistered as boolean,
             registeration_count: auction.pre_register_count,
             registeration_fees: auction.pre_register_fees,
             terms_and_conditions: auction.terms_condition,
@@ -172,6 +219,7 @@ const remove = async (id: [string]) => {
 
 export const auctionQueries = {
     create,
+    getAll,
     getActiveAuctioById,
     update,
     remove,

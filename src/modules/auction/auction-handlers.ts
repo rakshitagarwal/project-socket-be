@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { auctionService } from "./auction-services";
+import { IPagination } from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -14,6 +15,28 @@ const create = async (req: Request, res: Response) => {
     );
     res.status(response.code).json(response);
 };
+
+/**
+ * Auction retrieve By Id
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ * @return {Promise<Response>}
+ */
+const getById = async (req: Request, res: Response) => {    
+    const response = await auctionService.getById(req.params.id as string);
+    res.status(response.code).json(response);
+};
+
+/**
+ * Auction retrieve Many By Query
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ * @return {Promise<Response>}
+ */
+const getAll = async (req: Request, res: Response) => {        
+    const response = await auctionService.getAll(req.query as unknown as IPagination);
+    res.status(response.code).json(response);
+}
 
 /**
  * Auction updation By Id
@@ -43,6 +66,8 @@ const remove = async (req: Request, res: Response) => {
 
 export const auctionHandler = {
     create,
+    getById,
+    getAll,
     update,
     remove,
 };

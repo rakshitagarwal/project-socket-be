@@ -8,7 +8,7 @@ import { responseBuilder } from "../../common/responses";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
-import { IAuction } from "./typings/auction-types";
+import { IAuction, IPagination } from "./typings/auction-types";
 import mediaQueries from "../media/media-queries";
 
 /**
@@ -41,6 +41,45 @@ const create = async (auction: IAuction, userId: string) => {
             AUCTION_MESSAGES.NOT_CREATED
         );
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
+};
+
+/**
+ * Auction Retrieve
+ * @description retrieval of one auction using its unique id
+ * @param {string} auctionId - auction ObjectID
+ * @returns - response builder with { code, success, message, data, metadata }
+ */
+const getById = async (auctionId: string) => {    
+    const auction = await auctionQueries.getActiveAuctioById(auctionId);
+    if (!auction) return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction]);
+};
+
+/**
+ * Auction Retrieve
+ * @description retrieval of all auctions
+ * @param {IPagination} query - pagination query
+ * @returns - response builder with { code, success, message, data, metadata }
+ */
+const getAll = async (query: IPagination) => {    
+    const filter = [];
+    const page = Number(query.page) || 0;
+    const limit = Number(query.limit) || 10;
+    if (query.search) {
+        filter.push({ title: { contains: query.search, mode: "insensitive" } });
+    }
+    const auctions = await auctionQueries.getAll({ page , limit, filter });
+    return responseBuilder.okSuccess(
+        AUCTION_MESSAGES.FOUND,
+        auctions.queryResult,
+        {
+            limit,
+            page,
+            totalRecord: auctions.count,
+            totalPage: Math.ceil(auctions.count / limit),
+            search: query.search,
+        }
+    );
 };
 
 /**
@@ -102,6 +141,8 @@ const remove = async (id: [string]) => {
 
 export const auctionService = {
     create,
+    getById,
+    getAll,
     update,
     remove,
 };
