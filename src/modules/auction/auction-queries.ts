@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
-import { IAuction, IpaginationQuery } from "./typings/auction-types";
+import { IAuction, IPagination } from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -111,7 +111,7 @@ const getMultipleActiveById = async (id: [string]) => {
  * @description retrieval of all auctions
  * @returns - all auction entities
  */
-const getAll = async (query: IpaginationQuery) => {
+const getAll = async (query: IPagination) => {
     const queryResult = await db.auction.findMany({
         where: {
             AND: [
@@ -121,8 +121,8 @@ const getAll = async (query: IpaginationQuery) => {
                 { OR: query.filter }
             ],
         },
-        take: query.limit,
-        skip: query.page * query.limit,
+        take: Number(query.limit),
+        skip: Number(query.page) * Number(query.limit),
         select: {
             id: true,
             title: true,

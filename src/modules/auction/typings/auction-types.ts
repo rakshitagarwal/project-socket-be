@@ -3,14 +3,10 @@ import { auctionSchemas } from "../auction-schemas";
 
 export type IAuction = z.infer<typeof auctionSchemas.ZAuctionAdd>;
 
-export interface Ipagination {
-    limit: string
-    page: string
-    search: string
-}
 
-export interface IpaginationQuery {
-    limit: number
-    page: number
-    filter: Array<object>
-}
+export interface IPagination {
+    limit: string | number;
+    page: string | number;
+    search?: string;
+    filter?: object[];
+  }

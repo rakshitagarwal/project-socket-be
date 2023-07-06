@@ -8,7 +8,7 @@ import { responseBuilder } from "../../common/responses";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
-import { IAuction, Ipagination } from "./typings/auction-types";
+import { IAuction, IPagination } from "./typings/auction-types";
 import mediaQueries from "../media/media-queries";
 
 /**
@@ -60,14 +60,14 @@ const getById = async (auctionId: string) => {
  * @description retrieval of all auctions
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const getAll = async (query: Ipagination) => {
+const getAll = async (query: IPagination) => {    
     const filter = [];
-    const page = parseInt(query.page) || 0;
-    const limit = parseInt(query.limit) || 10;
+    const page = Number(query.page) || 0;
+    const limit = Number(query.limit) || 10;
     if (query.search) {
         filter.push({ title: { contains: query.search, mode: "insensitive" } });
     }
-    const auctions = await auctionQueries.getAll({ page, limit, filter });
+    const auctions = await auctionQueries.getAll({ page , limit, filter });
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
