@@ -58,6 +58,7 @@ const getById = async (auctionId: string) => {
 /**
  * Auction Retrieve
  * @description retrieval of all auctions
+ * @param {IPagination} query - pagination query
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {    
