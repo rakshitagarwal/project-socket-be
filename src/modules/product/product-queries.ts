@@ -53,7 +53,18 @@ const getById = async (id: string) => {
             description: true,
             price: true,
             status: true,
-            landing_image: true,
+            medias: {
+                select: {
+                    id: true,
+                    type: true,
+                    size: true,
+                    filename: true,
+                    local_path: true,
+                    mime_type: true,
+                    status: true,
+                    updated_at: true,
+                }
+            },
             updated_at: true,
             productCategories: {
                 select: {
@@ -107,9 +118,20 @@ const getAllProduct = async (query: IPaginationQuery) => {
             title: true,
             description: true,
             price: true,
-            landing_image: true,
+            medias: {
+                select: {
+                    id: true,
+                    type: true,
+                    size: true,
+                    filename: true,
+                    local_path: true,
+                    mime_type: true,
+                    status: true,
+                    updated_at: true,
+                }
+            },
             status: true,
-            updated_at: true,
+            updated_at: false,
             productCategories: {
                 select: {
                     id: true,
@@ -192,7 +214,7 @@ const removeAll = async function (ids: string[]) {
     return queryResult;
 };
 
-const findAll = async function (ids: string[]) {
+const getFindAllId = async function (ids: string[]) {
     const queryResult = await db.product.findMany({
         where: {
             AND: {
@@ -286,7 +308,7 @@ const productQueries = {
     getAllProduct,
     update,
     removeAll,
-    findAll,
+    getFindAllId,
     findProductMediaAllId,
     findProductMediaAll,
     addProductMediaNew,

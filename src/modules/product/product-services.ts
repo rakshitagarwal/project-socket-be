@@ -124,7 +124,7 @@ const update = async (newReqBody: addReqBody) => {
 const removeAll = async (collectionId: Ids) => {
     const ids = collectionId.ids;
     if (!ids.length) return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
-    const findProducts = await productQueries.findAll(ids);
+    const findProducts = await productQueries.getFindAllId(ids);
     if (!findProducts.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
 
     const productMedias = await productQueries.findProductMediaAll(ids);

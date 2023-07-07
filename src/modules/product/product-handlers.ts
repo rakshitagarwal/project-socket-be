@@ -9,7 +9,6 @@ import { IPagination, Iid } from './typings/product-type';
  * @param { Response } res - response object
  */
 const add = asyncHandler(async (req: Request, res: Response) => {
-
     const response = await productServices.add(req.body, res.locals.id as string);
     res.status(response.code).json(response);
 })
