@@ -263,30 +263,11 @@ const getFindAllId = async function (ids: string[]) {
 
 //---- Product Media Query-----------------
 
-
-/**
- * @param {string} ids in product media
- * @description - get Find ProductMedia All Id ids on product 
- */
-const findProductMediaAllId = async function (ids: string[]) {
-    const queryResult = await db.media.findMany({
-        where: {
-            AND: {
-                id: {
-                    in: ids,
-                },
-                is_deleted: false,
-            },
-        },
-    });
-    return queryResult;
-};
-
 /**
  * @param {string} id in product media
  * @description - get Find ProductMedia All id on product 
  */
-const findProductMediaAllIds = async function (id: string) {
+const findProductMediaIds = async function (id: string) {
     const queryResult = await db.productMedia.findMany({
         where: {
             AND: {
@@ -347,7 +328,7 @@ const addProductMediaNew = async (product: IProductMedia[]) => {
 
 /**
  * @param {string} id in product media
- * @description - update ProductMedia All ids on product 
+ * @description -  ProductMedia All ids on product 
  */
 const updateProductMedia = async (id: string) => {
     const queryResult = await db.productMedia.deleteMany({
@@ -369,12 +350,11 @@ const productQueries = {
     update,
     deleteMultipleIds,
     getFindAllId,
-    findProductMediaAllId,
     findProductMediaAll,
     addProductMediaNew,
     updateProductMedia,
     deleteManyProductMedia,
-    findProductMediaAllIds
+    findProductMediaIds
 };
 
 export default productQueries;

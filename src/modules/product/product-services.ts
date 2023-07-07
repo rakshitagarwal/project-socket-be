@@ -87,7 +87,7 @@ const get = async ({ id }: Iid, query: IPagination) => {
  * @see getById in pass the product Category Id.
  * @see getMediaById in pass the product media Id.
  * @see findManyMedias  check Ids in pass the product media Id.
- * @see findProductMediaAllId  check Ids in pass the product media Id.
+ * @see findManyMedias  check Ids in pass the product media Id.
  * @see updateProductMedia In check the product media id
  * @see addProductMediaNew product add 
  * @see deleteMediaByIds In check the media id
@@ -100,7 +100,7 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
     const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
         productQueries.getById(productId.id as string), productCategoryQueries.getById(newReqBody.product_category_id),
         mediaQuery.getMediaById(newReqBody.landing_image),
-        productQueries.findProductMediaAllId(newReqBody.media_id)
+        mediaQuery.findManyMedias(newReqBody.media_id)
     ]);
 
     if (!isExistProductId) {
@@ -123,7 +123,7 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
         const mediaIds: IProductMedia[] = media_id.map((element: string) => {
             return { media_id: element, product_id: productId.id as string }
         });
-        const getMediaId = await productQueries.findProductMediaAllIds(productId.id as string)
+        const getMediaId = await productQueries.findProductMediaIds(productId.id as string)
         const arrMediaId: string[] = [];
         getMediaId.map((data) => { arrMediaId.push(data.media_id) })
         const productMediaRemoveQuery = await productQueries.updateProductMedia(productId.id as string);
