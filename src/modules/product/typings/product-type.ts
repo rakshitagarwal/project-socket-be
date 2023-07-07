@@ -40,5 +40,6 @@ export interface IProductMedia {
     product_id: string
 }
 export interface Iid {
-    id: string;
+    id?: string;
 }
+

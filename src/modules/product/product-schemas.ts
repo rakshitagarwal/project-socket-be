@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 const schema = (() => {
 
-    const ZString = z.string();
     const title = z.string().min(1);
     const description = z.string();
     const product_category_id = z.string().uuid();
@@ -19,7 +18,6 @@ const schema = (() => {
     }).strict();
 
     const ZUpdate = z.object({
-        id: ZString.uuid(),
         title: title.optional(),
         description: description.optional(),
         price: price.optional(),

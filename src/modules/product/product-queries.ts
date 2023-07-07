@@ -1,6 +1,10 @@
 import { db } from '../../config/db';
 import { addReqBody, IPaginationQuery, IProductMedia, updateReqBody, } from './typings/product-type';
 
+/**
+ * @param {addReqBody} product  - product data
+ * @description - data for the product 
+ */
 const addNew = async (product: addReqBody) => {
     const queryResult = await db.product.create({
         data: {
@@ -15,6 +19,10 @@ const addNew = async (product: addReqBody) => {
     return queryResult;
 };
 
+/**
+ * @param {string} title  - pass title data
+ * @description -  get title is check title or not on product 
+ */
 const getTitle = async (title: string) => {
     const queryResult = await db.product.findFirst({
         where: {
@@ -38,6 +46,11 @@ const getTitle = async (title: string) => {
     return queryResult;
 };
 
+
+/**
+ * @param {string} id  - pass id product
+ * @description -  get id is check title or not on product 
+ */
 const getById = async (id: string) => {
     const queryResult = await db.product.findFirst({
         where: {
@@ -62,7 +75,7 @@ const getById = async (id: string) => {
                     local_path: true,
                     mime_type: true,
                     status: true,
-                    updated_at: true,
+                    updated_at: false,
                 }
             },
             updated_at: true,
@@ -83,7 +96,7 @@ const getById = async (id: string) => {
                             local_path: true,
                             mime_type: true,
                             status: true,
-                            updated_at: true,
+                            updated_at: false,
                         }
                     }
                 }
@@ -92,6 +105,11 @@ const getById = async (id: string) => {
     });
     return queryResult;
 };
+
+/**
+ * @param {IPaginationQuery} query   Pagination in  product
+ * @description -  get all product on product and total Count  
+ */
 const getAllProduct = async (query: IPaginationQuery) => {
     const totalCount = await db.product.count({
         where: {
@@ -127,7 +145,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
                     local_path: true,
                     mime_type: true,
                     status: true,
-                    updated_at: true,
+                    updated_at: false,
                 }
             },
             status: true,
@@ -149,7 +167,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
                             local_path: true,
                             mime_type: true,
                             status: true,
-                            updated_at: true,
+                            updated_at: false,
                         }
                     }
                 }
@@ -165,6 +183,12 @@ const getAllProduct = async (query: IPaginationQuery) => {
     };
 };
 
+
+/**
+ * @param {string} id in  product
+ * @param {updateReqBody} updateInfo pass in payload in product
+ * @description - update query
+ */
 const update = async (id: string, updateInfo: updateReqBody) => {
     const queryResult = await db.product.update({
         where: { id: id },
@@ -187,7 +211,7 @@ const update = async (id: string, updateInfo: updateReqBody) => {
                             local_path: true,
                             mime_type: true,
                             status: true,
-                            updated_at: true,
+                            updated_at: false,
                         }
                     }
                 }
@@ -199,7 +223,12 @@ const update = async (id: string, updateInfo: updateReqBody) => {
     return queryResult;
 };
 
-const removeAll = async function (ids: string[]) {
+
+/**
+ * @param {string} ids in  product
+ * @description - delete multiple ids on product 
+ */
+const deleteMultipleIds = async function (ids: string[]) {
     const queryResult = await db.product.deleteMany({
         where: {
             AND: {
@@ -214,6 +243,10 @@ const removeAll = async function (ids: string[]) {
     return queryResult;
 };
 
+/**
+ * @param {string} ids in product
+ * @description - get FindAll Id multiple ids on product 
+ */
 const getFindAllId = async function (ids: string[]) {
     const queryResult = await db.product.findMany({
         where: {
@@ -230,6 +263,11 @@ const getFindAllId = async function (ids: string[]) {
 
 //---- Product Media Query-----------------
 
+
+/**
+ * @param {string} ids in product media
+ * @description - get Find ProductMedia All Id ids on product 
+ */
 const findProductMediaAllId = async function (ids: string[]) {
     const queryResult = await db.media.findMany({
         where: {
@@ -243,6 +281,11 @@ const findProductMediaAllId = async function (ids: string[]) {
     });
     return queryResult;
 };
+
+/**
+ * @param {string} id in product media
+ * @description - get Find ProductMedia All id on product 
+ */
 const findProductMediaAllIds = async function (id: string) {
     const queryResult = await db.productMedia.findMany({
         where: {
@@ -258,6 +301,10 @@ const findProductMediaAllIds = async function (id: string) {
     return queryResult;
 };
 
+/**
+ * @param {string} ids in product media
+ * @description - get Find ProductMedia All id on product 
+ */
 const findProductMediaAll = async function (ids: string[]) {
     const queryResult = await db.productMedia.findMany({
         where: {
@@ -272,6 +319,10 @@ const findProductMediaAll = async function (ids: string[]) {
     return queryResult;
 };
 
+/**
+ * @param {string[]} ids in product media
+ * @description - delete ProductMedia All ids on product 
+ */
 const deleteManyProductMedia = async function (ids: string[]) {
     const queryResult = await db.productMedia.deleteMany({
         where: {
@@ -283,12 +334,21 @@ const deleteManyProductMedia = async function (ids: string[]) {
     return queryResult;
 };
 
+/**
+ * @param {IProductMedia} product in product media
+ * @description - add ProductMedia All ids on product 
+ */
 const addProductMediaNew = async (product: IProductMedia[]) => {
     const addProductMediaNew = await db.productMedia.createMany({
         data: product,
     });
     return addProductMediaNew;
 };
+
+/**
+ * @param {string} id in product media
+ * @description - update ProductMedia All ids on product 
+ */
 const updateProductMedia = async (id: string) => {
     const queryResult = await db.productMedia.deleteMany({
         where: {
@@ -307,7 +367,7 @@ const productQueries = {
     getById,
     getAllProduct,
     update,
-    removeAll,
+    deleteMultipleIds,
     getFindAllId,
     findProductMediaAllId,
     findProductMediaAll,

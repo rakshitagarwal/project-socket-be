@@ -7,7 +7,15 @@ import productCategoryQueries from "../product-categories/product-category-queri
 import mediaQuery from "../media/media-queries";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 
-
+/**
+ * @description  add product
+ * @param {string} userId it user ids.
+ * @param {addReqBody} newReqBody pass payload 
+ * @see getById in pass the product Category Id.
+ * @see getMediaById in pass the product media Id.
+ * @see findManyMedias  check Ids in pass the product media Id.
+ * @returns {object}  - the response object using responseBuilder.
+ */
 const add = async (newReqBody: addReqBody, userId: string) => {
     const [isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
         productCategoryQueries.getById(newReqBody.product_category_id),
@@ -44,6 +52,12 @@ const add = async (newReqBody: addReqBody, userId: string) => {
     );
 };
 
+/**
+ * @description   it is used in get id ,getAll and search title field apis for product
+ * @param {id} ids it user ids.
+ * @param {IPagination} query pagination for pass payload 
+ * @returns {object}  - the response object using responseBuilder.
+ */
 const get = async ({ id }: Iid, query: IPagination) => {
     if (id) {
         const result = await productQueries.getById(id);
@@ -68,10 +82,23 @@ const get = async ({ id }: Iid, query: IPagination) => {
     });
 };
 
-const update = async (newReqBody: addReqBody) => {
+/**
+ * @description update product
+ * @see getById in pass the product Category Id.
+ * @see getMediaById in pass the product media Id.
+ * @see findManyMedias  check Ids in pass the product media Id.
+ * @see findProductMediaAllId  check Ids in pass the product media Id.
+ * @see updateProductMedia In check the product media id
+ * @see addProductMediaNew product add 
+ * @see deleteMediaByIds In check the media id
+ * @param {Ids} productId pass in product id
+ * @param {addReqBody} addReqBody pass the payload
+ * @returns {object}  - the response object using responseBuilder.
+ */
+const update = async (productId: Iid, newReqBody: addReqBody) => {
 
     const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
-        productQueries.getById(newReqBody.id), productCategoryQueries.getById(newReqBody.product_category_id),
+        productQueries.getById(productId.id as string), productCategoryQueries.getById(newReqBody.product_category_id),
         mediaQuery.getMediaById(newReqBody.landing_image),
         productQueries.findProductMediaAllId(newReqBody.media_id)
     ]);
@@ -91,20 +118,20 @@ const update = async (newReqBody: addReqBody) => {
 
     let productUpdate;
     const resultTransactions = await prismaTransaction(async () => {
-        const { id: productId, media_id, ...payload } = newReqBody;
+        const { media_id, ...payload } = newReqBody;
 
         const mediaIds: IProductMedia[] = media_id.map((element: string) => {
-            return { media_id: element, product_id: productId }
+            return { media_id: element, product_id: productId.id as string }
         });
-        const getMediaId = await productQueries.findProductMediaAllIds(productId)
+        const getMediaId = await productQueries.findProductMediaAllIds(productId.id as string)
         const arrMediaId: string[] = [];
         getMediaId.map((data) => { arrMediaId.push(data.media_id) })
-        const productMediaRemoveQuery = await productQueries.updateProductMedia(productId);
+        const productMediaRemoveQuery = await productQueries.updateProductMedia(productId.id as string);
         const productMediaQuery = await productQueries.addProductMediaNew(mediaIds);
         const mediaFiles = await mediaQuery.findManyMedias(arrMediaId);
         mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
         const deleteMedias = await mediaQuery.deleteMediaByIds(arrMediaId);
-        productUpdate = await productQueries.update(productId as string, payload as updateReqBody);
+        productUpdate = await productQueries.update(productId.id as string, payload as updateReqBody);
         const promise = [productMediaQuery, productMediaRemoveQuery, deleteMedias, productUpdate]
         return promise
     })
@@ -130,7 +157,7 @@ const removeMultipleId = async (collectionId: Ids) => {
     mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
     const deleteMedias = await mediaQuery.deleteMediaByIds(mediaIds);
     const deleteProductMedias = await productQueries.deleteManyProductMedia(productMediaIds);
-    const deleteProducts = await productQueries.removeAll(ids);
+    const deleteProducts = await productQueries.deleteMultipleIds(ids);
 
     if (deleteProducts && deleteProductMedias && deleteMedias)
         return responseBuilder.okSuccess(productMessage.DELETE.SUCCESS);

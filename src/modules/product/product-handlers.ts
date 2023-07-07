@@ -28,7 +28,9 @@ const get = asyncHandler(async (req: Request, res: Response) => {
  * @param { Response } res - response object
  */
 const update = asyncHandler(async (req: Request, res: Response) => {
-    const response = await productServices.update(req.body);
+    console.log(req.params, req.body);
+
+    const response = await productServices.update(req.params, req.body);
     res.status(response.code).json(response);
 })
 /**

@@ -22,6 +22,7 @@ const get = asyncHandler(async (req: Request, res: Response) => {
     });
     res.status(response.code).json(response);
 })
+
 /**
  * @description handler to update new Product Category
  * @param { Request } req - request object
