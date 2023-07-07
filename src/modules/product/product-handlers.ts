@@ -36,8 +36,7 @@ const update = asyncHandler(async (req: Request, res: Response) => {
  * @param { Request } req - request object
  * @param { Response } res - response object
  */
-const removeAll = asyncHandler(async (req: Request, res: Response) => {
-
+const removeMultipleId = asyncHandler(async (req: Request, res: Response) => {
     const response = await productServices.removeMultipleId(req.body);
     res.status(response.code).json(response);
 })
@@ -45,6 +44,6 @@ const productHandler = {
     add,
     update,
     get,
-    removeAll
+    removeMultipleId
 }
 export default productHandler

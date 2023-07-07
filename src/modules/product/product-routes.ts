@@ -11,7 +11,7 @@ productRoutes.post(
     productHandler.add
 );
 productRoutes.get(ENDPOINTS.BASE + ':id?',
-    [validateRequest.params(schema.ZGetId),validateRequest.query(schema.Zpagination)],
+    [validateRequest.params(schema.ZGetId), validateRequest.query(schema.Zpagination)],
     productHandler.get
 );
 productRoutes.patch(ENDPOINTS.BASE,
@@ -21,5 +21,5 @@ productRoutes.patch(ENDPOINTS.BASE,
 productRoutes.delete(
     ENDPOINTS.BASE,
     validateRequest.body(schema.ZDelete),
-    productHandler.removeAll
+    productHandler.removeMultipleId
 );
