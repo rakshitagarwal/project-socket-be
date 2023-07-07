@@ -1,50 +1,65 @@
 import { responseBuilder, sanitize } from "../../common/responses";
-import { addReqBody, updateReqBody } from './typings/product-category-type';
+import { IParamQuery, addReqBody, updateReqBody } from './typings/product-category-type';
 import productCategoryQueries from './product-category-queries';
 import { productCategoryMessage } from '../../common/constants';
 
-
+/**
+ * @description add for product category
+ * @see sanitize sanitize is generic function. 
+ * @see getTitle It is unique title field   
+ * @returns {object} - the response object using responseBuilder.
+ */
 const add = async (newReqBody: addReqBody) => {
-
     newReqBody.title = sanitize(newReqBody.title)
     const isExist = await productCategoryQueries.getTitle(newReqBody.title);
-    if (!isExist) {
-        const { id } = await productCategoryQueries.addNew(newReqBody);
-        return responseBuilder.okSuccess(productCategoryMessage.ADD.SUCCESS, { id }
-        );
+    if (isExist) {
+        return responseBuilder.conflictError(productCategoryMessage.ADD.ALREADY_EXIST);
     }
-    return responseBuilder.badRequestError(productCategoryMessage.ADD.ALREADY_EXIST);
+    const { id } = await productCategoryQueries.addNew(newReqBody);
+    return responseBuilder.createdSuccess(productCategoryMessage.ADD.SUCCESS, { id }
+    );
 };
 
-const get = async (id: string | undefined, moduleInfo: { title: string }) => {
+/**
+ * @description  it is used in get id ,getAll and search title field apis for product category
+ * @returns {object}  - the response object using responseBuilder.
+ */
+const get = async (id: string | undefined, dataInfo: { title: string }) => {
     if (id) {
         const result = await productCategoryQueries.getById(id);
         return result
             ? responseBuilder.okSuccess(
                 productCategoryMessage.GET.REQUESTED,
-                [result]
+                result
             )
             : responseBuilder.badRequestError(
                 productCategoryMessage.GET.NOT_FOUND
             );
     }
-    const { queryResult } = await productCategoryQueries.getAll(moduleInfo.title as string);
+    const { queryResult } = await productCategoryQueries.getAll(dataInfo.title as string);
     return responseBuilder.okSuccess(productCategoryMessage.GET.ALL, queryResult, {});
 };
 
-const update = async (newReqBody: addReqBody) => {
-    // check if product category is exist
-    const isExistId = await productCategoryQueries.getById(newReqBody.id);
-    const isExist = await productCategoryQueries.getTitle(newReqBody.title);
-    if (!isExistId || isExist) {
-        return responseBuilder.badRequestError(
-            !isExistId ? productCategoryMessage.GET.NOT_FOUND
-                : productCategoryMessage.ADD.ALREADY_EXIST);
-    }
+/**
+ * @description  it is used in get id ,getAll and search title field apis for product category
+ * @see getTitle It is unique title field   
+ * @see getById in pass the product Category Id.
+ * @see sanitize sanitize is generic function. 
+ * @returns {object}  - the response object using responseBuilder.
+ */
+const update = async (productCategoryId: IParamQuery, payload: addReqBody) => {
+    payload.title = sanitize(payload.title)
 
-    const { id, ...payload } = newReqBody;
-    const data = await productCategoryQueries.update(id as string, payload as updateReqBody);
-    return responseBuilder.okSuccess(productCategoryMessage.UPDATE.SUCCESS, [data]
+    const isExistId = await productCategoryQueries.getById(productCategoryId.id as string);
+    if (!isExistId) {
+        return responseBuilder.badRequestError(productCategoryMessage.GET.NOT_FOUND);
+    }
+    const isExistTitle = await productCategoryQueries.getTitle(payload.title);
+    if (isExistTitle) {
+        return responseBuilder.conflictError(productCategoryMessage.ADD.ALREADY_EXIST);
+    }
+    const data = await productCategoryQueries.update(productCategoryId.id as string, payload as updateReqBody);
+    return responseBuilder.okSuccess(productCategoryMessage.UPDATE.SUCCESS, data
     );
 };
 const prodCategoryServices = {

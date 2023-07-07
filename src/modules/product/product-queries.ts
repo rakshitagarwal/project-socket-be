@@ -283,7 +283,7 @@ const deleteManyProductMedia = async function (ids: string[]) {
     return queryResult;
 };
 
-const addProductMediaNew = async (product: IProductMedia) => {
+const addProductMediaNew = async (product: IProductMedia[]) => {
     const addProductMediaNew = await db.productMedia.createMany({
         data: product,
     });

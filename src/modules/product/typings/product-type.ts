@@ -35,10 +35,10 @@ export interface Ids {
     ids: Array<string>
 }
 
-export type IProductMedia = {
+export interface IProductMedia {
     media_id: string,
     product_id: string
-}[];
+}
 export interface Iid {
     id: string;
 }

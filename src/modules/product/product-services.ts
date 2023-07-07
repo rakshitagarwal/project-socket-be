@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { responseBuilder } from "../../common/responses";
-import { addReqBody, Ids, IPagination, IProductMedia, Iid, updateReqBody } from "./typings/product-type";
+import { addReqBody, Ids, IPagination, Iid, updateReqBody, IProductMedia } from "./typings/product-type";
 import productQueries from "./product-queries";
 import { productCategoryMessage, productMessage, MESSAGES } from "../../common/constants";
 import productCategoryQueries from "../product-categories/product-category-queries";
@@ -9,7 +9,6 @@ import { prismaTransaction } from "../../utils/prisma-transactions";
 
 
 const add = async (newReqBody: addReqBody, userId: string) => {
-
     const [isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
         productCategoryQueries.getById(newReqBody.product_category_id),
         mediaQuery.getMediaById(newReqBody.landing_image),
@@ -27,14 +26,13 @@ const add = async (newReqBody: addReqBody, userId: string) => {
     }
 
     const resultTransactions = await prismaTransaction(async () => {
+
         newReqBody.userId = userId
         const queryResult = await productQueries.addNew(newReqBody);
-        const productId: string = queryResult.id
-        const arrId: IProductMedia = [];
-        newReqBody.media_id.forEach((element) => {
-            arrId.push({ media_id: element, product_id: productId })
+        const mediaIds: IProductMedia[] = newReqBody.media_id.map((element: string) => {
+            return { media_id: element, product_id: queryResult.id as string }
         });
-        const productMediaQuery = await productQueries.addProductMediaNew(arrId);
+        const productMediaQuery = await productQueries.addProductMediaNew(mediaIds);
         const promise = [queryResult, productMediaQuery]
         return promise
     })
@@ -95,16 +93,14 @@ const update = async (newReqBody: addReqBody) => {
     const resultTransactions = await prismaTransaction(async () => {
         const { id: productId, media_id, ...payload } = newReqBody;
 
-        const arrId: IProductMedia = [];
-        media_id.map((element) => {
-            arrId.push({ media_id: element, product_id: productId })
+        const mediaIds: IProductMedia[] = media_id.map((element: string) => {
+            return { media_id: element, product_id: productId }
         });
-
         const getMediaId = await productQueries.findProductMediaAllIds(productId)
         const arrMediaId: string[] = [];
         getMediaId.map((data) => { arrMediaId.push(data.media_id) })
         const productMediaRemoveQuery = await productQueries.updateProductMedia(productId);
-        const productMediaQuery = await productQueries.addProductMediaNew(arrId);
+        const productMediaQuery = await productQueries.addProductMediaNew(mediaIds);
         const mediaFiles = await mediaQuery.findManyMedias(arrMediaId);
         mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
         const deleteMedias = await mediaQuery.deleteMediaByIds(arrMediaId);
@@ -121,7 +117,7 @@ const update = async (newReqBody: addReqBody) => {
     );
 };
 
-const removeAll = async (collectionId: Ids) => {
+const removeMultipleId = async (collectionId: Ids) => {
     const ids = collectionId.ids;
     if (!ids.length) return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
     const findProducts = await productQueries.getFindAllId(ids);
@@ -145,6 +141,6 @@ const productServices = {
     add,
     get,
     update,
-    removeAll,
+    removeMultipleId,
 };
 export default productServices;

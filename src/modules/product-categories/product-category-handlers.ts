@@ -28,9 +28,10 @@ const get = asyncHandler(async (req: Request, res: Response) => {
  * @param { Response } res - response object
  */
 const update = asyncHandler(async (req: Request, res: Response) => {
-    const response = await prodCategoryServices.update(req.body);
+    const response = await prodCategoryServices.update(req.params, req.body);
     res.status(response.code).json(response);
 })
+
 const ProductCategoryHandler = {
     get,
     add,

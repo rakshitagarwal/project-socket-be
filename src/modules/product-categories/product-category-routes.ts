@@ -14,7 +14,8 @@ productCategoryRoutes.get(ENDPOINTS.BASE + ':id?',
     validateRequest.params(schema.ZGetId),
     prodCategoryHandler.get
 );
-productCategoryRoutes.patch(ENDPOINTS.BASE,
+productCategoryRoutes.patch(ENDPOINTS.BASE + ':id?',
+    validateRequest.params(schema.ZGetId),
     validateRequest.body(schema.ZUpdate),
     prodCategoryHandler.update);
 

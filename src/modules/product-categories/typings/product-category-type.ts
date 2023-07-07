@@ -5,3 +5,6 @@ export type addReqBody = {
 export type updateReqBody = {
     title: string;
 };
+export interface IParamQuery {
+    id?: string
+}
