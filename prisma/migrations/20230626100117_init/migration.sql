@@ -166,6 +166,19 @@ CREATE TABLE "auctions" (
     CONSTRAINT "auctions_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "auction_media" (
+    "id" TEXT NOT NULL,
+    "auction_id" TEXT NOT NULL,
+    "media_id" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "auction_media_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE INDEX "users_email_idx" ON "users"("email");
 
@@ -195,6 +208,9 @@ CREATE INDEX "master_auction_categories_title_idx" ON "master_auction_categories
 
 -- CreateIndex
 CREATE INDEX "auctions_title_idx" ON "auctions"("title");
+
+-- CreateIndex
+CREATE INDEX "auction_media_auction_id_media_id_idx" ON "auction_media"("auction_id", "media_id");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "master_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -231,3 +247,9 @@ ALTER TABLE "auctions" ADD CONSTRAINT "auctions_auction_category_id_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "auctions" ADD CONSTRAINT "auctions_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_media" ADD CONSTRAINT "auction_media_auction_id_fkey" FOREIGN KEY ("auction_id") REFERENCES "auctions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auction_media" ADD CONSTRAINT "auction_media_media_id_fkey" FOREIGN KEY ("media_id") REFERENCES "media"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
