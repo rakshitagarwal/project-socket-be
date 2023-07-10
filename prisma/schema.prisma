@@ -49,7 +49,7 @@ model User {
 model UserOTP {
   id             String   @id @default(uuid())
   otp            Int      @db.Integer
-  expiry_seconds BigInt?   @db.BigInt
+  expiry_seconds BigInt?  @db.BigInt
   otp_type       String
   created_at     DateTime @default(now()) @db.Timestamptz()
   user_id        String
@@ -85,7 +85,7 @@ model TermsAndCondition {
   created_by String
   users      User     @relation(fields: [created_by], references: [id])
 
-  @@index([ content])
+  @@index([content])
   @@map("terms_conditions")
 }
 
@@ -106,6 +106,7 @@ model Media {
   productMedias ProductMedia[]
   auctionImage Auctions[]  @relation("auctionImage")
   auctionVideo Auctions[]  @relation("auctionVideo")
+  Products      Products[]
 
   @@index([filename, type])
   @@map("media")
@@ -128,6 +129,8 @@ model Products {
   id                  String                @id @default(uuid())
   title               String
   description         String                @db.Text
+  landing_image       String
+  price               Int
   status              Boolean               @default(true)
   is_deleted          Boolean               @default(false)
   created_at          DateTime              @default(now()) @db.Timestamptz()
@@ -136,10 +139,12 @@ model Products {
   created_by          String
   users               User                  @relation(fields: [created_by], references: [id])
   productCategories   MasterProductCategory @relation(fields: [product_category_id], references: [id])
-  auctions            Auctions[]
-  productMedias       ProductMedia[]
+  medias              Media                 @relation(fields: [landing_image], references: [id], onDelete: Cascade)
 
-  @@index([title])
+  auctions      Auctions[]
+  productMedias ProductMedia[]
+
+  @@index([title, landing_image])
   @@map("products")
 }
 
@@ -151,8 +156,8 @@ model ProductMedia {
   is_deleted Boolean  @default(false)
   created_at DateTime @default(now()) @db.Timestamptz()
   updated_at DateTime @default(now()) @db.Timestamptz()
-  products   Products @relation(fields: [product_id], references: [id])
-  medias     Media    @relation(fields: [media_id], references: [id])
+  products   Products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  medias     Media    @relation(fields: [media_id], references: [id], onDelete: Cascade)
 
   @@map("product_media")
 }

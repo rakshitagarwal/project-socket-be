@@ -2,6 +2,8 @@ export const ENDPOINTS = {
     BASE: "/",
     DOCS: "/docs",
     AUCTIONS: "/auction",
+    PRODUCT_CATEGORY: "/product-category",
+    UPLOADS: "/uploads",
     AUCTION_CATEGORY: "/auction-category",
     ROLE: "/role",
     USERS: "/user",
@@ -15,10 +17,11 @@ export const ENDPOINTS = {
     REFRESH_TOKEN: "/refresh-token",
     VERIFY: "/verify",
     ID: "/:id",
+    PRODUCT: "/product",
+
     TERM_CONDITION: "/term-condition",
     MEDIA: "/media",
 };
-
 export const ALLOWED_MIMETYPES = [
     "image/png",
     "image/jpg",
@@ -30,7 +33,20 @@ export const ALLOWED_MIMETYPES = [
 ];
 
 export const ALLOWED_IMAGE_MIMETYPES = ["image/png", "image/jpg", "image/jpeg"];
-
+export const productCategoryMessage = {
+    ADD: {
+        SUCCESS: "product category add success",
+        ALREADY_EXIST: "product category title already exist",
+    },
+    GET: {
+        REQUESTED: "get product category requested!",
+        ALL: "get all product category !",
+        NOT_FOUND: "product category id not found",
+    },
+    UPDATE: {
+        SUCCESS: "product category update success",
+    },
+};
 export const AUCTION_CATEGORY_MESSAGES = {
     ADD: "auctionCategory created!",
     NOT_EXISTS: "auctionCategory id not found!",
@@ -47,6 +63,30 @@ export const AUCTION_MESSAGES = {
     FOUND: "auction found!",
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
+};
+
+export const productMessage = {
+    ADD: {
+        SUCCESS: "product add success",
+        ALREADY_EXIST: "product title already exist",
+    },
+    GET: {
+        REQUESTED: "get product requested!",
+        ALL: "get all product !",
+        NOT_FOUND: "product id not found",
+        SOME_NOT_FOUND: "some product, or product media or media id not found",
+        PRODUCT_MEDIA_NOT_FOUND: "Product Medias not found",
+        PRODUCT_MEDIA_IDS: "product media ids not exists",
+    },
+    UPDATE: {
+        SUCCESS: "product update success",
+        TRANSACTION_FAIL:
+            " Prisma has failed due to a conflict between two or more transactions",
+    },
+    DELETE: {
+        SUCCESS: "product remove success",
+        FAIL: "product remove failed",
+    },
 };
 
 export const TEMPLATE = {
