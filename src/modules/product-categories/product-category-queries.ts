@@ -70,7 +70,8 @@ const getAll = async (title: string) => {
                     contains: title ? title : '',
                     mode: 'insensitive'
                 },
-                status: true
+                status: true,
+                is_deleted: false
             },
         },
         select: {
@@ -127,12 +128,44 @@ const getProdCategoryById = async (id: string) => {
     return queryResult
 };
 
+const deleteMultipleIds = async (ids: string[]) => {
+    const queryResult = await db.masterProductCategory.updateMany({
+        where: {
+            id: {
+                in: ids,
+            },
+        },
+        data: { is_deleted: true },
+
+    }); return queryResult;
+};
+
+/**
+ * @param {string} ids in product media
+ * @description - get Find ProductMedia All id on product 
+ */
+const getProductCategoryAll = async function (ids: string[]) {
+    const queryResult = await db.masterProductCategory.findMany({
+        where: {
+            AND: {
+                id: {
+                    in: ids,
+                },
+                is_deleted: false,
+            },
+        },
+    });
+    return queryResult;
+};
+
 const prodCategoryQueries = {
     addNew,
     getTitle,
     getById,
     getAll,
     update,
-    getProdCategoryById
+    getProdCategoryById,
+    deleteMultipleIds,
+    getProductCategoryAll
 };
 export default prodCategoryQueries;

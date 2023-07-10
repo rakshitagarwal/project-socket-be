@@ -16,11 +16,15 @@ const schema = (() => {
     const ZGetId = z.object({
         id: z.string().uuid().optional(),
     });
+    const ZDelete = z.object({
+        ids: z.array(z.string().uuid().min(1)),
+    }).strict();
 
     return {
         ZNewAdd,
         ZUpdate,
-        ZGetId
+        ZGetId,
+        ZDelete
     };
 })();
 

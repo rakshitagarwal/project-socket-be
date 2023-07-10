@@ -51,6 +51,9 @@ export const productCategoryMessage = {
     UPDATE: {
         SUCCESS: 'product category update success',
     },
+    DELETE: {
+        SUCCESS: 'product category delete',
+    },
 }
 export const AUCTION_CATEGORY_MESSAGES = {
     ADD: "auctionCategory created!",
