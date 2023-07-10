@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
 import { IAuction, IPagination } from "./typings/auction-types";
 
@@ -108,6 +107,16 @@ const getMultipleActiveById = async (id: [string]) => {
  * @returns - all auction entities
  */
 const getAll = async (query: IPagination) => {
+    const queryCount = await db.auction.count({
+        where: {
+            AND: [
+                {
+                    is_deleted: false,
+                },
+                { OR: query.filter },
+            ],
+        },
+    });
     const queryResult = await db.auction.findMany({
         where: {
             AND: [
@@ -135,19 +144,12 @@ const getAll = async (query: IPagination) => {
             terms_and_conditions: true,
             auctionCategory: true,
             products: true,
+            auction_video: true,
+            auction_image: true,
+            status: true,
         },
     });
-    const count = await db.termsAndConditions.count({
-        where: {
-            AND: [
-                {
-                    is_deleted: false,
-                },
-                { OR: query.filter },
-            ],
-        },
-    });
-    return { queryResult, count };
+    return { queryResult, queryCount };
 };
 
 /**
@@ -159,12 +161,13 @@ const getAll = async (query: IPagination) => {
  * @returns {Promise<IAuction>}
  */
 const update = async (
-    prisma: PrismaClient,
-    auction: IAuction,
+    auction: IAuction & {
+        status: boolean;
+    },
     auctionId: string,
     userId: string
 ) => {
-    const query = await prisma.auctions.update({
+    const query = await db.auction.update({
         where: {
             id: auctionId,
         },
@@ -186,6 +189,7 @@ const update = async (
             terms_and_conditions: auction.terms_condition,
             state: auction.auction_state,
             created_by: userId,
+            status: auction.status,
         },
         select: {
             id: true,

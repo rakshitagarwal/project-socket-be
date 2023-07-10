@@ -107,7 +107,6 @@ const removeAll = async (data: IDeleteIds) => {
  * @returns queries for the sending the multiple data in masterAuctionCategory
  */
 const isIdExists = async (data: IDeleteIds) => {
-    console.log(data.ids);
     const query = await db.masterAuctionCategory.findMany({
         where: {
             AND: {
@@ -118,7 +117,6 @@ const isIdExists = async (data: IDeleteIds) => {
             },
         },
     });
-    console.log(query);
     return query;
 };
 

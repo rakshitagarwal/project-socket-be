@@ -76,6 +76,7 @@ const ZAuctionAdd = z
             invalid_type_error: "auction_state should be string!",
             required_error: "auction_state is required!",
         }),
+        status: z.boolean().optional(),
         product_id: z
             .string({
                 required_error: "product_id is required!",

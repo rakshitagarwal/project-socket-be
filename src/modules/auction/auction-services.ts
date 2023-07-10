@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import {
     AUCTION_CATEGORY_MESSAGES,
     AUCTION_MESSAGES,
@@ -6,7 +5,6 @@ import {
     productMessage,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
-import { prismaTransaction } from "../../utils/prisma-transactions";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
 import { IAuction, IPagination } from "./typings/auction-types";
@@ -56,7 +54,7 @@ const getById = async (auctionId: string) => {
     const auction = await auctionQueries.getActiveAuctioById(auctionId);
     if (!auction)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction]);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auction);
 };
 
 /**
@@ -66,21 +64,20 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
-    const filter = [];
-    const page = Number(query.page) || 0;
-    const limit = Number(query.limit) || 10;
     if (query.search) {
-        filter.push({ title: { contains: query.search, mode: "insensitive" } });
+        query.filter?.push({
+            title: { contains: query.search, mode: "insensitive" },
+        });
     }
-    const auctions = await auctionQueries.getAll({ page, limit, filter });
+    const auctions = await auctionQueries.getAll(query);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
         {
-            limit,
-            page,
-            totalRecord: auctions.count,
-            totalPage: Math.ceil(auctions.count / limit),
+            limit: +query.limit,
+            page: +query.page,
+            totalRecord: auctions.queryCount,
+            totalPage: Math.ceil(auctions.queryCount / +query.limit),
             search: query.search,
         }
     );
@@ -94,35 +91,47 @@ const getAll = async (query: IPagination) => {
  * @param {string} userId - for updating the created_by
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const update = async (auction: IAuction, auctionId: string, userId: string) => {
-    const isAuctionCategoryFound = await auctionCatgoryQueries.IsExistsActive(
-        auction.auction_category_id
-    );
+const update = async (
+    auction: IAuction & {
+        status: boolean;
+    },
+    auctionId: string,
+    userId: string
+) => {
+    const [isAuctionCategoryFound, isMediaFound, isProductExists] =
+        await Promise.all([
+            auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
+            mediaQueries.getMultipleActiveMediaByIds([
+                auction.auction_image,
+                auction.auction_video,
+            ]),
+            productQueries.getById(auction.product_id),
+        ]);
     if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    const isMediaFound = await mediaQueries.getMultipleActiveMediaByIds([
-        auction.auction_image,
-        auction.auction_video,
-    ]);
-    if (isMediaFound.length)
+    if (isMediaFound.length !== 2)
         return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
-    /**
-     * TODO: Verify ,PRODUCT_ID
-     */
-    const isTransactionDone = await prismaTransaction(
-        async (prisma: PrismaClient) => {
-            const createdAuction = await auctionQueries.update(
-                prisma,
-                auction,
-                auctionId,
-                userId
-            );
-            return createdAuction;
-        }
+    if (!isProductExists)
+        return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+
+    if (
+        auction.start_date < new Date() &&
+        (auction.auction_state === "live" ||
+            auction.auction_state === "completed")
+    ) {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_STATE_NOT_STARTED
+        );
+    }
+
+    const createdAuction = await auctionQueries.update(
+        auction,
+        auctionId,
+        userId
     );
-    if (!isTransactionDone)
+    if (!createdAuction)
         return responseBuilder.internalserverError(
             AUCTION_MESSAGES.NOT_CREATED
         );
