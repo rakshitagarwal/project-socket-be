@@ -154,19 +154,21 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
 const removeMultipleId = async (collectionId: Ids) => {
     const ids = collectionId.ids;
     if (!ids.length) return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
-
-    const resultTransactions = await prismaTransaction(async () => {
     const findProducts = await productQueries.getFindAllId(ids);
     if (!findProducts.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
     const productMedias = await productQueries.findProductMediaAll(ids);
+    if (!productMedias.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
+
     const productMediaIds = productMedias.map(mediaId => mediaId.id);
     const mediaIds = productMedias.map(productMedia => productMedia.media_id);
     const mediaFiles = await mediaQuery.findManyMedias(mediaIds);
+    if (!mediaFiles.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
     mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
-    const deleteMedias = await mediaQuery.deleteMediaByIds(mediaIds);
-    const deleteProductMedias = await productQueries.deleteManyProductMedia(productMediaIds);
-    const deleteProducts = await productQueries.deleteMultipleIds(ids);
-    const promise = [deleteProducts, deleteProductMedias , deleteMedias];
+    
+    const resultTransactions = await prismaTransaction(async () => {
+    const [deleteMedias, deleteProducts, deleteProductMedias] =
+    await Promise.all([mediaQuery.deleteMediaByIds(mediaIds), productQueries.deleteMultipleIds(ids), productQueries.deleteManyProductMedia(productMediaIds) ]);
+    const promise = [deleteMedias, deleteProducts, deleteProductMedias];
     return promise;
     });
     if (!resultTransactions)  return responseBuilder.internalserverError(productMessage.DELETE.FAIL);

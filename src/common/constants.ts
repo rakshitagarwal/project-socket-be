@@ -3,7 +3,7 @@ export const ENDPOINTS = {
     DOCS: "/docs",
     AUCTIONS: "/auction",
     PRODUCT_CATEGORY: "/product-category",
-
+    UPLOADS: "/uploads",
     AUCTION_CATEGORY: "/auction-category",
     ROLE: "/role",
     USERS: "/user",
@@ -70,7 +70,7 @@ export const productMessage = {
         REQUESTED: 'get product requested!',
         ALL: 'get all product !',
         NOT_FOUND: 'product id not found',
-        SOME_NOT_FOUND: 'product id not found',
+        SOME_NOT_FOUND: 'some product, or product media or media id not found',
         PRODUCT_MEDIA_NOT_FOUND: 'Product Medias not found',
         PRODUCT_MEDIA_IDS: 'product media ids not exists'
     },
