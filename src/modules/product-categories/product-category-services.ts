@@ -1,5 +1,5 @@
 import { responseBuilder, sanitize } from "../../common/responses";
-import { IParamQuery, addReqBody, updateReqBody } from './typings/product-category-type';
+import { IParamQuery, Ids, addReqBody, updateReqBody } from './typings/product-category-type';
 import productCategoryQueries from './product-category-queries';
 import { productCategoryMessage } from '../../common/constants';
 
@@ -62,9 +62,30 @@ const update = async (productCategoryId: IParamQuery, payload: addReqBody) => {
     return responseBuilder.okSuccess(productCategoryMessage.UPDATE.SUCCESS, data
     );
 };
+
+
+const removeMultipleId = async (collectionId: Ids) => {
+    const ids = collectionId.ids;
+    console.log("*****", ids.length);
+
+
+    const existIds = await productCategoryQueries.getProductCategoryAll(ids)
+
+    if (!existIds.length) {
+        return responseBuilder.badRequestError(productCategoryMessage.GET.NOT_FOUND);
+    }
+    const updateMultipleId = await productCategoryQueries.deleteMultipleIds(ids);
+    if (updateMultipleId.count !== ids.length) {
+        return responseBuilder.badRequestError();
+    }
+    return responseBuilder.okSuccess(productCategoryMessage.DELETE.SUCCESS, updateMultipleId);
+
+};
+
 const prodCategoryServices = {
     add,
     get,
-    update
+    update,
+    removeMultipleId
 };
 export default prodCategoryServices;
