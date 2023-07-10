@@ -33,10 +33,22 @@ const update = asyncHandler(async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 })
 
+/**
+ * @description handler to multiple Delete new Product category
+ * @param { Request } req - request object
+ * @param { Response } res - response object
+ */
+const removeMultipleId = asyncHandler(async (req: Request, res: Response) => {
+    // const getmultipleIds =await prodCategoryServices.
+    const response = await prodCategoryServices.removeMultipleId(req.body);
+    res.status(response.code).json(response);
+})
+
 const ProductCategoryHandler = {
     get,
     add,
-    update
+    update,
+    removeMultipleId
 }
 
 export default ProductCategoryHandler

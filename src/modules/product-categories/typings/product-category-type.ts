@@ -8,3 +8,8 @@ export type updateReqBody = {
 export interface IParamQuery {
     id?: string
 }
+
+export interface Ids {
+    ids: Array<string>
+}
+

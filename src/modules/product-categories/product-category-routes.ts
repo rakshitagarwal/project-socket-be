@@ -19,6 +19,11 @@ productCategoryRoutes.patch(ENDPOINTS.BASE + ':id?',
     validateRequest.body(schema.ZUpdate),
     prodCategoryHandler.update);
 
+productCategoryRoutes.delete(
+    ENDPOINTS.BASE,
+    validateRequest.body(schema.ZDelete),
+    prodCategoryHandler.removeMultipleId
+);
 
 
 
