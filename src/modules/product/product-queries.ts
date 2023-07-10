@@ -78,7 +78,7 @@ const getById = async (id: string) => {
                     updated_at: false,
                 }
             },
-            updated_at: true,
+            updated_at: false,
             productCategories: {
                 select: {
                     id: true,
@@ -136,6 +136,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
             title: true,
             description: true,
             price: true,
+            status: true,
             medias: {
                 select: {
                     id: true,
@@ -148,7 +149,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
                     updated_at: false,
                 }
             },
-            status: true,
+
             updated_at: false,
             productCategories: {
                 select: {

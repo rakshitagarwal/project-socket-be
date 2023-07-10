@@ -116,7 +116,6 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
         return responseBuilder.notFoundError(productMessage.GET.PRODUCT_MEDIA_IDS);
     }
 
-    let productUpdate;
     const resultTransactions = await prismaTransaction(async () => {
         const { media_id, ...payload } = newReqBody;
 
@@ -131,17 +130,14 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
         const mediaFiles = await mediaQuery.findManyMedias(arrMediaId);
         mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
         const deleteMedias = await mediaQuery.deleteMediaByIds(arrMediaId);
-        productUpdate = await productQueries.update(productId.id as string, payload as updateReqBody);
+        const productUpdate = await productQueries.update(productId.id as string, payload as updateReqBody);
         const promise = [productMediaQuery, productMediaRemoveQuery, deleteMedias, productUpdate]
         return promise
     })
     if (!resultTransactions) {
         return responseBuilder.badRequestError(productMessage.UPDATE.TRANSACTION_FAIL)
     }
-    return responseBuilder.okSuccess(
-        productMessage.UPDATE.SUCCESS,
-        productUpdate
-    );
+    return responseBuilder.okSuccess(productMessage.UPDATE.SUCCESS);
 };
 
 const removeMultipleId = async (collectionId: Ids) => {
