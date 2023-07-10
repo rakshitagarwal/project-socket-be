@@ -17,7 +17,7 @@ const schema = (() => {
         id: z.string().uuid().optional(),
     });
     const ZDelete = z.object({
-        ids: z.array(z.string().uuid()),
+        ids: z.array(z.string().uuid().min(1)),
     }).strict();
 
     return {
