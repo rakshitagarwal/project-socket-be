@@ -140,12 +140,24 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
     return responseBuilder.okSuccess(productMessage.UPDATE.SUCCESS);
 };
 
+/**
+ * @description delete product by ids
+ * @see getFindAllId  product Ids.
+ * @see findProductMediaAll product media ids.
+ * @see findManyMedias media ids.
+ * @see deleteMediaByIds delete media entries by ids.
+ * @see deleteManyProductMedia delete product media entries by ids.
+ * @see deleteMultipleIds delete product entries by ids.
+ * @param {Ids} collectionId pass in product id
+ * @returns {object}  - the response object using responseBuilder.
+ */
 const removeMultipleId = async (collectionId: Ids) => {
     const ids = collectionId.ids;
     if (!ids.length) return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
+
+    const resultTransactions = await prismaTransaction(async () => {
     const findProducts = await productQueries.getFindAllId(ids);
     if (!findProducts.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
-
     const productMedias = await productQueries.findProductMediaAll(ids);
     const productMediaIds = productMedias.map(mediaId => mediaId.id);
     const mediaIds = productMedias.map(productMedia => productMedia.media_id);
@@ -154,10 +166,11 @@ const removeMultipleId = async (collectionId: Ids) => {
     const deleteMedias = await mediaQuery.deleteMediaByIds(mediaIds);
     const deleteProductMedias = await productQueries.deleteManyProductMedia(productMediaIds);
     const deleteProducts = await productQueries.deleteMultipleIds(ids);
-
-    if (deleteProducts && deleteProductMedias && deleteMedias)
-        return responseBuilder.okSuccess(productMessage.DELETE.SUCCESS);
-    return responseBuilder.internalserverError(productMessage.DELETE.FAIL);
+    const promise = [deleteProducts, deleteProductMedias , deleteMedias];
+    return promise;
+    });
+    if (!resultTransactions)  return responseBuilder.internalserverError(productMessage.DELETE.FAIL);
+        return responseBuilder.okSuccess(productMessage.DELETE.SUCCESS); 
 };
 
 const productServices = {
