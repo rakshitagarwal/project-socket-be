@@ -22,7 +22,7 @@ const create = async (req: Request, res: Response) => {
  * @param {Response} res - HTTP Response
  * @return {Promise<Response>}
  */
-const getById = async (req: Request, res: Response) => {    
+const getById = async (req: Request, res: Response) => {
     const response = await auctionService.getById(req.params.id as string);
     res.status(response.code).json(response);
 };
@@ -33,10 +33,12 @@ const getById = async (req: Request, res: Response) => {
  * @param {Response} res - HTTP Response
  * @return {Promise<Response>}
  */
-const getAll = async (req: Request, res: Response) => {        
-    const response = await auctionService.getAll(req.query as unknown as IPagination);
+const getAll = async (req: Request, res: Response) => {
+    const response = await auctionService.getAll(
+        req.query as unknown as IPagination
+    );
     res.status(response.code).json(response);
-}
+};
 
 /**
  * Auction updation By Id

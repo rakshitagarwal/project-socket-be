@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AUCTION_STATE } from "../../common/constants";
 
 const ZAuctionAdd = z
     .object({
@@ -30,9 +31,8 @@ const ZAuctionAdd = z
             required_error: "new_participant_threshold is required!",
             invalid_type_error: "new_participant_threshold should be number!",
         }),
-        start_date: z.string({
-            required_error: "start_date is required!",
-            invalid_type_error: "start_date should be string!",
+        start_date: z.coerce.date().refine((data) => data > new Date(), {
+            message: "Start date must be in the future",
         }),
         is_pregistered: z
             .boolean({
@@ -72,10 +72,10 @@ const ZAuctionAdd = z
                 invalid_type_error: "auction_video should be string!",
             })
             .uuid(),
-        auction_state: z
-            .enum(["upcoming", "live", "compeleted"])
-            .default("upcoming")
-            .optional(),
+        auction_state: z.enum(AUCTION_STATE, {
+            invalid_type_error: "auction_state should be string!",
+            required_error: "auction_state is required!",
+        }),
         product_id: z
             .string({
                 required_error: "product_id is required!",
@@ -121,14 +121,18 @@ const ZDeleteId = z.object({
 
 const Zpagination = z
     .object({
-        page: z.preprocess(
-            (val) => parseInt(val as string),
-            z.number({ invalid_type_error: "page must be number" })
-        ).default(0),
-        limit: z.preprocess(
-            (val) => parseInt(val as string),
-            z.number({ invalid_type_error: "limit must be number" })
-        ).default(10),
+        page: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "page must be number" })
+            )
+            .default(0),
+        limit: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "limit must be number" })
+            )
+            .default(10),
         search: z
             .string()
             .regex(/^[a-zA-Z0-9._-]+$/)

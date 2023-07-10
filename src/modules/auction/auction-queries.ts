@@ -26,7 +26,7 @@ const create = async (auction: IAuction, userId: string) => {
             registeration_count: auction.pre_register_count,
             registeration_fees: auction.pre_register_fees,
             terms_and_conditions: auction.terms_condition,
-            state: auction.auction_state as unknown as string,
+            state: auction.auction_state,
             created_by: userId,
         },
         select: {
@@ -41,7 +41,7 @@ const create = async (auction: IAuction, userId: string) => {
  * @param {string} id - auction id
  * @returns {Promise<IAuction>}
  */
-const getActiveAuctioById = async (id: string) => {    
+const getActiveAuctioById = async (id: string) => {
     const query = await db.auction.findFirst({
         where: {
             id,
@@ -69,12 +69,8 @@ const getActiveAuctioById = async (id: string) => {
                     title: true,
                 },
             },
-            auction_image: {
-                select: {},
-            },
-            auction_video: {
-                select: {},
-            },
+            auction_image: true,
+            auction_video: true,
             products: {
                 select: {
                     id: true,
@@ -118,11 +114,11 @@ const getAll = async (query: IPagination) => {
                 {
                     is_deleted: false,
                 },
-                { OR: query.filter }
+                { OR: query.filter },
             ],
         },
-        take: Number(query.limit),
-        skip: Number(query.page) * Number(query.limit),
+        take: +query.limit,
+        skip: +query.page * +query.limit,
         select: {
             id: true,
             title: true,
@@ -138,7 +134,7 @@ const getAll = async (query: IPagination) => {
             registeration_fees: true,
             terms_and_conditions: true,
             auctionCategory: true,
-            products: true
+            products: true,
         },
     });
     const count = await db.termsAndConditions.count({
@@ -147,14 +143,14 @@ const getAll = async (query: IPagination) => {
                 {
                     is_deleted: false,
                 },
-                { OR: query.filter }
+                { OR: query.filter },
             ],
-        }
-    })
-    return {queryResult, count};
+        },
+    });
+    return { queryResult, count };
 };
 
-/**            
+/**
  * Auction Update By Id with Transaction
  * @param {PrismaClient} prisma - prisma for db transaction
  * @param {IAuction} auction - auction Data
@@ -191,6 +187,9 @@ const update = async (
             state: auction.auction_state,
             created_by: userId,
         },
+        select: {
+            id: true,
+        },
     });
     return query;
 };
@@ -200,7 +199,7 @@ const update = async (
  * @param {string} id - Auction ID
  * @returns {Promise<IAuction>} - return the auction detials
  */
-const remove = async (id: [string]) => {
+const remove = async (id: string[]) => {
     const query = await db.auction.updateMany({
         where: {
             AND: {

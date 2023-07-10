@@ -3,6 +3,7 @@ import {
     AUCTION_CATEGORY_MESSAGES,
     AUCTION_MESSAGES,
     MESSAGES,
+    productMessage,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { prismaTransaction } from "../../utils/prisma-transactions";
@@ -10,6 +11,7 @@ import { auctionCatgoryQueries } from "../auction-category/auction-category-quer
 import { auctionQueries } from "./auction-queries";
 import { IAuction, IPagination } from "./typings/auction-types";
 import mediaQueries from "../media/media-queries";
+import productQueries from "../product/product-queries";
 
 /**
  * Auction Creation
@@ -19,22 +21,23 @@ import mediaQueries from "../media/media-queries";
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const create = async (auction: IAuction, userId: string) => {
-    const isAuctionCategoryFound = await auctionCatgoryQueries.IsExistsActive(
-        auction.auction_category_id
-    );
-    if (!isAuctionCategoryFound)
+    const [isAuctionCategoryFound, isMediaFound, isProductFound] =
+        await Promise.all([
+            auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
+            mediaQueries.getMultipleActiveMediaByIds([
+                auction.auction_image,
+                auction.auction_video,
+            ]),
+            productQueries.getById(auction.product_id),
+        ]);
+    if (!isAuctionCategoryFound?.id)
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    const isMediaFound = await mediaQueries.getMultipleActiveMediaByIds([
-        auction.auction_image,
-        auction.auction_video,
-    ]);
-    if (isMediaFound.length)
+    if (isMediaFound.length !== 2)
         return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
-    /**
-     * TODO: verify, PRODUCT_ID
-     */
+    if (!isProductFound?.id)
+        return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
         return responseBuilder.internalserverError(

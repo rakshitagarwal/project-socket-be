@@ -40,7 +40,7 @@ app.use(
 app.use(hpp());
 app.use(userAgent.express());
 app.use(requestIp.mw());
-app.use(ENDPOINTS.UPLOADS, express.static(path.join(__dirname,"../uploads")));
+app.use(ENDPOINTS.UPLOADS, express.static(path.join(__dirname, "../uploads")));
 
 /**
  * Swagger Docs

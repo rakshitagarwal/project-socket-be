@@ -73,10 +73,10 @@ export const productMessage = {
     GET: {
         REQUESTED: "get product requested!",
         ALL: "get all product !",
-        NOT_FOUND: "product id not found",
-        SOME_NOT_FOUND: "some product, or product media or media id not found",
-        PRODUCT_MEDIA_NOT_FOUND: "Product Medias not found",
-        PRODUCT_MEDIA_IDS: "product media ids not exists",
+        NOT_FOUND: "product id not found!",
+        SOME_NOT_FOUND: "some product, or product media or media id not found!",
+        PRODUCT_MEDIA_NOT_FOUND: "Product Medias not found!",
+        PRODUCT_MEDIA_IDS: "product media ids not exists!",
     },
     UPDATE: {
         SUCCESS: "product update success",
@@ -166,3 +166,5 @@ export const MESSAGES = {
         CONFLICT: "term and condition already exists",
     },
 };
+
+export const AUCTION_STATE = ["upcoming", "live", "completed"] as const;
