@@ -39,7 +39,6 @@ const update = asyncHandler(async (req: Request, res: Response) => {
  * @param { Response } res - response object
  */
 const removeMultipleId = asyncHandler(async (req: Request, res: Response) => {
-    // const getmultipleIds =await prodCategoryServices.
     const response = await prodCategoryServices.removeMultipleId(req.body);
     res.status(response.code).json(response);
 })
