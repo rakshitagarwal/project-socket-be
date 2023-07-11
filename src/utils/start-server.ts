@@ -2,6 +2,8 @@ import { checkHealth } from "../config/db";
 import logger from "../config/logger";
 import app from "..";
 import env from "../config/env";
+import socketAuthentication from "../middlewares/socket-authentication";
+import * as socketio from "socket.io";
 
 async function startServer() {
     const checking = await checkHealth();
@@ -27,7 +29,12 @@ async function startServer() {
             console.log("Stopped server");
         });
     });
-
+    const io = new socketio.Server(server, {
+        cors: {
+            origin: "*",
+            credentials: true,
+        },
+    });
     return `🚀 DATABASE CONNECTED 🚀`;
 }
 

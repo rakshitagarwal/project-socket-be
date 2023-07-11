@@ -20,6 +20,7 @@ import logger from "./config/logger";
 import startServer from "./utils/start-server";
 import path from "path";
 import { ENDPOINTS } from "./common/constants";
+// import "./utils/cron-schedule"
 
 const app = express();
 
