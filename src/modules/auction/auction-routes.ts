@@ -32,7 +32,7 @@ auctionRouter.put(
 );
 
 auctionRouter.delete(
-    ENDPOINTS.BASE + ":id",
-    validateRequest.body(auctionSchemas.ZAuctionId),
+    ENDPOINTS.BASE,
+    validateRequest.body(auctionSchemas.ZDeleteId),
     handleAsync(auctionHandler.remove)
 );

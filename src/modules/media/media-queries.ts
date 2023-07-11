@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
 import { IMediaQuery } from "./typings/media.type";
 
@@ -156,6 +157,21 @@ const getMultipleActiveMediaByIds = async (ids: string[]) => {
     return query;
 };
 
+const softdeletedByIds = async (prisma: PrismaClient, id: string[]) => {
+    const query = await prisma.auctions.updateMany({
+        where: {
+            id: {
+                in: id,
+            },
+            is_deleted: false,
+        },
+        data: {
+            is_deleted: true,
+        },
+    });
+    return query;
+};
+
 const mediaQueries = {
     addMediaInfo,
     addMultipleMedia,
@@ -165,5 +181,6 @@ const mediaQueries = {
     updateMediaStatusById,
     deleteMediaByIds,
     getMultipleActiveMediaByIds,
+    softdeletedByIds,
 };
 export default mediaQueries;

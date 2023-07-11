@@ -10,6 +10,8 @@ import { auctionQueries } from "./auction-queries";
 import { IAuction, IPagination } from "./typings/auction-types";
 import mediaQueries from "../media/media-queries";
 import productQueries from "../product/product-queries";
+import { prismaTransaction } from "../../utils/prisma-transactions";
+import { PrismaClient } from "@prisma/client";
 
 /**
  * Auction Creation
@@ -143,12 +145,21 @@ const update = async (
  * @param {string} id - auction ID
  * @returns - return {code, message, data, metadata} from responseBuilder
  */
-const remove = async (id: [string]) => {
+const remove = async (id: string[]) => {
     const isExists = await auctionQueries.getMultipleActiveById(id);
-    if (!isExists)
+    if (!isExists.length)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    const isDeleted = await auctionQueries.remove(id);
-    if (isDeleted.count)
+    const isTransactioned = await prismaTransaction(
+        async (prisma: PrismaClient) => {
+            const isDeleted = await auctionQueries.remove(prisma, id);
+            const isMediaDeleted = await mediaQueries.softdeletedByIds(
+                prisma,
+                id
+            );
+            return { isDeleted, isMediaDeleted };
+        }
+    );
+    if (isTransactioned.isDeleted && isTransactioned.isMediaDeleted)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
     return responseBuilder.internalserverError();
 };

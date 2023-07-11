@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
 import { IAuction, IPagination } from "./typings/auction-types";
 
@@ -87,7 +88,7 @@ const getActiveAuctioById = async (id: string) => {
  * @param {[string]} id - multiple auction ID
  * @returns {[Promise<IAuction>]}
  */
-const getMultipleActiveById = async (id: [string]) => {
+const getMultipleActiveById = async (id: string[]) => {
     const query = await db.auction.findMany({
         where: {
             AND: {
@@ -134,6 +135,8 @@ const getAll = async (query: IPagination) => {
             description: true,
             image_path: true,
             video_path: true,
+            is_preRegistered: true,
+            state: true,
             bid_increment_price: true,
             plays_consumed_on_bid: true,
             opening_price: true,
@@ -147,6 +150,9 @@ const getAll = async (query: IPagination) => {
             auction_video: true,
             auction_image: true,
             status: true,
+        },
+        orderBy: {
+            created_at: "desc",
         },
     });
     return { queryResult, queryCount };
@@ -203,8 +209,8 @@ const update = async (
  * @param {string} id - Auction ID
  * @returns {Promise<IAuction>} - return the auction detials
  */
-const remove = async (id: string[]) => {
-    const query = await db.auction.updateMany({
+const remove = async (prisma: PrismaClient, id: string[]) => {
+    const query = await prisma.auctions.updateMany({
         where: {
             AND: {
                 id: {

@@ -62,7 +62,7 @@ const update = async (req: Request, res: Response) => {
  * @return {Promise<Response>}
  */
 const remove = async (req: Request, res: Response) => {
-    const response = await auctionService.remove(req.body);
+    const response = await auctionService.remove(req.body.ids);
     res.status(response.code).json(response);
 };
 
