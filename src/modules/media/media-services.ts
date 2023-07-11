@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 /**
  * @description uploadMedia is used to add one media entry in the database
- * @param {IFileMetaInfo} reqFileData - The media file is passed from body using this variable
+ * @param {IFileMetaInfo} reqFileData - The media file is passed here using this variable
  * @returns {object} - the response object using responseBuilder.
  */
 const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
@@ -23,28 +23,25 @@ const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
     };
 
     const mediaResult = await mediaQueries.addMediaInfo(fileData as IMediaQuery);
-    if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, fileData);
+    if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
     return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);};
 
 /**
- * @description uploadMultipleMedia is used to add multiple media entries in the databse.
- * @param {IFileMetaInfo} reqFileData[] - The media files are passed using this variable to queries.
+ * @description uploadMultipleMedia is used to add multiple media entries in the database.
+ * @param {IFileMetaInfo} reqFileData[] - The media files are passed here using this variable.
  * @returns {object} - the response object using responseBuilder.
  */
 const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {  
-    const filesData = [];
-    for (let i = 0; i < reqFileData.length; i++) {
-        filesData.push({
-            id: uuidv4(),
-            filename: reqFileData[i]?.filename,
-            type: reqFileData[i]?.mimetype?.split('/')[0],
-            local_path: reqFileData[i]?.path,
-            tag: "media",
-            mime_type: reqFileData[i]?.mimetype,
-            size: reqFileData[i]?.size,
-            created_by: userId,
-        });
-    } 
+    const filesData = reqFileData.map((file) => ({
+        id: uuidv4(),
+        filename: file?.filename,
+        type: file?.mimetype?.split('/')[0],
+        local_path: file?.path,
+        tag: "media",
+        mime_type: file?.mimetype,
+        size: file?.size,
+        created_by: userId,
+      }));
 
     const mediaResult = await mediaQueries.addMultipleMedia(filesData as IMediaQuery[]);
     if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
@@ -67,7 +64,7 @@ const getAllMedia = async (mediaId: string | undefined) => {
 };
 
 /**
- * @description updateMediaStatus is used to change the status of the media based on id.
+ * @description updateMediaStatus is used to change the status of the media with given id.
  * @param {string} id - id is passed to specify on which media file action will take place.
  * @returns {object} - the response object using responseBuilder.
  */
@@ -81,8 +78,8 @@ const updateMediaStatus = async (id: string) => {
 };
 
 /**
- * @description deleteMedia is used to delete media fileS
- * @param {string} ids - ids are passed to specify which media files soft delete will happen.
+ * @description deleteMedia is used to delete media entries from the database
+ * @param {string} ids - ids are passed to specify which media entries and files get deleted.
  * @returns {object} - the response object using responseBuilder.
  */
 const deleteMedia = async (deleteIds: Iid) => {        

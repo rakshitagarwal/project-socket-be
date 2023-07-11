@@ -3,7 +3,7 @@ import { IMediaQuery } from "./typings/media.type";
 
 /**
 * @description addMediaInfo is used to add one media entry in the database .
-* @param {IMediaQuery} mediaData - The media file is passed from service layer using videoData.
+* @param {IMediaQuery} mediaData - The media file is passed from service layer using mediaData.
 * @returns {queryResult} - the result of execution of query.
 */
 const addMediaInfo = async function (mediaData: IMediaQuery) {
@@ -24,7 +24,7 @@ const addMediaInfo = async function (mediaData: IMediaQuery) {
 
 /**
 * @description addMultipleMedia is used to add multiple media entries in the database.
-* @param {IMediaQuery} mediaData[] - media files data is passed from services using videoData.
+* @param {IMediaQuery} mediaData[] - media files data is passed from services using mediaData.
 * @returns {queryResult} - the result of execution of query.
 */
 const addMultipleMedia = async function (mediaData: IMediaQuery[]) {
@@ -34,7 +34,7 @@ const addMultipleMedia = async function (mediaData: IMediaQuery[]) {
 };
 
 /**
-* @description allMedias is used to get all media entries whose is_deleted is false.
+* @description allMedias is used to get all media entries.
 * @returns {queryResult} - the result of execution of query.
 */
 const allMedias = async function () {
@@ -54,11 +54,10 @@ const allMedias = async function () {
 
 /**
 * @description findManyMedias is used to find many media entries from the database.
-* @param {string} ids - The ids of media entries is passed using ids as variable.
+* @param {string} ids - The ids of many media entries is passed using ids as variable.
 * @returns {queryResult} - the result of execution of query.
 */
 const findManyMedias = async function (ids: string | string[]) {
-
     const queryResult = await db.media.findMany({
         where: {
             id: {
@@ -101,7 +100,7 @@ const getMediaById = async function (id: string) {
 };
 
 /** 
-* @description updateMediaStatusById is used to change status of media entry in database
+* @description updateMediaStatusById is used to change status of one media entry.
 * @param {string} id- The id of one media is passed using this variable.
 * @returns {queryResult} - the result of execution of query.
 */
@@ -124,7 +123,7 @@ const updateMediaStatusById = async function (id: string, status: boolean) {
 };
 
 /**
-* @description deleteMediaByIds is used to soft delete many media entries in database.
+* @description deleteMediaByIds is used to delete many media entries from the database.
 * @param {string} ids- The ids of media entries are passed from body using this variable.
 * @returns {queryResult} - the result of execution of query.
 */
