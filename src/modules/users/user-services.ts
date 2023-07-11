@@ -31,7 +31,7 @@ const register = async (body: Iuser) => {
     }
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({ data: { ...payload, role_id: isRole.id } })
-        eventService.emit('send-user-mail', { email: user.email, user_name: `${user.first_name} ${user.last_name}`, subject: "Welcome to Big Deal", template: TEMPLATE.EMAIL_VERIFICATION })
+        eventService.emit('send-user-mail', { email: user.email, user_name: `${user.first_name}`, subject: "Welcome to Big Deal", template: TEMPLATE.EMAIL_VERIFICATION })
     })
     return responseBuilder.createdSuccess(MESSAGES.USERS.SIGNUP)
 }
@@ -90,7 +90,7 @@ const playerLogin = async (body: IplayerLogin) => {
     await prismaTransaction(async (prisma: PrismaClient) => {
         const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
         await prisma.userOTP.create({ data: { user_id: isUser.id, otp: Number(passcode), otp_type: OTP_TYPE.LOGIN_TYPE } })
-        eventService.emit('send-user-mail', { email: isUser.email, otp: passcode, user_name: `${isUser.first_name} ${isUser.last_name}`, subject: "Login Passcode", template: TEMPLATE.LOGIN_OTP })
+        eventService.emit('send-user-mail', { email: isUser.email, otp: passcode, user_name: `${isUser.first_name}`, subject: "Login Passcode", template: TEMPLATE.LOGIN_OTP })
     })
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL)
 }
@@ -184,7 +184,7 @@ const forgetPassword = async (body: IplayerLogin) => {
     await prismaTransaction(async (prisma: PrismaClient) => {
         const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
         await prisma.userOTP.create({ data: { user_id: isUser.id, otp: Number(passcode), otp_type: OTP_TYPE.FORGET_PASSWORD } })
-        eventService.emit('send-user-mail', { email: isUser.email, otp: passcode, user_name: `${isUser.first_name} ${isUser.last_name}`, subject: "Forget password", template: TEMPLATE.FORGET_PASSWORD })
+        eventService.emit('send-user-mail', { email: isUser.email, otp: passcode, user_name: `${isUser.first_name}`, subject: "Forget password", template: TEMPLATE.FORGET_PASSWORD })
     })
     return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL)
 }
