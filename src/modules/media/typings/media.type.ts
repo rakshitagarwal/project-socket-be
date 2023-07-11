@@ -15,6 +15,7 @@ export interface Iid {
 }
 
 export interface IMediaQuery {
+    id:string;
     filename:string,
     size: number,
     type:string,

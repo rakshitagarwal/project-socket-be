@@ -3,14 +3,16 @@ import { responseBuilder } from "../../common/responses";
 import mediaQueries from "./media-queries";
 import {IFileMetaInfo, Iid, IMediaQuery} from "./typings/media.type";
 import fs from "fs";
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * @description uploadMedia is used to add one media entry in the database
  * @param {IFileMetaInfo} reqFileData - The media file is passed from body using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {    
+const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
     const fileData = {
+        id: uuidv4(),
         filename: reqFileData.filename,
         type: (reqFileData?.mimetype as string).split('/')[0],
         local_path: reqFileData.path,
@@ -21,18 +23,19 @@ const uploadMedia = async (reqFileData: IFileMetaInfo, userId: string) => {
     };
 
     const mediaResult = await mediaQueries.addMediaInfo(fileData as IMediaQuery);
-    return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
-};
+    if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, fileData);
+    return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);};
 
 /**
  * @description uploadMultipleMedia is used to add multiple media entries in the databse.
  * @param {IFileMetaInfo} reqFileData[] - The media files are passed using this variable to queries.
  * @returns {object} - the response object using responseBuilder.
  */
-const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {    
+const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string) => {  
     const filesData = [];
     for (let i = 0; i < reqFileData.length; i++) {
         filesData.push({
+            id: uuidv4(),
             filename: reqFileData[i]?.filename,
             type: reqFileData[i]?.mimetype?.split('/')[0],
             local_path: reqFileData[i]?.path,
@@ -41,10 +44,11 @@ const uploadMultipleMedia = async (reqFileData: IFileMetaInfo[], userId: string)
             size: reqFileData[i]?.size,
             created_by: userId,
         });
-    }
+    } 
 
     const mediaResult = await mediaQueries.addMultipleMedia(filesData as IMediaQuery[]);
-    return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
+    if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
+    return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);
 };
 
 /**
