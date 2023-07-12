@@ -32,29 +32,24 @@ export const ALLOWED_MIMETYPES = [
     "video/x-msvideo",
 ];
 
-export const ALLOWED_IMAGE_MIMETYPES = [
-    "image/png",
-    "image/jpg",
-    "image/jpeg"
-];
+export const ALLOWED_IMAGE_MIMETYPES = ["image/png", "image/jpg", "image/jpeg"];
 export const productCategoryMessage = {
-
     ADD: {
-        SUCCESS: 'product category add success',
-        ALREADY_EXIST: 'product category title already exist',
+        SUCCESS: "product category add success",
+        ALREADY_EXIST: "product category title already exist",
     },
     GET: {
-        REQUESTED: 'get product category requested!',
-        ALL: 'get all product category !',
-        NOT_FOUND: 'product category id not found',
+        REQUESTED: "get product category requested!",
+        ALL: "get all product category !",
+        NOT_FOUND: "product category id not found",
     },
     UPDATE: {
-        SUCCESS: 'product category update success',
+        SUCCESS: "product category update success",
     },
     DELETE: {
-        SUCCESS: 'product category delete',
+        SUCCESS: "product category delete",
     },
-}
+};
 export const AUCTION_CATEGORY_MESSAGES = {
     ADD: "auctionCategory created!",
     NOT_EXISTS: "auctionCategory id not found!",
@@ -63,46 +58,57 @@ export const AUCTION_CATEGORY_MESSAGES = {
     GET_SINGLE: "auctionCategory found!",
     DELETE: "auctionCategory deleted!",
 };
-export const productMessage = {
 
+export const AUCTION_MESSAGES = {
+    CREATE: "auction created!",
+    NOT_FOUND: "auction not found!",
+    NOT_CREATED: "auction not created!, something went wrong",
+    FOUND: "auction found!",
+    UPDATE: "auction updated!",
+    REMOVE: "auction deleted!",
+    AUCTION_STATE_NOT_STARTED:
+        "auction status can't be live, because it is not yet started!",
+};
+
+export const productMessage = {
     ADD: {
-        SUCCESS: 'product add success',
-        ALREADY_EXIST: 'product title already exist',
+        SUCCESS: "product add success",
+        ALREADY_EXIST: "product title already exist",
     },
     GET: {
-        REQUESTED: 'get product requested!',
-        ALL: 'get all product !',
-        NOT_FOUND: 'product id not found',
-        SOME_NOT_FOUND: 'some product, or product media or media id not found',
-        PRODUCT_MEDIA_NOT_FOUND: 'Product Medias not found',
-        PRODUCT_MEDIA_IDS: 'product media ids not exists'
+        REQUESTED: "get product requested!",
+        ALL: "get all product !",
+        NOT_FOUND: "product id not found!",
+        SOME_NOT_FOUND: "some product, or product media or media id not found!",
+        PRODUCT_MEDIA_NOT_FOUND: "Product Medias not found!",
+        PRODUCT_MEDIA_IDS: "product media ids not exists!",
     },
     UPDATE: {
-        SUCCESS: 'product update success',
-        TRANSACTION_FAIL: " Prisma has failed due to a conflict between two or more transactions"
+        SUCCESS: "product update success",
+        TRANSACTION_FAIL:
+            " Prisma has failed due to a conflict between two or more transactions",
     },
     DELETE: {
-        SUCCESS: 'product remove success',
-        FAIL: 'product remove failed',
-    }
-}
+        SUCCESS: "product remove success",
+        FAIL: "product remove failed",
+    },
+};
+
 export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP: "login_otp.html",
-    FORGET_PASSWORD: "forget_password.html"
-}
+    FORGET_PASSWORD: "forget_password.html",
+};
 
 export const OTP_TYPE = {
     EMAIL_VERIFICATION: "email_verification",
     LOGIN_TYPE: "login_type",
-    FORGET_PASSWORD: "forget_password"
-
-}
+    FORGET_PASSWORD: "forget_password",
+};
 
 export const MESSAGES = {
     OTP: {
         INVALID_OTP: "Invalid otp",
-
     },
     USERS: {
         CHECK_MAIL: "please check your email",
@@ -119,13 +125,13 @@ export const MESSAGES = {
         WORNG_PASSWORD: "Invalid old password",
         UPDATE_USER: "user update successfully",
         USER_DELETED: "user deleted",
-        SIGNUP: "user register successfully!"
+        SIGNUP: "user register successfully!",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
         FOUND_ROLE: "role found successfully",
         ROLE_ADDED: "role added successfully",
-        ROlE_NOT_EXIST: "role not found"
+        ROlE_NOT_EXIST: "role not found",
     },
     MEDIA: {
         REQUEST_MEDIA: "requested media",
@@ -138,13 +144,16 @@ export const MESSAGES = {
         MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
         MEDIA_SINGLE_INVALID: "media file more than 1",
         MEDIA_FILES_INVALID: "media files invalid",
-        MEDIA_NOT_ALLOWED: "images less than 5 or contain media which are not allowed",
+        MEDIA_NOT_ALLOWED:
+            "images less than 5 or contain media which are not allowed",
         MEDIA_MIN_ID: "atleast one media id should be provided",
         MEDIA_NOT_FOUND: "media id not found or not valid",
-        MEDIA_IDS_NOT_FOUND: "some media ids were not found"
+        MEDIA_IDS_NOT_FOUND: "some media ids were not found",
+        AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
+        AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
     ALL: {
-        MULTER_ERROR: "multer error"
+        MULTER_ERROR: "multer error",
     },
     JWT: {
         JWT_EXPIRED: "jwt expired",
@@ -161,6 +170,8 @@ export const MESSAGES = {
         NOT_FOUND: "term and condition not found!",
         FOUNDED: "term and condition found successfully!",
         INACTIVE_STATUS: "status is not active",
-        CONFLICT: "term and condition already exists"
-    }
-}
+        CONFLICT: "term and condition already exists",
+    },
+};
+
+export const AUCTION_STATE = ["upcoming", "live", "completed"] as const;

@@ -79,7 +79,8 @@ const removeCategories = async (data: IDeleteIds) => {
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
     const removeDetail = await auctionCatgoryQueries.removeAll(data);
-    if (removeDetail.count) return responseBuilder.okSuccess();
+    if (removeDetail.count)
+        return responseBuilder.okSuccess(AUCTION_CATEGORY_MESSAGES.DELETE);
     return responseBuilder.internalserverError();
 };
 
