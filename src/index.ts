@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @copyright GlobalVox Ventures Pvt. Ltd. 2023
  */
-import express, { Request, Response, NextFunction } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { commonErrorHandler } from "./middlewares/commonError";
 import cors from "cors";
 import bodyParser from "body-parser";
