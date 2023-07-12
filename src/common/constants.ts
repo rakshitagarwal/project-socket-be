@@ -129,7 +129,7 @@ export const MESSAGES = {
     },
     MEDIA: {
         REQUEST_MEDIA: "requested media",
-        MEDIA_NOT_ATTACHED: "media not attached",
+        MEDIA_NOT_ATTACHED: "media file not attached or not acceptable",
         MEDIA_ID: "media id not provided",
         MEDIA_CREATE_FAIL: "media creation fail",
         MEDIA_DELETE_SUCCESS: "media deleted successfully",
