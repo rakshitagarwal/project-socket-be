@@ -40,9 +40,7 @@ const create = async (auction: IAuction, userId: string) => {
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
-        return responseBuilder.internalserverError(
-            AUCTION_MESSAGES.NOT_CREATED
-        );
+        return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
@@ -134,9 +132,7 @@ const update = async (
         userId
     );
     if (!createdAuction)
-        return responseBuilder.internalserverError(
-            AUCTION_MESSAGES.NOT_CREATED
-        );
+        return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
@@ -161,7 +157,7 @@ const remove = async (id: string[]) => {
     );
     if (isTransactioned.isDeleted && isTransactioned.isMediaDeleted)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
-    return responseBuilder.internalserverError();
+    return responseBuilder.expectationField();
 };
 
 export const auctionService = {
