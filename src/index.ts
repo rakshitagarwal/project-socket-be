@@ -27,6 +27,7 @@ app.use(ENDPOINTS.UPLOADS, [
     (req: Request, _res: Response, next: NextFunction) => {
         console.log(req);
         logger.info(req);
+        console.log(path.join(__dirname, "../assets/uploads"));
         next();
     },
     express.static(path.join(__dirname, "../assets/uploads")),
