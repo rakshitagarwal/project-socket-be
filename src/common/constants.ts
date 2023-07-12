@@ -3,7 +3,7 @@ export const ENDPOINTS = {
     DOCS: "/docs",
     AUCTIONS: "/auction",
     PRODUCT_CATEGORY: "/product-category",
-    UPLOADS: "/uploads",
+    UPLOADS: "/assets/uploads",
     AUCTION_CATEGORY: "/auction-category",
     ROLE: "/role",
     USERS: "/user",
@@ -50,6 +50,9 @@ export const productCategoryMessage = {
     },
     UPDATE: {
         SUCCESS: 'product category update success',
+    },
+    DELETE: {
+        SUCCESS: 'product category delete',
     },
 }
 export const AUCTION_CATEGORY_MESSAGES = {
@@ -126,9 +129,9 @@ export const MESSAGES = {
     },
     MEDIA: {
         REQUEST_MEDIA: "requested media",
-        MEDIA_NOT_ATTACHED: "media not attached",
+        MEDIA_NOT_ATTACHED: "media file not attached or not acceptable",
         MEDIA_ID: "media id not provided",
-        MEDIA_UPDATE_SUCCESS: "media updated successfully",
+        MEDIA_CREATE_FAIL: "media creation fail",
         MEDIA_DELETE_SUCCESS: "media deleted successfully",
         MEDIA_DELETE_FAIL: "media delete failed",
         MEDIA_CREATE_SUCCESS: "media created successfully",
