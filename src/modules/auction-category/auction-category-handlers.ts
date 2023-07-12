@@ -59,7 +59,6 @@ const getAll = async (req: Request, res: Response) => {
  */
 const removeCategories = async (req: Request, res: Response) => {
     const response = await auctionCatgoryService.removeCategories(req.body);
-    console.log(req.body);
     res.status(response.code).json(response);
 };
 
