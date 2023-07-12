@@ -11,15 +11,9 @@ export interface IFileMetaInfo {
 }
 
 export interface Iid {
-    ids: string;
+    ids: string[];
 }
 
-export interface IMediaQuery {
-    filename:string,
-    size: number,
-    type:string,
-    local_path:  string,
-    tag: string,
-    mime_type: string,
-    created_by: string
-}
+export type IMediaQuery = Required<IFileMetaInfo> & {
+    id: string;
+};

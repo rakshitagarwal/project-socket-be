@@ -90,7 +90,7 @@ model TermsAndCondition {
 }
 
 model Media {
-  id            String         @id @default(uuid())
+  id            String         @id
   filename      String
   size          Int
   type          String

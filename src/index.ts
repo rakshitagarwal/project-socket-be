@@ -23,6 +23,10 @@ import { ENDPOINTS } from "./common/constants";
 
 const app = express();
 
+app.use(
+    ENDPOINTS.UPLOADS,
+    express.static(path.join(__dirname, "../assets/uploads"))
+);
 app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");
@@ -40,7 +44,6 @@ app.use(
 app.use(hpp());
 app.use(userAgent.express());
 app.use(requestIp.mw());
-app.use(ENDPOINTS.UPLOADS, express.static(path.join(__dirname, "../uploads")));
 
 /**
  * Swagger Docs
