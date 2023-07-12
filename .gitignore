@@ -55,4 +55,4 @@ Dockerfile
 bitbucket-pipelines.yml
 
 # Media
-uploads/
+assets/uploads/

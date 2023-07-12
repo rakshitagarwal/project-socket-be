@@ -3,7 +3,7 @@ export const ENDPOINTS = {
     DOCS: "/docs",
     AUCTIONS: "/auction",
     PRODUCT_CATEGORY: "/product-category",
-    UPLOADS: "/uploads",
+    UPLOADS: "/assets/uploads",
     AUCTION_CATEGORY: "/auction-category",
     ROLE: "/role",
     USERS: "/user",
