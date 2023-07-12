@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @copyright GlobalVox Ventures Pvt. Ltd. 2023
  */
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { commonErrorHandler } from "./middlewares/commonError";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -27,7 +27,8 @@ app.use(ENDPOINTS.UPLOADS, [ (req: Request, _res: Response, next: NextFunction)=
     console.log(req);
     logger.info(req);
     next();
-},express.static(path.join(__dirname,"../assets/uploads"))]);app.use(helmet());
+},express.static(path.join(__dirname,"../assets/uploads"))]);
+app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");
 app.use(
