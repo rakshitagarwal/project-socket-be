@@ -34,8 +34,17 @@ const create = async (auction: IAuction, userId: string) => {
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    if (isMediaFound.length !== 2)
-        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    const medias = isMediaFound.map((media) => media.type);
+    if (!medias.includes("image")) {
+        return responseBuilder.notFoundError(
+            MESSAGES.MEDIA.AUCTION_IMAGE_NOT_FOUND
+        );
+    }
+    if (!medias.includes("video")) {
+        return responseBuilder.notFoundError(
+            MESSAGES.MEDIA.AUCTION_VIDEO_NOT_FOUND
+        );
+    }
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     const auctionData = await auctionQueries.create(auction, userId);

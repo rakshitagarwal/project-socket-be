@@ -149,6 +149,8 @@ export const MESSAGES = {
         MEDIA_MIN_ID: "atleast one media id should be provided",
         MEDIA_NOT_FOUND: "media id not found or not valid",
         MEDIA_IDS_NOT_FOUND: "some media ids were not found",
+        AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
+        AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
     ALL: {
         MULTER_ERROR: "multer error",
