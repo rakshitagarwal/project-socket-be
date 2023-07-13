@@ -1,7 +1,6 @@
 import { Socket } from "socket.io";
-import tokenPersistanceQuery from "../modules/token-persistent/token-persistent-queries"
-import { verify} from "jsonwebtoken"
-
+import tokenPersistanceQuery from "../modules/token-persistent/token-persistent-queries";
+import { verify } from "jsonwebtoken";
 
 /**
 @description-Checks if a user is authenticated based on the provided access token.
@@ -10,16 +9,26 @@ import { verify} from "jsonwebtoken"
 @returns {void}
 @throws {Error} If authentication fails.
 */
-const socketAuthentication = (socket: Socket, next: (err?: Error) => void) => {
+const socketAuthentication = async (socket: Socket, next: (err?: Error) => void) => {
     const { accesstoken } = socket.handshake.auth;
     if (accesstoken) {
-        const publicKey = await tokenPersistanceQuery.findPersistentToken({ access_token: accesstoken })
-        return verify(token as string, publicKey.public_key as string, (err: unknown, decode) => {
-            if (err) {
-                next(new Error('Authentication failed'));
-            }
-            return next()
-    })
-    next(new Error('Authentication failed'));
-}
-export default socketAuthentication
+        const publicKey = await tokenPersistanceQuery.findPersistentToken({
+            access_token: accesstoken,
+        });
+        if(publicKey){
+            return verify(
+                accesstoken as string,
+                publicKey.public_key as string,
+                (err: unknown, decode) => {
+                    if (err) {
+                        next(new Error("Authentication failed"));
+                    }
+                    socket.handshake.auth.id=decode
+                    return next();
+                }
+            );
+        }
+        next(new Error("Authentication failed"));
+    }
+};
+export default socketAuthentication;
