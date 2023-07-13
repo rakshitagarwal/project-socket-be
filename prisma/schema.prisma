@@ -90,7 +90,7 @@ model TermsAndCondition {
 }
 
 model Media {
-  id            String         @id @default(uuid())
+  id            String         @id
   filename      String
   size          Int
   type          String
@@ -104,7 +104,8 @@ model Media {
   created_by    String
   users         User           @relation(fields: [created_by], references: [id])
   productMedias ProductMedia[]
-  auctionMedias AuctionMedia[]
+  auctionImage Auctions[]  @relation("auctionImage")
+  auctionVideo Auctions[]  @relation("auctionVideo")
   Products      Products[]
 
   @@index([filename, type])
@@ -185,9 +186,11 @@ model Auctions {
   opening_price          Float
   new_participants_limit Int?
   start_date             DateTime              @db.Date
-  registeration_count    BigInt
-  registeration_fees     Int
+  is_preRegistered       Boolean               @default(false)
+  registeration_count    Int?
+  registeration_fees     Int?
   terms_and_conditions   String?               @db.Text
+  state                  String                @db.Text
   status                 Boolean               @default(true)
   is_deleted             Boolean               @default(false)
   created_at             DateTime              @default(now()) @db.Timestamptz()
@@ -198,23 +201,9 @@ model Auctions {
   users                  User                  @relation(fields: [created_by], references: [id])
   auctionCategory        MasterAuctionCategory @relation(fields: [auction_category_id], references: [id])
   products               Products              @relation(fields: [product_id], references: [id])
-  auctionMedia           AuctionMedia[]
+  auction_image          Media              @relation("auctionImage", fields: [image_path], references: [id])
+  auction_video          Media               @relation("auctionVideo",fields: [video_path], references: [id])
 
   @@index([title])
   @@map("auctions")
-}
-
-model AuctionMedia {
-  id         String   @id @default(uuid())
-  auction_id String
-  media_id   String
-  status     Boolean  @default(true)
-  is_deleted Boolean  @default(false)
-  created_at DateTime @default(now()) @db.Timestamptz()
-  updated_at DateTime @default(now()) @db.Timestamptz()
-  auctions   Auctions @relation(fields: [auction_id], references: [id])
-  medias     Media    @relation(fields: [media_id], references: [id])
-
-  @@index([auction_id, media_id])
-  @@map("auction_media")
 }

@@ -18,12 +18,11 @@ import { responseBuilder } from "./common/responses";
 import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
 import startServer from "./utils/start-server";
-import path from "path";
-import { ENDPOINTS } from "./common/constants";
 // import "./utils/cron-schedule"
 
 const app = express();
 
+app.use("/assets/uploads", express.static("assets/uploads"));
 app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");
@@ -41,7 +40,6 @@ app.use(
 app.use(hpp());
 app.use(userAgent.express());
 app.use(requestIp.mw());
-app.use(ENDPOINTS.UPLOADS, express.static(path.join(__dirname,"../uploads")));
 
 /**
  * Swagger Docs
