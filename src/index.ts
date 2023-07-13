@@ -3,7 +3,7 @@
  * @version 1.0.0
  * @copyright GlobalVox Ventures Pvt. Ltd. 2023
  */
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import { commonErrorHandler } from "./middlewares/commonError";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -18,19 +18,10 @@ import { responseBuilder } from "./common/responses";
 import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
 import startServer from "./utils/start-server";
-import path from "path";
-import { ENDPOINTS } from "./common/constants";
 
 const app = express();
 
-app.use(ENDPOINTS.UPLOADS, [
-    (req: Request, _res: Response, next: NextFunction) => {
-        console.log(req);
-        logger.info(req);
-        next();
-    },
-    express.static(path.join(__dirname, "../assets/uploads")),
-]);
+app.use("/assets/uploads", express.static("assets/uploads"));
 app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");
