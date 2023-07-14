@@ -1,7 +1,6 @@
 import {
     AUCTION_CATEGORY_MESSAGES,
     AUCTION_MESSAGES,
-    MESSAGES,
     productMessage,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
@@ -21,32 +20,32 @@ import { PrismaClient } from "@prisma/client";
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const create = async (auction: IAuction, userId: string) => {
-    const [isAuctionCategoryFound, isMediaFound, isProductFound] =
-        await Promise.all([
-            auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
-            mediaQueries.getMultipleActiveMediaByIds([
-                auction.auction_image,
-                auction.auction_video,
-            ]),
-            productQueries.getById(auction.product_id),
-        ]);
+    const [isAuctionCategoryFound, isProductFound] = await Promise.all([
+        auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
+        productQueries.getById(auction.product_id),
+    ]);
     if (!isAuctionCategoryFound?.id)
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    const medias = isMediaFound.map((media) => media.type);
-    if (!medias.includes("image")) {
-        return responseBuilder.notFoundError(
-            MESSAGES.MEDIA.AUCTION_IMAGE_NOT_FOUND
-        );
-    }
-    if (!medias.includes("video")) {
-        return responseBuilder.notFoundError(
-            MESSAGES.MEDIA.AUCTION_VIDEO_NOT_FOUND
-        );
-    }
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    if (auction.is_pregistered) {
+        const newDateFormed = new Date(
+            new Date(
+                auction.pre_registeration_endDate as unknown as string
+            ).getTime() +
+                60 * 60 * 24 * 1000
+        ).toISOString();
+        auction = {
+            ...auction,
+            auction_pre_registeration_startDate: newDateFormed,
+            pre_registeration_endDate: new Date(
+                auction.pre_registeration_endDate as unknown as string
+            ).toISOString(),
+        };
+    }
+    console.log(auction);
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
         return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
@@ -107,25 +106,23 @@ const update = async (
     auctionId: string,
     userId: string
 ) => {
-    const [isAuctionCategoryFound, isMediaFound, isProductExists] =
+    const [isAuctionCategoryFound, isProductExists, isAuctionExists] =
         await Promise.all([
             auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
-            mediaQueries.getMultipleActiveMediaByIds([
-                auction.auction_image,
-                auction.auction_video,
-            ]),
             productQueries.getById(auction.product_id),
+            auctionQueries.getActiveAuctioById(auctionId),
         ]);
     if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    if (isMediaFound.length !== 2)
-        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
     if (!isProductExists)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    if (!isAuctionExists)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 
     if (
+        auction.start_date &&
         auction.start_date < new Date() &&
         (auction.auction_state === "live" ||
             auction.auction_state === "completed")
@@ -133,6 +130,22 @@ const update = async (
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_STATE_NOT_STARTED
         );
+    }
+
+    if (auction.is_pregistered) {
+        const newDateFormed = new Date(
+            new Date(
+                auction.pre_registeration_endDate as unknown as string
+            ).getTime() +
+                60 * 60 * 24 * 1000
+        ).toISOString();
+        auction = {
+            ...auction,
+            auction_pre_registeration_startDate: newDateFormed,
+            pre_registeration_endDate: new Date(
+                auction.pre_registeration_endDate as unknown as string
+            ).toISOString(),
+        };
     }
 
     const createdAuction = await auctionQueries.update(
