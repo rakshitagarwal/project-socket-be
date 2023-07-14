@@ -104,8 +104,7 @@ model Media {
   created_by    String
   users         User           @relation(fields: [created_by], references: [id])
   productMedias ProductMedia[]
-  auctionImage Auctions[]  @relation("auctionImage")
-  auctionVideo Auctions[]  @relation("auctionVideo")
+
   Products      Products[]
 
   @@index([filename, type])
@@ -179,16 +178,16 @@ model Auctions {
   id                     String                @id @default(uuid())
   title                  String
   description            String                @db.Text
-  image_path             String
-  video_path             String
-  bid_increment_price    Float
+  bid_increment_price    Float                 @default(0.01)
   plays_consumed_on_bid  Int
-  opening_price          Float
+  opening_price          Float                 @default(1.00)
   new_participants_limit Int?
-  start_date             DateTime              @db.Date
+  start_date             DateTime?              @db.Date
   is_preRegistered       Boolean               @default(false)
   registeration_count    Int?
   registeration_fees     Int?
+  registeration_endDate  DateTime?              @db.Date
+  auction_pre_registeration_startDate DateTime? @db.Date 
   terms_and_conditions   String?               @db.Text
   state                  String                @db.Text
   status                 Boolean               @default(true)
@@ -201,8 +200,6 @@ model Auctions {
   users                  User                  @relation(fields: [created_by], references: [id])
   auctionCategory        MasterAuctionCategory @relation(fields: [auction_category_id], references: [id])
   products               Products              @relation(fields: [product_id], references: [id])
-  auction_image          Media              @relation("auctionImage", fields: [image_path], references: [id])
-  auction_video          Media               @relation("auctionVideo",fields: [video_path], references: [id])
 
   @@index([title])
   @@map("auctions")
