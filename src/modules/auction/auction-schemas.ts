@@ -15,25 +15,37 @@ const ZAuctionAdd = z
             required_error: "description is required!",
             invalid_type_error: "description should be string!",
         }),
-        opening_price: z.number({
-            required_error: "opening_price is required!",
-            invalid_type_error: "description should be number!",
-        }),
-        price_increment: z.number({
-            required_error: "price_increment is required!",
-            invalid_type_error: "price_increment should be number!",
-        }),
+        opening_price: z
+            .number({
+                required_error: "opening_price is required!",
+                invalid_type_error: "description should be number!",
+            })
+            .default(1),
+        price_increment: z
+            .number({
+                required_error: "price_increment is required!",
+                invalid_type_error: "price_increment should be number!",
+            })
+            .default(0.01),
         play_consumed: z.number({
             required_error: "price_increment is required!",
             invalid_type_error: "price_increment should be number!",
         }),
-        new_participant_threshold: z.number({
-            required_error: "new_participant_threshold is required!",
-            invalid_type_error: "new_participant_threshold should be number!",
-        }),
-        start_date: z.coerce.date().refine((data) => data > new Date(), {
-            message: "Start date must be in the future",
-        }),
+        new_participant_threshold: z
+            .number({
+                required_error: "new_participant_threshold is required!",
+                invalid_type_error:
+                    "new_participant_threshold should be number!",
+            })
+            .min(1, { message: "minmum should be 1%" })
+            .max(100, { message: "maximum should be 100%" })
+            .optional(),
+        start_date: z.coerce
+            .date()
+            .refine((data) => data > new Date(), {
+                message: "Start date must be in the future",
+            })
+            .optional(),
         is_pregistered: z
             .boolean({
                 required_error: "is_pregistered is required!",
@@ -53,6 +65,12 @@ const ZAuctionAdd = z
                 invalid_type_error: "pre_register_fees should be number!",
             })
             .optional(),
+        pre_registeration_endDate: z
+            .string()
+            .datetime({
+                message: "pre_registeration_endDate should be date",
+            })
+            .optional(),
         terms_condition: z
             .string({
                 required_error: "terms_condition is required!",
@@ -60,18 +78,6 @@ const ZAuctionAdd = z
             })
             .min(1)
             .optional(),
-        auction_image: z
-            .string({
-                required_error: "auction_image is required!",
-                invalid_type_error: "auction_image should be string!",
-            })
-            .uuid(),
-        auction_video: z
-            .string({
-                required_error: "auction_video is required!",
-                invalid_type_error: "auction_video should be string!",
-            })
-            .uuid(),
         auction_state: z.enum(AUCTION_STATE, {
             invalid_type_error: "auction_state should be string!",
             required_error: "auction_state is required!",

@@ -155,16 +155,16 @@ CREATE TABLE "auctions" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "image_path" TEXT NOT NULL,
-    "video_path" TEXT NOT NULL,
-    "bid_increment_price" DOUBLE PRECISION NOT NULL,
+    "bid_increment_price" DOUBLE PRECISION NOT NULL DEFAULT 0.01,
     "plays_consumed_on_bid" INTEGER NOT NULL,
-    "opening_price" DOUBLE PRECISION NOT NULL,
+    "opening_price" DOUBLE PRECISION NOT NULL DEFAULT 1.00,
     "new_participants_limit" INTEGER,
-    "start_date" DATE NOT NULL,
+    "start_date" DATE,
     "is_preRegistered" BOOLEAN NOT NULL DEFAULT false,
     "registeration_count" INTEGER,
     "registeration_fees" INTEGER,
+    "registeration_endDate" DATE,
+    "auction_pre_registeration_startDate" DATE,
     "terms_and_conditions" TEXT,
     "state" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
@@ -356,12 +356,6 @@ ALTER TABLE "auctions" ADD CONSTRAINT "auctions_auction_category_id_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "auctions" ADD CONSTRAINT "auctions_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "auctions" ADD CONSTRAINT "auctions_image_path_fkey" FOREIGN KEY ("image_path") REFERENCES "media"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "auctions" ADD CONSTRAINT "auctions_video_path_fkey" FOREIGN KEY ("video_path") REFERENCES "media"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "currency_transaction" ADD CONSTRAINT "currency_transaction_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
