@@ -67,7 +67,7 @@ export const AUCTION_MESSAGES = {
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
     AUCTION_STATE_NOT_STARTED:
-        "auction status can't be live, because it is not yet started!",
+        "auction status can't be live/compeleted, because it is not yet started!",
 };
 
 export const productMessage = {
