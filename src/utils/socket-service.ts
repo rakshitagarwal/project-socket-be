@@ -5,7 +5,7 @@ import logger from "../config/logger";
 import socketAuthentication from "../middlewares/socket-authentication";
 
  export interface AppGlobal {
-    userSocket: Namespace
+    playerSocket: Namespace
 }
 
 const socketService = async (server: Server) => {
@@ -22,7 +22,7 @@ const socketService = async (server: Server) => {
      * @returns {void}
      */
     const socket = io.of(env.API_VERSION);
-    (global  as unknown as AppGlobal).userSocket = socket;
+    (global  as unknown as AppGlobal).playerSocket = socket;
     socket.use(socketAuthentication);
 
     /**
@@ -31,8 +31,8 @@ const socketService = async (server: Server) => {
      * @returns {void}
      */
     socket.on("connection", (socket) => {
-        const { accesstoken } = socket.handshake.auth;
-        if (!accesstoken) {
+        const { id } = socket.handshake.auth.id;
+        if (!id) {
             socket.disconnect();
         }
         logger.info({ level: "info", message: "socket connected" });

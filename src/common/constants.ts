@@ -162,6 +162,7 @@ export const MESSAGES = {
         TOKEN_NOT_FOUND: "token not found",
         TOKEN_NOT_EXPIRED: "token not expired",
         DATA_FOUND: "data found",
+        UNAUTHORIZED: "unauthorized"
     },
     TERM_CONDITION: {
         CREATED: "term and condition added successfully!",
@@ -174,4 +175,4 @@ export const MESSAGES = {
     },
 };
 
-export const AUCTION_STATE = ["upcoming", "live", "completed"] as const;
+export const AUCTION_STATE = ["upcoming", "live", "completed", "cancelled"] as const;

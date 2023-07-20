@@ -190,12 +190,12 @@ model Auctions {
   plays_consumed_on_bid               Int
   opening_price                       Float                     @default(1.00)
   new_participants_limit              Int?
-  start_date                          DateTime?                 @db.Date
+  start_date                          DateTime?                 @db.Timestamptz()
   is_preRegistered                    Boolean                   @default(false)
   registeration_count                 Int?
   registeration_fees                  Int?
-  registeration_endDate               DateTime?                 @db.Date
-  auction_pre_registeration_startDate DateTime?                 @db.Date
+  registeration_endDate               DateTime?                 @db.Timestamptz()
+  auction_pre_registeration_startDate DateTime?                 @db.Timestamptz()
   terms_and_conditions                String?                   @db.Text
   state                               String                    @db.Text
   status                              Boolean                   @default(true)

@@ -226,6 +226,46 @@ const remove = async (prisma: PrismaClient, id: string[]) => {
     return query;
 };
 
+const upcomingPlayerAuction = async () => {
+    const queryResult = await db.auction.findMany({
+        where: {
+            AND: [
+                {
+                    is_deleted: false,
+                    state: "upcoming",
+                    status: true,
+                },
+            ],
+        },
+        select: {
+            id: true,
+            title: true,
+            state: true,
+            registeration_count: true,
+            is_preRegistered: true,
+            registeration_endDate: true,
+            auction_pre_registeration_startDate: true,
+        },
+        orderBy: {
+            auction_pre_registeration_startDate: "desc",
+        },
+    });
+    return queryResult;
+};
+
+const updateAuctionState=async (auctionId:string,payload:string)=>{
+    const queryResult=await db.auction.update({data:{state:payload},where:{id:auctionId}})
+    return queryResult
+}
+
+const totalCountRegisterAuctionByAuctionId = async (auctionId: string) => {
+    const count = await db.PlayerAuctionRegister.count({
+        where: { auction_id: auctionId },
+    });
+    return count;
+};
+
+
 export const auctionQueries = {
     create,
     getAll,
@@ -233,4 +273,7 @@ export const auctionQueries = {
     update,
     remove,
     getMultipleActiveById,
+    upcomingPlayerAuction,
+    updateAuctionState,
+    totalCountRegisterAuctionByAuctionId
 };
