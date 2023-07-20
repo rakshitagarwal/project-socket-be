@@ -18,6 +18,7 @@ import { responseBuilder } from "./common/responses";
 import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
 import startServer from "./utils/start-server";
+// import "./utils/cron-schedule"
 
 const app = express();
 
