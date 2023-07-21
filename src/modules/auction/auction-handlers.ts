@@ -66,10 +66,19 @@ const remove = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ *
+ */
+const playerAuctionRegister = async (req: Request, res: Response) => {
+    const response = await auctionService.playerRegister(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
     getAll,
     update,
     remove,
+    playerAuctionRegister,
 };

@@ -50,6 +50,7 @@ Thumbs.db
 
 # Environment variables
 .env
+.vscode
 
 Dockerfile
 bitbucket-pipelines.yml

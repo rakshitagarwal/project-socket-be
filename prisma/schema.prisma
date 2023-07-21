@@ -27,6 +27,7 @@ model User {
   country     String
   mobile_no   String?
   password    String?
+  avatar      String?
   is_verified Boolean    @default(false)
   role_id     String
   status      Boolean    @default(true)
@@ -248,8 +249,8 @@ model CurrencyTransaction {
 
 model PlayerWalletTransaction {
   id                      String               @id @default(uuid())
-  play_debit              Int
-  play_credit             Int
+  play_debit              Int?
+  play_credit             Int?
   spend_on                PlaySpend
   status                  Boolean              @default(true)
   is_deleted              Boolean              @default(false)
@@ -262,6 +263,7 @@ model PlayerWalletTransaction {
   Auctions                Auctions?            @relation(fields: [auction_id], references: [id])
   User                    User                 @relation(fields: [created_by], references: [id])
   CurrencyTransaction     CurrencyTransaction? @relation(fields: [currency_transaction_id], references: [id])
+  PlayerAuctionRegisters  PlayerAuctionRegister[]
 
   @@map("player_wallet_transaction")
 }
@@ -269,12 +271,12 @@ model PlayerWalletTransaction {
 model PlayerAuctionRegister {
   id         String    @id @default(uuid())
   auction_id String
-  payment_id String?
+  player_wallet_transaction_id String?
   player_id  String
   created_at DateTime  @default(now()) @db.Timestamptz()
   Auctions   Auctions? @relation(fields: [auction_id], references: [id])
   User       User      @relation(fields: [player_id], references: [id])
-
+  PlayerWalletTransaction PlayerWalletTransaction? @relation(fields: [player_wallet_transaction_id], references: [id])
   @@map("player_auction_register")
 }
 

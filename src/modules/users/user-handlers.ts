@@ -1,7 +1,6 @@
-
-import { Request, Response } from "express"
-import userService from "./user-services"
-import { IuserPagination } from "./typings/user-types"
+import { Request, Response } from "express";
+import userService from "./user-services";
+import { IuserPagination } from "./typings/user-types";
 /**
  * @description handles admin  or player registration
  * @param req { Request } - admin  or player's request object
@@ -9,9 +8,9 @@ import { IuserPagination } from "./typings/user-types"
  */
 
 const register = async (req: Request, res: Response) => {
-    const response = await userService.register(req.body)
-    res.status(response.code).json(response)
-}
+    const response = await userService.register(req.body);
+    res.status(response.code).json(response);
+};
 /**
  * @description handles patch request for email verfication or login verfication
  * @param req { Request } admin or player's request object
@@ -19,9 +18,13 @@ const register = async (req: Request, res: Response) => {
  */
 
 const otpVerification = async (req: Request, res: Response) => {
-    const response = await userService.otpVerifcation({ ...req.body, user_agent: req.useragent?.source, ip_address: req.ip })
-    res.status(response.code).json(response)
-}
+    const response = await userService.otpVerifcation({
+        ...req.body,
+        user_agent: req.useragent?.source,
+        ip_address: req.ip,
+    });
+    res.status(response.code).json(response);
+};
 
 /**
  * @description handles post request for login admin
@@ -30,9 +33,13 @@ const otpVerification = async (req: Request, res: Response) => {
  */
 
 const adminLogin = async (req: Request, res: Response) => {
-    const response = await userService.adminLogin({ ...req.body, user_agent: req.useragent?.source, ip_address: req.ip })
-    res.status(response.code).json(response)
-}
+    const response = await userService.adminLogin({
+        ...req.body,
+        user_agent: req.useragent?.source,
+        ip_address: req.ip,
+    });
+    res.status(response.code).json(response);
+};
 
 /**
  * @description handles post request for login player's
@@ -41,9 +48,13 @@ const adminLogin = async (req: Request, res: Response) => {
  */
 
 const playerLogin = async (req: Request, res: Response) => {
-    const response = await userService.playerLogin({ ...req.body, user_agent: req.useragent?.source, ip_address: req.ip })
-    res.status(response.code).json(response)
-}
+    const response = await userService.playerLogin({
+        ...req.body,
+        user_agent: req.useragent?.source,
+        ip_address: req.ip,
+    });
+    res.status(response.code).json(response);
+};
 /**
  * @description This API logout current admin  or player to used.
  * @param req { Request } - admin or player's request object
@@ -52,9 +63,9 @@ const playerLogin = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
     const authHeader = req.headers["authorization"] as string;
     const token = authHeader.split(" ")[1];
-    const response = await userService.logout({ access_token: token })
-    res.status(response.code).json(response)
-}
+    const response = await userService.logout({ access_token: token });
+    res.status(response.code).json(response);
+};
 
 /**
  * @description handles specific user details
@@ -63,9 +74,9 @@ const logout = async (req: Request, res: Response) => {
  */
 
 const getUserDetail = async (req: Request, res: Response) => {
-    const response = await userService.getUser(req.params)
-    res.status(response.code).json(response)
-}
+    const response = await userService.getUser(req.params);
+    res.status(response.code).json(response);
+};
 
 /**
  * @description handles  user update data
@@ -74,8 +85,8 @@ const getUserDetail = async (req: Request, res: Response) => {
  */
 const updateUser = async (req: Request, res: Response) => {
     const response = await userService.updateUser(req.params, req.body);
-    res.status(response.code).json(response)
-}
+    res.status(response.code).json(response);
+};
 
 /**
  * @description handle user refresh token request
@@ -84,9 +95,13 @@ const updateUser = async (req: Request, res: Response) => {
  */
 
 const refreshToken = async (req: Request, res: Response) => {
-    const response = await userService.refreshToken({ ...req.body, user_agent: req.useragent?.source, ip_address: req.ip })
-    res.status(response.code).json(response)
-}
+    const response = await userService.refreshToken({
+        ...req.body,
+        user_agent: req.useragent?.source,
+        ip_address: req.ip,
+    });
+    res.status(response.code).json(response);
+};
 
 /**
  * @description handles specific user details
@@ -95,10 +110,9 @@ const refreshToken = async (req: Request, res: Response) => {
  */
 
 const removeUser = async (req: Request, res: Response) => {
-    const response = await userService.deleteUser(req.params)
-    res.status(response.code).json(response)
-}
-
+    const response = await userService.deleteUser(req.params);
+    res.status(response.code).json(response);
+};
 
 /**
  * @description this API forget a email for admin
@@ -107,9 +121,9 @@ const removeUser = async (req: Request, res: Response) => {
  */
 
 const forgetPassword = async (req: Request, res: Response) => {
-    const response = await userService.forgetPassword(req.body)
-    res.status(response.code).json(response)
-}
+    const response = await userService.forgetPassword(req.body);
+    res.status(response.code).json(response);
+};
 
 /**
  * @description this API is used to update a user's password
@@ -118,20 +132,20 @@ const forgetPassword = async (req: Request, res: Response) => {
  */
 
 const updatePassword = async (req: Request, res: Response) => {
-    const response = await userService.updatePassword(req.body)
-    res.status(response.code).json(response)
-}
+    const response = await userService.updatePassword(req.body);
+    res.status(response.code).json(response);
+};
 
 /**
- * @description This API set a password for admin 
+ * @description This API set a password for admin
  * @param req { Request } - request object
  * @param res { Response }
  */
 
 const resetPassword = async (req: Request, res: Response) => {
-    const response = await userService.resetPassword(req.body)
-    res.status(response.code).json(response)
-}
+    const response = await userService.resetPassword(req.body);
+    res.status(response.code).json(response);
+};
 
 /**
  * @description This API fetch all player records
@@ -140,9 +154,45 @@ const resetPassword = async (req: Request, res: Response) => {
  */
 
 const getAllusers = async (req: Request, res: Response) => {
-    const response = await userService.fetchAllUsers(req.query as unknown as IuserPagination)
-    res.status(response.code).json(response)
-}
+    const response = await userService.fetchAllUsers(
+        req.query as unknown as IuserPagination
+    );
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description add the plays in the wallet
+ * @param {Request} req - request object
+ * @param {Response} res - response object
+ */
+
+const addPlaysInWallet = async (req: Request, res: Response) => {
+    const response = await userService.addWalletTransaction(req.body);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description GET player play balance
+ * @param {Request} req - request object
+ * @param {Response} res - response object
+ */
+const getPlayBalance = async (req: Request, res: Response) => {
+    const response = await userService.getPlayerWalletBalance(
+        req.params.id as string
+    );
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description POST deduct play balances for player id
+ * @param {Request} req
+ * @param {Response} res
+ */
+const deductPlays = async (req: Request, res: Response) => {
+    const response = await userService.debitPlaysForPlayer(req.body);
+    res.status(response.code).json(response);
+};
+
 const userHandlers = {
     register,
     otpVerification,
@@ -156,7 +206,10 @@ const userHandlers = {
     forgetPassword,
     updatePassword,
     resetPassword,
-    getAllusers
-}
+    getAllusers,
+    addPlaysInWallet,
+    getPlayBalance,
+    deductPlays,
+};
 
-export default userHandlers
+export default userHandlers;

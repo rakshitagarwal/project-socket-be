@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
-import { IAuction, IPagination } from "./typings/auction-types";
+import {
+    IAuction,
+    IPagination,
+    IPlayerRegister,
+} from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -226,6 +230,31 @@ const remove = async (prisma: PrismaClient, id: string[]) => {
     return query;
 };
 
+/**
+ * /GET Upcoming auction by ID
+ * @param {string} id - auction id
+ * @returns auction detials
+ */
+
+const getUpcomingAuctionById = async (id: string) => {
+    const query = await db.auction.findFirst({
+        where: {
+            id,
+            state: "upcoming",
+            is_deleted: false,
+            status: true,
+        },
+    });
+    return query;
+};
+
+const playerAuctionRegistered = async (data: IPlayerRegister) => {
+    const query = await db.playerAuctionRegsiter.create({
+        data: data,
+    });
+    return query;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -233,4 +262,6 @@ export const auctionQueries = {
     update,
     remove,
     getMultipleActiveById,
+    getUpcomingAuctionById,
+    playerAuctionRegistered,
 };

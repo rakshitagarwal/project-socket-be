@@ -22,7 +22,7 @@ import startServer from "./utils/start-server";
 
 const app = express();
 
-app.use("/assets/uploads", express.static("assets/uploads"));
+app.use("/assets/", express.static("assets"));
 app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");

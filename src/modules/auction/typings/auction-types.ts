@@ -11,3 +11,12 @@ export interface IPagination {
     search?: string;
     filter?: object[];
 }
+
+export type IPlayerRegister = z.infer<typeof auctionSchemas.ZPlayerRegister>;
+export interface IRegisterPlayer {
+    id: string;
+    auction_id: string;
+    player_wallet_transaction_id: string | null;
+    player_id: string;
+    created_at: Date;
+}

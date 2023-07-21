@@ -1,16 +1,24 @@
 import {
     AUCTION_CATEGORY_MESSAGES,
     AUCTION_MESSAGES,
+    MESSAGES,
     productMessage,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
-import { IAuction, IPagination } from "./typings/auction-types";
+import {
+    IAuction,
+    IPagination,
+    IPlayerRegister,
+    IRegisterPlayer,
+} from "./typings/auction-types";
 import mediaQueries from "../media/media-queries";
 import productQueries from "../product/product-queries";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import { PrismaClient } from "@prisma/client";
+import userQueries from "../users/user-queries";
+import redisClient from "../../config/redis";
 
 /**
  * Auction Creation
@@ -45,7 +53,6 @@ const create = async (auction: IAuction, userId: string) => {
             ).toISOString(),
         };
     }
-    console.log(auction);
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
         return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
@@ -182,10 +189,54 @@ const remove = async (id: string[]) => {
     return responseBuilder.expectationField();
 };
 
+const playerRegister = async (data: IPlayerRegister) => {
+    const [auction, player, walletTransaction] = await Promise.all([
+        auctionQueries.getActiveAuctioById(data.auction_id),
+        userQueries.fetchPlayerId(data.player_id),
+        userQueries.getPlayerTrxById(
+            data.player_id,
+            data.player_wallet_transaction_id
+        ),
+    ]);
+    // TODO: check if a user is not already regsitered in the specific auctions
+    if (!auction)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    if (!player)
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+    if (!walletTransaction)
+        return responseBuilder.notFoundError(
+            MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
+        );
+    const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
+    if (!playerRegisered.id)
+        return responseBuilder.expectationField(
+            MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
+        );
+    const newRedisObject: { [id: string]: IRegisterPlayer } = {};
+    const getRegisteredPlayer = await redisClient.get("auction:pre-register");
+    if (!getRegisteredPlayer?.length) {
+        newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
+        await redisClient.set(
+            "auction:pre-register",
+            JSON.stringify(newRedisObject)
+        );
+    }
+    const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
+    registeredObj[`${data.auction_id + data.player_id}++`] = playerRegisered;
+    await redisClient.set(
+        "auction:pre-register",
+        JSON.stringify(registeredObj)
+    );
+    return responseBuilder.okSuccess(
+        MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
+    );
+};
+
 export const auctionService = {
     create,
     getById,
     getAll,
     update,
     remove,
+    playerRegister,
 };
