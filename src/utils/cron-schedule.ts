@@ -15,14 +15,18 @@ const socket = global as unknown as AppGlobal;
  * @description - Create a new CronJob instance
  */
 const cronJob = new CronJob(cronExpression, async () => {
+    /**
+   * Get the upcoming player auctions.
+   * @type {Array<UpcomingAuctionInfo>}
+   */
     const upcomingAuction = await auctionQueries.upcomingPlayerAuction();
     if (upcomingAuction.length) {
         upcomingAuction.forEach(async(upcomingInfo): Promise<void> => {
             const currectDate = new Date();
             if(upcomingInfo.is_preRegistered && currectDate>=new Date(upcomingInfo.auction_pre_registeration_startDate as unknown as string)){
                 const totalAuction = await auctionQueries.totalCountRegisterAuctionByAuctionId(upcomingInfo.id)
-                if(upcomingInfo.registeration_count){
-                    if(totalAuction>=upcomingInfo?.registeration_count){
+                if(!upcomingInfo.registeration_count){
+                    if(totalAuction>=0){
                         socket.playerSocket.emit("auction:state",{message:"Auction live!",auctionId:upcomingInfo.id})
                         auctionStart(upcomingInfo.id)
                         eventService.emit("auction:live:db:update",{auctionId:upcomingInfo.id,state:AUCTION_STATE.live})

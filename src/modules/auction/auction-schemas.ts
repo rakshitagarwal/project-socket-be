@@ -147,9 +147,63 @@ const Zpagination = z
     })
     .strict();
 
+const ZbidAuction = z
+    .object({
+        auctionId: z
+            .string({
+                required_error: "Auction Id is required!",
+                invalid_type_error: "Auction Id should be string!",
+            })
+            .uuid({ message: "Auction Id should be UUID!" }),
+        playerId: z
+            .string({
+                required_error: "player Id is required!",
+                invalid_type_error: "player Id should be string!",
+            })
+            .uuid({ message: "player Id should be UUID!" }),
+        remaining_seconds: z.preprocess(
+            (val) => parseInt(val as string),
+            z.number({
+                invalid_type_error: "remaining_seconds must be number",
+                required_error: "remaining_seconds is required!",
+            })
+        ),
+        playerName: z.string({
+            required_error: "playerName is required!",
+            invalid_type_error: "playerName should be string!",
+        }),
+        profileImage: z.string({
+            required_error: "profileImage is required!",
+            invalid_type_error: "profileImage should be string!",
+        }),
+        player_bot_id: z
+            .string({
+                required_error: "player_bot_id is required!",
+                invalid_type_error: "player_bot_id should be string!",
+            })
+            .uuid({ message: "player_bot_id should be UUID!" })
+            .optional(),
+        bid_price: z.preprocess(
+            (val) => parseFloat(val as string),
+            z.number({
+                invalid_type_error: "bid_price must be number",
+                required_error: "bid_price is required!",
+            })
+        ),
+        bid_number: z.preprocess(
+            (val) => parseInt(val as string),
+            z.number({
+                invalid_type_error: "bid_number must be number",
+                required_error: "bid_number is required!",
+            })
+        ),
+    })
+    .strict();
+
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
     ZDeleteId,
     Zpagination,
+    ZbidAuction,
 };

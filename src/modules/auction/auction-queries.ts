@@ -226,7 +226,15 @@ const remove = async (prisma: PrismaClient, id: string[]) => {
     return query;
 };
 
+/**
+ * Retrieves a list of upcoming player auctions.
+ * @returns {Promise<Array<UpcomingAuctionInfo>>} The list of upcoming player auctions.
+ */
 const upcomingPlayerAuction = async () => {
+    /**
+   * Query the database to fetch upcoming player auctions.
+   * @type {Promise<Array<UpcomingAuctionInfo>>}
+   */
     const queryResult = await db.auction.findMany({
         where: {
             AND: [
@@ -253,11 +261,22 @@ const upcomingPlayerAuction = async () => {
     return queryResult;
 };
 
+/**
+ * Updates the state of an auction with the given auctionId.
+ * @param {string} auctionId - The ID of the auction to update.
+ * @param {string} payload - The new state to set for the auction.
+ * @returns {Promise<Auction>} The updated auction object.
+ */
 const updateAuctionState=async (auctionId:string,payload:string)=>{
     const queryResult=await db.auction.update({data:{state:payload},where:{id:auctionId}})
     return queryResult
 }
 
+/**
+ * Retrieves the total count of players registered for an auction by the given auction ID.
+ * @param {string} auctionId - The ID of the auction to retrieve the count for.
+ * @returns {Promise<number>} The total count of players registered for the auction.
+ */
 const totalCountRegisterAuctionByAuctionId = async (auctionId: string) => {
     const count = await db.PlayerAuctionRegister.count({
         where: { auction_id: auctionId },
