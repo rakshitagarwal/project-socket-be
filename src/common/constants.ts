@@ -101,6 +101,7 @@ export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
+    PLAYER_REGISTERATION: "auction_player_registeration.html",
 };
 
 export const OTP_TYPE = {

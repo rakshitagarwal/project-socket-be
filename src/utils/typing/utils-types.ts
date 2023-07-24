@@ -1,11 +1,11 @@
 export interface Imail {
-    email: string;
+    email: string[];
     template: string;
     subject: string;
     otp?: string;
-    user_name: string;
+    user_name?: string;
+    message?: string;
 }
-
 export enum AUCTION_STATE {
     upcoming="upcoming",
     live="live",

@@ -51,7 +51,7 @@ const register = async (body: Iuser) => {
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
         eventService.emit("send-user-mail", {
-            email: user.email,
+            email: [user.email],
             user_name: `${user.first_name}`,
             subject: "Welcome to Big Deal",
             template: TEMPLATE.EMAIL_VERIFICATION,
@@ -146,7 +146,7 @@ const playerLogin = async (body: IplayerLogin) => {
             },
         });
         eventService.emit("send-user-mail", {
-            email: isUser.email,
+            email: [isUser.email],
             otp: passcode,
             user_name: `${isUser.first_name}`,
             subject: "Login Passcode",
@@ -269,7 +269,7 @@ const forgetPassword = async (body: IplayerLogin) => {
             },
         });
         eventService.emit("send-user-mail", {
-            email: isUser.email,
+            email: [isUser.email],
             otp: passcode,
             user_name: `${isUser.first_name}`,
             subject: "Forget password",
