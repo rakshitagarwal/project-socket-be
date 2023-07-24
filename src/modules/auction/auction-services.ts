@@ -228,7 +228,7 @@ const playerRegister = async (data: IPlayerRegister) => {
         );
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
     const getRegisteredPlayer = await redisClient.get("auction:pre-register");
-    if (!getRegisteredPlayer?.length) {
+    if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set(
             "auction:pre-register",
@@ -236,7 +236,7 @@ const playerRegister = async (data: IPlayerRegister) => {
         );
     }
     const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
-    registeredObj[`${data.auction_id + data.player_id}++`] = playerRegisered;
+    registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
     await redisClient.set(
         "auction:pre-register",
         JSON.stringify(registeredObj)
