@@ -196,7 +196,34 @@ const ZbidAuction = z
                 invalid_type_error: "bid_number must be number",
                 required_error: "bid_number is required!",
             })
-        ),
+        )
+    })
+const ZPlayerRegister = z
+    .object({
+        player_id: z
+            .string({
+                required_error: "player_id is required!",
+                invalid_type_error: "player_id should be string!",
+            })
+            .uuid({
+                message: "player_id should be UUID",
+            }),
+        auction_id: z
+            .string({
+                required_error: "auction_id is required!",
+                invalid_type_error: "auction_id should be string!",
+            })
+            .uuid({
+                message: "auction_id should be UUID",
+            }),
+        player_wallet_transaction_id: z
+            .string({
+                required_error: "player_id is required!",
+                invalid_type_error: "player_id should be string!",
+            })
+            .uuid({
+                message: "player_wallet_transaction_id should be UUID",
+            }),
     })
     .strict();
 
@@ -206,4 +233,5 @@ export const auctionSchemas = {
     ZDeleteId,
     Zpagination,
     ZbidAuction,
+    ZPlayerRegister,
 };

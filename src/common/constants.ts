@@ -18,9 +18,12 @@ export const ENDPOINTS = {
     VERIFY: "/verify",
     ID: "/:id",
     PRODUCT: "/product",
-
+    ADD_PLAYS: "add/plays",
     TERM_CONDITION: "/term-condition",
     MEDIA: "/media",
+    BALANCE: "wallet/balance/:id",
+    PLAYER_AUCTION_REGISTER: "player/register",
+    DEDUCT_PLAYS: "deduct/plays",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -173,6 +176,30 @@ export const MESSAGES = {
         INACTIVE_STATUS: "status is not active",
         CONFLICT: "term and condition already exists",
     },
+    USER_PLAY_BALANCE: {
+        PLAYER_BALANCE: "player play balances",
+        PLAYER_NOT_FOUND: "player not found!",
+        PLAY_BALANCE_CREDITED: "player balance credited!",
+        PLAY_BALANCE_NOT_CREDITED:
+            "player balance not added, something went wrong!",
+        USER_IS_NOT_PLAYER: "user is not a player!",
+    },
+    PLAYER_WALLET_TRAX: {
+        PLAYER_TRAX_NOT_FOUND: "transaction not found in wallet!",
+        INSUFFICIENT_PLAY_BALANCE: "insufficient play balance!",
+        PLAYS_NOT_DEBITED: "plays not debited!",
+        PLAYS_SUCCESSFULLY_DEBITED: "plays debited successfully!",
+    },
+    PLAYER_AUCTION_REGISTEREATION: {
+        PLAYER_REGISTERED: "you are registered in auction!",
+        PLAYER_NOT_REGISTERED: "you are not registered!",
+        PLAYER_ALREADY_EXISTS: "player already exists in auction!",
+    },
 };
 
-export const AUCTION_STATE = ["upcoming", "live", "completed", "cancelled"] as const;
+export const AUCTION_STATE = [
+    "upcoming",
+    "live",
+    "completed",
+    "cancelled",
+] as const;

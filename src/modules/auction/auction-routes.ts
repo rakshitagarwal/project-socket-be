@@ -36,3 +36,9 @@ auctionRouter.delete(
     validateRequest.body(auctionSchemas.ZDeleteId),
     handleAsync(auctionHandler.remove)
 );
+
+auctionRouter.post(
+    ENDPOINTS.BASE + ENDPOINTS.PLAYER_AUCTION_REGISTER,
+    [validateRequest.body(auctionSchemas.ZPlayerRegister)],
+    handleAsync(auctionHandler.playerAuctionRegister)
+);

@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
-import { IAuction, IPagination } from "./typings/auction-types";
+import {
+    IAuction,
+    IPagination,
+    IPlayerRegister,
+} from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -278,12 +282,53 @@ const updateAuctionState=async (auctionId:string,payload:string)=>{
  * @returns {Promise<number>} The total count of players registered for the auction.
  */
 const totalCountRegisterAuctionByAuctionId = async (auctionId: string) => {
-    const count = await db.PlayerAuctionRegister.count({
+    const count = await db.playerAuctionRefund.count({
         where: { auction_id: auctionId },
     });
     return count;
 };
 
+ /* /GET Upcoming auction by ID
+ * @param {string} id - auction id
+ * @returns auction detials
+ */
+
+const getUpcomingAuctionById = async (id: string) => {
+    const query = await db.auction.findFirst({
+        where: {
+            id,
+            state: "upcoming",
+            is_deleted: false,
+            status: true,
+        },
+    });
+    return query;
+};
+
+/**
+ * @description registered the player for the auction.
+ * @param {IPlayerRegister} data
+ * @returns
+ */
+const playerAuctionRegistered = async (data: IPlayerRegister) => {
+    const query = await db.playerAuctionRegsiter.create({
+        data: data,
+    });
+    return query;
+};
+
+/**
+ * @description verify if player doesn't register again in same auction.
+ * @param {string} id
+ */
+const checkIfPlayerExists = async (id: string) => {
+    const query = await db.playerAuctionRegsiter.findMany({
+        where: {
+            player_id: id,
+        },
+    });
+    return query;
+};
 
 export const auctionQueries = {
     create,
@@ -294,5 +339,8 @@ export const auctionQueries = {
     getMultipleActiveById,
     upcomingPlayerAuction,
     updateAuctionState,
-    totalCountRegisterAuctionByAuctionId
+    totalCountRegisterAuctionByAuctionId,
+    getUpcomingAuctionById,
+    playerAuctionRegistered,
+    checkIfPlayerExists,
 };
