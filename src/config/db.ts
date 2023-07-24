@@ -22,4 +22,5 @@ export const db = {
     auction: prismaClient.auctions,
     media: prismaClient.media,
     termsAndConditions: prismaClient.termsAndCondition,
+    playerBidLogs: prismaClient.playerBidLogs,
 };

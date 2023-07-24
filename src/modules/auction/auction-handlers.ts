@@ -66,10 +66,23 @@ const remove = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description - for fetching the bid-logs from auction_id
+ * @param {Request} req
+ * @param {Response }res
+ */
+const getBidLogs = async (req: Request, res: Response) => {
+    const response = await auctionService.getBidLogs(
+        req.params.id as unknown as string
+    );
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
     getAll,
     update,
     remove,
+    getBidLogs,
 };

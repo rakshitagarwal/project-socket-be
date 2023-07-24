@@ -226,6 +226,15 @@ const remove = async (prisma: PrismaClient, id: string[]) => {
     return query;
 };
 
+const fetchAuctionLogs = async (id: string) => {
+    const query = await db.playerBidLogs.findMany({
+        where: {
+            auctin_id: id,
+        },
+    });
+    return query;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -233,4 +242,5 @@ export const auctionQueries = {
     update,
     remove,
     getMultipleActiveById,
+    fetchAuctionLogs,
 };

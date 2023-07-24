@@ -182,10 +182,18 @@ const remove = async (id: string[]) => {
     return responseBuilder.expectationField();
 };
 
+const getBidLogs = async (id: string) => {
+    const isExists = await auctionQueries.fetchAuctionLogs(id);
+    //TODO: put these messages into constants, after the PR merge
+    if (isExists.length) return responseBuilder.okSuccess("get logs", isExists);
+    return responseBuilder.notFoundError("not bid logs found");
+};
+
 export const auctionService = {
     create,
     getById,
     getAll,
     update,
     remove,
+    getBidLogs,
 };
