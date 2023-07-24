@@ -189,16 +189,30 @@ const remove = async (id: string[]) => {
     return responseBuilder.expectationField();
 };
 
+/**
+ * @description - register the auction player
+ * @param {IPlayerRegister} data - auction pre-registeration data
+ * @returns
+ */
 const playerRegister = async (data: IPlayerRegister) => {
-    const [auction, player, walletTransaction] = await Promise.all([
-        auctionQueries.getActiveAuctioById(data.auction_id),
-        userQueries.fetchPlayerId(data.player_id),
-        userQueries.getPlayerTrxById(
-            data.player_id,
-            data.player_wallet_transaction_id
-        ),
-    ]);
-    // TODO: check if a user is not already regsitered in the specific auctions
+    const [auction, player, walletTransaction, existsInAuction] =
+        await Promise.all([
+            auctionQueries.getActiveAuctioById(data.auction_id),
+            userQueries.fetchPlayerId(data.player_id),
+            userQueries.getPlayerTrxById(
+                data.player_id,
+                data.player_wallet_transaction_id
+            ),
+            auctionQueries.checkIfPlayerExists(data.player_id),
+        ]);
+    if (existsInAuction.length)
+        return responseBuilder
+            .error(403)
+            .message(
+                MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_ALREADY_EXISTS
+            )
+            .build();
+
     if (!auction)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     if (!player)

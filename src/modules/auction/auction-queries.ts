@@ -248,9 +248,27 @@ const getUpcomingAuctionById = async (id: string) => {
     return query;
 };
 
+/**
+ * @description registered the player for the auction.
+ * @param {IPlayerRegister} data
+ * @returns
+ */
 const playerAuctionRegistered = async (data: IPlayerRegister) => {
     const query = await db.playerAuctionRegsiter.create({
         data: data,
+    });
+    return query;
+};
+
+/**
+ * @description verify if player doesn't register again in same auction.
+ * @param {string} id
+ */
+const checkIfPlayerExists = async (id: string) => {
+    const query = await db.playerAuctionRegsiter.findMany({
+        where: {
+            player_id: id,
+        },
     });
     return query;
 };
@@ -264,4 +282,5 @@ export const auctionQueries = {
     getMultipleActiveById,
     getUpcomingAuctionById,
     playerAuctionRegistered,
+    checkIfPlayerExists,
 };

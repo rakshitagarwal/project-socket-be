@@ -192,6 +192,7 @@ export const MESSAGES = {
     PLAYER_AUCTION_REGISTEREATION: {
         PLAYER_REGISTERED: "you are registered in auction!",
         PLAYER_NOT_REGISTERED: "you are not registered!",
+        PLAYER_ALREADY_EXISTS: "player already exists in auction!",
     },
 };
 
