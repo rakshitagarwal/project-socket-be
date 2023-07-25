@@ -5,6 +5,8 @@ import {
     IuserPaginationQuery,
     IWalletTx,
     IDeductPlx,
+    IPlayerBidLog,
+    IPlayerActionWinner,
 } from "./typings/user-types";
 
 /**
@@ -183,6 +185,31 @@ const debitPlayBalance = async (data: IDeductPlx) => {
     return query;
 };
 
+const createBidtransaction = async (data: IDeductPlx) => {
+    const query = await db.playerWalletTx.create({
+        data: {
+            play_debit: data.plays,
+            created_by: data.player_id,
+            spend_on: "BID_PLAYS",
+        },
+    });
+    return query;
+};
+
+const playerBidLog = async (data: [IPlayerBidLog]) => {
+    const queryResult = await db.playerBidLogs.createMany({
+        data: data,
+    });
+    return queryResult;
+};
+
+const playerAuctionWinner = async (data: IPlayerActionWinner) => {
+    const queryResult = await db.auctionWinner.create({
+        data: {...data},
+    });
+    return queryResult;
+};
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -192,5 +219,8 @@ const userQueries = {
     playerWalletBac,
     getPlayerTrxById,
     debitPlayBalance,
+    createBidtransaction,
+    playerBidLog,
+    playerAuctionWinner,
 };
 export default userQueries;

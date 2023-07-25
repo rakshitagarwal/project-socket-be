@@ -12,3 +12,8 @@ export enum AUCTION_STATE {
     completed="completed",
     cancelled="cancelled"
 }
+
+export enum PRE_REGISTER_THRESHOLD_STATUS {
+   completed="completed",
+   not_completed="not_completed"
+}

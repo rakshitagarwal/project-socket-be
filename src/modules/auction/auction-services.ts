@@ -203,8 +203,8 @@ const playerRegister = async (data: IPlayerRegister) => {
                 data.player_id,
                 data.player_wallet_transaction_id
             ),
-            auctionQueries.checkIfPlayerExists(data.player_id),
-        ]);
+            auctionQueries.checkIfPlayerExists(data.player_id,data.auction_id),
+        ]);        
     if (existsInAuction.length)
         return responseBuilder
             .error(403)
@@ -229,18 +229,17 @@ const playerRegister = async (data: IPlayerRegister) => {
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
     const getRegisteredPlayer = await redisClient.get("auction:pre-register");
     if (!getRegisteredPlayer) {
-        newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
+        newRedisObject[`${data.auction_id+data.player_id}`] = playerRegisered;
         await redisClient.set(
             "auction:pre-register",
             JSON.stringify(newRedisObject)
         );
+    }else{
+        const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
+        registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
+        await redisClient.set("auction:pre-register",JSON.stringify(registeredObj));
     }
-    const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
-    registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
-    await redisClient.set(
-        "auction:pre-register",
-        JSON.stringify(registeredObj)
-    );
+    
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
     );

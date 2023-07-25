@@ -6,10 +6,18 @@ import { Imail } from "./typing/utils-types";
 import fs from "fs";
 
 /**
- * @description - this function is used to send an email to the user with the given email, subject and template
- * @param props
- * @returns
+ * Sends an email using the nodemailer library.
+ *
+ * @param {Object} props - The email service properties.
+ * @param {string} props.email - The email address of the recipient.
+ * @param {string} props.template - The name of the email template file.
+ * @param {string} props.subject - The subject of the email.
+ * @param {string} [props.user_name] - The user's name (optional, used in the email template).
+ * @param {string} [props.otp] - The one-time passcode (optional, used in the email template).
+ * @param {string} props.message - The message content of the email.
+ * @returns {Promise<void>} - A promise that resolves when the email is sent successfully or rejects on error.
  */
+
 export async function mailService(props: Imail) {
     const htmlTemplate = fs.readFileSync(`assets/templates/${props.template}`, {
         encoding: "utf8",

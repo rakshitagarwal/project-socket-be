@@ -85,3 +85,22 @@ export interface IuserPaginationQuery {
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
 export type IDeductPlx = z.infer<typeof userSchemas.ZDeductPlays>;
+
+export interface IPlayerBidLog {
+    player_id: string;
+    auction_id: string;
+    bid_number: number;
+    bid_price: number;
+    remaining_seconds: number;
+    player_bot_id?: string;
+    created_by: Date;
+    player_name: string;
+    profile_image: string;
+}
+
+export interface IPlayerActionWinner{
+    player_id: string;
+    auction_id: string;
+    player_bot_id?: string;
+    total_bids:number
+}

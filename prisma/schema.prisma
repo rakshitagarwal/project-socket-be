@@ -248,35 +248,36 @@ model CurrencyTransaction {
 }
 
 model PlayerWalletTransaction {
-  id                      String               @id @default(uuid())
+  id                      String                  @id @default(uuid())
   play_debit              Int?
   play_credit             Int?
   spend_on                PlaySpend
-  status                  Boolean              @default(true)
-  is_deleted              Boolean              @default(false)
-  created_at              DateTime             @default(now()) @db.Timestamptz()
+  status                  Boolean                 @default(true)
+  is_deleted              Boolean                 @default(false)
+  created_at              DateTime                @default(now()) @db.Timestamptz()
   currency_transaction_id String?
   plays_refund_id         String?
   created_by              String
   auction_id              String?
-  PlayerAuctionRefund     PlayerAuctionRefund? @relation(fields: [plays_refund_id], references: [id])
-  Auctions                Auctions?            @relation(fields: [auction_id], references: [id])
-  User                    User                 @relation(fields: [created_by], references: [id])
-  CurrencyTransaction     CurrencyTransaction? @relation(fields: [currency_transaction_id], references: [id])
+  PlayerAuctionRefund     PlayerAuctionRefund?    @relation(fields: [plays_refund_id], references: [id])
+  Auctions                Auctions?               @relation(fields: [auction_id], references: [id])
+  User                    User                    @relation(fields: [created_by], references: [id])
+  CurrencyTransaction     CurrencyTransaction?    @relation(fields: [currency_transaction_id], references: [id])
   PlayerAuctionRegisters  PlayerAuctionRegister[]
 
   @@map("player_wallet_transaction")
 }
 
 model PlayerAuctionRegister {
-  id         String    @id @default(uuid())
-  auction_id String
+  id                           String                   @id @default(uuid())
+  auction_id                   String
   player_wallet_transaction_id String?
-  player_id  String
-  created_at DateTime  @default(now()) @db.Timestamptz()
-  Auctions   Auctions? @relation(fields: [auction_id], references: [id])
-  User       User      @relation(fields: [player_id], references: [id])
-  PlayerWalletTransaction PlayerWalletTransaction? @relation(fields: [player_wallet_transaction_id], references: [id])
+  player_id                    String
+  created_at                   DateTime                 @default(now()) @db.Timestamptz()
+  Auctions                     Auctions?                @relation(fields: [auction_id], references: [id])
+  User                         User                     @relation(fields: [player_id], references: [id])
+  PlayerWalletTransaction      PlayerWalletTransaction? @relation(fields: [player_wallet_transaction_id], references: [id])
+
   @@map("player_auction_register")
 }
 
@@ -286,12 +287,14 @@ model PlayerBidLogs {
   bid_number        Int
   remaining_seconds Int
   created_at        DateTime        @default(now()) @db.Timestamptz()
-  created_by        String
-  player_bot_id     String
-  auctin_id         String
-  BidBot            BidBot          @relation(fields: [player_bot_id], references: [id])
-  User              User            @relation(fields: [created_by], references: [id])
-  Auction           Auctions        @relation(fields: [auctin_id], references: [id])
+  player_id         String
+  player_name       String
+  profile_image     String
+  player_bot_id     String?
+  auction_id        String
+  BidBot            BidBot?         @relation(fields: [player_bot_id], references: [id])
+  User              User            @relation(fields: [player_id], references: [id])
+  Auction           Auctions        @relation(fields: [auction_id], references: [id])
   AuctionWinner     AuctionWinner[]
 
   @@map("player_bid_log")
@@ -312,15 +315,15 @@ model PlayerAuctionRefund {
 }
 
 model AuctionWinner {
-  id                String        @id @default(uuid())
+  id                String         @id @default(uuid())
   auction_id        String
   player_id         String
-  player_bid_log_id String
+  player_bid_log_id String?
   total_bids        Int
-  created_at        DateTime      @default(now()) @db.Timestamptz()
-  Auction           Auctions      @relation(fields: [auction_id], references: [id])
-  User              User          @relation(fields: [player_id], references: [id])
-  PlayerBidLog      PlayerBidLogs @relation(fields: [player_bid_log_id], references: [id])
+  created_at        DateTime       @default(now()) @db.Timestamptz()
+  Auction           Auctions       @relation(fields: [auction_id], references: [id])
+  User              User           @relation(fields: [player_id], references: [id])
+  PlayerBidLog      PlayerBidLogs? @relation(fields: [player_bid_log_id], references: [id])
 
   @@map("auction_winner")
 }
