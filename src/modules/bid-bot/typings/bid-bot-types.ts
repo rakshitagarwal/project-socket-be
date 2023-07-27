@@ -7,8 +7,8 @@ export interface IBidBotInfo {
     is_active: boolean;
 }
 
-export interface Iid {
-    ids: string[];
+export interface IUpdate {
+    bid_limit: number;
 }
 
 export interface IBidBotQuery {

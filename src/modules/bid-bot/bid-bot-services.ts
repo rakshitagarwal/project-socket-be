@@ -1,60 +1,47 @@
-import { MESSAGES } from "../../common/constants";
+// import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import bidBotQueries from "./bid-bot-queries";
-import {IBidBotInfo} from "./typings/bid-bot-types";
+import { IBidBotInfo, IUpdate } from "./typings/bid-bot-types";
 
-const addbidBot = async (reqFileData: IBidBotInfo, userId: string) => {
-    // const fileData = {
-    //     filename: reqFileData.filename,
-    //     type: (reqFileData?.mimetype as string).split('/')[0],
-    //     local_path: reqFileData.path,
-    //     tag: "media",
-    //     mime_type: reqFileData.mimetype,
-    //     size: reqFileData.size,
-    //     created_by: userId,
-    // };
-    const data1  = reqFileData;
-    const data2 = userId;
-    const mediaResult = {data1, data2};
-    // await bidBotQueries.addBidBot(fileData as IBidBotQuery);
-    if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
-    return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);
+const addbidBot = async (botData: IBidBotInfo) => {
+    const result = await bidBotQueries.addBidBot(botData as IBidBotInfo);
+    if (result) return responseBuilder.createdSuccess("bid bot created successfully", result);
+    return responseBuilder.badRequestError("bid bot creation failed");
 };
 
-const getBidBotByAuctionId = async (mediaId: string | undefined) => {
-    if (mediaId) {
-        const media = await bidBotQueries.getBidBotByAuctionId(mediaId);
-        if (media) return responseBuilder.okSuccess(MESSAGES.MEDIA.REQUEST_MEDIA, [media]);
-        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+const getBidBotByAuctionId = async (id: string) => {
+    if (id) {
+        const result = await bidBotQueries.getBidBotByAuctionId(id);
+        if (result) return responseBuilder.okSuccess("bid bot found successfully", result);
+        return responseBuilder.notFoundError("bid bot not found");
     }
-    return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
-
+    return responseBuilder.notFoundError("bid bot not found");
 };
 
-const getBidBotByPlayerId = async (mediaId: string | undefined) => {
-    if (mediaId) {
-        const media = await bidBotQueries.getBidBotByPlayerId(mediaId);
-        if (media) return responseBuilder.okSuccess(MESSAGES.MEDIA.REQUEST_MEDIA, [media]);
-        return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+const getBidBotByPlayerId = async (id: string) => {
+    if (id) {
+        const result = await bidBotQueries.getBidBotByPlayerId(id);
+        if (result) return responseBuilder.okSuccess("bid bot found successfully", result);
+        return responseBuilder.notFoundError("bid bot not found");
     }
-    return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    return responseBuilder.notFoundError("bid bot not found");
 };
 
-const updateBidBot = async (id: string) => {
-    const media = await bidBotQueries.getBidBotByPlayerId(id);
-    if (media) {
-        const result = await bidBotQueries.updateBidBot(id, media.is_active);
-        return responseBuilder.okSuccess(MESSAGES.MEDIA.MEDIA_STATUS_CHANGE_SUCCESS, result);
+const updateBidBot = async (id: string, data: IUpdate) => {
+    const existBot = await bidBotQueries.getBidBotById(id);
+    if (existBot) {
+        const { bid_limit } = data;
+        const result = await bidBotQueries.updateBidBot(id, bid_limit);
+        if (result) return responseBuilder.okSuccess("bid bot updated successfully", result);
     }
-    return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    return responseBuilder.notFoundError("bid bot not found");
 };
 
-
-const mediaServiceProvider = {
+const bidBotService = {
     addbidBot,
     getBidBotByPlayerId,
     getBidBotByAuctionId,
     updateBidBot,
 };
 
-export default mediaServiceProvider;
+export default bidBotService;

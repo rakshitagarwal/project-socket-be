@@ -18,7 +18,7 @@ export const ENDPOINTS = {
     VERIFY: "/verify",
     ID: "/:id",
     PRODUCT: "/product",
-
+    BIDBOT: "/bidbot",
     TERM_CONDITION: "/term-condition",
     MEDIA: "/media",
 };
