@@ -2,6 +2,7 @@ import { CronJob } from "cron";
 import { AppGlobal } from "./socket-service";
 import { auctionQueries } from "../modules/auction/auction-queries";
 import eventService from "./event-service"
+import {SOCKET_EVENT, NODE_EVENT_SERVICE ,MESSAGES} from "../common/constants";
 import {AUCTION_STATE,PRE_REGISTER_THRESHOLD_STATUS} from "./typing/utils-types"
 import {auctionStart} from "../modules/auction/auction-publisher"
 import redisClient from "../config/redis";
@@ -30,13 +31,13 @@ const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
                 const totalAuction = await auctionQueries.totalCountRegisterAuctionByAuctionId(upcomingInfo.id)
                 if(upcomingInfo.registeration_count){                    
                     if(totalAuction>=upcomingInfo.registeration_count){
-                        socket.playerSocket.emit("auction:state",{message:"Auction live!",auctionId:upcomingInfo.id})
+                        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_STATE,{message:MESSAGES.SOCKET.AUCTION_LIVE,auctionId:upcomingInfo.id})
                         auctionStart(upcomingInfo.id)
                         await redisClient.set(`auction:live:${upcomingInfo.id}`,JSON.stringify(upcomingInfo))
-                        eventService.emit("auction:live:db:update",{auctionId:upcomingInfo.id,state:AUCTION_STATE.live})
+                        eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE,{auctionId:upcomingInfo.id,state:AUCTION_STATE.live})
                     }else{
-                        eventService.emit("auction:live:db:update",{auctionId:upcomingInfo.id,state:AUCTION_STATE.cancelled})
-                        eventService.emit("auction:reminder:mail",{auctionId:upcomingInfo.id,status:PRE_REGISTER_THRESHOLD_STATUS.not_completed})
+                        eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE,{auctionId:upcomingInfo.id,state:AUCTION_STATE.cancelled})
+                        eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{auctionId:upcomingInfo.id,status:PRE_REGISTER_THRESHOLD_STATUS.not_completed})
                     }   
                 }
             }
@@ -59,10 +60,10 @@ const cronJob = new CronJob(cronExpressionEvery30Min, async () => {
                     const totalAuction = await auctionQueries.totalCountRegisterAuctionByAuctionId(upcomingInfo.id)
                     if(upcomingInfo.registeration_count){                    
                         if(totalAuction>=upcomingInfo.registeration_count){
-                            eventService.emit("auction:reminder:mail",{auctionId:upcomingInfo.id,status:PRE_REGISTER_THRESHOLD_STATUS.completed})
+                            eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{auctionId:upcomingInfo.id,status:PRE_REGISTER_THRESHOLD_STATUS.completed})
                         }else{
-                            eventService.emit("auction:live:db:update",{auctionId:upcomingInfo.id,state:AUCTION_STATE.cancelled})
-                            eventService.emit("auction:reminder:mail",{auctionId:upcomingInfo.id,status:PRE_REGISTER_THRESHOLD_STATUS.not_completed})
+                            eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE,{auctionId:upcomingInfo.id,state:AUCTION_STATE.cancelled})
+                            eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{auctionId:upcomingInfo.id,status:PRE_REGISTER_THRESHOLD_STATUS.not_completed})
             
                         }   
                     }

@@ -367,7 +367,10 @@ const playerRegistrationAuction = async (auction_id: string) => {
     });
     return query;
 };
-
+/**
+ * Get upcoming auctions
+ * @returns {[Promise<IAuction>]}
+ */
 const upcomingPlayerAuctionReminder = async () => {
     /**
      * Query the database to fetch upcoming player auctions.
@@ -405,6 +408,16 @@ const upcomingPlayerAuctionReminder = async () => {
     });
     return queryResult;
 };
+
+/**
+ * Get player auctions registerations count 
+ * @param {[string]} auctionId - multiple auction ID
+ * @returns {[Promise<IAuction>]}
+ */
+const auctionRegistrationCount=async(auctionId:string)=>{
+    const queryResult= await db.playerAuctionRegsiter.count({where:{auction_id:auctionId}})
+    return  queryResult
+}
 export const auctionQueries = {
     create,
     getAll,
@@ -419,5 +432,6 @@ export const auctionQueries = {
     playerAuctionRegistered,
     checkIfPlayerExists,
     playerRegistrationAuction,
-    upcomingPlayerAuctionReminder
+    upcomingPlayerAuctionReminder,
+    auctionRegistrationCount
 };

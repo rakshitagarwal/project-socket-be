@@ -1,3 +1,4 @@
+import { Sql } from "@prisma/client/runtime";
 import { db } from "../../config/db";
 import {
     IuserQuery,
@@ -7,7 +8,11 @@ import {
     IDeductPlx,
     IPlayerBidLog,
     IPlayerActionWinner,
+    PlayerBidLogGroup
 } from "./typings/user-types";
+import { Prisma, PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 /**
  * @description - this query is fetch specific user information
@@ -196,6 +201,12 @@ const createBidtransaction = async (data: IDeductPlx) => {
     return query;
 };
 
+/**
+ * Records player bid logs in the database.
+ * @async
+ * @param {IPlayerBidLog[]} data - An array of data representing the player bid logs to be recorded.
+ * @returns {Promise<PlayerBidLog[]>} A promise that resolves to an array of Player
+*/
 const playerBidLog = async (data: [IPlayerBidLog]) => {
     const queryResult = await db.playerBidLogs.createMany({
         data: data,
@@ -203,13 +214,48 @@ const playerBidLog = async (data: [IPlayerBidLog]) => {
     return queryResult;
 };
 
+/**
+ * Records the winner of a player auction in the database.
+ * @param {IPlayerActionWinner} data - The data representing the player auction winner to be recorded.
+ * @returns {Promise<AuctionWinner>} A promise that resolves to the created AuctionWinner object representing the recorded player auction winner.
+ */
+
 const playerAuctionWinner = async (data: IPlayerActionWinner) => {
     const queryResult = await db.auctionWinner.create({
-        data: {...data},
+        data: { ...data },
     });
     return queryResult;
 };
 
+/**
+ * fetch the total number of bids made by a specific player in a given auction.
+ * @async
+ * @param {string} auctionId - The ID of the auction to retrieve bid information from.
+ * @param {string} playerId - The ID of the player to get the total bids for.
+ * @returns {Promise<number>} A promise that resolves to the total number of bids made by the specified player in the given auction.
+ */
+const getWinnerTotalBid = async (auctionId: string, playerId: string) => {
+    const queryResult = await db.playerBidLogs.count({
+        where: { auction_id: auctionId, player_id: playerId },
+    });
+    return queryResult;
+};
+
+/**
+ * Fetches the highest bidders for a specific auction.
+ * @async
+ * @param {string} auctionId - The ID of the auction to retrieve highest bidders for.
+ * @returns {Promise<PlayerBidLogGroup[]>} A promise that resolves to an array of PlayerBidLogGroup objects representing the highest bidders.
+ */
+const fetchAuctionHigherBider = async (auctionId: string): Promise<PlayerBidLogGroup[]> => {
+    const query: Sql = Prisma.sql`
+        SELECT player_id, player_name, auction_id, profile_image, COUNT(*) AS count
+        FROM player_bid_log
+        WHERE auction_id = ${auctionId}
+        GROUP BY player_id, player_name, auction_id, profile_image ORDER BY count DESC LIMIT 3;`;
+        const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    return queryResult;
+};
 const userQueries = {
     fetchUser,
     updateUser,
@@ -222,5 +268,7 @@ const userQueries = {
     createBidtransaction,
     playerBidLog,
     playerAuctionWinner,
+    getWinnerTotalBid,
+    fetchAuctionHigherBider,
 };
 export default userQueries;

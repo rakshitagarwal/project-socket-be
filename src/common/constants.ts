@@ -111,6 +111,24 @@ export const OTP_TYPE = {
 };
 
 export const MESSAGES = {
+    SOCKET:{
+        TOTAL_AUCTION_REGISTERED: "total auction registered",
+        AUCTION_LIVE:"Auction live",
+        AUCTION_BUY_NOW:"Auction buy now",
+        AUCTION_WINNER:"Auction winner",
+        AUCTION_CLOSED:"Auction closed",
+        AUCTION_COUNT_DOWN:"Auction count down",
+        AUCTION_RECENT_BID:"Auction recent bid",
+        RECENT_BIDS:"Recents bids",
+        AUCTION_ENDED:"Auction ended",
+        CURRENT_PLAYS:"Current plays",
+        AUCTION_NOT_FOUND:"Auction not found",
+        USER_NOT_REGISTERED:"User not registered",
+        CONTINUE_BID_NOT_ALLOWED:"Continue bid not allowed",
+        INSUFFICIENT_PLAYS_BALANCED:"Insufficient play balance",
+        BUY_NOW:"Buy now",
+
+    },
     OTP: {
         INVALID_OTP: "Invalid otp",
     },
@@ -197,6 +215,25 @@ export const MESSAGES = {
         PLAYER_ALREADY_EXISTS: "player already exists in auction!",
     },
 };
+
+export const SOCKET_EVENT={
+    AUCTION_WINNER:"auction:winner",
+    AUCTION_COUNT_DOWN:"auction:count:down",
+    AUCTION_RECENT_BID:"auction:recent:bid",
+    AUCTION_BIDS:"auction:bids",
+    AUCTION_ERROR:"auction:error",
+    AUCTION_CURRENT_PLAYS:"auction:current:play",
+    AUCTION_STATE:"auction:state",
+    AUCTION_REGISTER_COUNT:"auction:register:count",
+    AUCTION_RUNNER_UP:"auction:runnner:up",
+}
+export const NODE_EVENT_SERVICE={
+    USER_MAIL:"send:user:mail",
+    AUCTION_STATE_UPDATE:"auction:state:update",
+    AUCTION_REMINDER_MAIL:"auction:reminder:mail",
+    AUCTION_CLOSED:"auction:closed",
+    AUCTION_REGISTER_COUNT:"auction:register:count",
+}
 
 export const AUCTION_STATE = [
     "upcoming",

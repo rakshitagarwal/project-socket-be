@@ -2,16 +2,18 @@ import { EventEmitter } from "events";
 import { mailService } from "./mail-service";
 import { auctionQueries } from "../modules/auction/auction-queries";
 import { Imail } from "./typing/utils-types";
-import { TEMPLATE } from "../common/constants";
+import { TEMPLATE,NODE_EVENT_SERVICE ,SOCKET_EVENT,MESSAGES} from "../common/constants";
 import { PRE_REGISTER_THRESHOLD_STATUS } from "./typing/utils-types";
-import redisClient from "../config/redis"
-import userQueries from "../modules/users/user-queries"
+import redisClient from "../config/redis";
+import userQueries from "../modules/users/user-queries";
+import { AppGlobal } from "./socket-service";
 const eventService: EventEmitter = new EventEmitter();
+const socket = global as unknown as AppGlobal;
 
 /**
  * @description - this event use for sending email notifications
  */
-eventService.on("send-user-mail", async function (data: Imail) {
+eventService.on(NODE_EVENT_SERVICE.USER_MAIL, async function (data: Imail) {
     await mailService(data);
 });
 
@@ -24,18 +26,18 @@ eventService.on("send-user-mail", async function (data: Imail) {
  * @returns {Promise<void>} - A promise that resolves when the email is sent successfully.
  */
 eventService.on(
-    "auction:reminder:mail",
+    NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,
     async function (data: { auctionId: string; status: string }) {
         const playerInformation =
             await auctionQueries.playerRegistrationAuction(data.auctionId);
-    
+
         if (playerInformation.length) {
             const auctionInfo = playerInformation[0];
             const userEmail = playerInformation.map(
                 (player) => player.User.email
             );
             if (data.status === PRE_REGISTER_THRESHOLD_STATUS.completed) {
-                                /**
+                /**
                  * Data object for sending a player registration reminder email.
                  *
                  * @typedef {Object} ReminderEmailData
@@ -53,7 +55,7 @@ eventService.on(
                 };
                 await mailService(data);
             } else {
-                 /**
+                /**
                  * Data object for sending an auction cancellation email.
                  *
                  * @typedef {Object} CancellationEmailData
@@ -75,7 +77,6 @@ eventService.on(
     }
 );
 
-
 /**
  * Event handler function that updates the state of an auction in the database.
  * @param {Object} data - The event data containing auctionId and state.
@@ -84,32 +85,61 @@ eventService.on(
  * @returns {Promise<void>} - A promise that resolves when the auction state is updated successfully.
  */
 eventService.on(
-    "auction:live:db:update",
+    NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE,
     async function (data: { auctionId: string; state: string }) {
-        auctionQueries.updateAuctionState(data.auctionId, data.state);
+       await auctionQueries.updateAuctionState(data.auctionId, data.state);
     }
 );
 
-eventService.on("auction:closed",async(auctionId:string)=>{
-    const auctionBidLog=await redisClient.get(`${auctionId}:bidHistory`)
-    if(auctionBidLog){
-        const winnerePayload=JSON.parse(auctionBidLog)
-        await userQueries.playerBidLog(winnerePayload)
-        const newWinnerPayload=winnerePayload[winnerePayload.length-1]
-        let total_bids=0
-        winnerePayload.forEach((playerInfo:{player_id:string,player_bot_id:string})=>{
-            if(newWinnerPayload.player_id===playerInfo.player_id && playerInfo.player_bot_id){
-                total_bids+=1
-            }
-        })
+eventService.on(NODE_EVENT_SERVICE.AUCTION_CLOSED, async (auctionId: string) => {
+    const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
+    if (auctionBidLog) {
+        const winnerePayload = JSON.parse(auctionBidLog);
+        await userQueries.playerBidLog(winnerePayload);
+        const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
+        const total_bids = await userQueries.getWinnerTotalBid(
+            auctionId,
+            newWinnerPayload.player_id
+        );
+        const higherBidder = await userQueries.fetchAuctionHigherBider(
+            auctionId
+        );
+        const isWinner = higherBidder.find((bidder) => {
+            return bidder.player_id === newWinnerPayload.player_id;
+        });
+        if (isWinner) {
+            const index = higherBidder.indexOf(isWinner);
+            higherBidder.splice(index, 1);
+            console.log(higherBidder);
+        } else {
+            higherBidder.splice(higherBidder.length - 1, 1);
+        }
+        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RUNNER_UP, {
+            message:MESSAGES.SOCKET.BUY_NOW,
+            data: higherBidder,
+        });
         await userQueries.playerAuctionWinner({
-            player_id:newWinnerPayload.player_id,
-            auction_id:newWinnerPayload.auction_id,
-            player_bot_id:newWinnerPayload.player_bot_id,
-            total_bids
-        })
-
+            player_id: newWinnerPayload.player_id,
+            auction_id: newWinnerPayload.auction_id,
+            player_bot_id: newWinnerPayload.player_bot_id,
+            total_bids,
+        });
     }
-})
+});
+
+eventService.on(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT, async (data:{auctionId: string,registeration_count:number}) => {
+    const auctionData = await auctionQueries.auctionRegistrationCount(
+        data.auctionId
+    );
+    socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
+        message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
+        data: {
+            current_registeration_no: auctionData,
+            auctionId:data.auctionId,
+            required_registration_count:data.registeration_count
+
+        },
+    });
+});
 
 export default eventService;

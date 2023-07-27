@@ -104,3 +104,11 @@ export interface IPlayerActionWinner{
     player_bot_id?: string;
     total_bids:number
 }
+
+export type PlayerBidLogGroup = {
+    player_id: string;
+    player_name: string;
+    auction_id: string;
+    profile_image: string;
+    count: number;
+};

@@ -19,7 +19,7 @@ import { responseBuilder } from "../../common/responses";
 import { PrismaClient } from "@prisma/client";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import eventService from "../../utils/event-service";
-import { TEMPLATE, MESSAGES, OTP_TYPE } from "../../common/constants";
+import { TEMPLATE, MESSAGES, OTP_TYPE,NODE_EVENT_SERVICE } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
 import { generateAccessToken } from "../../common/helper";
@@ -50,7 +50,7 @@ const register = async (body: Iuser) => {
         const user = await prisma.user.create({
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
-        eventService.emit("send-user-mail", {
+        eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
             user_name: `${user.first_name}`,
             subject: "Welcome to Big Deal",
@@ -145,7 +145,7 @@ const playerLogin = async (body: IplayerLogin) => {
                 otp_type: OTP_TYPE.LOGIN_TYPE,
             },
         });
-        eventService.emit("send-user-mail", {
+        eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [isUser.email],
             otp: passcode,
             user_name: `${isUser.first_name}`,
@@ -268,7 +268,7 @@ const forgetPassword = async (body: IplayerLogin) => {
                 otp_type: OTP_TYPE.FORGET_PASSWORD,
             },
         });
-        eventService.emit("send-user-mail", {
+        eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [isUser.email],
             otp: passcode,
             user_name: `${isUser.first_name}`,

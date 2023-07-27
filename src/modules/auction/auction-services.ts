@@ -3,6 +3,7 @@ import {
     AUCTION_MESSAGES,
     MESSAGES,
     productMessage,
+    NODE_EVENT_SERVICE
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
@@ -19,7 +20,7 @@ import { prismaTransaction } from "../../utils/prisma-transactions";
 import { PrismaClient } from "@prisma/client";
 import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
-
+import eventService from "../../utils/event-service";
 /**
  * Auction Creation
  * @param {IAuction} auction - auction request body details
@@ -239,7 +240,7 @@ const playerRegister = async (data: IPlayerRegister) => {
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set("auction:pre-register",JSON.stringify(registeredObj));
     }
-    
+    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT,{auctionId:data.auction_id,registeration_count:auction.registeration_count});
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
     );
