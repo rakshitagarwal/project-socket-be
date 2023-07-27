@@ -153,7 +153,7 @@ const addPlayBalanceTx = async (data: IWalletTx) => {
 };
 
 const addPlayRefundBalanceTx = async (
-    data: { created_by: string; spend_on: Ispend_on; play_credit: number }[]
+    data: { created_by: string; spend_on: Ispend_on; play_credit: number,auction_id:string }[]
 ) => {
     const query = await db.playerWalletTx.createMany({ data });
     return query;
