@@ -8,7 +8,8 @@ import {
     IDeductPlx,
     IPlayerBidLog,
     IPlayerActionWinner,
-    PlayerBidLogGroup
+    PlayerBidLogGroup,
+    Ispend_on,
 } from "./typings/user-types";
 import { Prisma, PrismaClient } from "@prisma/client";
 
@@ -151,6 +152,13 @@ const addPlayBalanceTx = async (data: IWalletTx) => {
     return query;
 };
 
+const addPlayRefundBalanceTx = async (
+    data: { created_by: string; spend_on: Ispend_on; play_credit: number }[]
+) => {
+    const query = await db.playerWalletTx.createMany({ data });
+    return query;
+};
+
 const playerWalletBac = async (player_id: string) => {
     const query = await db.playerWalletTx.findMany({
         where: {
@@ -206,7 +214,7 @@ const createBidtransaction = async (data: IDeductPlx) => {
  * @async
  * @param {IPlayerBidLog[]} data - An array of data representing the player bid logs to be recorded.
  * @returns {Promise<PlayerBidLog[]>} A promise that resolves to an array of Player
-*/
+ */
 const playerBidLog = async (data: [IPlayerBidLog]) => {
     const queryResult = await db.playerBidLogs.createMany({
         data: data,
@@ -247,13 +255,15 @@ const getWinnerTotalBid = async (auctionId: string, playerId: string) => {
  * @param {string} auctionId - The ID of the auction to retrieve highest bidders for.
  * @returns {Promise<PlayerBidLogGroup[]>} A promise that resolves to an array of PlayerBidLogGroup objects representing the highest bidders.
  */
-const fetchAuctionHigherBider = async (auctionId: string): Promise<PlayerBidLogGroup[]> => {
+const fetchAuctionHigherBider = async (
+    auctionId: string
+): Promise<PlayerBidLogGroup[]> => {
     const query: Sql = Prisma.sql`
         SELECT player_id, player_name, auction_id, profile_image, COUNT(*) AS count
         FROM player_bid_log
         WHERE auction_id = ${auctionId}
         GROUP BY player_id, player_name, auction_id, profile_image ORDER BY count DESC LIMIT 3;`;
-        const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
     return queryResult;
 };
 const userQueries = {
@@ -270,5 +280,6 @@ const userQueries = {
     playerAuctionWinner,
     getWinnerTotalBid,
     fetchAuctionHigherBider,
+    addPlayRefundBalanceTx,
 };
 export default userQueries;

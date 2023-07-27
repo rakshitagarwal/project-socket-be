@@ -112,3 +112,9 @@ export type PlayerBidLogGroup = {
     profile_image: string;
     count: number;
 };
+
+export enum  Ispend_on {
+    BUY_PLAYS="BUY_PLAYS",
+    REFUND_PLAYS="REFUND_PLAYS",
+    BID_PLAYS="BID_PLAYS"
+}

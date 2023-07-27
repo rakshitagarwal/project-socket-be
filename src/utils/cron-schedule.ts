@@ -14,16 +14,16 @@ const cronExpressionEvery30Min = "*/30 * * * *";
 const socket = global as unknown as AppGlobal;
 
 /**
- * @description - Create a new CronJob instance
+ * Creates a new cron job that runs at a specified interval and performs tasks related to upcoming auctions in 1 min.
+ * @param {string} cronExpression - The cron expression specifying the job's schedule.
+ * @returns {CronJob} - The newly created cron job instance.
  */
 const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
     /**
    * Get the upcoming player auctions.
    * @type {Array<UpcomingAuctionInfo>}
    */
-    const upcomingAuction = await auctionQueries.upcomingPlayerAuction();
-    console.log(upcomingAuction.length);
-    
+    const upcomingAuction = await auctionQueries.upcomingPlayerAuction();    
     if (upcomingAuction.length) {
         upcomingAuction.forEach(async(upcomingInfo): Promise<void> => {            
             const currectDate = new Date();            

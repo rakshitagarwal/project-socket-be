@@ -225,7 +225,7 @@ export const SOCKET_EVENT={
     AUCTION_CURRENT_PLAYS:"auction:current:play",
     AUCTION_STATE:"auction:state",
     AUCTION_REGISTER_COUNT:"auction:register:count",
-    AUCTION_RUNNER_UP:"auction:runnner:up",
+    AUCTION_RUNNER_UP:"auction:runner:up",
 }
 export const NODE_EVENT_SERVICE={
     USER_MAIL:"send:user:mail",
