@@ -50,4 +50,12 @@ const validateRequest = (() => {
     };
 })();
 
+export const bidRequestValidator = async <T>(data: T, schema: ZodSchema) => {
+    const parsedBody = await schema.safeParseAsync(data);
+    if (!parsedBody.success) {
+        return { status: false,messsage:"Bid failed",metadata:parsedBody.error };
+    }
+    return { status: true, bidData: parsedBody.data };
+};
+
 export default validateRequest;

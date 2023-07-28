@@ -78,6 +78,16 @@ const getBidLogs = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description - for player registering the auction
+ * @param {Request} req
+ * @param {Response }res
+ */
+const playerAuctionRegister = async (req: Request, res: Response) => {
+    const response = await auctionService.playerRegister(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
@@ -85,4 +95,5 @@ export const auctionHandler = {
     update,
     remove,
     getBidLogs,
+    playerAuctionRegister,
 };
