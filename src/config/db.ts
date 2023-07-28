@@ -24,10 +24,12 @@ export const db = {
     auction: prismaClient.auctions,
     countries: prismaClient.countries,
     currencyTx: prismaClient.currencyTransaction,
+    playerWallet: prismaClient.playerWallet,
     playerWalletTx: prismaClient.playerWalletTransaction,
     playerAuctionRegsiter: prismaClient.playerAuctionRegister,
     playerBidLogs: prismaClient.playerBidLogs,
     playerAuctionRefund: prismaClient.playerAuctionRefund,
-    auctionWinner: prismaClient.auctionResult,
+    auctionResult: prismaClient.auctionResult,
     userBidBot: prismaClient.bidBot,
+    buyNow: prismaClient.playerBuyNow,
 };
