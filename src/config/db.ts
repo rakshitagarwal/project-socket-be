@@ -19,8 +19,16 @@ export const db = {
     masterAuctionCategory: prismaClient.masterAuctionCategory,
     product: prismaClient.products,
     productMedia: prismaClient.productMedia,
-    auction: prismaClient.auctions,
     media: prismaClient.media,
     termsAndConditions: prismaClient.termsAndCondition,
-    bidBot: prismaClient.bidBot
+    bidBot: prismaClient.bidBot,
+    auction: prismaClient.auctions,
+    countries: prismaClient.countries,
+    currencyTx: prismaClient.currencyTransaction,
+    playerWalletTx: prismaClient.playerWalletTransaction,
+    playerAuctionRegsiter: prismaClient.playerAuctionRegister,
+    playerBidLogs: prismaClient.playerBidLogs,
+    playerAuctionRefund: prismaClient.playerAuctionRefund,
+    auctionWinner: prismaClient.auctionWinner,
+    userBidBot: prismaClient.bidBot,
 };

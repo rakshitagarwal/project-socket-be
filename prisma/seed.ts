@@ -57,6 +57,7 @@ async function startSeed() {
                     "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
                 country: "India",
                 is_verified: true,
+                avatar: "assets/avatar/1.png",
                 role_id: roleAdmin?.id as string,
             },
         });
