@@ -27,6 +27,7 @@ model User {
   country     String
   mobile_no   String?
   password    String?
+  avatar      String?
   is_verified Boolean    @default(false)
   role_id     String
   status      Boolean    @default(true)
