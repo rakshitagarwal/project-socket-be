@@ -3,7 +3,7 @@ import {
     AUCTION_MESSAGES,
     MESSAGES,
     productMessage,
-    NODE_EVENT_SERVICE
+    NODE_EVENT_SERVICE,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
@@ -190,6 +190,13 @@ const remove = async (id: string[]) => {
     return responseBuilder.expectationField();
 };
 
+const getBidLogs = async (id: string) => {
+    const isExists = await auctionQueries.fetchAuctionLogs(id);
+    //TODO: put these messages into constants, after the PR merge
+    if (isExists.length) return responseBuilder.okSuccess("get logs", isExists);
+    return responseBuilder.notFoundError("not bid logs found");
+};
+
 /**
  * @description - register the auction player
  * @param {IPlayerRegister} data - auction pre-registeration data
@@ -204,8 +211,8 @@ const playerRegister = async (data: IPlayerRegister) => {
                 data.player_id,
                 data.player_wallet_transaction_id
             ),
-            auctionQueries.checkIfPlayerExists(data.player_id,data.auction_id),
-        ]);        
+            auctionQueries.checkIfPlayerExists(data.player_id, data.auction_id),
+        ]);
     if (existsInAuction.length)
         return responseBuilder
             .error(403)
@@ -230,17 +237,25 @@ const playerRegister = async (data: IPlayerRegister) => {
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
     const getRegisteredPlayer = await redisClient.get("auction:pre-register");
     if (!getRegisteredPlayer) {
-        newRedisObject[`${data.auction_id+data.player_id}`] = playerRegisered;
+        newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set(
             "auction:pre-register",
             JSON.stringify(newRedisObject)
         );
-    }else{
-        const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
+    } else {
+        const registeredObj = JSON.parse(
+            getRegisteredPlayer as unknown as string
+        );
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set("auction:pre-register",JSON.stringify(registeredObj));
+        await redisClient.set(
+            "auction:pre-register",
+            JSON.stringify(registeredObj)
+        );
     }
-    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT,{auctionId:data.auction_id,registeration_count:auction.registeration_count});
+    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT, {
+        auctionId: data.auction_id,
+        registeration_count: auction.registeration_count,
+    });
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
     );
@@ -252,5 +267,6 @@ export const auctionService = {
     getAll,
     update,
     remove,
+    getBidLogs,
     playerRegister,
 };

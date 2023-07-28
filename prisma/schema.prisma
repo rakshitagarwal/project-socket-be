@@ -37,6 +37,7 @@ model User {
   roles       MasterRole @relation(fields: [role_id], references: [id])
   countries   Countries  @relation(fields: [country], references: [name])
 
+  PlayerWallet            PlayerWallet[]
   userPersistent          UserPersistent[]
   TermsAndCondition       TermsAndCondition[]
   medias                  Media[]
@@ -190,7 +191,7 @@ model Auctions {
   description             String                    @db.Text
   bid_increment_price     Float                     @default(0.01)
   plays_consumed_on_bid   Int
-  opening_price           Float                     @default(1.00)
+  opening_price           Float                     @db.DoublePrecision @default(1.00)
   new_participants_limit  Int?
   start_date              DateTime?                 @db.Timestamptz()
   is_preRegistered        Boolean                   @default(true)
@@ -248,23 +249,37 @@ model CurrencyTransaction {
   @@map("currency_transaction")
 }
 
+model PlayerWallet {
+  id           String   @id @default(uuid())
+  play_balance Int      @db.Integer
+  player_id    String
+  created_at   DateTime @default(now()) @db.Timestamptz()
+  updated_at   DateTime @default(now()) @db.Timestamptz()
+
+  User                    User                      @relation(fields: [player_id], references: [id])
+  PlayerWalletTransaction PlayerWalletTransaction[]
+}
+
 model PlayerWalletTransaction {
-  id                      String                  @id @default(uuid())
+  id                      String    @id @default(uuid())
   play_debit              Int?
   play_credit             Int?
   spend_on                PlaySpend
-  status                  Boolean                 @default(true)
-  is_deleted              Boolean                 @default(false)
-  created_at              DateTime                @default(now()) @db.Timestamptz()
+  status                  Boolean   @default(true)
+  is_deleted              Boolean   @default(false)
+  created_at              DateTime  @default(now()) @db.Timestamptz()
   currency_transaction_id String?
   plays_refund_id         String?
   created_by              String
   auction_id              String?
-  PlayerAuctionRefund     PlayerAuctionRefund?    @relation(fields: [plays_refund_id], references: [id])
-  Auctions                Auctions?               @relation(fields: [auction_id], references: [id])
-  User                    User                    @relation(fields: [created_by], references: [id])
-  CurrencyTransaction     CurrencyTransaction?    @relation(fields: [currency_transaction_id], references: [id])
-  PlayerAuctionRegisters  PlayerAuctionRegister[]
+  wallet_id               String?
+
+  PlayerWallet           PlayerWallet?           @relation(fields: [wallet_id], references: [id])
+  PlayerAuctionRefund    PlayerAuctionRefund?    @relation(fields: [plays_refund_id], references: [id])
+  Auctions               Auctions?               @relation(fields: [auction_id], references: [id])
+  User                   User                    @relation(fields: [created_by], references: [id])
+  CurrencyTransaction    CurrencyTransaction?    @relation(fields: [currency_transaction_id], references: [id])
+  PlayerAuctionRegisters PlayerAuctionRegister[]
 
   @@map("player_wallet_transaction")
 }
@@ -275,6 +290,7 @@ model PlayerAuctionRegister {
   player_wallet_transaction_id String?
   player_id                    String
   created_at                   DateTime                 @default(now()) @db.Timestamptz()
+  AuctionResult                AuctionResult[]
   Auctions                     Auctions?                @relation(fields: [auction_id], references: [id])
   User                         User                     @relation(fields: [player_id], references: [id])
   PlayerWalletTransaction      PlayerWalletTransaction? @relation(fields: [player_wallet_transaction_id], references: [id])
@@ -283,20 +299,19 @@ model PlayerAuctionRegister {
 }
 
 model PlayerBidLogs {
-  id                String          @id @default(uuid())
+  id                String   @id @default(uuid())
   bid_price         Float
   bid_number        Int
   remaining_seconds Int
-  created_at        DateTime        @default(now()) @db.Timestamptz()
+  created_at        DateTime @default(now()) @db.Timestamptz()
   player_id         String
   player_name       String
   profile_image     String
   player_bot_id     String?
   auction_id        String
-  BidBot            BidBot?         @relation(fields: [player_bot_id], references: [id])
-  User              User            @relation(fields: [player_id], references: [id])
-  Auction           Auctions        @relation(fields: [auction_id], references: [id])
-  AuctionResult     AuctionResult[]
+  BidBot            BidBot?  @relation(fields: [player_bot_id], references: [id])
+  User              User     @relation(fields: [player_id], references: [id])
+  Auction           Auctions @relation(fields: [auction_id], references: [id])
 
   @@map("player_bid_log")
 }
@@ -316,18 +331,21 @@ model PlayerAuctionRefund {
 }
 
 model AuctionResult {
-  id                 String         @id @default(uuid())
-  auction_id         String
-  player_id          String
-  player_bid_log_id  String?
-  total_bids         Int
-  auction_end_date   DateTime       @db.Timestamptz()
-  buy_now_expiration DateTime       @db.Timestamptz()
-  created_at         DateTime       @default(now()) @db.Timestamptz()
-  Auction            Auctions       @relation(fields: [auction_id], references: [id])
-  User               User           @relation(fields: [player_id], references: [id])
-  PlayerBidLog       PlayerBidLogs? @relation(fields: [player_bid_log_id], references: [id])
-  PlayerBuyNow       PlayerBuyNow[]
+  id                    String                @id @default(uuid())
+  player_register_id    String
+  player_id             String
+  auction_id            String
+  total_bids_price      Float                 @db.DoublePrecision
+  total_bids            Int
+  total_plays_consumed  Int
+  auction_end_date      DateTime              @db.Timestamptz()
+  buy_now_expiration    DateTime              @db.Timestamptz()
+  result_status         auctionResultType     @default(value: registered)
+  created_at            DateTime              @default(now()) @db.Timestamptz()
+  PlayerAuctionRegister PlayerAuctionRegister @relation(fields: [player_register_id], references: [id])
+  Auction               Auctions              @relation(fields: [auction_id], references: [id])
+  User                  User                  @relation(fields: [player_id], references: [id])
+  PlayerBuyNow          PlayerBuyNow[]
 
   @@map("auction_winner")
 }
@@ -349,16 +367,16 @@ model BidBot {
 
 model PlayerBuyNow {
   id                  String              @id @default(uuid())
-  buy_price           Decimal             @db.Decimal()
+  buy_price           Float               @db.DoublePrecision
   auction_id          String
   product_id          String
   player_result_id    String
-  payment_id          String
-  created_at          DateTime            @db.Timestamptz()
+  currency_payment_id          String
+  created_at          DateTime            @default(now()) @db.Timestamptz()
   Auction             Auctions            @relation(fields: [auction_id], references: [id])
   Product             Products            @relation(fields: [product_id], references: [id])
   AuctionPlayerResult AuctionResult       @relation(fields: [player_result_id], references: [id])
-  CurrencyTransaction CurrencyTransaction @relation(fields: [payment_id], references: [id])
+  CurrencyTransaction CurrencyTransaction @relation(fields: [currency_payment_id], references: [id])
 
   @@map("player_buy_now")
 }
@@ -384,5 +402,13 @@ enum auctionState {
   upcoming
   live
   completed
+  cancelled
+}
+
+enum auctionResultType {
+  won
+  lost
+  live
+  registered
   cancelled
 }
