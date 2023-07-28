@@ -37,6 +37,12 @@ auctionRouter.delete(
     handleAsync(auctionHandler.remove)
 );
 
+auctionRouter.get(
+    ENDPOINTS.BASE + "logs/:id",
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.getBidLogs)
+);
+
 auctionRouter.post(
     ENDPOINTS.BASE + ENDPOINTS.PLAYER_AUCTION_REGISTER,
     [validateRequest.body(auctionSchemas.ZPlayerRegister)],
