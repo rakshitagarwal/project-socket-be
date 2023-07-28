@@ -152,6 +152,13 @@ export const MESSAGES = {
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
+    BIDBOT: {
+        BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
+        BIDBOT_FOUND: "bidbot found successfully",
+        BIDBOT_CREATE_FAIL: "bidbot creation failed",
+        BIDBOT_NOT_FOUND: "bidbot not found or id not valid",
+        BIDBOT_UPDATE_LIMIT: "bidbot limit updated successfully",
+    },
     ALL: {
         MULTER_ERROR: "multer error",
     },
