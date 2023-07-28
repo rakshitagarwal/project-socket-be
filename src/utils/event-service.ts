@@ -42,12 +42,14 @@ eventService.on(
                 created_by: string;
                 play_credit: number;
                 spend_on: Ispend_on;
+                auction_id:string
             }> = [];
             const userEmail = playerInformation.map((player) => {
                 preRegisterRefund.push({
                     created_by: player.player_id,
                     play_credit: player.Auctions?.registeration_fees as number,
                     spend_on: Ispend_on.REFUND_PLAYS,
+                    auction_id:data.auctionId
                 });
                 return player.User.email;
             });
@@ -84,7 +86,7 @@ eventService.on(
                     email: userEmail,
                     template: TEMPLATE.PLAYER_REGISTERATION,
                     subject: "Auction cancelled",
-                    message: `${auctionInfo?.Auctions?.title} has been cancelled and your plays have refunded `,
+                    message: `${auctionInfo?.Auctions?.title} has been cancelled and your ${preRegisterRefund[0]?.play_credit} plays have refunded `,
                 };
                 await mailService(data);
                 await userQueries.addPlayRefundBalanceTx([
