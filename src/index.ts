@@ -18,10 +18,11 @@ import { responseBuilder } from "./common/responses";
 import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
 import startServer from "./utils/start-server";
+import "./utils/cron-schedule"
 
 const app = express();
 
-app.use("/assets/uploads", express.static("assets/uploads"));
+app.use("/assets/", express.static("assets"));
 app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");

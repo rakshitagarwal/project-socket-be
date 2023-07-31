@@ -66,10 +66,58 @@ const remove = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description - for fetching the bid-logs from auction_id
+ * @param {Request} req
+ * @param {Response }res
+ */
+const getBidLogs = async (req: Request, res: Response) => {
+    const response = await auctionService.getBidLogs(
+        req.params.id as unknown as string
+    );
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description - for player registering the auction
+ * @param {Request} req
+ * @param {Response }res
+ */
+const playerAuctionRegister = async (req: Request, res: Response) => {
+    const response = await auctionService.playerRegister(req.body);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description - find a player registered All auction
+ * @param {Request} req
+ * @param {Response }res
+ */
+const getAllMyAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.getAllMyAuction(
+        req.params.id as unknown as string
+    );
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description for starting the auction using start_date
+ * @param  {Request} req
+ * @param  {Response} res
+ */
+const startAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.startAuction(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
     getAll,
     update,
     remove,
+    getBidLogs,
+    playerAuctionRegister,
+    startAuction,
+    getAllMyAuction,
 };

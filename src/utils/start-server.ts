@@ -2,11 +2,11 @@ import { checkHealth } from "../config/db";
 import logger from "../config/logger";
 import app from "..";
 import env from "../config/env";
-
+import socketService from "./socket-service";
 async function startServer() {
     const checking = await checkHealth();
     if (!checking) {
-        return `🚀 DATABASE NOT CONNECTED 🚀`;
+        return `🚀 DATABASE NOT CONNECTED 🚀` 
     }
 
     const server = app.listen(env.PORT, "0.0.0.0", () => {
@@ -27,8 +27,9 @@ async function startServer() {
             console.log("Stopped server");
         });
     });
+    socketService(server);
 
-    return `🚀 DATABASE CONNECTED 🚀`;
+    return `🚀 DATABASE CONNECTED 🚀` 
 }
 
 export default startServer;

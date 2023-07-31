@@ -18,9 +18,13 @@ export const ENDPOINTS = {
     VERIFY: "/verify",
     ID: "/:id",
     PRODUCT: "/product",
-
+    ADD_PLAYS: "add/plays",
     TERM_CONDITION: "/term-condition",
     MEDIA: "/media",
+    BALANCE: "wallet/balance/:id",
+    PLAYER_AUCTION_REGISTER: "player/register",
+    DEDUCT_PLAYS: "deduct/plays",
+    PLAYER_AUCTION_ID:"/player-auction/:id"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -66,8 +70,12 @@ export const AUCTION_MESSAGES = {
     FOUND: "auction found!",
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
-    AUCTION_STATE_NOT_STARTED:
-        "auction status can't be live/compeleted, because it is not yet started!",
+    AUCTION_ALREADY_STARTED:
+        "auction is live,so you can't update the auction detials!",
+    AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
+    SOMETHING_WENT_WRONG: "cannot start auction, something went wrong!",
+    DATE_NOT_PROPER: "start_date shoudl be greater than current date!",
+    AUCTION_ALREADY_SET: "auction start_date is set!",
 };
 
 export const productMessage = {
@@ -98,6 +106,7 @@ export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
+    PLAYER_REGISTERATION: "auction_player_registeration.html",
 };
 
 export const OTP_TYPE = {
@@ -107,6 +116,23 @@ export const OTP_TYPE = {
 };
 
 export const MESSAGES = {
+    SOCKET: {
+        TOTAL_AUCTION_REGISTERED: "total auction registered",
+        AUCTION_LIVE: "Auction live",
+        AUCTION_BUY_NOW: "Auction buy now",
+        AUCTION_WINNER: "Auction winner",
+        AUCTION_CLOSED: "Auction closed",
+        AUCTION_COUNT_DOWN: "Auction count down",
+        AUCTION_RECENT_BID: "Auction recent bid",
+        RECENT_BIDS: "Recents bids",
+        AUCTION_ENDED: "Auction ended",
+        CURRENT_PLAYS: "Current plays",
+        AUCTION_NOT_FOUND: "Auction not found",
+        USER_NOT_REGISTERED: "User not registered",
+        CONTINUE_BID_NOT_ALLOWED: "Continue bid not allowed",
+        INSUFFICIENT_PLAYS_BALANCED: "Insufficient play balance",
+        BUY_NOW: "Buy now",
+    },
     OTP: {
         INVALID_OTP: "Invalid otp",
     },
@@ -162,6 +188,7 @@ export const MESSAGES = {
         TOKEN_NOT_FOUND: "token not found",
         TOKEN_NOT_EXPIRED: "token not expired",
         DATA_FOUND: "data found",
+        UNAUTHORIZED: "unauthorized",
     },
     TERM_CONDITION: {
         CREATED: "term and condition added successfully!",
@@ -172,6 +199,52 @@ export const MESSAGES = {
         INACTIVE_STATUS: "status is not active",
         CONFLICT: "term and condition already exists",
     },
+    USER_PLAY_BALANCE: {
+        PLAYER_BALANCE: "player play balances",
+        PLAYER_NOT_FOUND: "player not found!",
+        PLAY_BALANCE_CREDITED: "player balance credited!",
+        PLAY_BALANCE_NOT_CREDITED:
+            "player balance not added, something went wrong!",
+        USER_IS_NOT_PLAYER: "user is not a player!",
+        USER_WALLET_BALANCE_NOT_FOUND: "wallet balance not found!",
+    },
+    PLAYER_WALLET_TRAX: {
+        PLAYER_TRAX_NOT_FOUND: "transaction not found in wallet!",
+        INSUFFICIENT_PLAY_BALANCE: "insufficient play balance!",
+        PLAYS_NOT_DEBITED: "plays not debited!",
+        PLAYS_SUCCESSFULLY_DEBITED: "plays debited successfully!",
+        TRANSACTION_FAILED: "transaction failed!",
+    },
+    PLAYER_AUCTION_REGISTEREATION: {
+        PLAYER_REGISTERED: "you are registered in auction!",
+        PLAYER_NOT_REGISTERED: "you are not registered!",
+        PLAYER_ALREADY_EXISTS: "player already exists in auction!",
+    },
 };
 
-export const AUCTION_STATE = ["upcoming", "live", "completed"] as const;
+export const SOCKET_EVENT = {
+    AUCTION_WINNER: "auction:winner",
+    AUCTION_COUNT_DOWN: "auction:count:down",
+    AUCTION_RECENT_BID: "auction:recent:bid",
+    AUCTION_BIDS: "auction:bid:history",
+    AUCTION_ERROR: "auction:error",
+    AUCTION_CURRENT_PLAYS: "auction:current:play",
+    AUCTION_STATE: "auction:state",
+    AUCTION_REGISTER_COUNT: "auction:register:count",
+    AUCTION_RUNNER_UP: "auction:runner:up",
+};
+export const NODE_EVENT_SERVICE = {
+    USER_MAIL: "send:user:mail",
+    AUCTION_STATE_UPDATE: "auction:state:update",
+    AUCTION_REMINDER_MAIL: "auction:reminder:mail",
+    AUCTION_CLOSED: "auction:closed",
+    AUCTION_REGISTER_COUNT: "auction:register:count",
+    UPDATE_PLAYER_REGISTER_STATUS:"auction:player:register:status",
+};
+
+export const AUCTION_STATE = [
+    "upcoming",
+    "live",
+    "completed",
+    "cancelled",
+] as const;

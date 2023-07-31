@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-
+import fs from "fs";
 async function startSeed() {
     const prismaClient = new PrismaClient();
     const roles = await prismaClient.masterRole.findMany({});
@@ -9,13 +9,20 @@ async function startSeed() {
     const auctionCategory = await prismaClient.masterAuctionCategory.findMany(
         {}
     );
+    const countryDetails = await prismaClient.countries.findMany({});
     const users = await prismaClient.user.findMany({});
     if (
         !roles.length &&
         !productCategory.length &&
         !auctionCategory.length &&
-        !users.length
+        !users.length &&
+        !countryDetails.length
     ) {
+        const countries = JSON.parse(
+            fs.readFileSync("assets/data/countries.json") as unknown as string
+        );
+
+        await prismaClient.countries.createMany({ data: countries });
         await prismaClient.masterRole.createMany({
             data: [
                 {
@@ -46,9 +53,11 @@ async function startSeed() {
                 first_name: "admin",
                 last_name: "admin",
                 email: "admin929@yopmail.com",
-                password: "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                password:
+                    "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
                 country: "India",
-                is_verified:true,
+                is_verified: true,
+                avatar: "assets/avatar/1.png",
                 role_id: roleAdmin?.id as string,
             },
         });
