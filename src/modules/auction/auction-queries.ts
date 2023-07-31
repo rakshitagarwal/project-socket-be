@@ -1,11 +1,15 @@
-import { auctionState } from "@prisma/client";
+import { Prisma, auctionState,PrismaClient } from "@prisma/client";
+import { auctionResultType } from "@prisma/client";
+
 import { db } from "../../config/db";
 import {
     IAuction,
     IPagination,
     IPlayerRegister,
 } from "./typings/auction-types";
+import { Sql } from "@prisma/client/runtime";
 
+const prisma = new PrismaClient();
 /**
  * Auction Creation
  * @param {IAuction} auction - values regarding the auction data
@@ -419,6 +423,23 @@ const auctionRegistrationCount = async (auctionId: string) => {
     return queryResult;
 };
 
+const fetchPlayerAuction=async (player_id: string)=>{    
+    const query: Sql = Prisma.sql`SELECT COUNT( (T2.player_id,T2.auction_id)) from player_auction_register as T1 LEFT JOIN player_bid_log as T2 ON T1.player_id=T2.player_id and T1.auction_id=T2.auction_id where T1.player_id=${player_id}`;
+    const queryResult = await prisma.$queryRaw(query);
+    return queryResult
+}
+
+const updatePlayerRegistrationAuctionStatus =async(auction_id:string,status:auctionResultType)=>{
+    const queryResult = await db.playerAuctionRegsiter.updateMany({where:{auction_id},data:{status}})
+    return queryResult
+}
+
+const updatePlayerRegistrationAuctionResultStatus=async(auction_id:string,player_id:string)=>{
+    const lostQueryResult= await db.playerAuctionRegsiter.updateMany({where:{AND:[{auction_id},{NOT:{player_id}}]},data:{status:"lost"}})
+    const wonQueryResult= await db.playerAuctionRegsiter.updateMany({where:{auction_id,player_id},data:{status:"won"}})
+    return {lostQueryResult,wonQueryResult}
+}
+
 export const auctionQueries = {
     create,
     getAll,
@@ -435,4 +456,7 @@ export const auctionQueries = {
     checkIfPlayerExists,
     playerRegistrationAuction,
     auctionRegistrationCount,
+    fetchPlayerAuction,
+    updatePlayerRegistrationAuctionStatus,
+    updatePlayerRegistrationAuctionResultStatus
 };

@@ -48,3 +48,9 @@ auctionRouter.post(
     [validateRequest.body(auctionSchemas.ZPlayerRegister)],
     handleAsync(auctionHandler.playerAuctionRegister)
 );
+
+auctionRouter.get(
+    ENDPOINTS.PLAYER_AUCTION_ID,
+    [validateRequest.params(auctionSchemas.ZAuctionId)],
+    handleAsync(auctionHandler.getAllMyAuction)
+);
