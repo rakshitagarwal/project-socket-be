@@ -88,6 +88,11 @@ const playerAuctionRegister = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description for starting the auction using start_date
+ * @param  {Request} req
+ * @param  {Response} res
+ */
 const startAuction = async (req: Request, res: Response) => {
     const response = await auctionService.startAuction(req.body);
     res.status(response.code).json(response);

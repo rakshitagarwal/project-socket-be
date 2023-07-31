@@ -215,6 +215,11 @@ const remove = async (id: string[]) => {
     return query;
 };
 
+/**
+ * @description for the fetching the auction wise logs
+ * @param {string} id - auction id
+ * @returns
+ */
 const fetchAuctionLogs = async (id: string) => {
     const query = await db.playerBidLogs.findMany({
         where: {
@@ -224,6 +229,11 @@ const fetchAuctionLogs = async (id: string) => {
     return query;
 };
 
+/**
+ * @description for starting the auction with start_date
+ * @param {IStartAuction} data
+ * @returns
+ */
 const startAuction = async (data: IStartAuction) => {
     const query = await db.auction.update({
         where: {
@@ -237,7 +247,7 @@ const startAuction = async (data: IStartAuction) => {
 };
 
 /**
- * Retrieves a list of upcoming player auctions.
+ * @description Retrieves a list of upcoming player auctions.
  * @returns {Promise<Array<UpcomingAuctionInfo>>} The list of upcoming player auctions.
  */
 const upcomingPlayerAuction = async () => {

@@ -222,6 +222,11 @@ const playerRegister = async (data: IPlayerRegister) => {
     );
 };
 
+/**
+ * @description for the auction start
+ * @param  {IStartAuction} data - for start_date and player_id
+ * @returns
+ */
 const startAuction = async (data: IStartAuction) => {
     const auction = await auctionQueries.getActiveAuctioById(data.auction_id);
     if (!auction) {
