@@ -10,8 +10,15 @@ import redisClient from "../../config/redis";
  * @returns {object} - the response object using responseBuilder.
  */
 const addbidBot = async (botData: IBidBotInfo) => {
-    await redisClient.set(`${botData.auction_id}:${botData.player_id}:bidbot`,
-     `${botData.player_id}:${botData.bid_limit}`);
+    const Data = await redisClient.get(`${botData.auction_id}:bidbot`);
+    const oneBidByBot = {playerId: `${botData.player_id}`,limit: `${botData.bid_limit}`,bid_no: 0,};
+    if(!Data) {
+        await redisClient.set(`${botData.auction_id}:bidbot`, JSON.stringify({[botData.player_id]: oneBidByBot}));
+    } else {
+        const newData = JSON.parse(Data);
+        newData[botData.player_id] = oneBidByBot;
+        await redisClient.set(`${botData.auction_id}:bidbot`, JSON.stringify(newData));
+    }
     const result = await bidBotQueries.addBidBot(botData as IBidBotInfo);
     if (result) return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, result);
     return responseBuilder.badRequestError(MESSAGES.BIDBOT.BIDBOT_CREATE_FAIL);
