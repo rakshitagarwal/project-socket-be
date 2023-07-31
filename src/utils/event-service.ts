@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import { auctionState } from "@prisma/client";
 import { mailService } from "./mail-service";
 import { auctionQueries } from "../modules/auction/auction-queries";
 import { Imail } from "./typing/utils-types";
@@ -9,7 +10,7 @@ import {
     MESSAGES,
 } from "../common/constants";
 import { PRE_REGISTER_THRESHOLD_STATUS } from "./typing/utils-types";
-import {Ispend_on} from "../modules/users/typings/user-types"
+import { Ispend_on } from "../modules/users/typings/user-types";
 import redisClient from "../config/redis";
 import userQueries from "../modules/users/user-queries";
 import { AppGlobal } from "./socket-service";
@@ -42,14 +43,14 @@ eventService.on(
                 created_by: string;
                 play_credit: number;
                 spend_on: Ispend_on;
-                auction_id:string
+                auction_id: string;
             }> = [];
             const userEmail = playerInformation.map((player) => {
                 preRegisterRefund.push({
                     created_by: player.player_id,
                     play_credit: player.Auctions?.registeration_fees as number,
                     spend_on: Ispend_on.REFUND_PLAYS,
-                    auction_id:data.auctionId
+                    auction_id: data.auctionId,
                 });
                 return player.User.email;
             });
@@ -106,10 +107,13 @@ eventService.on(
  */
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE,
-    async function (data: { auctionId: string; state: string }) {
+    async function (data: { auctionId: string; state: auctionState }) {
         await auctionQueries.updateAuctionState(data.auctionId, data.state);
     }
 );
+eventService.on(NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,async(auction_id:string)=>{
+    await auctionQueries.updatePlayerRegistrationAuctionStatus(auction_id,"live");
+})
 
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_CLOSED,
@@ -119,32 +123,7 @@ eventService.on(
             const winnerePayload = JSON.parse(auctionBidLog);
             await userQueries.playerBidLog(winnerePayload);
             const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
-            const total_bids = await userQueries.getWinnerTotalBid(
-                auctionId,
-                newWinnerPayload.player_id
-            );
-            const higherBidder = await userQueries.fetchAuctionHigherBider(
-                auctionId
-            );
-            const isWinner = higherBidder.find((bidder) => {
-                return bidder.player_id === newWinnerPayload.player_id;
-            });
-            if (isWinner) {
-                const index = higherBidder.indexOf(isWinner);
-                higherBidder.splice(index, 1);
-            } else {
-                higherBidder.splice(higherBidder.length - 1, 1);
-            }
-            socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RUNNER_UP, {
-                message: MESSAGES.SOCKET.BUY_NOW,
-                data: higherBidder,
-            });
-            await userQueries.playerAuctionWinner({
-                player_id: newWinnerPayload.player_id,
-                auction_id: newWinnerPayload.auction_id,
-                player_bot_id: newWinnerPayload.player_bot_id,
-                total_bids,
-            });
+            await auctionQueries.updatePlayerRegistrationAuctionResultStatus(auctionId,newWinnerPayload.player_id)            
         }
     }
 );

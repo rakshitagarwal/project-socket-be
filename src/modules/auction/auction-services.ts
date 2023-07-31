@@ -198,19 +198,11 @@ const playerRegister = async (data: IPlayerRegister) => {
     const getRegisteredPlayer = await redisClient.get("auction:pre-register");
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(
-            "auction:pre-register",
-            JSON.stringify(newRedisObject)
-        );
+        await redisClient.set("auction:pre-register",JSON.stringify(newRedisObject));
     } else {
-        const registeredObj = JSON.parse(
-            getRegisteredPlayer as unknown as string
-        );
+        const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(
-            "auction:pre-register",
-            JSON.stringify(registeredObj)
-        );
+        await redisClient.set("auction:pre-register",JSON.stringify(registeredObj));
     }
     eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT, {
         auctionId: data.auction_id,
@@ -221,6 +213,13 @@ const playerRegister = async (data: IPlayerRegister) => {
     );
 };
 
+const getAllMyAuction = async (player_id: string) => {
+    const playerAuction = await auctionQueries.fetchPlayerAuction(player_id) ;
+    console.log(playerAuction)
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND);
+};
+
+
 export const auctionService = {
     create,
     getById,
@@ -229,4 +228,5 @@ export const auctionService = {
     remove,
     getBidLogs,
     playerRegister,
+    getAllMyAuction,
 };
