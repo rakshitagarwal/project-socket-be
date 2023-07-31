@@ -67,7 +67,21 @@ const remove = async (req: Request, res: Response) => {
 };
 
 /**
- *
+ * @description - for fetching the bid-logs from auction_id
+ * @param {Request} req
+ * @param {Response }res
+ */
+const getBidLogs = async (req: Request, res: Response) => {
+    const response = await auctionService.getBidLogs(
+        req.params.id as unknown as string
+    );
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description - for player registering the auction
+ * @param {Request} req
+ * @param {Response }res
  */
 const playerAuctionRegister = async (req: Request, res: Response) => {
     const response = await auctionService.playerRegister(req.body);
@@ -80,5 +94,6 @@ export const auctionHandler = {
     getAll,
     update,
     remove,
+    getBidLogs,
     playerAuctionRegister,
 };
