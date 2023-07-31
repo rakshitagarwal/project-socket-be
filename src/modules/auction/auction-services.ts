@@ -251,6 +251,12 @@ const startAuction = async (data: IStartAuction) => {
     return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
+const getAllMyAuction = async (player_id: string) => {
+    const playerAuction = await auctionQueries.fetchPlayerAuction(player_id);
+    console.log(playerAuction);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND);
+};
+
 export const auctionService = {
     create,
     getById,
@@ -260,4 +266,5 @@ export const auctionService = {
     getBidLogs,
     playerRegister,
     startAuction,
+    getAllMyAuction,
 };

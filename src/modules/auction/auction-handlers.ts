@@ -89,6 +89,18 @@ const playerAuctionRegister = async (req: Request, res: Response) => {
 };
 
 /**
+ * @description - find a player registered All auction
+ * @param {Request} req
+ * @param {Response }res
+ */
+const getAllMyAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.getAllMyAuction(
+        req.params.id as unknown as string
+    );
+    res.status(response.code).json(response);
+};
+
+/**
  * @description for starting the auction using start_date
  * @param  {Request} req
  * @param  {Response} res
@@ -107,4 +119,5 @@ export const auctionHandler = {
     getBidLogs,
     playerAuctionRegister,
     startAuction,
+    getAllMyAuction,
 };
