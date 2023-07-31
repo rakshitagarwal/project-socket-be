@@ -88,6 +88,11 @@ const playerAuctionRegister = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+const startAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.startAuction(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
@@ -96,4 +101,5 @@ export const auctionHandler = {
     remove,
     getBidLogs,
     playerAuctionRegister,
+    startAuction,
 };

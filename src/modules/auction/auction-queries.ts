@@ -4,6 +4,7 @@ import {
     IAuction,
     IPagination,
     IPlayerRegister,
+    IStartAuction,
 } from "./typings/auction-types";
 
 /**
@@ -223,6 +224,18 @@ const fetchAuctionLogs = async (id: string) => {
     return query;
 };
 
+const startAuction = async (data: IStartAuction) => {
+    const query = await db.auction.update({
+        where: {
+            id: data.auction_id,
+        },
+        data: {
+            start_date: data.start_date,
+        },
+    });
+    return query;
+};
+
 /**
  * Retrieves a list of upcoming player auctions.
  * @returns {Promise<Array<UpcomingAuctionInfo>>} The list of upcoming player auctions.
@@ -435,4 +448,5 @@ export const auctionQueries = {
     checkIfPlayerExists,
     playerRegistrationAuction,
     auctionRegistrationCount,
+    startAuction,
 };

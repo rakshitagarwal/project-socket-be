@@ -13,6 +13,7 @@ import {
     IPagination,
     IPlayerRegister,
     IRegisterPlayer,
+    IStartAuction,
 } from "./typings/auction-types";
 import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
@@ -221,6 +222,30 @@ const playerRegister = async (data: IPlayerRegister) => {
     );
 };
 
+const startAuction = async (data: IStartAuction) => {
+    const auction = await auctionQueries.getActiveAuctioById(data.auction_id);
+    if (!auction) {
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    }
+    const auction_updated = await auctionQueries.startAuction(data);
+    if (!auction_updated.id) {
+        return responseBuilder.expectationField(
+            AUCTION_MESSAGES.SOMETHING_WENT_WRONG
+        );
+    }
+    if (auction.start_date) {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_ALREADY_SET
+        );
+    }
+    if (data.start_date < new Date()) {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.DATE_NOT_PROPER
+        );
+    }
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
+};
+
 export const auctionService = {
     create,
     getById,
@@ -229,4 +254,5 @@ export const auctionService = {
     remove,
     getBidLogs,
     playerRegister,
+    startAuction,
 };
