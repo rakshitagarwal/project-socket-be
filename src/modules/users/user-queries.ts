@@ -7,7 +7,7 @@ import {
     IWalletTx,
     IDeductPlx,
     IPlayerBidLog,
-    IPlayerActionWinner,
+    // IPlayerActionWinner,
     PlayerBidLogGroup,
     Ispend_on,
 } from "./typings/user-types";
@@ -136,8 +136,8 @@ const fetchPlayerId = async (id: string) => {
  * @returns
  */
 
-const addPlayBalanceTx = async (data: IWalletTx) => {
-    const query = await db.playerWalletTx.create({
+const addPlayBalanceTx = async (prisma: PrismaClient, data: IWalletTx) => {
+    const query = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
             created_by: data.player_id,
@@ -159,14 +159,46 @@ const addPlayRefundBalanceTx = async (
     return query;
 };
 
+const addPlaysToWallet = async (prisma: PrismaClient, data: IWalletTx) => {
+    const query = await prisma.playerWallet.create({
+        data: {
+            play_balance: data.plays,
+            player_id: data.player_id,
+        },
+    });
+    return query;
+};
+
 const playerWalletBac = async (player_id: string) => {
-    const query = await db.playerWalletTx.findMany({
+    const query = await db.playerWallet.findFirst({
         where: {
-            created_by: player_id,
+            player_id: player_id,
         },
         select: {
-            play_credit: true,
-            play_debit: true,
+            id: true,
+            play_balance: true,
+        },
+    });
+    return query;
+};
+
+/**
+ * @description created the transaction for the BUY plays debited
+ * @param {string} id
+ * @param {number} plays
+ */
+const createTrx = async (
+    prisma: PrismaClient,
+    id: string,
+    player_id: string,
+    plays: number
+) => {
+    const query = await prisma.playerWalletTransaction.create({
+        data: {
+            play_debit: plays,
+            created_by: player_id,
+            spend_on: "BUY_PLAYS",
+            wallet_id: id,
         },
     });
     return query;
@@ -187,17 +219,35 @@ const getPlayerTrxById = async (player_id: string, trx_id: string) => {
     return query;
 };
 
-const debitPlayBalance = async (data: IDeductPlx) => {
-    const query = await db.playerWalletTx.create({
+/**
+ * @description the debited amount from the player wallet balance
+ * @param {PrismaClient} prisma
+ * @param {IDeductPlx} data
+ * @returns
+ */
+
+const debitPlayBalance = async (
+    prisma: PrismaClient,
+    data: IDeductPlx & {
+        walletId: string;
+    }
+) => {
+    const query = await prisma.playerWallet.update({
+        where: {
+            id: data.walletId,
+        },
         data: {
-            play_debit: data.plays,
-            created_by: data.player_id,
-            spend_on: "BUY_PLAYS",
+            play_balance: data.plays,
         },
     });
     return query;
 };
 
+/**
+ * @description the data for creating the bid transaction
+ * @param {IDeductPlx} data
+ * @returns
+ */
 const createBidtransaction = async (data: IDeductPlx) => {
     const query = await db.playerWalletTx.create({
         data: {
@@ -228,12 +278,12 @@ const playerBidLog = async (data: [IPlayerBidLog]) => {
  * @returns {Promise<AuctionWinner>} A promise that resolves to the created AuctionWinner object representing the recorded player auction winner.
  */
 
-const playerAuctionWinner = async (data: IPlayerActionWinner) => {
-    const queryResult = await db.auctionWinner.create({
-        data: { ...data },
-    });
-    return queryResult;
-};
+// const playerAuctionWinner = async (data: IPlayerActionWinner) => {
+//     const queryResult = await db.auctionResult.create({
+//         data: { ...data },
+//     });
+//     return queryResult;
+// };
 
 /**
  * fetch the total number of bids made by a specific player in a given auction.
@@ -266,6 +316,7 @@ const fetchAuctionHigherBider = async (
     const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
     return queryResult;
 };
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -277,9 +328,11 @@ const userQueries = {
     debitPlayBalance,
     createBidtransaction,
     playerBidLog,
-    playerAuctionWinner,
+    // playerAuctionWinner,
     getWinnerTotalBid,
     fetchAuctionHigherBider,
     addPlayRefundBalanceTx,
+    createTrx,
+    addPlaysToWallet,
 };
 export default userQueries;

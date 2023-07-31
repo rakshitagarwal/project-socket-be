@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { auctionState } from "@prisma/client";
 import { db } from "../../config/db";
 import {
     IAuction,
@@ -17,8 +17,6 @@ const create = async (auction: IAuction, userId: string) => {
         data: {
             title: auction.title,
             description: auction.description as string,
-            bid_increment_price: auction.price_increment,
-            opening_price: auction.opening_price,
             plays_consumed_on_bid: auction.play_consumed,
             product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
@@ -27,11 +25,7 @@ const create = async (auction: IAuction, userId: string) => {
             is_preRegistered: auction.is_pregistered,
             registeration_count: auction.pre_register_count,
             registeration_fees: auction.pre_register_fees,
-            registeration_endDate: auction.pre_registeration_endDate,
-            auction_pre_registeration_startDate:
-                auction.auction_pre_registeration_startDate,
             terms_and_conditions: auction.terms_condition,
-            state: auction.auction_state,
             created_by: userId,
         },
         select: {
@@ -66,8 +60,6 @@ const getActiveAuctioById = async (id: string) => {
             registeration_fees: true,
             terms_and_conditions: true,
             status: true,
-            registeration_endDate: true,
-            auction_pre_registeration_startDate: true,
             is_preRegistered: true,
             state: true,
             auctionCategory: {
@@ -94,7 +86,7 @@ const getActiveAuctioById = async (id: string) => {
  * @returns {[Promise<IAuction>]}
  */
 const getMultipleActiveById = async (id: string[]) => {
-    const query = await db.auction.findMany({
+    const query = await db.auction.findFirst({
         where: {
             AND: {
                 id: {
@@ -147,8 +139,6 @@ const getAll = async (query: IPagination) => {
             is_preRegistered: true,
             registeration_count: true,
             registeration_fees: true,
-            registeration_endDate: true,
-            auction_pre_registeration_startDate: true,
             terms_and_conditions: true,
             auctionCategory: true,
             products: true,
@@ -183,19 +173,13 @@ const update = async (
         data: {
             title: auction.title,
             description: auction.description,
-            bid_increment_price: auction.price_increment,
-            opening_price: auction.opening_price,
             plays_consumed_on_bid: auction.play_consumed,
             product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,
-            start_date: auction.start_date,
             is_preRegistered: auction.is_pregistered as boolean,
             registeration_count: auction.pre_register_count,
             registeration_fees: auction.pre_register_fees,
-            registeration_endDate: auction.pre_registeration_endDate,
-            auction_pre_registeration_startDate:
-                auction.auction_pre_registeration_startDate,
             terms_and_conditions: auction.terms_condition,
             state: auction.auction_state,
             created_by: userId,
@@ -213,8 +197,8 @@ const update = async (
  * @param {string} id - Auction ID
  * @returns {Promise<IAuction>} - return the auction detials
  */
-const remove = async (prisma: PrismaClient, id: string[]) => {
-    const query = await prisma.auctions.updateMany({
+const remove = async (id: string[]) => {
+    const query = await db.auction.updateMany({
         where: {
             AND: {
                 id: {
@@ -264,8 +248,7 @@ const upcomingPlayerAuction = async () => {
             state: true,
             registeration_count: true,
             is_preRegistered: true,
-            registeration_endDate: true,
-            auction_pre_registeration_startDate: true,
+            start_date: true,
             bid_increment_price: true,
             plays_consumed_on_bid: true,
             opening_price: true,
@@ -276,7 +259,7 @@ const upcomingPlayerAuction = async () => {
             },
         },
         orderBy: {
-            auction_pre_registeration_startDate: "desc",
+            start_date: "desc",
         },
     });
     return queryResult;
@@ -288,7 +271,7 @@ const upcomingPlayerAuction = async () => {
  * @param {string} payload - The new state to set for the auction.
  * @returns {Promise<Auction>} The updated auction object.
  */
-const updateAuctionState = async (auctionId: string, payload: string) => {
+const updateAuctionState = async (auctionId: string, payload: auctionState) => {
     const queryResult = await db.auction.update({
         data: { state: payload },
         where: { id: auctionId },
@@ -366,7 +349,7 @@ const playerRegistrationAuction = async (auction_id: string) => {
                 select: {
                     title: true,
                     registeration_fees: true,
-                    auction_pre_registeration_startDate: true,
+                    start_date: true,
                 },
             },
             User: {
@@ -382,47 +365,47 @@ const playerRegistrationAuction = async (auction_id: string) => {
  * Get upcoming auctions
  * @returns {[Promise<IAuction>]}
  */
-const upcomingPlayerAuctionReminder = async () => {
-    /**
-     * Query the database to fetch upcoming player auctions.
-     * @type {Promise<Array<UpcomingAuctionInfo>>}
-     */
-    const queryResult = await db.auction.findMany({
-        where: {
-            AND: [
-                {
-                    is_deleted: false,
-                    state: "upcoming",
-                    status: true,
-                },
-                {
-                    AND: [
-                        {
-                            registeration_endDate: {
-                                gte: new Date(
-                                    new Date().getTime() - 36 * 60000
-                                ),
-                            },
-                        },
-                    ],
-                },
-            ],
-        },
-        select: {
-            id: true,
-            title: true,
-            state: true,
-            registeration_count: true,
-            is_preRegistered: true,
-            registeration_endDate: true,
-            auction_pre_registeration_startDate: true,
-        },
-        orderBy: {
-            auction_pre_registeration_startDate: "desc",
-        },
-    });
-    return queryResult;
-};
+// const upcomingPlayerAuctionReminder = async () => {
+//     /**
+//      * Query the database to fetch upcoming player auctions.
+//      * @type {Promise<Array<UpcomingAuctionInfo>>}
+//      */
+//     const queryResult = await db.auction.findMany({
+//         where: {
+//             AND: [
+//                 {
+//                     is_deleted: false,
+//                     state: "upcoming",
+//                     status: true,
+//                 },
+//                 {
+//                     AND: [
+//                         {
+//                             registeration_endDate: {
+//                                 gte: new Date(
+//                                     new Date().getTime() - 36 * 60000
+//                                 ),
+//                             },
+//                         },
+//                     ],
+//                 },
+//             ],
+//         },
+//         select: {
+//             id: true,
+//             title: true,
+//             state: true,
+//             registeration_count: true,
+//             is_preRegistered: true,
+//             registeration_endDate: true,
+//             auction_pre_registeration_startDate: true,
+//         },
+//         orderBy: {
+//             auction_pre_registeration_startDate: "desc",
+//         },
+//     });
+//     return queryResult;
+// };
 
 /**
  * Get player auctions registerations count
@@ -435,6 +418,7 @@ const auctionRegistrationCount = async (auctionId: string) => {
     });
     return queryResult;
 };
+
 export const auctionQueries = {
     create,
     getAll,
@@ -450,6 +434,5 @@ export const auctionQueries = {
     playerAuctionRegistered,
     checkIfPlayerExists,
     playerRegistrationAuction,
-    upcomingPlayerAuctionReminder,
     auctionRegistrationCount,
 };
