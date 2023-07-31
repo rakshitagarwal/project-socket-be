@@ -13,6 +13,7 @@ import {
     IPagination,
     IPlayerRegister,
     IRegisterPlayer,
+    IStartAuction,
 } from "./typings/auction-types";
 import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
@@ -198,11 +199,19 @@ const playerRegister = async (data: IPlayerRegister) => {
     const getRegisteredPlayer = await redisClient.get("auction:pre-register");
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set("auction:pre-register",JSON.stringify(newRedisObject));
+        await redisClient.set(
+            "auction:pre-register",
+            JSON.stringify(newRedisObject)
+        );
     } else {
-        const registeredObj = JSON.parse(getRegisteredPlayer as unknown as string);
+        const registeredObj = JSON.parse(
+            getRegisteredPlayer as unknown as string
+        );
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set("auction:pre-register",JSON.stringify(registeredObj));
+        await redisClient.set(
+            "auction:pre-register",
+            JSON.stringify(registeredObj)
+        );
     }
     eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT, {
         auctionId: data.auction_id,
@@ -213,12 +222,40 @@ const playerRegister = async (data: IPlayerRegister) => {
     );
 };
 
-const getAllMyAuction = async (player_id: string) => {
-    const playerAuction = await auctionQueries.fetchPlayerAuction(player_id) ;
-    console.log(playerAuction)
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND);
+/**
+ * @description for the auction start
+ * @param  {IStartAuction} data - for start_date and player_id
+ * @returns
+ */
+const startAuction = async (data: IStartAuction) => {
+    const auction = await auctionQueries.getActiveAuctioById(data.auction_id);
+    if (!auction) {
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    }
+    const auction_updated = await auctionQueries.startAuction(data);
+    if (!auction_updated.id) {
+        return responseBuilder.expectationField(
+            AUCTION_MESSAGES.SOMETHING_WENT_WRONG
+        );
+    }
+    if (auction.start_date) {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_ALREADY_SET
+        );
+    }
+    if (data.start_date < new Date()) {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.DATE_NOT_PROPER
+        );
+    }
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
+const getAllMyAuction = async (player_id: string) => {
+    const playerAuction = await auctionQueries.fetchPlayerAuction(player_id);
+    console.log(playerAuction);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND);
+};
 
 export const auctionService = {
     create,
@@ -228,5 +265,6 @@ export const auctionService = {
     remove,
     getBidLogs,
     playerRegister,
+    startAuction,
     getAllMyAuction,
 };

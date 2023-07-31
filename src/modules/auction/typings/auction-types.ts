@@ -20,3 +20,5 @@ export interface IRegisterPlayer {
     player_id: string;
     created_at: Date;
 }
+
+export type IStartAuction = z.infer<typeof auctionSchemas.ZStartAuction>;

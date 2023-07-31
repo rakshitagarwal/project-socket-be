@@ -27,7 +27,10 @@ auctionRouter.get(
 
 auctionRouter.put(
     ENDPOINTS.BASE + ":id",
-    validateRequest.params(auctionSchemas.ZAuctionId),
+    [
+        validateRequest.params(auctionSchemas.ZAuctionId),
+        validateRequest.body(auctionSchemas.ZAuctionAdd),
+    ],
     handleAsync(auctionHandler.update)
 );
 
@@ -49,6 +52,11 @@ auctionRouter.post(
     handleAsync(auctionHandler.playerAuctionRegister)
 );
 
+auctionRouter.post(
+    ENDPOINTS.BASE + "start",
+    [validateRequest.body(auctionSchemas.ZStartAuction)],
+    handleAsync(auctionHandler.startAuction)
+);
 auctionRouter.get(
     ENDPOINTS.PLAYER_AUCTION_ID,
     [validateRequest.params(auctionSchemas.ZAuctionId)],
