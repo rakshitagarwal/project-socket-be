@@ -110,7 +110,10 @@ export const bidByBotRecieved = async (bidPayload: IBidAuction) => {
         console.log(isBotEnabled, "BotEnabled");
         const isBidHistory = await redisClient.get( `${bidPayload.auction_id}:bidHistory`);
         const bidHistoryData = JSON.parse(isBidHistory as unknown as string);
-
+        // eslint-disable-next-line no-prototype-builtins
+        const bidBotCollection = bidHistoryData.filter((obj: any) => obj.hasOwnProperty('player_bot_id'));
+        console.log(bidBotCollection);
+        
         const Data = await redisClient.get(`${bidPayload.auction_id}:bidbot`);
         const bidBotData = JSON.parse(Data as unknown as string)
         if (bidBotData !== null && bidBotData.bid_no < bidBotData.limit) {
