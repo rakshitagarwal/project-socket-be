@@ -14,13 +14,11 @@ import {
     IPlayerRegister,
     IRegisterPlayer,
 } from "./typings/auction-types";
-import mediaQueries from "../media/media-queries";
 import productQueries from "../product/product-queries";
-import { prismaTransaction } from "../../utils/prisma-transactions";
-import { PrismaClient } from "@prisma/client";
 import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
+
 /**
  * Auction Creation
  * @param {IAuction} auction - auction request body details
@@ -39,21 +37,6 @@ const create = async (auction: IAuction, userId: string) => {
         );
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-    if (auction.is_pregistered) {
-        const newDateFormed = new Date(
-            new Date(
-                auction.pre_registeration_endDate as unknown as string
-            ).getTime() +
-                60 * 60 * 24 * 1000
-        ).toISOString();
-        auction = {
-            ...auction,
-            auction_pre_registeration_startDate: newDateFormed,
-            pre_registeration_endDate: new Date(
-                auction.pre_registeration_endDate as unknown as string
-            ).toISOString(),
-        };
-    }
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
         return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
@@ -129,33 +112,15 @@ const update = async (
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 
-    if (
-        auction.start_date &&
-        auction.start_date < new Date() &&
-        (auction.auction_state === "live" ||
-            auction.auction_state === "completed")
-    ) {
+    if (auction.start_date && auction.start_date > new Date()) {
         return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_STATE_NOT_STARTED
+            AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
         );
     }
-
-    if (auction.is_pregistered) {
-        const newDateFormed = new Date(
-            new Date(
-                auction.pre_registeration_endDate as unknown as string
-            ).getTime() +
-                60 * 60 * 24 * 1000
-        ).toISOString();
-        auction = {
-            ...auction,
-            auction_pre_registeration_startDate: newDateFormed,
-            pre_registeration_endDate: new Date(
-                auction.pre_registeration_endDate as unknown as string
-            ).toISOString(),
-        };
-    }
-
+    if (isAuctionExists.state === "live")
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_LIVE_DELETE
+        );
     const createdAuction = await auctionQueries.update(
         auction,
         auctionId,
@@ -173,19 +138,14 @@ const update = async (
  */
 const remove = async (id: string[]) => {
     const isExists = await auctionQueries.getMultipleActiveById(id);
-    if (!isExists.length)
+    if (!isExists?.id)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    const isTransactioned = await prismaTransaction(
-        async (prisma: PrismaClient) => {
-            const isDeleted = await auctionQueries.remove(prisma, id);
-            const isMediaDeleted = await mediaQueries.softdeletedByIds(
-                prisma,
-                id
-            );
-            return { isDeleted, isMediaDeleted };
-        }
-    );
-    if (isTransactioned.isDeleted && isTransactioned.isMediaDeleted)
+    if (isExists.state === "live")
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_LIVE_DELETE
+        );
+    const isDeleted = await auctionQueries.remove(id);
+    if (isDeleted.count)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
     return responseBuilder.expectationField();
 };

@@ -19,7 +19,12 @@ import { responseBuilder } from "../../common/responses";
 import { PrismaClient } from "@prisma/client";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import eventService from "../../utils/event-service";
-import { TEMPLATE, MESSAGES, OTP_TYPE,NODE_EVENT_SERVICE } from "../../common/constants";
+import {
+    TEMPLATE,
+    MESSAGES,
+    OTP_TYPE,
+    NODE_EVENT_SERVICE,
+} from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
 import { generateAccessToken } from "../../common/helper";
@@ -349,6 +354,11 @@ const fetchAllUsers = async (query: IuserPagination) => {
     });
 };
 
+/**
+ * @description add the wallet transaction for the buy plays
+ * @param {IWalletTx} data
+ * @returns
+ */
 const addWalletTransaction = async (data: IWalletTx) => {
     const isExists = await userQueries.fetchPlayerId(data.player_id);
     if (!isExists?.id)
@@ -360,8 +370,21 @@ const addWalletTransaction = async (data: IWalletTx) => {
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
         );
     }
-    const addedBalance = await userQueries.addPlayBalanceTx(data);
-    if (addedBalance.id)
+    const transaction = await prismaTransaction(
+        async (prisma: PrismaClient) => {
+            const addedBalance = await userQueries.addPlayBalanceTx(
+                prisma,
+                data
+            );
+            const addedWallet = await userQueries.addPlaysToWallet(
+                prisma,
+                data
+            );
+
+            return { addedBalance, addedWallet };
+        }
+    );
+    if (transaction.addedBalance && transaction.addedWallet)
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED
         );
@@ -370,8 +393,15 @@ const addWalletTransaction = async (data: IWalletTx) => {
     );
 };
 
+/**
+ * @description get the player wallet balance
+ * @param {string} player_id
+ * @returns
+ */
+
 const getPlayerWalletBalance = async (player_id: string) => {
     const isExists = await userQueries.fetchPlayerId(player_id);
+
     if (!isExists?.id)
         return responseBuilder.notFoundError(
             MESSAGES.USER_PLAY_BALANCE.PLAYER_NOT_FOUND
@@ -382,28 +412,18 @@ const getPlayerWalletBalance = async (player_id: string) => {
         );
     }
     const transactions = await userQueries.playerWalletBac(player_id);
-    if (!transactions.length) return responseBuilder.notFoundError();
-    const credit_amount = transactions
-        .map(
-            (trx) =>
-                (trx.play_credit as unknown as number) &&
-                (trx.play_credit as unknown as number)
-        )
-        .reduce((cur, next) => cur + next, 0);
-    const debit_amount = transactions
-        .map(
-            (trx) =>
-                (trx.play_debit as unknown as number) &&
-                (trx.play_debit as unknown as number)
-        )
-        .reduce((cur, next) => cur + next, 0);
+    if (!transactions?.id)
+        return responseBuilder.notFoundError(
+            MESSAGES.USER_PLAY_BALANCE.USER_WALLET_BALANCE_NOT_FOUND
+        );
     return responseBuilder.okSuccess(
         MESSAGES.USER_PLAY_BALANCE.PLAYER_BALANCE,
         {
-            play_balance: credit_amount - debit_amount,
+            play_balance: transactions.play_balance,
         }
     );
 };
+
 /**
  *  @description deduct the plaer for the auction ID
  *  @param {IDeductPlx} data - deduct play for the specific player
@@ -412,36 +432,36 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
     const isExists = await userQueries.fetchPlayerId(data.player_id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
-    const transactions = await userQueries.playerWalletBac(data.player_id);
-    if (!transactions.length) return responseBuilder.notFoundError();
-    const credit_amount = transactions
-        .map(
-            (trx) =>
-                (trx.play_credit as unknown as number) &&
-                (trx.play_credit as unknown as number)
-        )
-        .reduce((cur, next) => cur + next, 0);
-    const debit_amount = transactions
-        .map(
-            (trx) =>
-                (trx.play_debit as unknown as number) &&
-                (trx.play_debit as unknown as number)
-        )
-        .reduce((cur, next) => cur + next, 0);
-    const fetchedPlayBalx = credit_amount - debit_amount;
-    if (data.plays < 0 || data.plays > fetchedPlayBalx)
-        return responseBuilder.badRequestError(
-            MESSAGES.PLAYER_WALLET_TRAX.INSUFFICIENT_PLAY_BALANCE
+    const wallet = await userQueries.playerWalletBac(data.player_id);
+    if (!wallet?.id)
+        return responseBuilder.notFoundError(
+            MESSAGES.USER_PLAY_BALANCE.USER_WALLET_BALANCE_NOT_FOUND
         );
-    const debited_amount = await userQueries.debitPlayBalance(data);
-    if (!debited_amount.id)
+    const transaction = await prismaTransaction(
+        async (prisma: PrismaClient) => {
+            const remaining_blx = wallet.play_balance - data.plays;
+            const debited_amount = await userQueries.debitPlayBalance(prisma, {
+                ...data,
+                plays: remaining_blx,
+                walletId: wallet?.id as unknown as string,
+            });
+            const walletTrx = await userQueries.createTrx(
+                prisma,
+                debited_amount.id,
+                data.player_id,
+                data.plays
+            );
+            return { debited_amount, walletTrx };
+        }
+    );
+    if (!transaction.wallet && !transaction.walletTrx)
         return responseBuilder.expectationField(
-            MESSAGES.PLAYER_WALLET_TRAX.PLAYS_NOT_DEBITED
+            MESSAGES.PLAYER_WALLET_TRAX.TRANSACTION_FAILED
         );
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_WALLET_TRAX.PLAYS_SUCCESSFULLY_DEBITED,
         {
-            transaction_id: debited_amount.id,
+            transaction_id: transaction.walletTrx.id,
         }
     );
 };
