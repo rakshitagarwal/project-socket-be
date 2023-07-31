@@ -44,6 +44,26 @@ const getBidBotById = async function (id: string) {
 };
 
 /**
+ * @description getBidBotByAuctionId is used to retrieve the bid bot based on its id.
+ * @param {string} id - The id of bidbot is passed here using this variable
+ * @returns {queryResult} - the result of execution of query.
+ */
+const getAllBidBot = async function () {
+    const queryResult = await db.bidBot.findMany({
+        select: {
+            id: true,
+            player_id: true,
+            auction_id: true,
+            bid_limit: true,
+            total_bot_bid: true,
+            is_active: true,
+            created_at: true,
+        },
+    });
+    return queryResult;
+};
+
+/**
  * @description getBidBotByAuctionId is used to retrieve the bid bot based on the auction id.
  * @param {string} id - The id of auction is passed here using this variable
  * @returns {queryResult} - the result of execution of query.
@@ -111,6 +131,7 @@ const updateBidBot = async function (id: string, bidsUpdated: number) {
 const bidBotQueries = {
     addBidBot,
     getBidBotById,
+    getAllBidBot,
     getBidBotByPlayerId,
     getBidBotByAuctionId,
     updateBidBot,

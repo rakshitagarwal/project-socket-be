@@ -2,6 +2,7 @@ import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import bidBotQueries from "./bid-bot-queries";
 import { IBidBotInfo, IUpdate } from "./typings/bid-bot-types";
+import redisClient from "../../config/redis";
 
 /**
  * @description addbidBot is used to add bidbot information to the database.
@@ -9,6 +10,8 @@ import { IBidBotInfo, IUpdate } from "./typings/bid-bot-types";
  * @returns {object} - the response object using responseBuilder.
  */
 const addbidBot = async (botData: IBidBotInfo) => {
+    await redisClient.set(`${botData.auction_id}:${botData.player_id}:bidbot`,
+     `${botData.player_id}:${botData.bid_limit}`);
     const result = await bidBotQueries.addBidBot(botData as IBidBotInfo);
     if (result) return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, result);
     return responseBuilder.badRequestError(MESSAGES.BIDBOT.BIDBOT_CREATE_FAIL);

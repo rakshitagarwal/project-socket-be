@@ -45,6 +45,9 @@ const socketService = async (server: Server) => {
             socket.on("auction:bid", (data) => {
                 newBiDRecieved(data, socket.id);
             });
+            // socket.on("auction:bidbot", (data) => {
+            //     newBidByBotRecieved(data, socket.id);
+            // });
         }
     });
     return socketService;
