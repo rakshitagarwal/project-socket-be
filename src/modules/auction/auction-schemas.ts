@@ -15,18 +15,6 @@ const ZAuctionAdd = z
             required_error: "description is required!",
             invalid_type_error: "description should be string!",
         }),
-        opening_price: z
-            .number({
-                required_error: "opening_price is required!",
-                invalid_type_error: "description should be number!",
-            })
-            .default(1),
-        price_increment: z
-            .number({
-                required_error: "price_increment is required!",
-                invalid_type_error: "price_increment should be number!",
-            })
-            .default(0.01),
         play_consumed: z.number({
             required_error: "price_increment is required!",
             invalid_type_error: "price_increment should be number!",
@@ -65,12 +53,6 @@ const ZAuctionAdd = z
                 invalid_type_error: "pre_register_fees should be number!",
             })
             .optional(),
-        pre_registeration_endDate: z
-            .string()
-            .datetime({
-                message: "pre_registeration_endDate should be date",
-            })
-            .optional(),
         terms_condition: z
             .string({
                 required_error: "terms_condition is required!",
@@ -78,10 +60,12 @@ const ZAuctionAdd = z
             })
             .min(1)
             .optional(),
-        auction_state: z.enum(AUCTION_STATE, {
-            invalid_type_error: "auction_state should be string!",
-            required_error: "auction_state is required!",
-        }),
+        auction_state: z
+            .enum(AUCTION_STATE, {
+                invalid_type_error: "auction_state should be string!",
+                required_error: "auction_state is required!",
+            })
+            .optional(),
         status: z.boolean().optional(),
         product_id: z
             .string({
@@ -182,7 +166,7 @@ const ZbidAuction = z
                 invalid_type_error: "player_bot_id should be string!",
             })
             .uuid({ message: "player_bot_id should be UUID!" })
-            .optional()
+            .optional(),
     })
     .strict();
 
