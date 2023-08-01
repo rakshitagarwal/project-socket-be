@@ -118,7 +118,10 @@ const playerAuctionDetails= async (req: Request, res: Response) => {
     const response = await auctionService.playerAuctionDetails(req.query as unknown as {auction_id:string,player_id:string});
     res.status(response.code).json(response);
 };
-
+const startAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.startAuction(req.body);
+    res.status(response.code).json(response);
+}
 export const auctionHandler = {
     create,
     getById,
@@ -128,5 +131,6 @@ export const auctionHandler = {
     getBidLogs,
     playerAuctionRegister,
     getAllMyAuction,
-    playerAuctionDetails
+    playerAuctionDetails,
+    startAuction
 };
