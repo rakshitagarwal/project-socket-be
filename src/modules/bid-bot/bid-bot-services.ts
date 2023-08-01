@@ -1,27 +1,19 @@
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import bidBotQueries from "./bid-bot-queries";
-import { IBidBotInfo, IUpdate } from "./typings/bid-bot-types";
-import { executeBidbot } from "./bid-bot-publisher";
-import userQueries from "../users/user-queries";
-import redisClient from "../../config/redis";
+import { IBidBotInfoCopy, IUpdate } from "./typings/bid-bot-types";
 
 /**
  * @description addbidBot is used to add bidbot information to the database.
  * @param {IBidBotInfo} botData - All info related to bidbpt is passed using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const addbidBot = async (botData: IBidBotInfo) => {
-    const wallet = await userQueries.playerWalletBac(botData.player_id);
-    if (wallet as unknown as number >= botData.plays_limit){
-        const queryResult = await bidBotQueries.addBidBot(botData as IBidBotInfo);
-        if (queryResult) {
-        await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}:${queryResult.id}`,`${botData.plays_limit}`);
-        executeBidbot(botData, queryResult.id);
-        return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, queryResult);
-        }
+const addbidBot = async (botData: IBidBotInfoCopy) => {
+    const queryResult = await bidBotQueries.addBidBot(botData );
+    if (queryResult) {
+    return queryResult.id;
     }
-    return responseBuilder.badRequestError(MESSAGES.BIDBOT.BIDBOT_CREATE_FAIL);
+    return null;
 };
 
 /**

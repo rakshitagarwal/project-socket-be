@@ -9,10 +9,11 @@ import eventService from "../../utils/event-service";
 import { NODE_EVENT_SERVICE, MESSAGES, SOCKET_EVENT } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import bidBotQueries from "./bid-bot-queries";
-import { IBidBotInfo } from "./typings/bid-bot-types";
+import { IBidBotInfoCopy } from "./typings/bid-bot-types";
+import bidBotService from "./bid-bot-services";
+import { newBiDRecieved } from "../auction/auction-publisher";
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
-
 
 /**
  * Starts the auction with the given auctionId.
@@ -98,21 +99,17 @@ export const selectRandomBidClient = async function selectRandomBidClient() {
     return null;
 };
 
-export const executeBidbot = async function (botData: IBidBotInfo, bidBotId: string) {
-    const redisData = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}:${bidBotId}`);
+export const executeBidbot = async function (botData: IBidBotInfoCopy, bidBotId: string, socketId: string) {
+    const redisData = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`);
     const playsProvided = +(redisData as unknown as string);
     if (!redisData?.length) console.log("error");
-    if (playsProvided <= 0) socket.playerSocket.to(bidBotId).emit(SOCKET_EVENT.AUCTION_ERROR, {message: "plays limit reached"});
-    
-    const isBidHistory = await redisClient.get(`${botData.auction_id}:bidHistory`);
-    const bidHistory = JSON.parse(isBidHistory as unknown as string);
+    if (playsProvided <= 0) socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message: "plays limit reached"});
+    const bidHistory = JSON.parse(await redisClient.get(`${botData.auction_id}:bidHistory`) as unknown as string);
     const lastBid = bidHistory[bidHistory.length - 1];
-    console.log(lastBid, "last bid history");
-    console.log(bidBotId);
-    if ((countdowns[botData.auction_id] as unknown as number) > 5) {
-        console.log("time for placing a bid not allowed");
-    }
-
+    const randomTime = Math.floor(Math.random() * (5)) + 1;
+    console.log(randomTime);
+    
+    newBiDRecieved(botData, socketId);
     const randomClient = await selectRandomBidClient();
     console.log(randomClient);
     if (lastBid.player_id === randomClient?.player_id) {
@@ -120,19 +117,19 @@ export const executeBidbot = async function (botData: IBidBotInfo, bidBotId: str
     } else {
         const auctionRunning = await redisClient.get(`auction:live:${botData.auction_id}`);
         const auctionDetail = JSON.parse(auctionRunning as unknown as string);
-        const playsUpdated = playsProvided - auctionDetail.plays_consumed_on_bid;
+        const playsUpdated = playsProvided - auctionDetail.plays_consumed_on_bid as unknown as number;
         await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}:${bidBotId}`,`${playsUpdated}`);
-        // await bidBotQueries.updateBidBot(bidBotId, playsUpdated);
     }
 };
 
-export const bidByBotRecieved = async (bidPayload: IBidBotInfo, socketId: string) => {
-    const Data = await redisClient.get(`${bidPayload.auction_id}:bidbot`);
-    const bidBotData = JSON.parse(Data as unknown as string);
-    console.log(bidBotData, "bidBotData");
-    console.log(socketId);
-
-    const randomIndex = Math.floor(Math.random() * bidBotData.length);
-    const randomClient = bidBotData[randomIndex];
-    console.log(randomClient, "randomClient");
+export const bidByBotRecieved = async (botData: IBidBotInfoCopy, socketId: string) => {
+    const wallet = await userQueries.playerWalletBac(botData.player_id);
+    if ((wallet as unknown as number) >= botData.plays_limit) {
+        const data = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`);
+        if (!data?.length) {
+            await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`,`${botData.plays_limit}`);
+            const insertBidBot = await bidBotService.addbidBot(botData);
+            executeBidbot(botData, insertBidBot as unknown as string, socketId);
+        }
+    }
 };

@@ -7,6 +7,15 @@ export interface IBidBotInfo {
     is_active: boolean;
     player_bot_id: string | undefined;
 }
+export interface IBidBotInfoCopy {
+    auction_id: string;
+    player_id: string;
+    remaining_seconds: number;
+    player_name: string;
+    plays_limit: number;
+    profile_image: string;
+    player_bot_id?: string | undefined;
+}
 
 export interface IUpdate {
     plays_limit: number;
