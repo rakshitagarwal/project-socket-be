@@ -31,12 +31,6 @@ export const prismaErrorHandler = (
         );
         res.status(response.code).json(response);
     }
-    console.log(err.code);
-    
-    if(err instanceof Prisma.PrismaClientRustPanicError){
-        console.log(err,"+++");
-
-    }
     // TODO: Try, if condition doesnt work, then call next with error:- next(err)
     const response = responseBuilder.internalserverError("", {}, err);
     

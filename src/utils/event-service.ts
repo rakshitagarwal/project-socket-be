@@ -133,9 +133,7 @@ eventService.on(
     async (data: { auctionId: string; registeration_count: number }) => {
 
         const auctionData = await auctionQueries.auctionRegistrationCount(
-            data.auctionId);
-            console.log(data,auctionData);
-            
+            data.auctionId);            
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
             message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
             data: {
