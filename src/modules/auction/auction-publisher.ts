@@ -70,6 +70,7 @@ const recentBid = async (auctionId: string) => {
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RECENT_BID, {
         message: MESSAGES.SOCKET.AUCTION_RECENT_BID,
         data: bidHistory[bidHistory.length - 1],
+        auctionId
     });
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_BIDS, {
         message: MESSAGES.SOCKET.RECENT_BIDS,
@@ -143,15 +144,12 @@ const auctionBidderHistory =async(bidderPayload:IBidAuction,socketId:string,type
         countdowns[newBidData.auction_id] = 10;
         if(type==="new_bid_history_set"){
             await redisClient.set( `${newBidData.auction_id}:bidHistory`,JSON.stringify([{ ...newBidData, created_at: new Date() }]));
+            recentBid(newBidData.auction_id);
         }else{
             const newbidHistory=JSON.parse(bidHistoryData)
-            if (newbidHistory[newbidHistory.length - 1].player_id === newBidData.player_id) {
-                socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {    message:MESSAGES.SOCKET.CONTINUE_BID_NOT_ALLOWED,});
-            }else{
                 newbidHistory.push({...newBidData,created_at: new Date()});
                 await redisClient.set(`${newBidData.auction_id}:bidHistory`,JSON.stringify(newbidHistory));    
                 recentBid(newBidData.auction_id);
-            } 
         }
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message:MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,});
@@ -200,8 +198,13 @@ export const newBiDRecieved = async (
                     if (!isBidHistory) {
                         auctionBidderHistory(bidData,socketId,"new_bid_history_set","")
                     } else {
-                        auctionBidderHistory(bidData,socketId,"new_bid_history_update",isBidHistory)
-                    }
+                        const iscontinue=JSON.parse(isBidHistory)
+                        if(iscontinue[iscontinue.length - 1].player_id === bidData.player_id){
+                            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message:MESSAGES.SOCKET.CONTINUE_BID_NOT_ALLOWED,});
+                        }else{
+                            auctionBidderHistory(bidData,socketId,"new_bid_history_update",isBidHistory)
+                        }
+                        }
                 }
             } else {
                 socket.playerSocket

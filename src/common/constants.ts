@@ -24,7 +24,8 @@ export const ENDPOINTS = {
     BALANCE: "wallet/balance/:id",
     PLAYER_AUCTION_REGISTER: "player/register",
     DEDUCT_PLAYS: "deduct/plays",
-    PLAYER_AUCTION_ID:"/player-auction/:id"
+    PLAYER_AUCTION_ID:"/player-auction/:id",
+    PLAYER_AUCTION:"/player/auction/result"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -149,6 +150,7 @@ export const MESSAGES = {
         UPDATE_USER: "user update successfully",
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
+        PLAYER_NOT_REGISTERED: "user not registered"
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",

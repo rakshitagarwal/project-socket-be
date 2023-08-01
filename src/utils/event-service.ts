@@ -131,15 +131,16 @@ eventService.on(
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT,
     async (data: { auctionId: string; registeration_count: number }) => {
+
         const auctionData = await auctionQueries.auctionRegistrationCount(
-            data.auctionId
-        );
+            data.auctionId);
+            console.log(data,auctionData);
+            
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
             message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
             data: {
-                current_registeration_no: auctionData,
+                auction_registration_percentage:(auctionData*100)/data.registeration_count,
                 auctionId: data.auctionId,
-                required_registration_count: data.registeration_count,
             },
         });
     }

@@ -88,14 +88,34 @@ const playerAuctionRegister = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
-
 /**
  * @description - find a player registered All auction
  * @param {Request} req
  * @param {Response }res
  */
-const getAllMyAuction = async (req: Request, res: Response) => {
-    const response = await auctionService.getAllMyAuction(req.params.id as unknown as string);
+const getAllMyAuction = async (req: Request, res: Response): Promise<void> => {
+    const response = await auctionService.getAllMyAuction(
+        req.params.id as unknown as string,
+        req.query as unknown as IPagination
+    );    
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(
+                response,
+                (_key, value) =>
+                    typeof value === "bigint" ? value.toString() : value 
+            )
+        )
+    );
+};
+
+/**
+ * @description - find a player registered auction details
+ * @param {Request} req
+ * @param {Response }res
+ */
+const playerAuctionDetails= async (req: Request, res: Response) => {
+    const response = await auctionService.playerAuctionDetails(req.query as unknown as {auction_id:string,player_id:string});
     res.status(response.code).json(response);
 };
 
@@ -107,5 +127,6 @@ export const auctionHandler = {
     remove,
     getBidLogs,
     playerAuctionRegister,
-    getAllMyAuction
+    getAllMyAuction,
+    playerAuctionDetails
 };
