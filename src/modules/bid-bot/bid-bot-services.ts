@@ -14,11 +14,11 @@ import redisClient from "../../config/redis";
 const addbidBot = async (botData: IBidBotInfo) => {
     const wallet = await userQueries.playerWalletBac(botData.player_id);
     if (wallet as unknown as number >= botData.plays_limit){
-        const result = await bidBotQueries.addBidBot(botData as IBidBotInfo);
-        if (result) {
-        await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}:${result.id}`,`${botData.plays_limit}`);
-        executeBidbot(botData, result.id);
-        return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, result);
+        const queryResult = await bidBotQueries.addBidBot(botData as IBidBotInfo);
+        if (queryResult) {
+        await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}:${queryResult.id}`,`${botData.plays_limit}`);
+        executeBidbot(botData, queryResult.id);
+        return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, queryResult);
         }
     }
     return responseBuilder.badRequestError(MESSAGES.BIDBOT.BIDBOT_CREATE_FAIL);
