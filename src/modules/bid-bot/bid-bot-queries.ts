@@ -13,7 +13,7 @@ const addBidBot = async function (bidBodData: IBidBotInfo) {
             id: true,
             player_id: true,
             auction_id: true,
-            bid_limit: true,
+            plays_limit: true,
             total_bot_bid: true,
             is_active: true,
             created_at: true,
@@ -34,7 +34,7 @@ const getBidBotById = async function (id: string) {
             id: true,
             player_id: true,
             auction_id: true,
-            bid_limit: true,
+            plays_limit: true,
             total_bot_bid: true,
             is_active: true,
             created_at: true,
@@ -54,13 +54,33 @@ const getAllBidBot = async function () {
             id: true,
             player_id: true,
             auction_id: true,
-            bid_limit: true,
+            plays_limit: true,
             total_bot_bid: true,
             is_active: true,
             created_at: true,
         },
     });
     return queryResult;
+};
+
+const bidBotCollection = async function () {
+    const queryResult = await db.bidBot.findMany({
+        select: {
+          id: true,
+          player_id: true,
+          auction_id: true,
+          plays_limit: true,
+          total_bot_bid: true,
+          is_active: true,
+          created_at: true,
+        },
+        where: {
+          plays_limit: {
+            gt: 0, // 'gt' stands for 'greater than'
+          },
+        },
+      });
+      return queryResult;
 };
 
 /**
@@ -75,7 +95,7 @@ const getBidBotByAuctionId = async function (id: string) {
             id: true,
             player_id: true,
             auction_id: true,
-            bid_limit: true,
+            plays_limit: true,
             total_bot_bid: true,
             is_active: true,
             created_at: true,
@@ -96,7 +116,7 @@ const getBidBotByPlayerId = async function (id: string) {
             id: true,
             player_id: true,
             auction_id: true,
-            bid_limit: true,
+            plays_limit: true,
             total_bot_bid: true,
             is_active: true,
             created_at: true,
@@ -114,12 +134,12 @@ const getBidBotByPlayerId = async function (id: string) {
 const updateBidBot = async function (id: string, bidsUpdated: number) {
     const queryResult = await db.bidBot.update({
         where: { id },
-        data: { bid_limit: bidsUpdated },
+        data: { plays_limit: bidsUpdated },
         select: {
             id: true,
             player_id: true,
             auction_id: true,
-            bid_limit: true,
+            plays_limit: true,
             total_bot_bid: true,
             is_active: true,
             created_at: true,
@@ -132,6 +152,7 @@ const bidBotQueries = {
     addBidBot,
     getBidBotById,
     getAllBidBot,
+    bidBotCollection,
     getBidBotByPlayerId,
     getBidBotByAuctionId,
     updateBidBot,

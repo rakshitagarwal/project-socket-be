@@ -2,13 +2,14 @@ import { AppGlobal } from "../../utils/socket-service";
 import redisClient from "../../config/redis";
 // import { bidRequestValidator } from "../../middlewares/validateRequest";
 // import { auctionSchemas } from "../auction/auction-schemas";
-import { IBidAuction } from "../../middlewares/typings/middleware-types";
+// import { IBidAuction } from "../../middlewares/typings/middleware-types";
 import userQueries from "../users/user-queries"
 import userService from  "../users/user-services"
 import eventService from "../../utils/event-service";
 import { NODE_EVENT_SERVICE,MESSAGES,SOCKET_EVENT } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import bidBotQueries from "./bid-bot-queries";
+import { IBidBotInfo } from "./typings/bid-bot-types";
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
 
@@ -86,106 +87,62 @@ export const bidTransaction=async(playload:{playerId:string,socketId:string,auct
     
 }
 
-export const selectRandomBidClient = async function selectRandomBidClient() {
-    let selectRandomBidClient = null;
-    const allBidBots = await bidBotQueries.getAllBidBot();
+export const executeBidbot = async function startbidbot (botData: IBidBotInfo, bidBotId: string){
+    const redisData  = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}:${bidBotId}`);
+    if(Number(redisData) <= 0){
+    socket.playerSocket.to(bidBotId).emit(SOCKET_EVENT.AUCTION_ERROR, {message: "plays limit reached"});
+    }
+    const isBidHistory = await redisClient.get( `${botData.auction_id}:bidHistory`);
+    const bidHistory = JSON.parse(isBidHistory as unknown as string);
+    const lastBid = bidHistory[bidHistory.length - 1]
+    console.log(lastBid, "last bid history");
+    console.log(bidBotId);
+    if(countdowns[botData.auction_id] as unknown as number > 5){
+        console.log("place a bid not allowed");
+    }
 
-    if (allBidBots.length > 0) {
-      const remainingClients = allBidBots.filter((client) => client.bid_limit > 0);
-      if (remainingClients.length === 0) {
-        return false; // No other clients available to bid, so return false
-      }
-      const randomIndex = Math.floor(Math.random() * remainingClients.length);
-      const randomClient = remainingClients[randomIndex];
-      selectRandomBidClient = randomClient;
-      return selectRandomBidClient;
+    const randomClient = await selectRandomBidClient();
+    console.log(randomClient);
+    if (lastBid.player_id === randomClient?.player_id){
+        console.log("continue not allowed");
+    }
+    
+    // const redisData = await redisClient.get(`${botData.auction_id}:bidbot`);
+    // const oneBidByBot = {playerId: `${botData.player_id}`,limit: `${botData.plays_limit}`,total_bot_bid: 0,};
+    // if(!redisData) {
+    //     await redisClient.set(`${botData.auction_id}:bidbot`, JSON.stringify({[botData.player_id]: oneBidByBot}));
+    // } else {
+    //     const newData = JSON.parse(redisData);
+    //     newData[botData.player_id] = oneBidByBot;
+    //     await redisClient.set(`${botData.auction_id}:bidbot`, JSON.stringify(newData));
+    // }
+}
+
+export const selectRandomBidClient = async function selectRandomBidClient() {
+    const bidBotCollection = await bidBotQueries.bidBotCollection();
+    console.log(bidBotCollection);
+    if (bidBotCollection.length > 0) {
+      
+      const randomIndex = Math.floor(Math.random() * bidBotCollection.length);
+      const randomClient = bidBotCollection[randomIndex];
+      return randomClient;
     }
     return null;
   }
 
-export const bidByBotRecieved = async (bidPayload: IBidAuction) => {
-    // bid place by bidbot
-    const isBotEnabled = bidPayload?.player_bot_id;
-    if(isBotEnabled){
-        console.log(isBotEnabled, "BotEnabled");
-        const isBidHistory = await redisClient.get( `${bidPayload.auction_id}:bidHistory`);
-        const bidHistoryData = JSON.parse(isBidHistory as unknown as string);
-        // eslint-disable-next-line no-prototype-builtins
-        const bidBotCollection = bidHistoryData.filter((obj: any) => obj.hasOwnProperty('player_bot_id'));
-        console.log(bidBotCollection);
-        
-        const Data = await redisClient.get(`${bidPayload.auction_id}:bidbot`);
-        const bidBotData = JSON.parse(Data as unknown as string)
-        if (bidBotData !== null && bidBotData.bid_no < bidBotData.limit) {
-            bidBotData.bid_no = bidBotData.bid_no + 1;
-            bidHistoryData.push({ ...bidPayload,created_at:new Date()});
-            await redisClient.set(`${bidPayload.auction_id}:bidHistory`,JSON.stringify(bidHistoryData));
+export const bidByBotRecieved = async (bidPayload: IBidBotInfo) => {
 
-        }
-    }
-    // bid place by bidbot
+    const Data = await redisClient.get(`${bidPayload.auction_id}:bidbot`);
+    const bidBotData = JSON.parse(Data as unknown as string);
+    console.log(bidBotData,"bidBotData");
+
+    const isBidHistory = await redisClient.get( `${bidPayload.auction_id}:bidHistory`);
+    const bidHistoryData = JSON.parse(isBidHistory as unknown as string);
+    // eslint-disable-next-line no-prototype-builtins
+    const bidBotCollection = bidHistoryData.filter((obj: any) => obj.hasOwnProperty('player_bot_id'));//need to have data which have bot id
+    console.log(bidBotCollection,"bidBotCollection");
+
+    const randomIndex = Math.floor(Math.random() * bidBotData.length);
+    const randomClient = bidBotData[randomIndex];
+    console.log(randomClient,"randomClient");
 }
-
-
-// export const newBidByBotRecieved = async (bidPayload: IBidAuction, socketId: string) => {
-//     const isValid = await bidRequestValidator<IBidAuction>(bidPayload,auctionSchemas.ZbidAuction);
-//     if (!isValid.status) {
-//         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
-//     } else {
-//         const { bidData } = isValid;
-//         const isAuction = countdowns[bidData.auction_id];
-//         if (!isAuction) {
-//             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message: MESSAGES.SOCKET.AUCTION_NOT_FOUND});
-//         } else {
-//             const isPre_register = await redisClient.get("auction:pre-register");
-//             if (isPre_register?.length) {
-//                     const preRegisterData = JSON.parse(isPre_register);
-//                     if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
-//                         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message:MESSAGES.SOCKET.USER_NOT_REGISTERED,});
-//                     } else {
-//                         const isBalance= await bidTransaction({playerId:bidData.player_id,socketId,auctionId:bidData.auction_id})
-//                         if(isBalance.status){
-//                             const newBidData={ ...bidData, bid_price:isBalance.bidPrice, bid_number:isBalance.bidNumber}                    
-//                              const isBidHistory = await redisClient.get( `${newBidData.auction_id}:bidHistory`);
-//                         if (!isBidHistory) {
-//                             countdowns[newBidData.auction_id] = 10;
-//                             await redisClient.set( `${newBidData.auction_id}:bidHistory`, JSON.stringify([ { ...newBidData,created_at:new Date()}, ]));
-//                             recentBid(newBidData.auction_id);
-//                         } else {
-//                             const bidHistoryData = JSON.parse(isBidHistory);
-//                             if (bidHistoryData[bidHistoryData.length - 1].player_id === newBidData.player_id) {
-//                                 socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {    message:MESSAGES.SOCKET.CONTINUE_BID_NOT_ALLOWED,});
-//                             } else { 
-//                                 countdowns[newBidData.auction_id] = 10;
-//                                 // bid place by bidbot
-//                                 const isBotEnabled = bidData?.player_bot_id;
-//                                 if(isBotEnabled){
-//                                     console.log(isBotEnabled, "BotEnabled");
-//                                     const bidBotData = await redisClient.get(`${bidData.auction_id}:${bidData.player_id}:bidbot`);
-//                                     if (bidBotData !== null) {
-//                                         const splitArray = bidBotData.split(":");
-//                                         const playerId = splitArray[0];
-//                                         const playerBotLimit = splitArray[1];
-//                                         const bidByBot: { [key: string]: number } = {};
-//                                         bidByBot[`${playerId}`] = Number(playerBotLimit);
-//                                         console.log(bidByBot, "bidByBot");
-//                                         activeBidBot.push(bidByBot);
-//                                     }
-//                                 }
-//                                 // bid place by bidbot
-//                                 bidHistoryData.push({ ...newBidData,created_at:new Date()});
-//                                 await redisClient.set(`${newBidData.auction_id}:bidHistory`,JSON.stringify(bidHistoryData));
-//                                 recentBid(newBidData.auction_id);
-//                             }
-//                         }
-//                     }
-//                     else{
-//                         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message:MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED });
-//                     }
-//                 }
-//             } else {
-//                 socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message: MESSAGES.SOCKET.USER_NOT_REGISTERED });
-//             }
-//         }
-//     }
-// };

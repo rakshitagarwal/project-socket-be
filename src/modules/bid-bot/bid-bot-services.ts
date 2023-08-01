@@ -2,6 +2,8 @@ import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import bidBotQueries from "./bid-bot-queries";
 import { IBidBotInfo, IUpdate } from "./typings/bid-bot-types";
+import { executeBidbot } from "./bid-bot-publisher";
+import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 
 /**
@@ -10,17 +12,15 @@ import redisClient from "../../config/redis";
  * @returns {object} - the response object using responseBuilder.
  */
 const addbidBot = async (botData: IBidBotInfo) => {
-    const Data = await redisClient.get(`${botData.auction_id}:bidbot`);
-    const oneBidByBot = {playerId: `${botData.player_id}`,limit: `${botData.bid_limit}`,bid_no: 0,};
-    if(!Data) {
-        await redisClient.set(`${botData.auction_id}:bidbot`, JSON.stringify({[botData.player_id]: oneBidByBot}));
-    } else {
-        const newData = JSON.parse(Data);
-        newData[botData.player_id] = oneBidByBot;
-        await redisClient.set(`${botData.auction_id}:bidbot`, JSON.stringify(newData));
+    const wallet = await userQueries.playerWalletBac(botData.player_id);
+    if (wallet as unknown as number >= botData.plays_limit){
+        const result = await bidBotQueries.addBidBot(botData as IBidBotInfo);
+        if (result) {
+        await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}:${result.id}`,`${botData.plays_limit}`);
+        executeBidbot(botData, result.id);
+        return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, result);
+        }
     }
-    const result = await bidBotQueries.addBidBot(botData as IBidBotInfo);
-    if (result) return responseBuilder.createdSuccess(MESSAGES.BIDBOT.BIDBOT_CREATE_SUCCESS, result);
     return responseBuilder.badRequestError(MESSAGES.BIDBOT.BIDBOT_CREATE_FAIL);
 };
 
@@ -61,8 +61,8 @@ const getBidBotByPlayerId = async (id: string) => {
 const updateBidBot = async (id: string, data: IUpdate) => {
     const existBot = await bidBotQueries.getBidBotById(id);
     if (existBot) {
-        const { bid_limit } = data;
-        const result = await bidBotQueries.updateBidBot(id, bid_limit);
+        const { plays_limit } = data;
+        const result = await bidBotQueries.updateBidBot(id, plays_limit);
         if (result) return responseBuilder.okSuccess(MESSAGES.BIDBOT.BIDBOT_UPDATE_LIMIT, result);
     }
     return responseBuilder.notFoundError(MESSAGES.BIDBOT.BIDBOT_NOT_FOUND);
