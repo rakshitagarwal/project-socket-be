@@ -25,6 +25,7 @@ export const ENDPOINTS = {
     BALANCE: "wallet/balance/:id",
     PLAYER_AUCTION_REGISTER: "player/register",
     DEDUCT_PLAYS: "deduct/plays",
+    PLAYER_AUCTION_ID:"/player-auction/:id"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -73,6 +74,9 @@ export const AUCTION_MESSAGES = {
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
+    SOMETHING_WENT_WRONG: "cannot start auction, something went wrong!",
+    DATE_NOT_PROPER: "start_date shoudl be greater than current date!",
+    AUCTION_ALREADY_SET: "auction start_date is set!",
 };
 
 export const productMessage = {
@@ -230,7 +234,7 @@ export const SOCKET_EVENT = {
     AUCTION_WINNER: "auction:winner",
     AUCTION_COUNT_DOWN: "auction:count:down",
     AUCTION_RECENT_BID: "auction:recent:bid",
-    AUCTION_BIDS: "auction:bids",
+    AUCTION_BIDS: "auction:bid:history",
     AUCTION_ERROR: "auction:error",
     AUCTION_CURRENT_PLAYS: "auction:current:play",
     AUCTION_STATE: "auction:state",
@@ -243,6 +247,7 @@ export const NODE_EVENT_SERVICE = {
     AUCTION_REMINDER_MAIL: "auction:reminder:mail",
     AUCTION_CLOSED: "auction:closed",
     AUCTION_REGISTER_COUNT: "auction:register:count",
+    UPDATE_PLAYER_REGISTER_STATUS:"auction:player:register:status",
 };
 
 export const AUCTION_STATE = [

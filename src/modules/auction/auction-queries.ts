@@ -1,11 +1,16 @@
-import { auctionState } from "@prisma/client";
+import { Prisma, auctionState, PrismaClient } from "@prisma/client";
+import { auctionResultType } from "@prisma/client";
+
 import { db } from "../../config/db";
 import {
     IAuction,
     IPagination,
     IPlayerRegister,
+    IStartAuction,
 } from "./typings/auction-types";
+import { Sql } from "@prisma/client/runtime";
 
+const prisma = new PrismaClient();
 /**
  * Auction Creation
  * @param {IAuction} auction - values regarding the auction data
@@ -214,6 +219,11 @@ const remove = async (id: string[]) => {
     return query;
 };
 
+/**
+ * @description for the fetching the auction wise logs
+ * @param {string} id - auction id
+ * @returns
+ */
 const fetchAuctionLogs = async (id: string) => {
     const query = await db.playerBidLogs.findMany({
         where: {
@@ -224,7 +234,24 @@ const fetchAuctionLogs = async (id: string) => {
 };
 
 /**
- * Retrieves a list of upcoming player auctions.
+ * @description for starting the auction with start_date
+ * @param {IStartAuction} data
+ * @returns
+ */
+const startAuction = async (data: IStartAuction) => {
+    const query = await db.auction.update({
+        where: {
+            id: data.auction_id,
+        },
+        data: {
+            start_date: data.start_date,
+        },
+    });
+    return query;
+};
+
+/**
+ * @description Retrieves a list of upcoming player auctions.
  * @returns {Promise<Array<UpcomingAuctionInfo>>} The list of upcoming player auctions.
  */
 const upcomingPlayerAuction = async () => {
@@ -419,6 +446,38 @@ const auctionRegistrationCount = async (auctionId: string) => {
     return queryResult;
 };
 
+const fetchPlayerAuction = async (player_id: string) => {
+    const query: Sql = Prisma.sql`SELECT COUNT( (T2.player_id,T2.auction_id)) from player_auction_register as T1 LEFT JOIN player_bid_log as T2 ON T1.player_id=T2.player_id and T1.auction_id=T2.auction_id where T1.player_id=${player_id}`;
+    const queryResult = await prisma.$queryRaw(query);
+    return queryResult;
+};
+
+const updatePlayerRegistrationAuctionStatus = async (
+    auction_id: string,
+    status: auctionResultType
+) => {
+    const queryResult = await db.playerAuctionRegsiter.updateMany({
+        where: { auction_id },
+        data: { status },
+    });
+    return queryResult;
+};
+
+const updatePlayerRegistrationAuctionResultStatus = async (
+    auction_id: string,
+    player_id: string
+) => {
+    const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
+        where: { AND: [{ auction_id }, { NOT: { player_id } }] },
+        data: { status: "lost" },
+    });
+    const wonQueryResult = await db.playerAuctionRegsiter.updateMany({
+        where: { auction_id, player_id },
+        data: { status: "won" },
+    });
+    return { lostQueryResult, wonQueryResult };
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -435,4 +494,8 @@ export const auctionQueries = {
     checkIfPlayerExists,
     playerRegistrationAuction,
     auctionRegistrationCount,
+    startAuction,
+    fetchPlayerAuction,
+    updatePlayerRegistrationAuctionStatus,
+    updatePlayerRegistrationAuctionResultStatus,
 };

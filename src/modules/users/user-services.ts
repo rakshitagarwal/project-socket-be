@@ -242,13 +242,11 @@ const deleteUser = async (param: IuserQuery) => {
     if (!user) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    const isupdate = await userQueries.updateUser(
+     await userQueries.updateUser(
         { id: param.id },
         { is_deleted: true }
     );
-    if (isupdate.is_deleted) {
-        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
-    }
+    
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_DELETED);
 };
 

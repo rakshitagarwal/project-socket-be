@@ -42,14 +42,9 @@ const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
                     auctionId: upcomingInfo.id,
                 });
                 auctionStart(upcomingInfo.id);
-                await redisClient.set(
-                    `auction:live:${upcomingInfo.id}`,
-                    JSON.stringify(upcomingInfo)
-                );
-                eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {
-                    auctionId: upcomingInfo.id,
-                    state: AUCTION_STATE.live,
-                });
+                await redisClient.set(`auction:live:${upcomingInfo.id}`,JSON.stringify(upcomingInfo));
+                eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {auctionId: upcomingInfo.id,state: AUCTION_STATE.live,});
+                await eventService.emit(NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,upcomingInfo.id)
             }
         });
     }
