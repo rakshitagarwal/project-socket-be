@@ -93,23 +93,35 @@ const playerAuctionRegister = async (req: Request, res: Response) => {
  * @param {Request} req
  * @param {Response }res
  */
-const getAllMyAuction = async (req: Request, res: Response) => {
+const getAllMyAuction = async (req: Request, res: Response): Promise<void> => {
     const response = await auctionService.getAllMyAuction(
-        req.params.id as unknown as string
+        req.params.id as unknown as string,
+        req.query as unknown as IPagination
+    );    
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(
+                response,
+                (_key, value) =>
+                    typeof value === "bigint" ? value.toString() : value 
+            )
+        )
     );
-    res.status(response.code).json(response);
 };
 
 /**
- * @description for starting the auction using start_date
- * @param  {Request} req
- * @param  {Response} res
+ * @description - find a player registered auction details
+ * @param {Request} req
+ * @param {Response }res
  */
+const playerAuctionDetails= async (req: Request, res: Response) => {
+    const response = await auctionService.playerAuctionDetails(req.query as unknown as {auction_id:string,player_id:string});
+    res.status(response.code).json(response);
+};
 const startAuction = async (req: Request, res: Response) => {
     const response = await auctionService.startAuction(req.body);
     res.status(response.code).json(response);
-};
-
+}
 export const auctionHandler = {
     create,
     getById,
@@ -118,6 +130,7 @@ export const auctionHandler = {
     remove,
     getBidLogs,
     playerAuctionRegister,
-    startAuction,
     getAllMyAuction,
+    playerAuctionDetails,
+    startAuction
 };
