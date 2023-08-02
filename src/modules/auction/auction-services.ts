@@ -344,8 +344,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
     ) {
         if (
             isplayerAuctionDetail.buy_now_expiration &&
-            isplayerAuctionDetail.buy_now_expiration.getTime() >
-                new Date().getTime()
+            isplayerAuctionDetail.buy_now_expiration < new Date()
         ) {
             return responseBuilder.badRequestError(
                 MESSAGES.TRANSACTION_CRYPTO.GET_NOW_EXPIRED

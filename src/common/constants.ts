@@ -77,7 +77,7 @@ export const AUCTION_MESSAGES = {
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
     SOMETHING_WENT_WRONG: "cannot start auction, something went wrong!",
     DATE_NOT_PROPER: "start_date shoudl be greater than current date!",
-    AUCTION_ALREADY_SET: "auction start_date is set!",
+    AUCTION_ALREADY_SET: "auction start_date is already setted!",
 };
 
 export const productMessage = {
