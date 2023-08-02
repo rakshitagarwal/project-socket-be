@@ -557,7 +557,8 @@ const updatePlayerRegistrationAuctionResultStatus = async (
     player_id: string
 ) => {
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
-    const winexpirationTime: Date = new Date(new Date().getDate() + 2);
+    const winexpirationTime: Date = new Date();
+    winexpirationTime.setDate(new Date().getDate() + 2);
     const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
         where: { AND: [{ auction_id }, { NOT: { player_id } }] },
         data: { status: "lost", buy_now_expiration: lostexpirationTime },
@@ -576,34 +577,36 @@ const updatePlayerRegistrationAuctionResultStatus = async (
  * @returns {Promise<Object|null>} - A Promise that resolves to an object containing auction registration details, or null if not found.
 
  */
-const getplayerRegistrationAuctionDetails = async (player_id: string,auction_id:string) => {
+const getplayerRegistrationAuctionDetails = async (
+    player_id: string,
+    auction_id: string
+) => {
     const queryResult = await db.playerAuctionRegsiter.findFirst({
-        where: { player_id,auction_id },
+        where: { player_id, auction_id },
         select: {
             id: true,
             auction_id: true,
             player_id: true,
             status: true,
-            buy_now_expiration:true,
+            buy_now_expiration: true,
             Auctions: {
                 select: {
                     title: true,
-                    plays_consumed_on_bid:true,
+                    plays_consumed_on_bid: true,
                     description: true,
                     product_id: true,
-                    products:{
-                        select:{
+                    products: {
+                        select: {
                             medias: true,
                             price: true,
-                            landing_image:true
-                        }
-                    }
+                            landing_image: true,
+                        },
+                    },
                 },
-                
             },
             PlayerBidLogs: {
-                orderBy:{
-                    created_at:"desc"
+                orderBy: {
+                    created_at: "desc",
                 },
             },
         },
