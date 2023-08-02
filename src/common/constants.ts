@@ -242,6 +242,7 @@ export const SOCKET_EVENT = {
     AUCTION_STATE: "auction:state",
     AUCTION_REGISTER_COUNT: "auction:register:count",
     AUCTION_RUNNER_UP: "auction:runner:up",
+    BIDBOT_ERROR: "bidbot:error",
 };
 export const NODE_EVENT_SERVICE = {
     USER_MAIL: "send:user:mail",

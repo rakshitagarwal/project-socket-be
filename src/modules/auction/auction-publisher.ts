@@ -13,7 +13,7 @@ import {
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 const socket = global as unknown as AppGlobal;
-const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
+export const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
 
 /**
  * Starts the auction with the given auctionId.
