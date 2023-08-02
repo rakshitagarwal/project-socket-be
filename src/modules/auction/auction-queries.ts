@@ -446,11 +446,93 @@ const auctionRegistrationCount = async (auctionId: string) => {
     return queryResult;
 };
 
-const fetchPlayerAuction = async (player_id: string) => {
-    const query: Sql = Prisma.sql`SELECT COUNT( (T2.player_id,T2.auction_id)) from player_auction_register as T1 LEFT JOIN player_bid_log as T2 ON T1.player_id=T2.player_id and T1.auction_id=T2.auction_id where T1.player_id=${player_id}`;
-    const queryResult = await prisma.$queryRaw(query);
+interface IPlayerAuctionInfo {
+    id: string;
+    auction_id: string;
+    player_id: string;
+    status: boolean;
+    title: string;
+    total_bids: number;
+    bid_increment_price: number;
+    plays_consumed_on_bid: number;
+    last_bidding_price: number;
+}
+
+/**
+ * Fetches the player auction information for a given player ID.
+ * @param {string} player_id - The ID of the player for whom to fetch auction information.
+ * @param {number} offset
+ * @param {number} limit
+ * @returns {Promise<IPlayerAuctionInfo[]>} A Promise that resolves to an array of PlayerAuctionInfo objects representing the auction information for the player.
+ */
+const fetchPlayerAuction = async (
+    player_id: string,
+    offset: number,
+    limit: number
+) => {
+    const query: Sql = Prisma.sql`
+      SELECT
+        T2.player_id,
+        T2.auction_id,
+        T1.total_bids,
+        T2.created_at,
+        T2.status,
+        T2.title,
+        T2.bid_increment_price,
+        T2.plays_consumed_on_bid,
+        T2.id,
+        T1.bid_price as last_bidding_price,
+        (T1.total_bids * T2.plays_consumed_on_bid) as total_bid_consumed
+      FROM
+        (select player_bid_log_T1.player_id,player_bid_log_T1.auction_id,player_bid_log_T1.total_bids,player_bid_log_T2.bid_price from (SELECT
+            player_id,
+                auction_id,
+                COUNT(*) AS total_bids
+              FROM
+                player_bid_log
+              GROUP BY
+                player_id,
+                auction_id) as player_bid_log_T1 left join player_bid_log as player_bid_log_T2 on player_bid_log_T1.player_id=player_bid_log_T2.player_id and player_bid_log_T1.auction_id=player_bid_log_T2.auction_id
+                order by player_bid_log_T2.created_at desc limit 1) as T1
+      RIGHT JOIN
+        (SELECT
+          T3.title,
+          T3.bid_increment_price,
+          T3.plays_consumed_on_bid,
+          T4.created_at,
+          T4.auction_id,
+          T4.player_id,
+          T4.status,
+          T4.id
+        FROM
+          player_auction_register as T4
+        INNER JOIN
+          auctions as T3
+        ON
+          T3.id = T4.auction_id
+        ) as T2
+      ON
+        T1.auction_id = T2.auction_id
+      AND
+        T1.player_id = T2.player_id
+      WHERE
+        T2.player_id = ${player_id}
+      ORDER BY
+        T2.created_at DESC
+        offset ${offset}
+        limit ${limit}
+    `;
+
+    const queryResult = await prisma.$queryRaw<IPlayerAuctionInfo[]>(query);
     return queryResult;
 };
+
+/**
+ * Updates the registration status of players in a specific auction.
+ * @param {string} auction_id - The ID of the auction.
+ * @param {auctionResultType} status - The updated status for the players in the auction.
+ * @returns {Promise<any>} A Promise that resolves to the query result after updating the player registration status.
+ */
 
 const updatePlayerRegistrationAuctionStatus = async (
     auction_id: string,
@@ -463,19 +545,70 @@ const updatePlayerRegistrationAuctionStatus = async (
     return queryResult;
 };
 
+/**
+ * Updates the registration status of players in an auction result.
+ * @param {string} auction_id - The ID of the auction.
+ * @param {string} player_id - The ID of the player.
+ * @returns {Promise<{ lostQueryResult: any, wonQueryResult: any }>} An object containing the query results for "lost" and "won" updates.
+ */
+
 const updatePlayerRegistrationAuctionResultStatus = async (
     auction_id: string,
     player_id: string
 ) => {
+    const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
+    const winexpirationTime: Date = new Date(new Date().getDate() + 2);
     const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
         where: { AND: [{ auction_id }, { NOT: { player_id } }] },
-        data: { status: "lost" },
+        data: { status: "lost", buy_now_expiration: lostexpirationTime },
     });
     const wonQueryResult = await db.playerAuctionRegsiter.updateMany({
         where: { auction_id, player_id },
-        data: { status: "won" },
+        data: { status: "won", buy_now_expiration: winexpirationTime },
     });
     return { lostQueryResult, wonQueryResult };
+};
+/**
+ * Retrieves auction registration details for a specific player in a given auction.
+ * @async
+ * @param {string} player_id - The ID of the player for whom auction registration details are to be retrieved.
+ * @param {string} auction_id - The ID of the auction for which registration details are to be retrieved.
+ * @returns {Promise<Object|null>} - A Promise that resolves to an object containing auction registration details, or null if not found.
+
+ */
+const getplayerRegistrationAuctionDetails = async (player_id: string,auction_id:string) => {
+    const queryResult = await db.playerAuctionRegsiter.findFirst({
+        where: { player_id,auction_id },
+        select: {
+            id: true,
+            auction_id: true,
+            player_id: true,
+            status: true,
+            buy_now_expiration:true,
+            Auctions: {
+                select: {
+                    title: true,
+                    plays_consumed_on_bid:true,
+                    description: true,
+                    product_id: true,
+                    products:{
+                        select:{
+                            medias: true,
+                            price: true,
+                            landing_image:true
+                        }
+                    }
+                },
+                
+            },
+            PlayerBidLogs: {
+                orderBy:{
+                    created_at:"desc"
+                },
+            },
+        },
+    });
+    return queryResult;
 };
 
 export const auctionQueries = {
@@ -498,4 +631,5 @@ export const auctionQueries = {
     fetchPlayerAuction,
     updatePlayerRegistrationAuctionStatus,
     updatePlayerRegistrationAuctionResultStatus,
+    getplayerRegistrationAuctionDetails,
 };

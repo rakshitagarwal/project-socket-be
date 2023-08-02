@@ -33,6 +33,7 @@ export const prismaErrorHandler = (
     }
     // TODO: Try, if condition doesnt work, then call next with error:- next(err)
     const response = responseBuilder.internalserverError("", {}, err);
+    
     logger.error(
         `${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
     );
