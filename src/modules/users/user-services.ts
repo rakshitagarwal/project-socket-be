@@ -242,11 +242,8 @@ const deleteUser = async (param: IuserQuery) => {
     if (!user) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-     await userQueries.updateUser(
-        { id: param.id },
-        { is_deleted: true }
-    );
-    
+    await userQueries.updateUser({ id: param.id }, { is_deleted: true });
+
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_DELETED);
 };
 
@@ -374,10 +371,18 @@ const addWalletTransaction = async (data: IWalletTx) => {
                 prisma,
                 data
             );
-            const addedWallet = await userQueries.addPlaysToWallet(
-                prisma,
-                data
+            const isPlayerWallet = await userQueries.playerWalletBac(
+                data.player_id
             );
+            let addedWallet;
+            if (isPlayerWallet) {
+                addedWallet = await userQueries.updatePlayerWallet(prisma, {
+                    player_id: data.player_id,
+                    plays: +isPlayerWallet.play_balance + +data.plays,
+                });
+            } else {
+                addedWallet = await userQueries.addPlaysToWallet(prisma, data);
+            }
 
             return { addedBalance, addedWallet };
         }
@@ -435,6 +440,14 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
         return responseBuilder.notFoundError(
             MESSAGES.USER_PLAY_BALANCE.USER_WALLET_BALANCE_NOT_FOUND
         );
+    if (wallet.play_balance < data.plays) {
+        return responseBuilder
+            .success(206)
+            .message(MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED)
+            .data({})
+            .metaData({})
+            .build();
+    }
     const transaction = await prismaTransaction(
         async (prisma: PrismaClient) => {
             const remaining_blx = wallet.play_balance - data.plays;
@@ -464,6 +477,21 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
     );
 };
 
+const bidPlaysDebit = async (data: IDeductPlx & { totalPlays: number }) => {
+   return await prismaTransaction(async (prisma: PrismaClient) => {
+        const remaining_blx = data.totalPlays - data.plays;
+        const debited_amount = await userQueries.updatePlayerWallet(prisma, {
+            plays: remaining_blx,
+            player_id: data.player_id,
+        });
+        const walletTrx = await userQueries.createBidtransaction({
+            player_id: data.player_id,
+            plays: data.plays,
+        });
+        return { debited_amount, walletTrx };
+    });
+};
+
 const userService = {
     register,
     otpVerifcation,
@@ -481,6 +509,7 @@ const userService = {
     addWalletTransaction,
     getPlayerWalletBalance,
     debitPlaysForPlayer,
+    bidPlaysDebit,
 };
 
 export default userService;
