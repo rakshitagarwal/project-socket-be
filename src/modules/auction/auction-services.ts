@@ -20,6 +20,7 @@ import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
+import { auctionState } from "@prisma/client";
 
 /**
  * Auction Creation
@@ -65,12 +66,16 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
+    let state: auctionState = "upcoming";
     if (query.search) {
         query.filter?.push({
             title: { contains: query.search, mode: "insensitive" },
         });
     }
-    const auctions = await auctionQueries.getAll(query);
+    if (query.state) {
+        state = query.state as unknown as auctionState;
+    }
+    const auctions = await auctionQueries.getAll(query, state);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,

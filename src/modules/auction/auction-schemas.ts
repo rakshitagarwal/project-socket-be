@@ -118,6 +118,10 @@ const Zpagination = z
                 z.number({ invalid_type_error: "page must be number" })
             )
             .default(0),
+        state: z.enum(AUCTION_STATE, {
+            required_error: "state is required!",
+            invalid_type_error: "state should be enum",
+        }),
         limit: z
             .preprocess(
                 (val) => parseInt(val as string),

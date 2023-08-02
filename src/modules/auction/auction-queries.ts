@@ -117,12 +117,13 @@ const getMultipleActiveById = async (id: string[]) => {
  * @description retrieval of all auctions
  * @returns - all auction entities
  */
-const getAll = async (query: IPagination) => {
+const getAll = async (query: IPagination, state: auctionState) => {
     const queryCount = await db.auction.count({
         where: {
             AND: [
                 {
                     is_deleted: false,
+                    state: state,
                 },
                 { OR: query.filter },
             ],
@@ -133,30 +134,20 @@ const getAll = async (query: IPagination) => {
             AND: [
                 {
                     is_deleted: false,
+                    state: state,
                 },
                 { OR: query.filter },
             ],
         },
+        include: {
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
+        },
         take: +query.limit,
         skip: +query.page * +query.limit,
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            state: true,
-            bid_increment_price: true,
-            plays_consumed_on_bid: true,
-            opening_price: true,
-            new_participants_limit: true,
-            start_date: true,
-            is_preRegistered: true,
-            registeration_count: true,
-            registeration_fees: true,
-            terms_and_conditions: true,
-            auctionCategory: true,
-            products: true,
-            status: true,
-        },
         orderBy: {
             created_at: "desc",
         },

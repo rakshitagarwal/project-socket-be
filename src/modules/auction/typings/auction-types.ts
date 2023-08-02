@@ -9,7 +9,15 @@ export interface IPagination {
     limit: string | number;
     page: string | number;
     search?: string;
+    state?: auction_state;
     filter?: object[];
+}
+
+export enum auction_state {
+    "upcoming",
+    "live",
+    "cancelled",
+    "completed",
 }
 
 export type IPlayerRegister = z.infer<typeof auctionSchemas.ZPlayerRegister>;
