@@ -9,7 +9,7 @@ import eventService from "../../utils/event-service";
 import { NODE_EVENT_SERVICE, MESSAGES, SOCKET_EVENT } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import bidBotQueries from "./bid-bot-queries";
-import { IBidBotInfoCopy } from "./typings/bid-bot-types";
+import { IBidBotData } from "./typings/bid-bot-types";
 import bidBotService from "./bid-bot-services";
 import { newBiDRecieved } from "../auction/auction-publisher";
 const socket = global as unknown as AppGlobal;
@@ -99,7 +99,7 @@ export const selectRandomBidClient = async function selectRandomBidClient() {
     return null;
 };
 
-export const executeBidbot = async function (botData: IBidBotInfoCopy, bidBotId: string, socketId: string) {
+export const executeBidbot = async function (botData: IBidBotData, bidBotId: string, socketId: string) {
     const redisData = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`);
     const playsProvided = +(redisData as unknown as string);
     if (!redisData?.length) console.log("error");
@@ -108,6 +108,7 @@ export const executeBidbot = async function (botData: IBidBotInfoCopy, bidBotId:
     const lastBid = bidHistory[bidHistory.length - 1];
     const randomTime = Math.floor(Math.random() * (5)) + 1;
     console.log(randomTime);
+    console.log(bidBotId);
     
     newBiDRecieved(botData, socketId);
     const randomClient = await selectRandomBidClient();
@@ -118,17 +119,17 @@ export const executeBidbot = async function (botData: IBidBotInfoCopy, bidBotId:
         const auctionRunning = await redisClient.get(`auction:live:${botData.auction_id}`);
         const auctionDetail = JSON.parse(auctionRunning as unknown as string);
         const playsUpdated = playsProvided - auctionDetail.plays_consumed_on_bid as unknown as number;
-        await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}:${bidBotId}`,`${playsUpdated}`);
+        await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`,`${playsUpdated}`);
     }
 };
 
-export const bidByBotRecieved = async (botData: IBidBotInfoCopy, socketId: string) => {
+export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) => {
     const wallet = await userQueries.playerWalletBac(botData.player_id);
     if ((wallet as unknown as number) >= botData.plays_limit) {
         const data = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`);
         if (!data?.length) {
             await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`,`${botData.plays_limit}`);
-            const insertBidBot = await bidBotService.addbidBot(botData);
+            const insertBidBot = await bidBotService.addBidBot(botData);
             executeBidbot(botData, insertBidBot as unknown as string, socketId);
         }
     }

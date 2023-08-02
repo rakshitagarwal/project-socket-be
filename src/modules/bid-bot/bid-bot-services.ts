@@ -1,19 +1,39 @@
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import bidBotQueries from "./bid-bot-queries";
-import { IBidBotInfoCopy, IUpdate } from "./typings/bid-bot-types";
+import { IBidBotData, ISearch } from "./typings/bid-bot-types";
 
 /**
- * @description addbidBot is used to add bidbot information to the database.
+ * @description addBidBot is used to add bidbot information to the database.
  * @param {IBidBotInfo} botData - All info related to bidbpt is passed using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const addbidBot = async (botData: IBidBotInfoCopy) => {
-    const queryResult = await bidBotQueries.addBidBot(botData );
-    if (queryResult) {
-    return queryResult.id;
+const addBidBot = async (botData: IBidBotData) => {
+    const dbEntry = {
+        player_id: botData.player_id,
+        auction_id: botData.auction_id,
+        total_bot_bid: 0,
+        is_active: true,
+        plays_limit: botData.plays_limit
     }
+    const queryResult = await bidBotQueries.addBidBot(dbEntry);
+    if (queryResult) return queryResult.id;
     return null;
+};
+
+/**
+ * @description getBidBotByAuctionId is used to retrieve the bid bot based on the auction id
+ * @param {string} id - The id of auction is passed here using this variable
+ * @returns {object} - the response object using responseBuilder.
+ */
+const getByAuctionAndPlayerId = async (data: ISearch) => {
+    if (data) {
+        const { player_id, auction_id } = data;
+        const result = await bidBotQueries.getByAuctionAndPlayerId(player_id, auction_id);
+        if (result) return responseBuilder.okSuccess(MESSAGES.BIDBOT.BIDBOT_FOUND, result);
+        return responseBuilder.notFoundError(MESSAGES.BIDBOT.BIDBOT_NOT_FOUND);
+    }
+    return responseBuilder.notFoundError(MESSAGES.BIDBOT.BIDBOT_NOT_FOUND);
 };
 
 /**
@@ -46,24 +66,23 @@ const getBidBotByPlayerId = async (id: string) => {
 
 /**
  * @description updateBidBot is used to update bid limit entry of one bidbot.
- * @param {string} id - The id of bidbot is passed here using this variable
- * @param {IUpdate} data - The bid limit to be updated of a bidbot is passed using this variable
+ * @param {IUpdate} updateData - auction and player ids with plays limit is passed using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const updateBidBot = async (id: string, data: IUpdate) => {
-    const existBot = await bidBotQueries.getBidBotById(id);
+const updateBidBot = async (updateData: ISearch) => {
+    const existBot = await bidBotQueries.getByAuctionAndPlayerId(updateData.player_id, updateData.auction_id);
     if (existBot) {
-        const { plays_limit } = data;
-        const result = await bidBotQueries.updateBidBot(id, plays_limit);
+        const result = await bidBotQueries.updateBidBot(existBot.id, updateData.plays_limit as number);
         if (result) return responseBuilder.okSuccess(MESSAGES.BIDBOT.BIDBOT_UPDATE_LIMIT, result);
     }
     return responseBuilder.notFoundError(MESSAGES.BIDBOT.BIDBOT_NOT_FOUND);
 };
 
 const bidBotService = {
-    addbidBot,
-    getBidBotByPlayerId,
+    addBidBot,
+    getByAuctionAndPlayerId,
     getBidBotByAuctionId,
+    getBidBotByPlayerId,
     updateBidBot,
 };
 
