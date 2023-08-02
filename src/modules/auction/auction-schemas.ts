@@ -199,6 +199,24 @@ const ZPlayerRegister = z
     })
     .strict();
 
+const IPlayerAuction = z.object({
+    player_id: z
+        .string({
+            required_error: "player_id is required!",
+            invalid_type_error: "player_id should be string!",
+        })
+        .uuid({
+            message: "player_id should be UUID",
+        }),
+    auction_id: z
+        .string({
+            required_error: "auction_id is required!",
+            invalid_type_error: "auction_id should be string!",
+        })
+        .uuid({
+            message: "auction_id should be UUID",
+        }),
+});
 const ZStartAuction = z.object({
     auction_id: z
         .string({
@@ -208,12 +226,11 @@ const ZStartAuction = z.object({
         .uuid({
             message: "auction_id should be UUID",
         }),
-    start_date: z.coerce.date({
-        required_error: "start_date is required!",
-        invalid_type_error: "start_date should be  date!",
-    }),
+        start_date: z.coerce.date({
+            required_error: "start_date is required!",
+            invalid_type_error: "start_date should be  date!",
+        }),
 });
-
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
@@ -221,5 +238,6 @@ export const auctionSchemas = {
     Zpagination,
     ZbidAuction,
     ZPlayerRegister,
+    IPlayerAuction,
     ZStartAuction,
 };
