@@ -131,7 +131,7 @@ export const MESSAGES = {
         AUCTION_NOT_FOUND: "Auction not found",
         USER_NOT_REGISTERED: "User not registered",
         CONTINUE_BID_NOT_ALLOWED: "Continue bid not allowed",
-        INSUFFICIENT_PLAYS_BALANCED: "Insufficient play balance",
+        INSUFFICIENT_PLAYS_BALANCED: "Insufficient plays balance",
         BUY_NOW: "Buy now",
     },
     OTP: {
