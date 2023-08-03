@@ -545,7 +545,8 @@ const updatePlayerRegistrationAuctionResultStatus = async (
     player_id: string
 ) => {
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
-    const winexpirationTime: Date = new Date(new Date().getDate() + 2);
+    const winexpirationTime: Date = new Date();
+    winexpirationTime.setDate(new Date().getDate() + 2);
     const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
         where: { AND: [{ auction_id }, { NOT: { player_id } }] },
         data: { status: "lost", buy_now_expiration: lostexpirationTime },

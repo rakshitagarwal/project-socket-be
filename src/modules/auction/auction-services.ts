@@ -242,7 +242,10 @@ const getAllMyAuction = async (player_id: string, query: IPagination) => {
         offset,
         limit
     );
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, playerAuction);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, playerAuction, {
+        limit,
+        page: offset,
+    });
 };
 
 /**

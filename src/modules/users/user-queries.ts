@@ -169,6 +169,12 @@ const addPlaysToWallet = async (prisma: PrismaClient, data: IWalletTx) => {
     return query;
 };
 
+const updatePlayerWallet = async (prisma: PrismaClient, data: IWalletTx) => {
+    const query = await prisma.playerWallet.updateMany({where:{player_id:data.player_id},data:{play_balance:data.plays}});
+    return query;
+};
+
+
 const playerWalletBac = async (player_id: string) => {
     const query = await db.playerWallet.findFirst({
         where: {
@@ -239,7 +245,7 @@ const debitPlayBalance = async (
         data: {
             play_balance: data.plays,
         },
-    });
+    });        
     return query;
 };
 
@@ -334,5 +340,6 @@ const userQueries = {
     addPlayRefundBalanceTx,
     createTrx,
     addPlaysToWallet,
+    updatePlayerWallet
 };
 export default userQueries;
