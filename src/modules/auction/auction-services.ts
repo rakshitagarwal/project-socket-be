@@ -129,6 +129,9 @@ const update = async (
     );
     if (!createdAuction)
         return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
+    if(auction.auction_state && auction.auction_state==="cancelled"){
+        eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{status:"cancelled",auctionId})
+    }
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
@@ -287,6 +290,7 @@ const startAuction = async (data: IStartAuction) => {
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
+    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{status:"auction_start",auctionId:data.auction_id,start_date:data.start_date})
     return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
 };
 

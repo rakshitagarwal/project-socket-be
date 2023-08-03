@@ -376,7 +376,6 @@ const playerRegistrationAuction = async (auction_id: string) => {
                 select: {
                     title: true,
                     registeration_fees: true,
-                    start_date: true,
                 },
             },
             User: {
