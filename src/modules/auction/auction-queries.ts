@@ -609,6 +609,16 @@ const getplayerRegistrationAuctionDetails = async (
                     created_at: "desc",
                 },
             },
+            User:{
+                select:{
+                    avatar:true,
+                    country:true,
+                    status:true,
+                    first_name:true,
+                    last_name:true,
+                    email:true,
+                }
+            },
         },
     });
     return queryResult;

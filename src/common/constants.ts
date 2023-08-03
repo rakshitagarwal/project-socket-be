@@ -125,7 +125,7 @@ export const MESSAGES = {
         AUCTION_CLOSED: "Auction closed",
         AUCTION_COUNT_DOWN: "Auction count down",
         AUCTION_RECENT_BID: "Auction recent bid",
-        RECENT_BIDS: "Recents bids",
+        RECENT_BIDS: "Recents bids history",
         AUCTION_ENDED: "Auction ended",
         CURRENT_PLAYS: "Current plays",
         AUCTION_NOT_FOUND: "Auction not found",
