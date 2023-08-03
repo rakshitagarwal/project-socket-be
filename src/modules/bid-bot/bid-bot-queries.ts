@@ -26,7 +26,7 @@ const addBidBot = async function (bidBodData: IBidBotInfo) {
  * @description bidBotCollection is used to retrieve all bidbots with plays more than 0.
  * @returns {queryResult} - the result of execution of query.
  */
-const bidBotCollection = async function () {
+const bidBotCollection = async function (id: string) {
     const queryResult = await db.bidBot.findMany({
         select: {
           id: true,
@@ -38,6 +38,7 @@ const bidBotCollection = async function () {
           created_at: true,
         },
         where: {
+          auction_id: id,
           plays_limit: {
             gt: 0,
           },

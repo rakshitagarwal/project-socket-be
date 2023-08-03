@@ -138,59 +138,51 @@ export const bidTransaction = async (playload: {
     return { status: false };
 };
 
-export const selectRandomBidClient = async function selectRandomBidClient() {
-    const bidBotCollection = await bidBotQueries.bidBotCollection();
-    if (bidBotCollection.length > 0) {
-        const randomIndex = Math.floor(Math.random() * bidBotCollection.length);
-        const randomClient = bidBotCollection[randomIndex];
-        return randomClient;
-    }
-    return null;
+const randomIntegerInRange = () => Math.floor(Math.random() * (5)) + 1;
+
+export const selectRandomBidClient = async function selectRandomBidClient(auction_id: string) {
+    const bidBotCollection = await bidBotQueries.bidBotCollection(auction_id);
+    return bidBotCollection.length > 0 ? bidBotCollection[Math.floor(Math.random() * bidBotCollection.length)] : null;
 };
 
-export const executeBidbot = async function (
-    botData: IBidBotData,
-    bidBotId: string,
-    socketId: string
-) {
-    let redisData = undefined;
-    redisData = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`);
-    let playsProvided = 0;
-    playsProvided = +(redisData as unknown as string);
-
-    if (!redisData) {
+export const executeBidbot = async function (botData: IBidBotData, bidBotId: string, socketId: string) {
+    const isActive = countdowns[botData.auction_id];
+    if (!isActive) {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message: "auction not active" });
+    } else {
+    const playsProvided = +(await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`) as string);
+    if (!playsProvided) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, { message: "plays invalid" });
     } else if (playsProvided <= 0) {
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message: "plays limit reached",});
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message: "plays limit reached" });
     } else {
-        const randomClient = await selectRandomBidClient();
-        const bidHistory = JSON.parse((await redisClient.get(`${botData.auction_id}:bidHistory`)) as string);
+        const randomClient = await selectRandomBidClient(botData.auction_id);
+        const bidHistory = JSON.parse(await redisClient.get(`${botData.auction_id}:bidHistory`) as string);
+        
         if (!bidHistory) {
-            const randomTime = Math.floor(Math.random() * 5) + 1;
+            const randomTime = randomIntegerInRange(); // 1 to 5 
             if (countdowns[botData.auction_id] === randomTime) {
-                newBiDRecieved(
-                    {
-                        player_id: botData.player_id,
-                        auction_id: botData.auction_id,
-                        player_name: botData.player_name,
-                        profile_image: botData.profile_image,
-                        remaining_seconds: countdowns[botData.auction_id] as number,
-                        player_bot_id: randomClient?.id,
-                    }, socketId);
+                await newBiDRecieved({
+                    player_id: botData.player_id,
+                    auction_id: botData.auction_id,
+                    player_name: botData.player_name,
+                    profile_image: botData.profile_image,
+                    remaining_seconds: countdowns[botData.auction_id] as number,
+                    player_bot_id: randomClient?.id,
+                }, socketId);
                 const auctionRunning = JSON.parse(await redisClient.get(`auction:live:${botData.auction_id}`) as string);
-                const playsUpdated = (playsProvided - auctionRunning.plays_consumed_on_bid) as number;
-                await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`,`${playsUpdated}`);
+                const playsUpdated = playsProvided - auctionRunning.plays_consumed_on_bid;
+                await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`, `${playsUpdated}`);
             }
             executeBidbot(botData, bidBotId, socketId);
         } else {
             const lastBid = bidHistory[bidHistory.length - 1];
             if (lastBid.player_id === randomClient?.player_id) {
-                socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {message: "continous bidbot bids not allowed"});
+                socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, { message: "continuous bidbot bids not allowed" });
             } else {
-            const randomTime = Math.floor(Math.random() * 5) + 1;
-            if (countdowns[botData.auction_id] === randomTime) {
-                newBiDRecieved(
-                    {
+                const randomTime = randomIntegerInRange(); // 1 to 5 
+                if (countdowns[botData.auction_id] === randomTime) {
+                    await newBiDRecieved({
                         player_id: botData.player_id,
                         auction_id: botData.auction_id,
                         player_name: botData.player_name,
@@ -198,37 +190,32 @@ export const executeBidbot = async function (
                         remaining_seconds: countdowns[botData.auction_id] as number,
                         player_bot_id: randomClient?.id,
                     }, socketId);
-                const auctionRunning = JSON.parse(await redisClient.get(`auction:live:${botData.auction_id}`) as string);
-                const playsUpdated = (playsProvided - auctionRunning.plays_consumed_on_bid) as number;
-                await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`,`${playsUpdated}`);
-            }
+                    const auctionRunning = JSON.parse(await redisClient.get(`auction:live:${botData.auction_id}`) as string);
+                    const playsUpdated = playsProvided - auctionRunning.plays_consumed_on_bid;
+                    await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`, `${playsUpdated}`);
                 }
+            }
             executeBidbot(botData, bidBotId, socketId);
         }
     }
+}
 };
 
-export const bidByBotRecieved = async (botData: IBidBotData,socketId: string) => {
+export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) => {
     const isActive = countdowns[botData.auction_id];
     if (!isActive) {
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message: "auction not active"});
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message: "auction not active" });
     } else {
         const wallet = await userQueries.playerWalletBac(botData.player_id);
-        if ((wallet?.play_balance as unknown as number) < botData.plays_limit) {
-            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {message: "wallet balance insufficient"});
+        if (wallet?.play_balance as number < botData.plays_limit) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, { message: "wallet balance insufficient" });
         } else {
             const data = await redisClient.get(`BidBotCount:${botData.player_id}:${botData.auction_id}`);
-            const existBot = await bidBotQueries.getByAuctionAndPlayerId(botData.player_id,botData.auction_id);
-            let insertBidBot;
-            if (!existBot) {
-                insertBidBot = await bidBotService.addBidBot(botData);
-            }
-            if (!data?.length) {
-                await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`,`${botData.plays_limit}`);
-                executeBidbot(botData, insertBidBot as string, socketId);
-            } else {
-                executeBidbot(botData, insertBidBot as string, socketId);
-            }
+            const existBot = await bidBotQueries.getByAuctionAndPlayerId(botData.player_id, botData.auction_id);
+            // if existBot true, logic to update plays limit in database
+            const bidBotId = !existBot ? await bidBotService.addBidBot(botData) : existBot.id;
+            if (!data) await redisClient.set(`BidBotCount:${botData.player_id}:${botData.auction_id}`, `${botData.plays_limit}`);
+            executeBidbot(botData, bidBotId as string, socketId);
         }
     }
 };
