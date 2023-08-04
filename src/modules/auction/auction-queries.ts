@@ -145,6 +145,20 @@ const getAll = async (query: IPagination, state: auctionState) => {
                     PlayerAuctionRegister: true,
                 },
             },
+            products: {
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    price: true,
+                    medias: true,
+                    productMedias: {
+                        select: {
+                            medias: true,
+                        },
+                    },
+                },
+            },
             PlayerAuctionRegister: {
                 select: {
                     status: true,
@@ -601,15 +615,15 @@ const getplayerRegistrationAuctionDetails = async (
                     created_at: "desc",
                 },
             },
-            User:{
-                select:{
-                    avatar:true,
-                    country:true,
-                    status:true,
-                    first_name:true,
-                    last_name:true,
-                    email:true,
-                }
+            User: {
+                select: {
+                    avatar: true,
+                    country: true,
+                    status: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                },
             },
         },
     });
