@@ -98,11 +98,11 @@ export interface IPlayerBidLog {
     profile_image: string;
 }
 
-export interface IPlayerActionWinner{
+export interface IPlayerActionWinner {
     player_id: string;
     auction_id: string;
     player_bot_id?: string;
-    total_bids:number
+    total_bids: number;
 }
 
 export type PlayerBidLogGroup = {
@@ -113,8 +113,8 @@ export type PlayerBidLogGroup = {
     count: number;
 };
 
-export enum  Ispend_on {
-    BUY_PLAYS="BUY_PLAYS",
-    REFUND_PLAYS="REFUND_PLAYS",
-    BID_PLAYS="BID_PLAYS"
+export enum Ispend_on {
+    BUY_PLAYS = "BUY_PLAYS",
+    REFUND_PLAYS = "REFUND_PLAYS",
+    BID_PLAYS = "BID_PLAYS",
 }

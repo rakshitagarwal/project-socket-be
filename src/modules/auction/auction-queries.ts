@@ -145,6 +145,11 @@ const getAll = async (query: IPagination, state: auctionState) => {
                     PlayerAuctionRegister: true,
                 },
             },
+            PlayerAuctionRegister: {
+                select: {
+                    status: true,
+                },
+            },
         },
         take: +query.limit,
         skip: +query.page * +query.limit,
@@ -625,6 +630,7 @@ const createPaymentTrx = async (data: IPurchase) => {
         data: {
             credit_amount: data.amount,
             currency: Currency.CRYPTO,
+            wallet_address: data.wallet_address,
             currency_type: currencyType.BIGTOKEN,
             crypto_transacation_hash: data.transaction_hash,
             created_by: data.player_id,

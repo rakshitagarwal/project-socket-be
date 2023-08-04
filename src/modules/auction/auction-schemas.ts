@@ -261,10 +261,22 @@ const ZPlayerWinner = z.object({
         .uuid({
             message: "player_register_id should be in UUID format!",
         }),
-    transaction_hash: z.string({
-        required_error: "transaction_hash is required!",
-        invalid_type_error: "transaction_hash should be of type string!",
-    }),
+    wallet_address: z
+        .string({
+            required_error: "wallet_address is required!",
+            invalid_type_error: "wallet_address should be string!",
+        })
+        .regex(/^0x[a-fA-F0-9]{40}$/, {
+            message: "wallet_address is not valid",
+        }),
+    transaction_hash: z
+        .string({
+            required_error: "transaction_hash is required!",
+            invalid_type_error: "transaction_hash should be string!",
+        })
+        .regex(/^0x[a-f0-9]{64}$/, {
+            message: "transaction_hash is not valid!",
+        }),
     amount: z.number({
         required_error: "amount is required!",
         invalid_type_error: "amount should be of type number!",
