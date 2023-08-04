@@ -9,7 +9,15 @@ export interface IPagination {
     limit: string | number;
     page: string | number;
     search?: string;
+    state?: auction_state;
     filter?: object[];
+}
+
+export enum auction_state {
+    "upcoming",
+    "live",
+    "cancelled",
+    "completed",
 }
 
 export type IPlayerRegister = z.infer<typeof auctionSchemas.ZPlayerRegister>;
@@ -21,4 +29,18 @@ export interface IRegisterPlayer {
     created_at: Date;
 }
 
+export type IPurchase = z.infer<typeof auctionSchemas.ZPlayerWinner>;
+
 export type IStartAuction = z.infer<typeof auctionSchemas.ZStartAuction>;
+
+export interface IPlayerAuctionInfo {
+    id: string;
+    auction_id: string;
+    player_id: string;
+    status: boolean;
+    title: string;
+    total_bids: number;
+    bid_increment_price: number;
+    plays_consumed_on_bid: number;
+    last_bidding_price: number;
+}

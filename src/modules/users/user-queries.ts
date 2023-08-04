@@ -136,12 +136,17 @@ const fetchPlayerId = async (id: string) => {
  * @returns
  */
 
-const addPlayBalanceTx = async (prisma: PrismaClient, data: IWalletTx) => {
+const addPlayBalanceTx = async (
+    prisma: PrismaClient,
+    data: IWalletTx & { currency_transaction_id: string; wallet_id: string }
+) => {
     const query = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
             created_by: data.player_id,
             spend_on: "BUY_PLAYS",
+            wallet_id: data.wallet_id,
+            currency_transaction_id: data.currency_transaction_id,
         },
         select: {
             id: true,
@@ -153,7 +158,12 @@ const addPlayBalanceTx = async (prisma: PrismaClient, data: IWalletTx) => {
 };
 
 const addPlayRefundBalanceTx = async (
-    data: { created_by: string; spend_on: Ispend_on; play_credit: number,auction_id:string }[]
+    data: {
+        created_by: string;
+        spend_on: Ispend_on;
+        play_credit: number;
+        auction_id: string;
+    }[]
 ) => {
     const query = await db.playerWalletTx.createMany({ data });
     return query;
@@ -165,6 +175,14 @@ const addPlaysToWallet = async (prisma: PrismaClient, data: IWalletTx) => {
             play_balance: data.plays,
             player_id: data.player_id,
         },
+    });
+    return query;
+};
+
+const updatePlayerWallet = async (prisma: PrismaClient, data: IDeductPlx) => {
+    const query = await prisma.playerWallet.updateMany({
+        where: { id: data.player_id },
+        data: { play_balance: data.plays },
     });
     return query;
 };
@@ -317,6 +335,35 @@ const fetchAuctionHigherBider = async (
     return queryResult;
 };
 
+const createPaymentTrx = async (data: IWalletTx) => {
+    const queries = await db.currencyTx.create({
+        data: {
+            credit_amount: data.amount,
+            currency: data.currency,
+            currency_type: data.currencyType,
+            wallet_address: data.wallet_address,
+            crypto_transacation_hash: data.transaction_hash,
+            created_by: data.player_id,
+        },
+    });
+    return queries;
+};
+
+const updatePlaysInWallet = async (
+    prisma: PrismaClient,
+    data: { wallet_id: string; plays: number }
+) => {
+    const query = await prisma.playerWallet.update({
+        where: {
+            id: data.wallet_id,
+        },
+        data: {
+            play_balance: data.plays,
+        },
+    });
+    return query;
+};
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -334,5 +381,8 @@ const userQueries = {
     addPlayRefundBalanceTx,
     createTrx,
     addPlaysToWallet,
+    updatePlayerWallet,
+    createPaymentTrx,
+    updatePlaysInWallet,
 };
 export default userQueries;

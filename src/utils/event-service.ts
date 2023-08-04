@@ -9,11 +9,13 @@ import {
     SOCKET_EVENT,
     MESSAGES,
 } from "../common/constants";
-import { PRE_REGISTER_THRESHOLD_STATUS } from "./typing/utils-types";
 import { Ispend_on } from "../modules/users/typings/user-types";
 import redisClient from "../config/redis";
 import userQueries from "../modules/users/user-queries";
 import { AppGlobal } from "./socket-service";
+import { PrismaClient } from "@prisma/client";
+
+import { prismaTransaction } from "./prisma-transactions";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 
@@ -34,27 +36,12 @@ eventService.on(NODE_EVENT_SERVICE.USER_MAIL, async function (data: Imail) {
  */
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,
-    async function (data: { auctionId: string; status: string }) {
-        const playerInformation =
-            await auctionQueries.playerRegistrationAuction(data.auctionId);
+    async function (data: { auctionId: string; status: string,start_date:string }) {
+        const playerInformation = await auctionQueries.playerRegistrationAuction(data.auctionId);
         if (playerInformation.length) {
             const auctionInfo = playerInformation[0];
-            const preRegisterRefund: Array<{
-                created_by: string;
-                play_credit: number;
-                spend_on: Ispend_on;
-                auction_id: string;
-            }> = [];
-            const userEmail = playerInformation.map((player) => {
-                preRegisterRefund.push({
-                    created_by: player.player_id,
-                    play_credit: player.Auctions?.registeration_fees as number,
-                    spend_on: Ispend_on.REFUND_PLAYS,
-                    auction_id: data.auctionId,
-                });
-                return player.User.email;
-            });
-            if (data.status === PRE_REGISTER_THRESHOLD_STATUS.completed) {
+            if (data.status === "auction_start") {
+                const userEmail = playerInformation.map((player) => {return player.User.email;});
                 /**
                  * Data object for sending a player registration reminder email.
                  *
@@ -65,34 +52,49 @@ eventService.on(
                  * @property {string} message - The message content of the email.
                  */
 
-                const data = {
+                const mailData = {
                     email: userEmail,
                     template: TEMPLATE.PLAYER_REGISTERATION,
                     subject: "Reminder for Auction start",
-                    message: `${auctionInfo?.Auctions?.title} auction will go live after 24 hours`,
+                    message: `We are thrilled to remind you that the ${auctionInfo?.Auctions?.title} is just around the corner! The auction will go live on ${data.start_date}. Prepare for an exciting event with extraordinary items up for bid. Mark your calendar and be part of this unforgettable experience!`,
                 };
-                await mailService(data);
-            } else {
-                /**
-                 * Data object for sending an auction cancellation email.
-                 *
-                 * @typedef {Object} CancellationEmailData
-                 * @property {string} email - The email address of the recipient.
-                 * @property {string} template - The template to use for the email content.
-                 * @property {string} subject - The subject of the email.
-                 * @property {string} message - The message content of the email.
-                 */
-
-                const data = {
-                    email: userEmail,
-                    template: TEMPLATE.PLAYER_REGISTERATION,
-                    subject: "Auction cancelled",
-                    message: `${auctionInfo?.Auctions?.title} has been cancelled and your ${preRegisterRefund[0]?.play_credit} plays have refunded `,
-                };
-                await mailService(data);
-                await userQueries.addPlayRefundBalanceTx([
-                    ...preRegisterRefund,
-                ]);
+                await mailService(mailData);
+            }else if(data.status==="cancelled"){
+               await prismaTransaction(async(prisma:PrismaClient)=>{
+                    const preRegisterRefund: Array<{
+                        created_by: string;
+                        play_credit: number;
+                        spend_on: Ispend_on;
+                        auction_id: string;
+                    }> = [];
+                    const userEmail = playerInformation.map((player) => {
+                        preRegisterRefund.push({
+                            created_by: player.player_id,
+                            play_credit: player.Auctions?.registeration_fees as number,
+                            spend_on: Ispend_on.REFUND_PLAYS,
+                            auction_id: data.auctionId,
+                        });
+                        return player.User.email;
+                    })
+                    /**
+                     * Data object for sending an auction cancellation email.
+                     *
+                     * @typedef {Object} CancellationEmailData
+                     * @property {string} email - The email address of the recipient.
+                     * @property {string} template - The template to use for the email content.
+                     * @property {string} subject - The subject of the email.
+                     * @property {string} message - The message content of the email.
+                     */
+    
+                    const mailData = {
+                        email: userEmail,
+                        template: TEMPLATE.PLAYER_REGISTERATION,
+                        subject: "Auction cancelled",
+                        message: `${auctionInfo?.Auctions?.title} has been cancelled and your ${preRegisterRefund[0]?.play_credit} plays have refunded `,
+                    };
+                    await mailService(mailData);
+                    await prisma.playerWalletTransaction.createMany({data:preRegisterRefund})
+               })
             }
         }
     }

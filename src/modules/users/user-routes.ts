@@ -80,23 +80,23 @@ userRouter.patch(
 userRouter.get(
     ENDPOINTS.BASE,
     [isAuthenticated, validateRequest.query(userSchemas.pagination)],
-    userHandlers.getAllusers
+    asyncHandler(userHandlers.getAllusers)
 );
 
 userRouter.get(
     ENDPOINTS.BASE + ENDPOINTS.BALANCE,
     [isAuthenticated, validateRequest.params(userSchemas.ZPlayerId)],
-    userHandlers.getPlayBalance
+    asyncHandler(userHandlers.getPlayBalance)
 );
 
 userRouter.post(
     ENDPOINTS.BASE + ENDPOINTS.ADD_PLAYS,
     [isAuthenticated, validateRequest.body(userSchemas.ZPlayerBalance)],
-    userHandlers.addPlaysInWallet
+    asyncHandler(userHandlers.addPlaysInWallet)
 );
 
 userRouter.post(
     ENDPOINTS.BASE + ENDPOINTS.DEDUCT_PLAYS,
     [isAuthenticated, validateRequest.body(userSchemas.ZDeductPlays)],
-    userHandlers.deductPlays
+    asyncHandler(userHandlers.deductPlays)
 );

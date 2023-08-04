@@ -12,6 +12,7 @@ import {
     IAuction,
     IPagination,
     IPlayerRegister,
+    IPurchase,
     IRegisterPlayer,
     IStartAuction,
 } from "./typings/auction-types";
@@ -19,6 +20,7 @@ import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
+import { auctionState } from "@prisma/client";
 
 /**
  * Auction Creation
@@ -64,12 +66,16 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
+    let state: auctionState = "upcoming";
     if (query.search) {
         query.filter?.push({
             title: { contains: query.search, mode: "insensitive" },
         });
     }
-    const auctions = await auctionQueries.getAll(query);
+    if (query.state) {
+        state = query.state as unknown as auctionState;
+    }
+    const auctions = await auctionQueries.getAll(query, state);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
@@ -129,6 +135,9 @@ const update = async (
     );
     if (!createdAuction)
         return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
+    if(auction.auction_state && auction.auction_state==="cancelled"){
+        eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{status:"cancelled",auctionId})
+    }
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
@@ -168,7 +177,10 @@ const playerRegister = async (data: IPlayerRegister) => {
         await Promise.all([
             auctionQueries.getActiveAuctioById(data.auction_id),
             userQueries.fetchPlayerId(data.player_id),
-            userQueries.getPlayerTrxById(data.player_id,data.player_wallet_transaction_id),
+            userQueries.getPlayerTrxById(
+                data.player_id,
+                data.player_wallet_transaction_id
+            ),
             auctionQueries.checkIfPlayerExists(data.player_id, data.auction_id),
         ]);
     if (existsInAuction.length)
@@ -225,11 +237,18 @@ const playerRegister = async (data: IPlayerRegister) => {
  * @property {number} query.page - The page number to offset the results (default is 0 if not provided).
  * @returns {Promise<Object>} - A Promise that resolves to an object containing auction information.
  */
-const getAllMyAuction = async (player_id: string,query: IPagination) => {
-    const limit=parseInt(query.limit as unknown as string)||10
-    const offset=parseInt(query.page as unknown as string)||0
-    const playerAuction = await auctionQueries.fetchPlayerAuction(player_id,offset,limit) ;
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND,playerAuction);
+const getAllMyAuction = async (player_id: string, query: IPagination) => {
+    const limit = parseInt(query.limit as unknown as string) || 10;
+    const offset = parseInt(query.page as unknown as string) || 0;
+    const playerAuction = await auctionQueries.fetchPlayerAuction(
+        player_id,
+        offset,
+        limit
+    );
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, playerAuction, {
+        limit,
+        page: offset,
+    });
 };
 
 /**
@@ -242,24 +261,44 @@ const getAllMyAuction = async (player_id: string,query: IPagination) => {
  * @returns {Promise<Object>} - A Promise that resolves to an object containing auction details.
  
  */
-const playerAuctionDetails=async(data:{player_id:string,auction_id:string})=>{    
-    const [auction, player, playerAuctionDetail] =
-    await Promise.all([
+const playerAuctionDetails = async (data: {
+    player_id: string;
+    auction_id: string;
+}) => {
+    const [auction, player, playerAuctionDetail] = await Promise.all([
         auctionQueries.getActiveAuctioById(data.auction_id),
         userQueries.fetchPlayerId(data.player_id),
-        auctionQueries.getplayerRegistrationAuctionDetails(data.player_id,data.auction_id)
+        auctionQueries.getplayerRegistrationAuctionDetails(
+            data.player_id,
+            data.auction_id
+        ),
     ]);
     if (!auction)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     if (!player)
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
-    if(!playerAuctionDetail){
-        return responseBuilder.notFoundError(MESSAGES.USERS.PLAYER_NOT_REGISTERED);
+    if (!playerAuctionDetail) {
+        return responseBuilder.notFoundError(
+            MESSAGES.USERS.PLAYER_NOT_REGISTERED
+        );
     }
-    const buy_now_price=playerAuctionDetail?.status==="won"?playerAuctionDetail.PlayerBidLogs[0]?.bid_price:(playerAuctionDetail?.Auctions?.products.price as unknown as number)-((playerAuctionDetail?.Auctions?.plays_consumed_on_bid as unknown as number)*(playerAuctionDetail?.PlayerBidLogs as unknown as object[]).length*0.1)
-    const {PlayerBidLogs,...bidInfoDetails}=playerAuctionDetail
-    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {...bidInfoDetails,buy_now_price,totalBid:PlayerBidLogs.length});
-}
+    const buy_now_price =
+        playerAuctionDetail?.status === "won"
+            ? playerAuctionDetail.PlayerBidLogs[0]?.bid_price
+            : (playerAuctionDetail?.Auctions?.products
+                  .price as unknown as number) -
+              (playerAuctionDetail?.Auctions
+                  ?.plays_consumed_on_bid as unknown as number) *
+                  (playerAuctionDetail?.PlayerBidLogs as unknown as object[])
+                      .length *
+                  0.1;
+    const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
+        ...bidInfoDetails,
+        buy_now_price,
+        totalBid: PlayerBidLogs.length,
+    });
+};
 
 /**
  * @description for the auction start
@@ -287,7 +326,52 @@ const startAuction = async (data: IStartAuction) => {
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
+    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL,{status:"auction_start",auctionId:data.auction_id,start_date:data.start_date})
     return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
+};
+
+/**
+ * @description purchase product auction for the auctions
+ * @param {IPurchase} data - transaction data for the product
+ * @returns
+ */
+const purchaseAuctionProduct = async (data: IPurchase) => {
+    const [isauction, isplayer, isplayerAuctionDetail] = await Promise.all([
+        auctionQueries.getActiveAuctioById(data.auction_id),
+        userQueries.fetchPlayerId(data.player_id),
+        auctionQueries.checkPlayerRegisteration(data.player_register_id),
+    ]);
+    if (!isauction)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    if (!isplayer)
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+    if (!isplayerAuctionDetail) {
+        return responseBuilder.notFoundError(
+            MESSAGES.USERS.PLAYER_NOT_REGISTERED
+        );
+    }
+    if (
+        isplayerAuctionDetail.status === "won" ||
+        isplayerAuctionDetail.status === "lost"
+    ) {
+        if (
+            isplayerAuctionDetail.buy_now_expiration &&
+            isplayerAuctionDetail.buy_now_expiration < new Date()
+        ) {
+            return responseBuilder.badRequestError(
+                MESSAGES.TRANSACTION_CRYPTO.GET_NOW_EXPIRED
+            );
+        }
+    }
+    const createTransactionHash = await auctionQueries.createPaymentTrx(data);
+    if (!createTransactionHash.id) {
+        return responseBuilder.expectationField(
+            MESSAGES.TRANSACTION_CRYPTO.NOT_CREATED
+        );
+    }
+    return responseBuilder.okSuccess(
+        MESSAGES.TRANSACTION_CRYPTO.CREATED_SUCCESS
+    );
 };
 
 export const auctionService = {
@@ -300,5 +384,6 @@ export const auctionService = {
     playerRegister,
     startAuction,
     getAllMyAuction,
-    playerAuctionDetails
+    playerAuctionDetails,
+    purchaseAuctionProduct,
 };
