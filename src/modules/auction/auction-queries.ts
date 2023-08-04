@@ -1,11 +1,19 @@
-import { Prisma, auctionState, PrismaClient } from "@prisma/client";
+import {
+    Prisma,
+    auctionState,
+    PrismaClient,
+    Currency,
+    currencyType,
+} from "@prisma/client";
 import { auctionResultType } from "@prisma/client";
 
 import { db } from "../../config/db";
 import {
     IAuction,
     IPagination,
+    IPlayerAuctionInfo,
     IPlayerRegister,
+    IPurchase,
     IStartAuction,
 } from "./typings/auction-types";
 import { Sql } from "@prisma/client/runtime";
@@ -109,12 +117,13 @@ const getMultipleActiveById = async (id: string[]) => {
  * @description retrieval of all auctions
  * @returns - all auction entities
  */
-const getAll = async (query: IPagination) => {
+const getAll = async (query: IPagination, state: auctionState) => {
     const queryCount = await db.auction.count({
         where: {
             AND: [
                 {
                     is_deleted: false,
+                    state: state,
                 },
                 { OR: query.filter },
             ],
@@ -125,30 +134,25 @@ const getAll = async (query: IPagination) => {
             AND: [
                 {
                     is_deleted: false,
+                    state: state,
                 },
                 { OR: query.filter },
             ],
         },
+        include: {
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
+            PlayerAuctionRegister: {
+                select: {
+                    status: true,
+                },
+            },
+        },
         take: +query.limit,
         skip: +query.page * +query.limit,
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            state: true,
-            bid_increment_price: true,
-            plays_consumed_on_bid: true,
-            opening_price: true,
-            new_participants_limit: true,
-            start_date: true,
-            is_preRegistered: true,
-            registeration_count: true,
-            registeration_fees: true,
-            terms_and_conditions: true,
-            auctionCategory: true,
-            products: true,
-            status: true,
-        },
         orderBy: {
             created_at: "desc",
         },
@@ -376,7 +380,6 @@ const playerRegistrationAuction = async (auction_id: string) => {
                 select: {
                     title: true,
                     registeration_fees: true,
-                    start_date: true,
                 },
             },
             User: {
@@ -388,6 +391,7 @@ const playerRegistrationAuction = async (auction_id: string) => {
     });
     return query;
 };
+
 /**
  * Get upcoming auctions
  * @returns {[Promise<IAuction>]}
@@ -445,18 +449,6 @@ const auctionRegistrationCount = async (auctionId: string) => {
     });
     return queryResult;
 };
-
-interface IPlayerAuctionInfo {
-    id: string;
-    auction_id: string;
-    player_id: string;
-    status: boolean;
-    title: string;
-    total_bids: number;
-    bid_increment_price: number;
-    plays_consumed_on_bid: number;
-    last_bidding_price: number;
-}
 
 /**
  * Fetches the player auction information for a given player ID.
@@ -609,9 +601,51 @@ const getplayerRegistrationAuctionDetails = async (
                     created_at: "desc",
                 },
             },
+            User:{
+                select:{
+                    avatar:true,
+                    country:true,
+                    status:true,
+                    first_name:true,
+                    last_name:true,
+                    email:true,
+                }
+            },
         },
     });
     return queryResult;
+};
+
+/**
+ * @description check if a player is registered in auction or not
+ * @param registeration_id
+ */
+const checkPlayerRegisteration = async (registeration_id: string) => {
+    const queryRx = await db.playerAuctionRegsiter.findFirst({
+        where: {
+            id: registeration_id,
+        },
+    });
+    return queryRx;
+};
+
+/**
+ * @description the create currency transaction using the CRYTPO
+ * @param {IPurchase} data - data for creating the currency transaction
+ * @returns
+ */
+const createPaymentTrx = async (data: IPurchase) => {
+    const queryRx = await db.currencyTx.create({
+        data: {
+            credit_amount: data.amount,
+            currency: Currency.CRYPTO,
+            wallet_address: data.wallet_address,
+            currency_type: currencyType.BIGTOKEN,
+            crypto_transacation_hash: data.transaction_hash,
+            created_by: data.player_id,
+        },
+    });
+    return queryRx;
 };
 
 export const auctionQueries = {
@@ -635,4 +669,6 @@ export const auctionQueries = {
     updatePlayerRegistrationAuctionStatus,
     updatePlayerRegistrationAuctionResultStatus,
     getplayerRegistrationAuctionDetails,
+    checkPlayerRegisteration,
+    createPaymentTrx,
 };

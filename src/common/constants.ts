@@ -25,8 +25,9 @@ export const ENDPOINTS = {
     BALANCE: "wallet/balance/:id",
     PLAYER_AUCTION_REGISTER: "player/register",
     DEDUCT_PLAYS: "deduct/plays",
-    PLAYER_AUCTION_ID:"/player-auction/:id",
-    PLAYER_AUCTION:"/player/auction/result"
+    PLAYER_AUCTION_ID: "/player-auction/:id",
+    PLAYER_AUCTION: "/player/auction/result",
+    PAY_NOW: "product/purchase",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -75,8 +76,8 @@ export const AUCTION_MESSAGES = {
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
-    SOMETHING_WENT_WRONG: "cannot start auction, something went wrong!",
-    DATE_NOT_PROPER: "start_date shoudl be greater than current date!",
+    SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
+    DATE_NOT_PROPER: "start_date should be greater than current date!",
     AUCTION_ALREADY_SET: "auction start_date is set!",
 };
 
@@ -118,6 +119,11 @@ export const OTP_TYPE = {
 };
 
 export const MESSAGES = {
+    TRANSACTION_CRYPTO: {
+        NOT_CREATED: "transaction not created!",
+        CREATED_SUCCESS: "transaction created successfully!",
+        GET_NOW_EXPIRED: "product purchase time is expired!",
+    },
     SOCKET: {
         TOTAL_AUCTION_REGISTERED: "total auction registered",
         AUCTION_LIVE: "Auction live",
@@ -126,7 +132,7 @@ export const MESSAGES = {
         AUCTION_CLOSED: "Auction closed",
         AUCTION_COUNT_DOWN: "Auction count down",
         AUCTION_RECENT_BID: "Auction recent bid",
-        RECENT_BIDS: "Recents bids",
+        RECENT_BIDS: "Recents bids history",
         AUCTION_ENDED: "Auction ended",
         CURRENT_PLAYS: "Current plays",
         AUCTION_NOT_FOUND: "Auction not found",
@@ -154,7 +160,7 @@ export const MESSAGES = {
         UPDATE_USER: "user update successfully",
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
-        PLAYER_NOT_REGISTERED: "user not registered"
+        PLAYER_NOT_REGISTERED: "user not registered",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
@@ -250,7 +256,7 @@ export const NODE_EVENT_SERVICE = {
     AUCTION_REMINDER_MAIL: "auction:reminder:mail",
     AUCTION_CLOSED: "auction:closed",
     AUCTION_REGISTER_COUNT: "auction:register:count",
-    UPDATE_PLAYER_REGISTER_STATUS:"auction:player:register:status",
+    UPDATE_PLAYER_REGISTER_STATUS: "auction:player:register:status",
 };
 
 export const AUCTION_STATE = [

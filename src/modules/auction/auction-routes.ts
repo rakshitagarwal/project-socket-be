@@ -71,3 +71,9 @@ auctionRouter.get(
     [validateRequest.query(auctionSchemas.IPlayerAuction)],
     handleAsync(auctionHandler.playerAuctionDetails)
 );
+
+auctionRouter.post(
+    ENDPOINTS.BASE + ENDPOINTS.PAY_NOW,
+    [validateRequest.body(auctionSchemas.ZPlayerWinner)],
+    handleAsync(auctionHandler.purchase)
+);

@@ -30,8 +30,6 @@ const socketAuthentication = async (
                 publicKey.public_key as string,
                 (err: unknown, decode) => {
                     if (err instanceof TokenExpiredError) {
-                        console.log(err);
-                        
                         next(new Error(MESSAGES.JWT.JWT_EXPIRED));
                     }
 
@@ -43,7 +41,7 @@ const socketAuthentication = async (
                         next(new Error(MESSAGES.JWT.JWT_MALFORMED));
                     }
                     socket.handshake.auth.id = decode;
-                   return next();
+                    return next();
                 }
             );
         }

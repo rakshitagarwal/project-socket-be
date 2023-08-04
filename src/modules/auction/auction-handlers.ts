@@ -97,13 +97,11 @@ const getAllMyAuction = async (req: Request, res: Response): Promise<void> => {
     const response = await auctionService.getAllMyAuction(
         req.params.id as unknown as string,
         req.query as unknown as IPagination
-    );    
+    );
     res.status(response.code).json(
         JSON.parse(
-            JSON.stringify(
-                response,
-                (_key, value) =>
-                    typeof value === "bigint" ? value.toString() : value 
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? value.toString() : value
             )
         )
     );
@@ -114,14 +112,33 @@ const getAllMyAuction = async (req: Request, res: Response): Promise<void> => {
  * @param {Request} req
  * @param {Response }res
  */
-const playerAuctionDetails= async (req: Request, res: Response) => {
-    const response = await auctionService.playerAuctionDetails(req.query as unknown as {auction_id:string,player_id:string});
+const playerAuctionDetails = async (req: Request, res: Response) => {
+    const response = await auctionService.playerAuctionDetails(
+        req.query as unknown as { auction_id: string; player_id: string }
+    );
     res.status(response.code).json(response);
 };
+
+/**
+ * @description starting the auction with the start date
+ * @param {Request} req - request
+ * @param {Response} res - response
+ */
 const startAuction = async (req: Request, res: Response) => {
     const response = await auctionService.startAuction(req.body);
     res.status(response.code).json(response);
-}
+};
+
+/**
+ * @description - for the purchase o product auction
+ * @param {Request} req - request
+ * @param {Response} res - response
+ */
+const purchase = async (req: Request, res: Response) => {
+    const response = await auctionService.purchaseAuctionProduct(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
@@ -132,5 +149,6 @@ export const auctionHandler = {
     playerAuctionRegister,
     getAllMyAuction,
     playerAuctionDetails,
-    startAuction
+    startAuction,
+    purchase,
 };
