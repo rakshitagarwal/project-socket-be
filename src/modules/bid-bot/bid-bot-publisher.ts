@@ -166,6 +166,8 @@ export const selectRandomBidClient = async function selectRandomBidClient(auctio
         randomClient = await selectRandomBidClient(botData.auction_id);
     }
   
+    // const randomTime = Math.floor(Math.random() * ( 5 - 1)) + 1;
+    // console.log(countdowns[botData.auction_id], "+ ", randomTime);
     const randomTime = Math.floor(Math.random() * 5) + 1;
     if (countdowns[botData.auction_id] === randomTime) {
       newBiDRecieved({
