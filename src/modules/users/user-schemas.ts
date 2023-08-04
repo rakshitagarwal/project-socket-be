@@ -19,9 +19,11 @@ const register = z
             invalid_type_error: "role must be string",
             required_error: "role is required",
         }),
-        country: z.string({
-            invalid_type_error: "country must be string",
-        }).optional(),
+        country: z
+            .string({
+                invalid_type_error: "country must be string",
+            })
+            .optional(),
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
@@ -168,10 +170,46 @@ const pagination = z
     .strict();
 
 const ZPlayerBalance = z.object({
-    plays: z.number({
-        required_error: "plays is required",
-        invalid_type_error: "plays should be number",
+    amount: z
+        .number({
+            required_error: "amount is required!",
+            invalid_type_error: "amount should be number!",
+        })
+        .gt(0, {
+            message: "amount should be greater than 0!",
+        }),
+    currency: z.enum(["FIAT", "CRYPTO"], {
+        required_error: "currency is required!",
+        invalid_type_error: "currency should be type of string!",
     }),
+    currencyType: z.enum(["BIGTOKEN", "USDTERC20", "USDTRC20"], {
+        required_error: "currencyType is required!",
+        invalid_type_error: "currencyType should be type of string!",
+    }),
+    plays: z
+        .number({
+            required_error: "plays is required",
+            invalid_type_error: "plays should be number",
+        })
+        .gt(0, {
+            message: "plays should be greater than 0!",
+        }),
+    wallet_address: z
+        .string({
+            required_error: "wallet_address is required!",
+            invalid_type_error: "wallet_address should be string!",
+        })
+        .regex(/^0x[a-fA-F0-9]{40}$/, {
+            message: "wallet_address is not valid",
+        }),
+    transaction_hash: z
+        .string({
+            required_error: "transaction_hash is required!",
+            invalid_type_error: "transaction_hash should be string!",
+        })
+        .regex(/^0x[a-f0-9]{64}$/, {
+            message: "transaction_hash is not valid!",
+        }),
     player_id: z
         .string({
             required_error: "player_id is required",

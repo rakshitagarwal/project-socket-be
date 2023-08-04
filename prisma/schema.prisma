@@ -239,6 +239,7 @@ model CurrencyTransaction {
   currency                 Currency?
   currency_type            currencyType
   crypto_transacation_hash String?                   @db.Text
+  wallet_address           String?                   @db.Text
   payment_gateway_id       String?
   created_at               DateTime                  @default(now()) @db.Timestamptz()
   created_by               String

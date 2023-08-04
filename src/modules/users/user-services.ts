@@ -355,6 +355,7 @@ const fetchAllUsers = async (query: IuserPagination) => {
  * @returns
  */
 const addWalletTransaction = async (data: IWalletTx) => {
+    let current_plays = 0;
     const isExists = await userQueries.fetchPlayerId(data.player_id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(
@@ -365,33 +366,65 @@ const addWalletTransaction = async (data: IWalletTx) => {
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
         );
     }
-    const transaction = await prismaTransaction(
-        async (prisma: PrismaClient) => {
-            const addedBalance = await userQueries.addPlayBalanceTx(
-                prisma,
-                data
-            );
-            const isPlayerWallet = await userQueries.playerWalletBac(
-                data.player_id
-            );
-            let addedWallet;
-            if (isPlayerWallet) {
-                addedWallet = await userQueries.updatePlayerWallet(prisma, {
-                    player_id: data.player_id,
-                    plays: +isPlayerWallet.play_balance + +data.plays,
-                });
+    const player_wallet = await userQueries.playerWalletBac(data.player_id);
+    const wallet_id = player_wallet?.id as unknown as string;
+    if (data.currency === "CRYPTO") {
+        if (player_wallet?.id) {
+            if (data.currencyType === "BIGTOKEN") {
+                current_plays =
+                    player_wallet.play_balance +
+                    data.plays +
+                    (data.plays * 10) / 100;
             } else {
-                addedWallet = await userQueries.addPlaysToWallet(prisma, data);
+                current_plays = player_wallet.play_balance + data.plays;
             }
-
-            return { addedBalance, addedWallet };
+        } else {
+            if (data.currencyType === "BIGTOKEN") {
+                current_plays = data.plays + (data.plays * 10) / 100;
+            } else {
+                current_plays = data.plays;
+            }
         }
-    );
-    if (transaction.addedBalance && transaction.addedWallet)
+    }
+    const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
+        const currency_trx = await userQueries.createPaymentTrx({
+            ...data,
+            plays: current_plays,
+        });
+        if (!wallet_id) {
+            const add_new_wallet = await userQueries.addPlaysToWallet(prisma, {
+                ...data,
+                plays: current_plays,
+            });
+            await userQueries.addPlayBalanceTx(prisma, {
+                ...data,
+                wallet_id: add_new_wallet.id,
+                currency_transaction_id: currency_trx.id,
+            });
+        } else {
+            const player_wallet = await userQueries.updatePlaysInWallet(
+                prisma,
+                {
+                    wallet_id: wallet_id,
+                    plays: current_plays,
+                }
+            );
+            await userQueries.addPlayBalanceTx(prisma, {
+                ...data,
+                wallet_id: player_wallet.id,
+                currency_transaction_id: currency_trx.id,
+            });
+        }
+
+        return { currency_trx };
+    });
+    if (createTrax.currency_trx.id) {
         return responseBuilder.okSuccess(
-            MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED
+            MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
+            { plays: current_plays }
         );
-    return responseBuilder.conflictError(
+    }
+    return responseBuilder.expectationField(
         MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED
     );
 };
@@ -415,14 +448,10 @@ const getPlayerWalletBalance = async (player_id: string) => {
         );
     }
     const transactions = await userQueries.playerWalletBac(player_id);
-    if (!transactions?.id)
-        return responseBuilder.notFoundError(
-            MESSAGES.USER_PLAY_BALANCE.USER_WALLET_BALANCE_NOT_FOUND
-        );
     return responseBuilder.okSuccess(
         MESSAGES.USER_PLAY_BALANCE.PLAYER_BALANCE,
         {
-            play_balance: transactions.play_balance,
+            play_balance: transactions ? transactions.play_balance : 0,
         }
     );
 };
@@ -478,7 +507,7 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
 };
 
 const bidPlaysDebit = async (data: IDeductPlx & { totalPlays: number }) => {
-   return await prismaTransaction(async (prisma: PrismaClient) => {
+    return await prismaTransaction(async (prisma: PrismaClient) => {
         const remaining_blx = data.totalPlays - data.plays;
         const debited_amount = await userQueries.updatePlayerWallet(prisma, {
             plays: remaining_blx,
