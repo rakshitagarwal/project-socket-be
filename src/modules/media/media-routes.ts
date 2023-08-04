@@ -7,6 +7,7 @@ import {
 } from "../../middlewares/mediaUpload";
 import validateRequest from "../../middlewares/validateRequest";
 import mediaSchema from "./media-schemas";
+import handleAsync from "express-async-handler";
 
 export const mediaRouter = Router();
 
@@ -14,16 +15,16 @@ mediaRouter.post(ENDPOINTS.BASE, storeOneMedia, mediaHandler.uploadMedia);
 mediaRouter.post(
     ENDPOINTS.BASE + "multiple",
     storeMultipleMedia,
-    mediaHandler.uploadMultipleMedia
+    handleAsync(mediaHandler.uploadMultipleMedia)
 );
-mediaRouter.get(ENDPOINTS.BASE + ":id?", mediaHandler.getAllMedia);
+mediaRouter.get(ENDPOINTS.BASE + ":id?", handleAsync(mediaHandler.getAllMedia));
 mediaRouter.patch(
     ENDPOINTS.BASE + ":id",
     validateRequest.params(mediaSchema.uuidSchema),
-    mediaHandler.updateMediaStatus
+    handleAsync(mediaHandler.updateMediaStatus)
 );
 mediaRouter.delete(
     ENDPOINTS.BASE,
     validateRequest.body(mediaSchema.requestBodySchema),
-    mediaHandler.deleteMedia
+    handleAsync(mediaHandler.deleteMedia)
 );
