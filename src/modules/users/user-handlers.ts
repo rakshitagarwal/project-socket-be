@@ -180,7 +180,13 @@ const getPlayBalance = async (req: Request, res: Response) => {
     const response = await userService.getPlayerWalletBalance(
         req.params.id as string
     );
-    res.status(response.code).json(response);
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? value.toString() : value
+            )
+        )
+    );
 };
 
 /**

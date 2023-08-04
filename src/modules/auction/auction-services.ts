@@ -205,11 +205,11 @@ const playerRegister = async (data: IPlayerRegister) => {
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
         );
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
-    const getRegisteredPlayer = await redisClient.get("auction:pre-register");
+    const getRegisteredPlayer = await redisClient.get(`auction:pre-register:${data.auction_id}`);
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set(
-            "auction:pre-register",
+            `auction:pre-register:${data.auction_id}`,
             JSON.stringify(newRedisObject)
         );
     } else {
@@ -218,7 +218,7 @@ const playerRegister = async (data: IPlayerRegister) => {
         );
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set(
-            "auction:pre-register",
+            `auction:pre-register:${data.auction_id}`,
             JSON.stringify(registeredObj)
         );
     }

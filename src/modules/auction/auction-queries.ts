@@ -270,6 +270,7 @@ const upcomingPlayerAuction = async () => {
                     is_deleted: false,
                     state: "upcoming",
                     status: true,
+                    start_date:{gte: new Date(new Date().getTime() - 1 * 62000)},
                 },
             ],
         },
@@ -601,15 +602,15 @@ const getplayerRegistrationAuctionDetails = async (
                     created_at: "desc",
                 },
             },
-            User:{
-                select:{
-                    avatar:true,
-                    country:true,
-                    status:true,
-                    first_name:true,
-                    last_name:true,
-                    email:true,
-                }
+            User: {
+                select: {
+                    avatar: true,
+                    country: true,
+                    status: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                },
             },
         },
     });
