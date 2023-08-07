@@ -257,6 +257,7 @@ export const NODE_EVENT_SERVICE = {
     AUCTION_CLOSED: "auction:closed",
     AUCTION_REGISTER_COUNT: "auction:register:count",
     UPDATE_PLAYER_REGISTER_STATUS: "auction:player:register:status",
+    COUNTDOWN: "auction:countdown",
 };
 
 export const AUCTION_STATE = [

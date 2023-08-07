@@ -11,6 +11,7 @@ import {
     SOCKET_EVENT,
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
+
 const socket = global as unknown as AppGlobal;
 export const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
 
@@ -58,6 +59,8 @@ export const auctionStart = (auctionId: string) => {
                 auctionId,
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
+            eventService.emit(NODE_EVENT_SERVICE.COUNTDOWN, countdowns[auctionId], auctionId); //emit live countdown
+            console.log(countdowns[auctionId]);
             setTimeout(timerRunEverySecond, 1000);
         }
     }
