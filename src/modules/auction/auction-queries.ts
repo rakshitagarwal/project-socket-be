@@ -284,6 +284,7 @@ const upcomingPlayerAuction = async () => {
                     is_deleted: false,
                     state: "upcoming",
                     status: true,
+                    start_date:{gte: new Date(new Date().getTime() - 1 * 62000)},
                 },
             ],
         },

@@ -248,6 +248,8 @@ export const NODE_EVENT_SERVICE = {
     AUCTION_CLOSED: "auction:closed",
     AUCTION_REGISTER_COUNT: "auction:register:count",
     UPDATE_PLAYER_REGISTER_STATUS: "auction:player:register:status",
+    PLAYER_PLAYS_BALANCE_CREDITED:"auction:player:balance:credit",
+    PLAYER_PLAYS_BALANCE_DEBIT:"auction:player:balance:debit",
 };
 
 export const AUCTION_STATE = [
