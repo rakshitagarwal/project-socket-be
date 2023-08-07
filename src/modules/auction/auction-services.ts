@@ -186,7 +186,6 @@ const playerRegister = async (data: IPlayerRegister) => {
             ),
             auctionQueries.checkIfPlayerExists(data.player_id, data.auction_id),
         ]);
-    console.log(auction, player, walletTransaction, existsInAuction);
     if (existsInAuction.length)
         return responseBuilder
             .error(403)
