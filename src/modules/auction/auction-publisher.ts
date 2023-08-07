@@ -110,10 +110,9 @@ const bidTransaction = async (playload: {
                   auctionData.opening_price +
                   auctionData.bid_increment_price)
                 : (auctionData.bid_increment_price + auctionData.opening_price);
-                socket.playerSocket
-                .to(playload.socketId)
-                .emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS,play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
-            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId,plays_balance:auctionData.plays_consumed_on_bid,auction_id:playload.auctionId})
+                socket.playerSocket.to(playload.socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS,play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
+            
+                eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId,plays_balance:auctionData.plays_consumed_on_bid,auction_id:playload.auctionId,  plays_consumed_on_bid:  auctionData.plays_consumed_on_bid})
             return { status: true, bidNumber, bidPrice };
         }
     }
@@ -154,6 +153,8 @@ const auctionBidderHistory = async (
             recentBid(newBidData.auction_id);
         }
     } else {
+        console.log("--===----------------------------------------------------------------");
+        
         socket.playerSocket
             .to(socketId)
             .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -173,6 +174,8 @@ export const newBiDRecieved = async (
     bidPayload: IBidAuction,
     socketId: string
 ) => {
+    console.log(bidPayload);
+    
     const isValid = await bidRequestValidator<IBidAuction>(
         bidPayload,
         auctionSchemas.ZbidAuction
@@ -215,12 +218,16 @@ export const newBiDRecieved = async (
                             "new_bid_history_set",
                             ""
                         );
+                        console.log("--------------------------------");
+                        
                     } else {
                         const iscontinue = JSON.parse(isBidHistory);
                         if (
                             iscontinue[iscontinue.length - 1].player_id ===
                             bidData.player_id
                         ) {
+                            console.log("++++++++++++");
+                            
                             socket.playerSocket
                                 .to(socketId)
                                 .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -229,6 +236,8 @@ export const newBiDRecieved = async (
                                             .CONTINUE_BID_NOT_ALLOWED,
                                 });
                         } else {
+                            console.log("+===");
+                            
                             auctionBidderHistory(
                                 bidData,
                                 socketId,

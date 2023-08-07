@@ -12,9 +12,10 @@ export interface IBidBotData {
     remaining_seconds: number;
     player_name: string;
     profile_image: string;
-    total_bot_bid: number | undefined;
-    is_active: boolean | undefined;
+    total_bot_bid?: number | undefined;
+    is_active?: boolean | undefined;
     player_bot_id?: string | undefined;
+    socket_id?: string | undefined;
 }
 
 export interface ISearch {

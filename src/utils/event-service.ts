@@ -210,27 +210,33 @@ eventService.on(
         player_id: string;
         plays_balance: number;
         auction_id: string;
+        plays_consumed_on_bid: number;
     }) => {
-        const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
-        if (playersBalance) {
-            if (playersBalance[data.player_id]) {
-                playersBalance[data.player_id] =
-                    +playersBalance[data.player_id] - data.plays_balance;
-                await redisClient.set(
-                    "player:plays:balance",
-                    JSON.stringify(playersBalance)
-                );
-            }
-            if (data.auction_id) {
-                await userQueries.createBidtransaction({
-                    player_id: data.player_id,
-                    plays: data.plays_balance,
-                    auction_id: data.auction_id,
-                });
-            }
+    const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+    const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${data.auction_id}`) as string);
+if(existingBotData){
+    console.log(data.plays_consumed_on_bid, "plays_consumed_on_bid");
+    const updatedLimit  = Number(existingBotData[`${data.player_id}`].plays_limit - data.plays_consumed_on_bid);
+    existingBotData[`${data.player_id}`].plays_limit = updatedLimit;
+    console.log(existingBotData[`${data.player_id}`]);
+    
+    await redisClient.set(`BidBotCount:${data.auction_id}`,JSON.stringify({[data.player_id]:existingBotData[`${data.player_id}`]}));
+}
+
+    if (playersBalance) {
+        if (playersBalance[data.player_id]) {
+            playersBalance[data.player_id] =
+                +playersBalance[data.player_id] - data.plays_balance;
+            await redisClient.set("player:plays:balance",JSON.stringify(playersBalance));
         }
+        if (data.auction_id) {
+            await userQueries.createBidtransaction({
+                player_id: data.player_id,
+                plays: data.plays_balance,
+                auction_id: data.auction_id,
+            });
+        }
+    }
     }
 );
 
