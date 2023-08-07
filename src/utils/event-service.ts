@@ -174,4 +174,64 @@ eventService.on(
     }
 );
 
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,
+    async (data: { player_id: string; plays_balance: number }) => {
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        if (!playersBalance) {
+            await redisClient.set(
+                "player:plays:balance",
+                JSON.stringify({ [data.player_id]: data.plays_balance })
+            );
+        } else {
+            if (playersBalance[data.player_id]) {
+                playersBalance[data.player_id] =
+                    +playersBalance[data.player_id] + +data.plays_balance;
+                redisClient.set(
+                    "player:plays:balance",
+                    JSON.stringify(playersBalance)
+                );
+            } else {
+                playersBalance[data.player_id] = data.plays_balance;
+                redisClient.set(
+                    "player:plays:balance",
+                    JSON.stringify(playersBalance)
+                );
+            }
+        }
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,
+    async (data: {
+        player_id: string;
+        plays_balance: number;
+        auction_id: string;
+    }) => {
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        if (playersBalance) {
+            if (playersBalance[data.player_id]) {
+                playersBalance[data.player_id] =
+                    +playersBalance[data.player_id] - data.plays_balance;
+                await redisClient.set(
+                    "player:plays:balance",
+                    JSON.stringify(playersBalance)
+                );
+            }
+            if (data.auction_id) {
+                await userQueries.createBidtransaction({
+                    player_id: data.player_id,
+                    plays: data.plays_balance,
+                    auction_id: data.auction_id,
+                });
+            }
+        }
+    }
+);
+
 export default eventService;
