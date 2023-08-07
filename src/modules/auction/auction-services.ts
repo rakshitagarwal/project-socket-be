@@ -208,7 +208,9 @@ const playerRegister = async (data: IPlayerRegister) => {
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
         );
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
-    const getRegisteredPlayer = await redisClient.get(`auction:pre-register:${data.auction_id}`);
+    const getRegisteredPlayer = await redisClient.get(
+        `auction:pre-register:${data.auction_id}`
+    );
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set(
@@ -313,21 +315,11 @@ const startAuction = async (data: IStartAuction) => {
     if (!auction) {
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     }
-    const auction_updated = await auctionQueries.startAuction(data);
-    if (!auction_updated.id) {
+
+    if (!auction.id) {
         return responseBuilder.expectationField(
             AUCTION_MESSAGES.SOMETHING_WENT_WRONG
         );
-    }
-    if (auction_updated.registeration_count) {
-        if (
-            auction_updated.PlayerAuctionRegister.length <
-            auction_updated.registeration_count
-        ) {
-            return responseBuilder.badRequestError(
-                AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
-            );
-        }
     }
     if (auction.start_date) {
         return responseBuilder.badRequestError(
@@ -335,17 +327,30 @@ const startAuction = async (data: IStartAuction) => {
         );
     }
 
-    if (new Date(data.start_date).getSeconds() < new Date().getSeconds()) {
+    if (new Date(data.start_date).toISOString() < new Date().toISOString()) {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
+
+    if (auction.registeration_count) {
+        if (
+            auction.PlayerAuctionRegister.length < auction.registeration_count
+        ) {
+            return responseBuilder.badRequestError(
+                AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
+            );
+        }
+    }
+    const auction_updated = await auctionQueries.startAuction(data);
     eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
         status: "auction_start",
         auctionId: data.auction_id,
         start_date: data.start_date,
     });
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
+    if (auction_updated.id)
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.SOMETHING_WENT_WRONG);
 };
 
 /**
