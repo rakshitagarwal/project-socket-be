@@ -186,12 +186,15 @@ const playerRegister = async (data: IPlayerRegister) => {
             ),
             auctionQueries.checkIfPlayerExists(data.player_id, data.auction_id),
         ]);
+    console.log(auction, player, walletTransaction, existsInAuction);
     if (existsInAuction.length)
         return responseBuilder
             .error(403)
             .message(
                 MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_ALREADY_EXISTS
             )
+            .data({})
+            .metaData({})
             .build();
 
     if (!auction)
@@ -203,6 +206,7 @@ const playerRegister = async (data: IPlayerRegister) => {
             MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
         );
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
+    console.log(playerRegisered);
     if (!playerRegisered.id)
         return responseBuilder.expectationField(
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
