@@ -72,18 +72,21 @@ export const AUCTION_MESSAGES = {
     FOUND: "auction found!",
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
+    PLAYER_COUNT_NOT_REACHED: "player registeration count not reached",
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
     DATE_NOT_PROPER: "start_date should be greater than current date!",
-    AUCTION_ALREADY_SET: "auction start_date is set!",
+    AUCTION_ALREADY_SET: "cannot update start date already added!",
 };
 
 export const productMessage = {
     ADD: {
         SUCCESS: "product add success",
         ALREADY_EXIST: "product title already exist",
+        PRODUCT_ADDED_WITH_AUCTION:
+            "Cannot delete product is bind with auction",
     },
     GET: {
         REQUESTED: "get product requested!",
@@ -248,6 +251,9 @@ export const NODE_EVENT_SERVICE = {
     AUCTION_CLOSED: "auction:closed",
     AUCTION_REGISTER_COUNT: "auction:register:count",
     UPDATE_PLAYER_REGISTER_STATUS: "auction:player:register:status",
+    DELETE_PRODUCT_MEDIA_IMAGES: "product:media:delete",
+    PLAYER_PLAYS_BALANCE_CREDITED: "auction:player:balance:credit",
+    PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",
 };
 
 export const AUCTION_STATE = [
