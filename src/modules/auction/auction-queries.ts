@@ -81,6 +81,7 @@ const getActiveAuctioById = async (id: string) => {
                     title: true,
                 },
             },
+            PlayerAuctionRegister: true,
             products: {
                 select: {
                     id: true,
@@ -164,6 +165,7 @@ const getAll = async (query: IPagination, state: auctionState) => {
                     status: true,
                 },
             },
+            auctionCategory: true,
         },
         take: +query.limit,
         skip: +query.page * +query.limit,
@@ -264,6 +266,15 @@ const startAuction = async (data: IStartAuction) => {
         data: {
             start_date: data.start_date,
         },
+        select: {
+            id: true,
+            registeration_count: true,
+            PlayerAuctionRegister: {
+                include: {
+                    _count: true,
+                },
+            },
+        },
     });
     return query;
 };
@@ -284,6 +295,9 @@ const upcomingPlayerAuction = async () => {
                     is_deleted: false,
                     state: "upcoming",
                     status: true,
+                    start_date: {
+                        gte: new Date(new Date().getTime() - 1 * 62000),
+                    },
                 },
             ],
         },

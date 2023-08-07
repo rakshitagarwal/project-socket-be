@@ -1,12 +1,18 @@
-import { db } from '../../config/db';
-import { addReqBody, IPaginationQuery, IProductMedia, updateReqBody, } from './typings/product-type';
+import { PrismaClient } from "@prisma/client";
+import { db } from "../../config/db";
+import {
+    addReqBody,
+    IPaginationQuery,
+    IProductMedia,
+    updateReqBody,
+} from "./typings/product-type";
 
 /**
  * @param {addReqBody} product  - product data
- * @description - data for the product 
+ * @description - data for the product
  */
-const addNew = async (product: addReqBody) => {
-    const queryResult = await db.product.create({
+const addNew = async (prisma: PrismaClient, product: addReqBody) => {
+    const queryResult = await prisma.products.create({
         data: {
             title: product.title,
             description: product.description,
@@ -21,7 +27,7 @@ const addNew = async (product: addReqBody) => {
 
 /**
  * @param {string} title  - pass title data
- * @description -  get title is check title or not on product 
+ * @description -  get title is check title or not on product
  */
 const getTitle = async (title: string) => {
     const queryResult = await db.product.findFirst({
@@ -46,10 +52,9 @@ const getTitle = async (title: string) => {
     return queryResult;
 };
 
-
 /**
  * @param {string} id  - pass id product
- * @description -  get id is check title or not on product 
+ * @description -  get id is check title or not on product
  */
 const getById = async (id: string) => {
     const queryResult = await db.product.findFirst({
@@ -76,14 +81,19 @@ const getById = async (id: string) => {
                     mime_type: true,
                     status: true,
                     updated_at: false,
-                }
+                },
             },
             updated_at: false,
             productCategories: {
                 select: {
                     id: true,
-                    title: true
-                }
+                    title: true,
+                },
+            },
+            auctions: {
+                include: {
+                    _count: true,
+                },
             },
             productMedias: {
                 select: {
@@ -97,10 +107,10 @@ const getById = async (id: string) => {
                             mime_type: true,
                             status: true,
                             updated_at: false,
-                        }
-                    }
-                }
-            }
+                        },
+                    },
+                },
+            },
         },
     });
     return queryResult;
@@ -108,7 +118,7 @@ const getById = async (id: string) => {
 
 /**
  * @param {IPaginationQuery} query   Pagination in  product
- * @description -  get all product on product and total Count  
+ * @description -  get all product on product and total Count
  */
 const getAllProduct = async (query: IPaginationQuery) => {
     const totalCount = await db.product.count({
@@ -116,8 +126,8 @@ const getAllProduct = async (query: IPaginationQuery) => {
             AND: [
                 { is_deleted: false },
                 {
-                    OR: query.filter
-                }
+                    OR: query.filter,
+                },
             ],
         },
     });
@@ -127,8 +137,8 @@ const getAllProduct = async (query: IPaginationQuery) => {
             AND: [
                 { is_deleted: false },
                 {
-                    OR: query.filter
-                }
+                    OR: query.filter,
+                },
             ],
         },
         select: {
@@ -147,15 +157,19 @@ const getAllProduct = async (query: IPaginationQuery) => {
                     mime_type: true,
                     status: true,
                     updated_at: false,
-                }
+                },
             },
-
+            auctions: {
+                include: {
+                    _count: true,
+                },
+            },
             updated_at: false,
             productCategories: {
                 select: {
                     id: true,
-                    title: true
-                }
+                    title: true,
+                },
             },
             productMedias: {
                 select: {
@@ -169,14 +183,14 @@ const getAllProduct = async (query: IPaginationQuery) => {
                             mime_type: true,
                             status: true,
                             updated_at: false,
-                        }
-                    }
-                }
-            }
+                        },
+                    },
+                },
+            },
         },
-        orderBy: { updated_at: 'desc' },
+        orderBy: { updated_at: "desc" },
         skip: query.limit * query.page,
-        take: query.limit
+        take: query.limit,
     });
     return {
         queryResult,
@@ -184,14 +198,17 @@ const getAllProduct = async (query: IPaginationQuery) => {
     };
 };
 
-
 /**
  * @param {string} id in  product
  * @param {updateReqBody} updateInfo pass in payload in product
  * @description - update query
  */
-const update = async (id: string, updateInfo: updateReqBody) => {
-    const queryResult = await db.product.update({
+const update = async (
+    prisma: PrismaClient,
+    id: string,
+    updateInfo: updateReqBody
+) => {
+    const queryResult = await prisma.products.update({
         where: { id: id },
         data: { ...updateInfo },
         select: {
@@ -213,9 +230,9 @@ const update = async (id: string, updateInfo: updateReqBody) => {
                             mime_type: true,
                             status: true,
                             updated_at: false,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             },
             created_at: false,
             updated_at: false,
@@ -224,10 +241,9 @@ const update = async (id: string, updateInfo: updateReqBody) => {
     return queryResult;
 };
 
-
 /**
  * @param {string} ids in  product
- * @description - delete multiple ids on product 
+ * @description - delete multiple ids on product
  */
 const deleteMultipleIds = async function (ids: string[]) {
     const queryResult = await db.product.deleteMany({
@@ -239,14 +255,13 @@ const deleteMultipleIds = async function (ids: string[]) {
                 is_deleted: false,
             },
         },
-
     });
     return queryResult;
 };
 
 /**
  * @param {string} ids in product
- * @description - get FindAll Id multiple ids on product 
+ * @description - get FindAll Id multiple ids on product
  */
 const getFindAllId = async function (ids: string[]) {
     const queryResult = await db.product.findMany({
@@ -258,6 +273,13 @@ const getFindAllId = async function (ids: string[]) {
                 is_deleted: false,
             },
         },
+        select: {
+            auctions: {
+                include: {
+                    _count: true,
+                },
+            },
+        },
     });
     return queryResult;
 };
@@ -266,7 +288,7 @@ const getFindAllId = async function (ids: string[]) {
 
 /**
  * @param {string} id in product media
- * @description - get Find ProductMedia All id on product 
+ * @description - get Find ProductMedia All id on product
  */
 const findProductMediaIds = async function (id: string) {
     const queryResult = await db.productMedia.findMany({
@@ -277,15 +299,15 @@ const findProductMediaIds = async function (id: string) {
             },
         },
         select: {
-            media_id: true
-        }
+            media_id: true,
+        },
     });
     return queryResult;
 };
 
 /**
  * @param {string} ids in product media
- * @description - get Find ProductMedia All id on product 
+ * @description - get Find ProductMedia All id on product
  */
 const findProductMediaAll = async function (ids: string[]) {
     const queryResult = await db.productMedia.findMany({
@@ -303,7 +325,7 @@ const findProductMediaAll = async function (ids: string[]) {
 
 /**
  * @param {string[]} ids in product media
- * @description - delete ProductMedia All ids on product 
+ * @description - delete ProductMedia All ids on product
  */
 const deleteManyProductMedia = async function (ids: string[]) {
     const queryResult = await db.productMedia.deleteMany({
@@ -318,10 +340,13 @@ const deleteManyProductMedia = async function (ids: string[]) {
 
 /**
  * @param {IProductMedia} product in product media
- * @description - add ProductMedia All ids on product 
+ * @description - add ProductMedia All ids on product
  */
-const addProductMediaNew = async (product: IProductMedia[]) => {
-    const addProductMediaNew = await db.productMedia.createMany({
+const addProductMediaNew = async (
+    prisma: PrismaClient,
+    product: IProductMedia[]
+) => {
+    const addProductMediaNew = await prisma.productMedia.createMany({
         data: product,
     });
     return addProductMediaNew;
@@ -329,13 +354,15 @@ const addProductMediaNew = async (product: IProductMedia[]) => {
 
 /**
  * @param {string} id in product media
- * @description -  ProductMedia All ids on product 
+ * @description -  ProductMedia All ids on product
  */
-const updateProductMedia = async (id: string) => {
+const updateProductMedia = async (id: string[]) => {
     const queryResult = await db.productMedia.deleteMany({
         where: {
             AND: {
-                product_id: id,
+                product_id: {
+                    in: id,
+                },
                 is_deleted: false,
             },
         },
@@ -355,7 +382,7 @@ const productQueries = {
     addProductMediaNew,
     updateProductMedia,
     deleteManyProductMedia,
-    findProductMediaIds
+    findProductMediaIds,
 };
 
 export default productQueries;

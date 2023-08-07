@@ -364,26 +364,14 @@ const addWalletTransaction = async (data: IWalletTx) => {
     if (isExists.roles.title !== "Player") {
         return responseBuilder.badRequestError(
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
-        );
+    );
     }
-    const player_wallet = await userQueries.playerWalletBac(data.player_id);
-    const wallet_id = player_wallet?.id as unknown as string;
     if (data.currency === "CRYPTO") {
-        if (player_wallet?.id) {
-            if (data.currencyType === "BIGTOKEN") {
-                current_plays =
-                    player_wallet.play_balance +
-                    data.plays +
-                    (data.plays * 10) / 100;
-            } else {
-                current_plays = player_wallet.play_balance + data.plays;
-            }
+        if (data.currencyType === "BIGTOKEN") {
+            current_plays = data.plays + (data.plays * 10) / 100;
+            
         } else {
-            if (data.currencyType === "BIGTOKEN") {
-                current_plays = data.plays + (data.plays * 10) / 100;
-            } else {
-                current_plays = data.plays;
-            }
+            current_plays = data.plays;
         }
     }
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
@@ -391,34 +379,16 @@ const addWalletTransaction = async (data: IWalletTx) => {
             ...data,
             plays: current_plays,
         });
-        if (!wallet_id) {
-            const add_new_wallet = await userQueries.addPlaysToWallet(prisma, {
-                ...data,
-                plays: current_plays,
-            });
-            await userQueries.addPlayBalanceTx(prisma, {
-                ...data,
-                wallet_id: add_new_wallet.id,
-                currency_transaction_id: currency_trx.id,
-            });
-        } else {
-            const player_wallet = await userQueries.updatePlaysInWallet(
-                prisma,
-                {
-                    wallet_id: wallet_id,
-                    plays: current_plays,
-                }
-            );
-            await userQueries.addPlayBalanceTx(prisma, {
-                ...data,
-                wallet_id: player_wallet.id,
-                currency_transaction_id: currency_trx.id,
-            });
-        }
+        await userQueries.addPlayBalanceTx(prisma, {
+            ...data,
+            plays:current_plays,
+            currency_transaction_id: currency_trx.id,
+        });
 
         return { currency_trx };
     });
     if (createTrax.currency_trx.id) {
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,{player_id:data.player_id,plays_balance:current_plays})
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
             { plays: current_plays }
@@ -447,11 +417,12 @@ const getPlayerWalletBalance = async (player_id: string) => {
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
         );
     }
-    const transactions = await userQueries.playerWalletBac(player_id);
+    const transactions = await userQueries.playerPlaysBalance(player_id) as unknown as {play_balance:number,player_id:string}[]
+    
     return responseBuilder.okSuccess(
         MESSAGES.USER_PLAY_BALANCE.PLAYER_BALANCE,
         {
-            play_balance: transactions ? transactions.play_balance : 0,
+            play_balance: transactions.length ? transactions[0]?.play_balance : 0,
         }
     );
 };
@@ -464,8 +435,8 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
     const isExists = await userQueries.fetchPlayerId(data.player_id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
-    const wallet = await userQueries.playerWalletBac(data.player_id);
-    if (!wallet?.id)
+    const wallet = await userQueries.playerPlaysBalance(data.player_id) as unknown as {play_balance:number,player_id:string}
+    if (!wallet)
         return responseBuilder.notFoundError(
             MESSAGES.USER_PLAY_BALANCE.USER_WALLET_BALANCE_NOT_FOUND
         );
@@ -479,25 +450,17 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
     }
     const transaction = await prismaTransaction(
         async (prisma: PrismaClient) => {
-            const remaining_blx = wallet.play_balance - data.plays;
-            const debited_amount = await userQueries.debitPlayBalance(prisma, {
-                ...data,
-                plays: remaining_blx,
-                walletId: wallet?.id as unknown as string,
-            });
             const walletTrx = await userQueries.createTrx(
                 prisma,
-                debited_amount.id,
                 data.player_id,
                 data.plays
             );
-            return { debited_amount, walletTrx };
+            return {  walletTrx };
         }
     );
-    if (!transaction.wallet && !transaction.walletTrx)
-        return responseBuilder.expectationField(
-            MESSAGES.PLAYER_WALLET_TRAX.TRANSACTION_FAILED
-        );
+    if (!transaction.walletTrx)
+        return responseBuilder.expectationField( MESSAGES.PLAYER_WALLET_TRAX.TRANSACTION_FAILED);
+    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:data.player_id,plays_balance:data.plays})
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_WALLET_TRAX.PLAYS_SUCCESSFULLY_DEBITED,
         {
@@ -506,20 +469,20 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
     );
 };
 
-const bidPlaysDebit = async (data: IDeductPlx & { totalPlays: number }) => {
-    return await prismaTransaction(async (prisma: PrismaClient) => {
-        const remaining_blx = data.totalPlays - data.plays;
-        const debited_amount = await userQueries.updatePlayerWallet(prisma, {
-            plays: remaining_blx,
-            player_id: data.player_id,
-        });
-        const walletTrx = await userQueries.createBidtransaction({
-            player_id: data.player_id,
-            plays: data.plays,
-        });
-        return { debited_amount, walletTrx };
-    });
-};
+// const bidPlaysDebit = async (data: IDeductPlx & { totalPlays: number }) => {
+//     return await prismaTransaction(async (prisma: PrismaClient) => {
+//         const remaining_blx = data.totalPlays - data.plays;
+//         const debited_amount = await userQueries.updatePlayerWallet(prisma, {
+//             plays: remaining_blx,
+//             player_id: data.player_id,
+//         });
+//         const walletTrx = await userQueries.createBidtransaction({
+//             player_id: data.player_id,
+//             plays: data.plays,
+//         });
+//         return { debited_amount, walletTrx };
+//     });
+// };
 
 const userService = {
     register,
@@ -538,7 +501,7 @@ const userService = {
     addWalletTransaction,
     getPlayerWalletBalance,
     debitPlaysForPlayer,
-    bidPlaysDebit,
+    // bidPlaysDebit,
 };
 
 export default userService;

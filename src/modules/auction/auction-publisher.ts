@@ -3,7 +3,6 @@ import redisClient from "../../config/redis";
 import { bidRequestValidator } from "../../middlewares/validateRequest";
 import { auctionSchemas } from "./auction-schemas";
 import { IBidAuction } from "../../middlewares/typings/middleware-types";
-import userService from "../users/user-services";
 import eventService from "../../utils/event-service";
 import {
     NODE_EVENT_SERVICE,
@@ -98,27 +97,23 @@ const bidTransaction = async (playload: {
     socketId: string;
     auctionId: string;
 }) => {
-    const isBalance = await userService.getPlayerWalletBalance(
-        playload.playerId
-    );
+    const isBalance = JSON.parse(await redisClient.get("player:plays:balance") as unknown as string);
     const auctionData = JSON.parse((await redisClient.get(`auction:live:${playload.auctionId}`)) as unknown as string);
-    const data = isBalance.data as unknown as { play_balance: number };
-    if (data.play_balance >= auctionData.plays_consumed_on_bid) {
+    if(isBalance && +isBalance[playload.playerId]>auctionData.plays_consumed_on_bid){
         const bidHistory = JSON.parse((await redisClient.get(`${playload.auctionId}:bidHistory`)) as unknown as string);
-        if ( bidHistory && bidHistory.length * auctionData.bid_increment_price +auctionData.opening_price >=auctionData.products.price
-        ) {
-            socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {message: MESSAGES.SOCKET.AUCTION_ENDED,});
-        } else {
+        if ( bidHistory && bidHistory.length * auctionData.bid_increment_price +auctionData.opening_price >=auctionData.products.price) {
+                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {message: MESSAGES.SOCKET.AUCTION_ENDED,});
+        }else{
             const bidNumber = bidHistory ? bidHistory.length + 1 : 1;
             const bidPrice = bidHistory
-                ? bidHistory.length * auctionData.bid_increment_price +
+                ? (bidHistory.length * auctionData.bid_increment_price +
                   auctionData.opening_price +
-                  auctionData.bid_increment_price
-                : auctionData.bid_increment_price + auctionData.opening_price;
-            await userService.bidPlaysDebit({player_id: playload.playerId,plays: auctionData.plays_consumed_on_bid,totalPlays:data.play_balance});
-            socket.playerSocket
+                  auctionData.bid_increment_price)
+                : (auctionData.bid_increment_price + auctionData.opening_price);
+                socket.playerSocket
                 .to(playload.socketId)
-                .emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS,play_balance:    data.play_balance - auctionData.plays_consumed_on_bid,});
+                .emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS,play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
+            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId,plays_balance:auctionData.plays_consumed_on_bid,auction_id:playload.auctionId})
             return { status: true, bidNumber, bidPrice };
         }
     }
@@ -195,7 +190,7 @@ export const newBiDRecieved = async (
             });
         } else {
             const isPre_register = await redisClient.get(
-                "auction:pre-register"
+                `auction:pre-register:${bidData.auction_id}`
             );
             if (isPre_register?.length) {
                 const preRegisterData = JSON.parse(isPre_register);
