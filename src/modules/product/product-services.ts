@@ -1,16 +1,29 @@
-import fs from 'fs';
+import fs from "fs";
 import { responseBuilder } from "../../common/responses";
-import { addReqBody, Ids, IPagination, Iid, updateReqBody, IProductMedia } from "./typings/product-type";
+import {
+    addReqBody,
+    Ids,
+    IPagination,
+    Iid,
+    updateReqBody,
+} from "./typings/product-type";
 import productQueries from "./product-queries";
-import { productCategoryMessage, productMessage, MESSAGES } from "../../common/constants";
+import {
+    productCategoryMessage,
+    productMessage,
+    MESSAGES,
+    NODE_EVENT_SERVICE,
+} from "../../common/constants";
 import productCategoryQueries from "../product-categories/product-category-queries";
 import mediaQuery from "../media/media-queries";
 import { prismaTransaction } from "../../utils/prisma-transactions";
+import { PrismaClient } from "@prisma/client";
+import eventService from "../../utils/event-service";
 
 /**
  * @description  add product
  * @param {string} userId it user ids.
- * @param {addReqBody} newReqBody pass payload 
+ * @param {addReqBody} newReqBody pass payload
  * @see getById in pass the product Category Id.
  * @see getMediaById in pass the product media Id.
  * @see findManyMedias  check Ids in pass the product media Id.
@@ -20,65 +33,78 @@ const add = async (newReqBody: addReqBody, userId: string) => {
     const [isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
         productCategoryQueries.getById(newReqBody.product_category_id),
         mediaQuery.getMediaById(newReqBody.landing_image),
-        mediaQuery.findManyMedias(newReqBody.media_id)
+        mediaQuery.findManyMedias(newReqBody.media_id),
     ]);
 
     if (!isExistId) {
-        return responseBuilder.notFoundError(productCategoryMessage.GET.NOT_FOUND);
+        return responseBuilder.notFoundError(
+            productCategoryMessage.GET.NOT_FOUND
+        );
     }
     if (!isExistIdLandImg) {
         return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
     }
     if (isExistIdMedia.length !== newReqBody.media_id.length) {
-        return responseBuilder.notFoundError(productMessage.GET.PRODUCT_MEDIA_IDS);
+        return responseBuilder.notFoundError(
+            productMessage.GET.PRODUCT_MEDIA_IDS
+        );
     }
-
-    const resultTransactions = await prismaTransaction(async () => {
-
-        newReqBody.userId = userId
-        const queryResult = await productQueries.addNew(newReqBody);
-        const mediaIds: IProductMedia[] = newReqBody.media_id.map((element: string) => {
-            return { media_id: element, product_id: queryResult.id as string }
-        });
-        const productMediaQuery = await productQueries.addProductMediaNew(mediaIds);
-        const promise = [queryResult, productMediaQuery]
-        return promise
-    })
-    if (!resultTransactions) {
-        return responseBuilder.badRequestError(productMessage.UPDATE.TRANSACTION_FAIL)
-    }
-    return responseBuilder.createdSuccess(
-        productMessage.ADD.SUCCESS,
+    newReqBody.userId = userId;
+    const resultTransactions = await prismaTransaction(
+        async (prisma: PrismaClient) => {
+            const queryResult = await productQueries.addNew(prisma, newReqBody);
+            const mediaIds = newReqBody.media_id.map((element) => {
+                return {
+                    media_id: element,
+                    product_id: queryResult.id as string,
+                };
+            });
+            const productMediaQuery = await productQueries.addProductMediaNew(
+                prisma,
+                mediaIds
+            );
+            return [queryResult, productMediaQuery];
+        }
     );
+    if (!resultTransactions.length) {
+        return responseBuilder.badRequestError(
+            productMessage.UPDATE.TRANSACTION_FAIL
+        );
+    }
+    return responseBuilder.createdSuccess(productMessage.ADD.SUCCESS);
 };
 
 /**
  * @description   it is used in get id ,getAll and search title field apis for product
  * @param {id} ids it user ids.
- * @param {IPagination} query pagination for pass payload 
+ * @param {IPagination} query pagination for pass payload
  * @returns {object}  - the response object using responseBuilder.
  */
 const get = async ({ id }: Iid, query: IPagination) => {
     if (id) {
         const result = await productQueries.getById(id);
         if (!result) {
-            return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND)
+            return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
         }
-        return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result)
+        return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result);
     }
-    const limit = parseInt(query.limit) || 10
-    const page = parseInt(query.page) || 0
-    const filter = []
+    const limit = parseInt(query.limit) || 10;
+    const page = parseInt(query.page) || 0;
+    const filter = [];
     if (query.search) {
-        filter.push({ title: { contains: query.search, mode: 'insensitive' } },)
+        filter.push({ title: { contains: query.search, mode: "insensitive" } });
     }
-    const { queryResult, totalCount } = await productQueries.getAllProduct({ limit, filter, page });
+    const { queryResult, totalCount } = await productQueries.getAllProduct({
+        limit,
+        filter,
+        page,
+    });
     return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
         limit,
         page,
         totalRecord: totalCount,
         totalPages: Math.ceil(totalCount / limit),
-        search: query.search || ''
+        search: query.search || "",
     });
 };
 
@@ -89,53 +115,64 @@ const get = async ({ id }: Iid, query: IPagination) => {
  * @see findManyMedias  check Ids in pass the product media Id.
  * @see findManyMedias  check Ids in pass the product media Id.
  * @see updateProductMedia In check the product media id
- * @see addProductMediaNew product add 
+ * @see addProductMediaNew product add
  * @see deleteMediaByIds In check the media id
  * @param {Ids} productId pass in product id
  * @param {addReqBody} addReqBody pass the payload
  * @returns {object}  - the response object using responseBuilder.
  */
 const update = async (productId: Iid, newReqBody: addReqBody) => {
-
-    const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia] = await Promise.all([
-        productQueries.getById(productId.id as string), productCategoryQueries.getById(newReqBody.product_category_id),
-        mediaQuery.getMediaById(newReqBody.landing_image),
-        mediaQuery.findManyMedias(newReqBody.media_id)
-    ]);
-
+    const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia] =
+        await Promise.all([
+            productQueries.getById(productId.id as string),
+            productCategoryQueries.getById(newReqBody.product_category_id),
+            mediaQuery.getMediaById(newReqBody.landing_image),
+            mediaQuery.findManyMedias(newReqBody.media_id),
+        ]);
     if (!isExistProductId) {
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     }
     if (!isExistId) {
-        return responseBuilder.notFoundError(productCategoryMessage.GET.NOT_FOUND);
+        return responseBuilder.notFoundError(
+            productCategoryMessage.GET.NOT_FOUND
+        );
     }
     if (!isExistIdLandImg) {
         return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
     }
     if (isExistIdMedia.length !== newReqBody.media_id.length) {
-        return responseBuilder.notFoundError(productMessage.GET.PRODUCT_MEDIA_IDS);
+        return responseBuilder.notFoundError(
+            productMessage.GET.PRODUCT_MEDIA_IDS
+        );
     }
 
-    const resultTransactions = await prismaTransaction(async () => {
-        const { media_id, ...payload } = newReqBody;
+    // EVENT FOR DELETING THE OLD IMAGES FROM FS
+    eventService.emit(
+        NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
+        isExistProductId.id
+    );
+    const { media_id, ...payload } = newReqBody;
+    const mediaIds = media_id.map((element) => {
+        return { media_id: element, product_id: productId.id as string };
+    });
 
-        const mediaIds: IProductMedia[] = media_id.map((element: string) => {
-            return { media_id: element, product_id: productId.id as string }
-        });
-        const getMediaId = await productQueries.findProductMediaIds(productId.id as string)
-        const arrMediaId: string[] = [];
-        getMediaId.map((data) => { arrMediaId.push(data.media_id) })
-        const productMediaRemoveQuery = await productQueries.updateProductMedia(productId.id as string);
-        const productMediaQuery = await productQueries.addProductMediaNew(mediaIds);
-        const mediaFiles = await mediaQuery.findManyMedias(arrMediaId);
-        mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
-        const deleteMedias = await mediaQuery.deleteMediaByIds(arrMediaId);
-        const productUpdate = await productQueries.update(productId.id as string, payload as updateReqBody);
-        const promise = [productMediaQuery, productMediaRemoveQuery, deleteMedias, productUpdate]
-        return promise
-    })
-    if (!resultTransactions) {
-        return responseBuilder.badRequestError(productMessage.UPDATE.TRANSACTION_FAIL)
+    const createTrx = await prismaTransaction(async (prisma: PrismaClient) => {
+        const productUpdate = await productQueries.update(
+            prisma,
+            productId.id as string,
+            payload as updateReqBody
+        );
+        const productMediaQuery = await productQueries.addProductMediaNew(
+            prisma,
+            mediaIds
+        );
+        return { productUpdate, productMediaQuery };
+    });
+
+    if (!createTrx) {
+        return responseBuilder.badRequestError(
+            productMessage.UPDATE.TRANSACTION_FAIL
+        );
     }
     return responseBuilder.okSuccess(productMessage.UPDATE.SUCCESS);
 };
@@ -153,26 +190,46 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
  */
 const removeMultipleId = async (collectionId: Ids) => {
     const ids = collectionId.ids;
-    if (!ids.length) return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
+    if (!ids.length)
+        return responseBuilder.badRequestError(productMessage.GET.NOT_FOUND);
     const findProducts = await productQueries.getFindAllId(ids);
-    if (!findProducts.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
+    if (!findProducts.length)
+        return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
     const productMedias = await productQueries.findProductMediaAll(ids);
-    if (!productMedias.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
+    if (!productMedias.length)
+        return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
 
-    const productMediaIds = productMedias.map(mediaId => mediaId.id);
-    const mediaIds = productMedias.map(productMedia => productMedia.media_id);
-    const mediaFiles = await mediaQuery.findManyMedias(mediaIds);
-    if (!mediaFiles.length) return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
-    mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
-    
-    const resultTransactions = await prismaTransaction(async () => {
-    const [deleteMedias, deleteProducts, deleteProductMedias] =
-    await Promise.all([mediaQuery.deleteMediaByIds(mediaIds), productQueries.deleteMultipleIds(ids), productQueries.deleteManyProductMedia(productMediaIds) ]);
-    const promise = [deleteMedias, deleteProducts, deleteProductMedias];
-    return promise;
+    const isAuctionExists = findProducts.some((product) => {
+        if (product.auctions.length > 0) return true;
+        return false;
     });
-    if (!resultTransactions)  return responseBuilder.internalserverError(productMessage.DELETE.FAIL);
-        return responseBuilder.okSuccess(productMessage.DELETE.SUCCESS); 
+
+    if (isAuctionExists) {
+        return responseBuilder.badRequestError(
+            productMessage.ADD.PRODUCT_ADDED_WITH_AUCTION
+        );
+    }
+
+    const productMediaIds = productMedias.map((mediaId) => mediaId.id);
+    const mediaIds = productMedias.map((productMedia) => productMedia.media_id);
+    const mediaFiles = await mediaQuery.findManyMedias(mediaIds);
+    if (!mediaFiles.length)
+        return responseBuilder.notFoundError(productMessage.GET.SOME_NOT_FOUND);
+    mediaFiles.map((item) => fs.unlinkSync(`${item?.local_path}`));
+
+    const resultTransactions = await prismaTransaction(async () => {
+        const [deleteMedias, deleteProducts, deleteProductMedias] =
+            await Promise.all([
+                mediaQuery.deleteMediaByIds(mediaIds),
+                productQueries.deleteMultipleIds(ids),
+                productQueries.deleteManyProductMedia(productMediaIds),
+            ]);
+        const promise = [deleteMedias, deleteProducts, deleteProductMedias];
+        return promise;
+    });
+    if (!resultTransactions)
+        return responseBuilder.internalserverError(productMessage.DELETE.FAIL);
+    return responseBuilder.okSuccess(productMessage.DELETE.SUCCESS);
 };
 
 const productServices = {

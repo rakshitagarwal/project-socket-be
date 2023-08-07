@@ -164,6 +164,7 @@ const getAll = async (query: IPagination, state: auctionState) => {
                     status: true,
                 },
             },
+            auctionCategory: true,
         },
         take: +query.limit,
         skip: +query.page * +query.limit,
@@ -263,6 +264,15 @@ const startAuction = async (data: IStartAuction) => {
         },
         data: {
             start_date: data.start_date,
+        },
+        select: {
+            id: true,
+            registeration_count: true,
+            PlayerAuctionRegister: {
+                include: {
+                    _count: true,
+                },
+            },
         },
     });
     return query;
