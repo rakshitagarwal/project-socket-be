@@ -369,7 +369,7 @@ const addWalletTransaction = async (data: IWalletTx) => {
     if (data.currency === "CRYPTO") {
         if (data.currencyType === "BIGTOKEN") {
             current_plays = data.plays + (data.plays * 10) / 100;
-            
+
         } else {
             current_plays = data.plays;
         }
@@ -388,7 +388,10 @@ const addWalletTransaction = async (data: IWalletTx) => {
         return { currency_trx };
     });
     if (createTrax.currency_trx.id) {
-        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,{player_id:data.player_id,plays_balance:current_plays})
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
+            player_id:data.player_id,
+            plays_balance: current_plays,
+        });
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
             { plays: current_plays }
@@ -417,12 +420,16 @@ const getPlayerWalletBalance = async (player_id: string) => {
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
         );
     }
-    const transactions = await userQueries.playerPlaysBalance(player_id) as unknown as {play_balance:number,player_id:string}[]
-    
+    const transactions = (await userQueries.playerPlaysBalance(
+        player_id
+    )) as unknown as { play_balance: number; player_id: string }[];
+
     return responseBuilder.okSuccess(
         MESSAGES.USER_PLAY_BALANCE.PLAYER_BALANCE,
         {
-            play_balance: transactions.length ? transactions[0]?.play_balance : 0,
+            play_balance: transactions.length
+                ? transactions[0]?.play_balance
+                : 0,
         }
     );
 };
@@ -435,12 +442,14 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
     const isExists = await userQueries.fetchPlayerId(data.player_id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
-    const wallet = await userQueries.playerPlaysBalance(data.player_id) as unknown as {play_balance:number,player_id:string}
-    if (!wallet)
+    const wallet = (await userQueries.playerPlaysBalance(
+        data.player_id
+    )) as unknown as [{ play_balance: number; player_id: string }];
+    if (!wallet || !wallet.length)
         return responseBuilder.notFoundError(
             MESSAGES.USER_PLAY_BALANCE.USER_WALLET_BALANCE_NOT_FOUND
         );
-    if (wallet.play_balance < data.plays) {
+    if (wallet.length && wallet[0]?.play_balance < data.plays) {
         return responseBuilder
             .success(206)
             .message(MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED)
@@ -455,12 +464,17 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
                 data.player_id,
                 data.plays
             );
-            return {  walletTrx };
+            return { walletTrx };
         }
     );
     if (!transaction.walletTrx)
-        return responseBuilder.expectationField( MESSAGES.PLAYER_WALLET_TRAX.TRANSACTION_FAILED);
-    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:data.player_id,plays_balance:data.plays})
+        return responseBuilder.expectationField(
+            MESSAGES.PLAYER_WALLET_TRAX.TRANSACTION_FAILED
+        );
+    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
+        player_id: data.player_id,
+        plays_balance: data.plays,
+    });
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_WALLET_TRAX.PLAYS_SUCCESSFULLY_DEBITED,
         {
