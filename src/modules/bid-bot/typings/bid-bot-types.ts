@@ -18,6 +18,12 @@ export interface IBidBotData {
     socket_id?: string | undefined;
 }
 
+export interface IBidBotUpdate {
+    player_id: string;
+    auction_id: string;
+    total_bot_bid: number;
+}
+
 export interface ISearch {
     player_id: string;
     auction_id: string;

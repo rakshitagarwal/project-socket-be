@@ -59,7 +59,7 @@ export const auctionStart = (auctionId: string) => {
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             eventService.emit(NODE_EVENT_SERVICE.COUNTDOWN, countdowns[auctionId], auctionId); //emit live countdown
-            console.log(countdowns[auctionId]);
+            // console.log(countdowns[auctionId]);
             setTimeout(timerRunEverySecond, 1000);
         }
     }

@@ -1,5 +1,5 @@
 import { db } from "../../config/db";
-import { IBidBotInfo } from "./typings/bid-bot-types";
+import { IBidBotInfo, IBidBotUpdate } from "./typings/bid-bot-types";
 
 /**
  * @description addbidBot is used to add bidbot information to the database.
@@ -155,7 +155,12 @@ const updateBidBot = async function (id: string, bidsUpdated: number) {
     return queryResult;
 };
 
-const updateBidBotMany = async function (bidBotData: any) {
+/**
+ * @description updateBidBotMany is used to update total_bot_bid of bidbot.
+ * @param {IBidBotUpdate} bidBotData - data required to updata total_bot_bid type definition
+ * @returns {queryResult} - the result of execution of query.
+ */
+const updateBidBotMany = async function (bidBotData: IBidBotUpdate) {
     const queryResult = await db.bidBot.updateMany({
         where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
         data: { 
