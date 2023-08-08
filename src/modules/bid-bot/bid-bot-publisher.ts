@@ -33,14 +33,6 @@ export const executeBidbot = async function (
             // player_bot_id: randomClient?.id,
         }, botData.socket_id as string);
 
-    // if (bidSuccess === "pass") {
-    // const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${botData.auction_id}`) as string);
-    // const auctionRunning = JSON.parse((await redisClient.get(`auction:live:${botData.auction_id}`)) as string);
-    // const playsUpdated = (existingBotData[`${botData}`].plays_limit  - auctionRunning.plays_consumed_on_bid) as number;
-    // existingBotData[`${botData.player_id}`].plays_limit = playsUpdated;
-    // await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
-    // console.log("7");
-    // }
 };
 
 const tempStorage: {[auctionId:string]:number}= {}; // to store random time
@@ -56,9 +48,9 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
         const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${auctionId}`) as string);
         const bidBotCollection = Object.keys(existingBotData);
         const randomIndex = Math.floor(Math.random() * bidBotCollection.length);
-        const selectRandom = bidBotCollection[randomIndex];
-        const randomBot = existingBotData[`${selectRandom}`];
-        console.log(randomBot, "selected randomBot");
+        const selectRandom = bidBotCollection[randomIndex]; // key or player id selection
+        const randomBot = existingBotData[`${selectRandom}`]; // value or object of player id
+        // console.log(randomBot, "selected randomBot");
         executeBidbot(randomBot,countdown);   
         const rng = seedrandom();
         const randomNumber = rng();
@@ -78,7 +70,7 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
     if (!existBot) await bidBotService.addBidBot(botData);
 
     const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${botData.auction_id}`) as string);
-    console.log(existingBotData, "existingBotData");
+    // console.log(existingBotData, "existingBotData");
     
     const playerInfo = {
         player_id: botData.player_id,
@@ -100,17 +92,4 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
             await redisClient.set(`BidBotCount:${botData.auction_id}`, JSON.stringify(existingBotData));
         }
         
-
-    // if(existingBotData){
-    //     if( existingBotData[`${botData.player_id}`] && existingBotData[`${botData.player_id}`]?.plays_limit===0){
-    //         existingBotData[`${botData.player_id}`]= playerInfo;
-    //         await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
-    //     }else if(!existingBotData[`${botData.player_id}`]){
-    //         existingBotData[`${botData.player_id}`] = playerInfo;
-    //         await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
-    //    }
-    // }
-    // else if(!existingBotData){
-    //     await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify({[botData.player_id]:playerInfo}));
-    // } 
 };

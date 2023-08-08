@@ -152,9 +152,7 @@ const auctionBidderHistory = async (
             );
             recentBid(newBidData.auction_id);
         }
-    } else {
-        console.log("--===----------------------------------------------------------------");
-        
+    } else {   
         socket.playerSocket
             .to(socketId)
             .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -173,9 +171,7 @@ const auctionBidderHistory = async (
 export const newBiDRecieved = async (
     bidPayload: IBidAuction,
     socketId: string
-) => {
-    console.log(bidPayload);
-    
+) => {    
     const isValid = await bidRequestValidator<IBidAuction>(
         bidPayload,
         auctionSchemas.ZbidAuction
@@ -218,16 +214,12 @@ export const newBiDRecieved = async (
                             "new_bid_history_set",
                             ""
                         );
-                        console.log("--------------------------------");
-                        
                     } else {
                         const iscontinue = JSON.parse(isBidHistory);
                         if (
                             iscontinue[iscontinue.length - 1].player_id ===
                             bidData.player_id
-                        ) {
-                            console.log("++++++++++++");
-                            
+                        ) {                            
                             socket.playerSocket
                                 .to(socketId)
                                 .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -235,9 +227,7 @@ export const newBiDRecieved = async (
                                         MESSAGES.SOCKET
                                             .CONTINUE_BID_NOT_ALLOWED,
                                 });
-                        } else {
-                            console.log("+===");
-                            
+                        } else {                            
                             auctionBidderHistory(
                                 bidData,
                                 socketId,

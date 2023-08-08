@@ -214,14 +214,6 @@ eventService.on(
     }) => {
     const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
     const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${data.auction_id}`) as string);
-if(existingBotData){
-    console.log(data.plays_consumed_on_bid, "plays_consumed_on_bid");
-    const updatedLimit  = Number(existingBotData[`${data.player_id}`].plays_limit - data.plays_consumed_on_bid);
-    existingBotData[`${data.player_id}`].plays_limit = updatedLimit;
-    console.log(existingBotData[`${data.player_id}`]);
-    
-    await redisClient.set(`BidBotCount:${data.auction_id}`,JSON.stringify({[data.player_id]:existingBotData[`${data.player_id}`]}));
-}
 
     if (playersBalance) {
         if (playersBalance[data.player_id]) {
@@ -229,6 +221,15 @@ if(existingBotData){
                 +playersBalance[data.player_id] - data.plays_balance;
             await redisClient.set("player:plays:balance",JSON.stringify(playersBalance));
         }
+        
+        if (existingBotData) {
+            const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_consumed_on_bid);
+            if (existingBotData[data.player_id]) {
+                existingBotData[data.player_id].plays_limit = updatedLimit;
+                await redisClient.set(`BidBotCount:${data.auction_id}`, JSON.stringify(existingBotData));
+            }
+        }
+
         if (data.auction_id) {
             await userQueries.createBidtransaction({
                 player_id: data.player_id,
