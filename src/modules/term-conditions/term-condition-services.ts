@@ -18,7 +18,7 @@ const create = async (body: Icreate) => {
     }
     const result = await termAndConditionQuery.create(body)
     if (!result) {
-        return responseBuilder.expectationField()
+        return responseBuilder.expectationFaild()
     }
     return responseBuilder.createdSuccess(MESSAGES.TERM_CONDITION.CREATED)
 }
@@ -40,7 +40,7 @@ const update = async (id: Iid, body: Iupdate) => {
     }
     const result = await termAndConditionQuery.update(id, body)
     if (!result) {
-        return responseBuilder.expectationField()
+        return responseBuilder.expectationFaild()
     }
     return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.UPDATED)
 }
