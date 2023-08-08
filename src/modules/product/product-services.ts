@@ -148,9 +148,10 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
 
     // EVENT FOR DELETING THE OLD IMAGES FROM FS
     eventService.emit(
-        NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
+        NODE_EVENT_SERVICE.DELETE_PRODUCT_MEDIA_IMAGES,
         isExistProductId.id
     );
+
     const { media_id, ...payload } = newReqBody;
     const mediaIds = media_id.map((element) => {
         return { media_id: element, product_id: productId.id as string };

@@ -160,11 +160,7 @@ const getAll = async (query: IPagination, state: auctionState) => {
                     },
                 },
             },
-            PlayerAuctionRegister: {
-                select: {
-                    status: true,
-                },
-            },
+            PlayerAuctionRegister: true,
             auctionCategory: true,
         },
         take: +query.limit,
