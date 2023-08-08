@@ -10,7 +10,6 @@ import seedrandom from "seedrandom";
 import eventService from "../../utils/event-service";
 const socket = global as unknown as AppGlobal;
 
-
 export const executeBidbot = async function (
     botData: IBidBotData,
     remeaning_second:number
@@ -20,10 +19,6 @@ export const executeBidbot = async function (
         return;
     }
 
-    // const bidHistory = JSON.parse((await redisClient.get(`${botData.auction_id}:bidHistory`)) as string);
-    // if (bidHistory && bidHistory[bidHistory.length - 1]?.player_id === randomClient?.player_id as string) {
-    //     randomClient = bidBotCollection[Math.floor(Math.random() * bidBotCollection.length)];
-    // }
     await newBiDRecieved({
             player_id: botData.player_id,
             auction_id: botData.auction_id,
@@ -32,7 +27,6 @@ export const executeBidbot = async function (
             remaining_seconds: remeaning_second ,
             // player_bot_id: randomClient?.id,
         }, botData.socket_id as string);
-
 };
 
 const tempStorage: {[auctionId:string]:number}= {}; // to store random time
@@ -47,15 +41,41 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
     if(tempStorage[auctionId] && tempStorage[auctionId] === countdown){
         const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${auctionId}`) as string);
         const bidBotCollection = Object.keys(existingBotData);
-        const randomIndex = Math.floor(Math.random() * bidBotCollection.length);
-        const selectRandom = bidBotCollection[randomIndex]; // key or player id selection
+        const bidHistory = JSON.parse((await redisClient.get(`${auctionId}:bidHistory`)) as string);
+        let lastBidder: string;
+        let selectRandom;
+        if(bidHistory){
+            lastBidder = bidHistory[bidHistory.length - 1].player_id;
+            let filteredBotCollection = bidBotCollection;
+            if (lastBidder) {
+                filteredBotCollection = bidBotCollection.filter(playerId => playerId !== lastBidder);
+            }
+            const randomIndex = Math.floor(Math.random() * filteredBotCollection.length);
+            selectRandom = filteredBotCollection[randomIndex]; 
+        } else {
+            const randomIndex = Math.floor(Math.random() * bidBotCollection.length);
+            selectRandom = bidBotCollection[randomIndex]; // key or player id selection
+        }
         const randomBot = existingBotData[`${selectRandom}`]; // value or object of player id
-        // console.log(randomBot, "selected randomBot");
         executeBidbot(randomBot,countdown);   
         const rng = seedrandom();
         const randomNumber = rng();
         const randomTime: number = Math.floor((randomNumber as unknown as number) * 5) + 1;
         tempStorage[`${auctionId}`] = randomTime;     
+    }
+    
+    if (countdown === 0){
+        const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${auctionId}`) as string);
+        const bidBotCollection = Object.keys(existingBotData);
+        for(let i = 0; i <bidBotCollection.length; i++) {
+            const count = existingBotData[`${bidBotCollection[i]}`].total_bot_bid ;
+            const data = {
+                auction_id: auctionId,
+                player_id: bidBotCollection[i],
+                total_bot_bid: count,
+                }
+            await bidBotQueries.updateBidBotMany(data);
+        }  
     }
 });
 
@@ -70,12 +90,12 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
     if (!existBot) await bidBotService.addBidBot(botData);
 
     const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${botData.auction_id}`) as string);
-    // console.log(existingBotData, "existingBotData");
     
     const playerInfo = {
         player_id: botData.player_id,
         auction_id: botData.auction_id,
         plays_limit: botData.plays_limit,
+        total_bot_bid: 0,
         player_name: botData.player_name,
         profile_image: botData.profile_image,
         socket_id: socketId
@@ -91,5 +111,4 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
             existingBotData[botData.player_id] = playerInfo;
             await redisClient.set(`BidBotCount:${botData.auction_id}`, JSON.stringify(existingBotData));
         }
-        
 };

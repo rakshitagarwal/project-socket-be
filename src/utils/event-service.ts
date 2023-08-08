@@ -226,6 +226,7 @@ eventService.on(
             const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_consumed_on_bid);
             if (existingBotData[data.player_id]) {
                 existingBotData[data.player_id].plays_limit = updatedLimit;
+                existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
                 await redisClient.set(`BidBotCount:${data.auction_id}`, JSON.stringify(existingBotData));
             }
         }
