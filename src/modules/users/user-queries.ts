@@ -138,14 +138,13 @@ const fetchPlayerId = async (id: string) => {
 
 const addPlayBalanceTx = async (
     prisma: PrismaClient,
-    data: IWalletTx & { currency_transaction_id: string; wallet_id: string }
+    data: IWalletTx & { currency_transaction_id: string }
 ) => {
     const query = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
             created_by: data.player_id,
             spend_on: "BUY_PLAYS",
-            wallet_id: data.wallet_id,
             currency_transaction_id: data.currency_transaction_id,
         },
         select: {
@@ -169,37 +168,6 @@ const addPlayRefundBalanceTx = async (
     return query;
 };
 
-const addPlaysToWallet = async (prisma: PrismaClient, data: IWalletTx) => {
-    const query = await prisma.playerWallet.create({
-        data: {
-            play_balance: data.plays,
-            player_id: data.player_id,
-        },
-    });
-    return query;
-};
-
-const updatePlayerWallet = async (prisma: PrismaClient, data: IDeductPlx) => {
-    const query = await prisma.playerWallet.updateMany({
-        where: { id: data.player_id },
-        data: { play_balance: data.plays },
-    });
-    return query;
-};
-
-const playerWalletBac = async (player_id: string) => {
-    const query = await db.playerWallet.findFirst({
-        where: {
-            player_id: player_id,
-        },
-        select: {
-            id: true,
-            play_balance: true,
-        },
-    });
-    return query;
-};
-
 /**
  * @description created the transaction for the BUY plays debited
  * @param {string} id
@@ -207,7 +175,6 @@ const playerWalletBac = async (player_id: string) => {
  */
 const createTrx = async (
     prisma: PrismaClient,
-    id: string,
     player_id: string,
     plays: number
 ) => {
@@ -216,7 +183,6 @@ const createTrx = async (
             play_debit: plays,
             created_by: player_id,
             spend_on: "BUY_PLAYS",
-            wallet_id: id,
         },
     });
     return query;
@@ -238,39 +204,16 @@ const getPlayerTrxById = async (player_id: string, trx_id: string) => {
 };
 
 /**
- * @description the debited amount from the player wallet balance
- * @param {PrismaClient} prisma
- * @param {IDeductPlx} data
- * @returns
- */
-
-const debitPlayBalance = async (
-    prisma: PrismaClient,
-    data: IDeductPlx & {
-        walletId: string;
-    }
-) => {
-    const query = await prisma.playerWallet.update({
-        where: {
-            id: data.walletId,
-        },
-        data: {
-            play_balance: data.plays,
-        },
-    });
-    return query;
-};
-
-/**
  * @description the data for creating the bid transaction
  * @param {IDeductPlx} data
  * @returns
  */
-const createBidtransaction = async (data: IDeductPlx) => {
+const createBidtransaction = async (data: IDeductPlx & {auction_id:string}) => {
     const query = await db.playerWalletTx.create({
         data: {
             play_debit: data.plays,
             created_by: data.player_id,
+            auction_id:data.auction_id,
             spend_on: "BID_PLAYS",
         },
     });
@@ -289,19 +232,6 @@ const playerBidLog = async (data: [IPlayerBidLog]) => {
     });
     return queryResult;
 };
-
-/**
- * Records the winner of a player auction in the database.
- * @param {IPlayerActionWinner} data - The data representing the player auction winner to be recorded.
- * @returns {Promise<AuctionWinner>} A promise that resolves to the created AuctionWinner object representing the recorded player auction winner.
- */
-
-// const playerAuctionWinner = async (data: IPlayerActionWinner) => {
-//     const queryResult = await db.auctionResult.create({
-//         data: { ...data },
-//     });
-//     return queryResult;
-// };
 
 /**
  * fetch the total number of bids made by a specific player in a given auction.
@@ -349,19 +279,21 @@ const createPaymentTrx = async (data: IWalletTx) => {
     return queries;
 };
 
-const updatePlaysInWallet = async (
-    prisma: PrismaClient,
-    data: { wallet_id: string; plays: number }
-) => {
-    const query = await prisma.playerWallet.update({
-        where: {
-            id: data.wallet_id,
-        },
-        data: {
-            play_balance: data.plays,
-        },
-    });
-    return query;
+const playerPlaysBalance = async (
+    auctionId: string
+): Promise<PlayerBidLogGroup[]> => {
+    const query: Sql = Prisma.sql`SELECT 
+                (COALESCE(SUM(play_credit), 0) - COALESCE(SUM(play_debit), 0)) as play_balance,
+                    player_wallet_transaction.created_by as player_id
+                FROM 
+                    player_wallet_transaction
+                WHERE 
+                    created_by = ${auctionId}
+                GROUP BY 
+                     player_wallet_transaction.created_by;
+  `;
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    return queryResult;
 };
 
 const userQueries = {
@@ -370,19 +302,14 @@ const userQueries = {
     fetchAllUsers,
     fetchPlayerId,
     addPlayBalanceTx,
-    playerWalletBac,
     getPlayerTrxById,
-    debitPlayBalance,
     createBidtransaction,
     playerBidLog,
-    // playerAuctionWinner,
     getWinnerTotalBid,
     fetchAuctionHigherBider,
     addPlayRefundBalanceTx,
     createTrx,
-    addPlaysToWallet,
-    updatePlayerWallet,
     createPaymentTrx,
-    updatePlaysInWallet,
+    playerPlaysBalance,
 };
 export default userQueries;

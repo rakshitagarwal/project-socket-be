@@ -155,6 +155,17 @@ const updateBidBot = async function (id: string, bidsUpdated: number) {
     return queryResult;
 };
 
+const updateBidBotMany = async function (bidBotData: any) {
+    const queryResult = await db.bidBot.updateMany({
+        where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
+        data: { 
+            total_bot_bid: bidBotData.total_bot_bid,
+            is_active: false
+        },
+    });
+    return queryResult;
+};
+
 const bidBotQueries = {
     addBidBot,
     bidBotCollection,
@@ -163,6 +174,7 @@ const bidBotQueries = {
     getBidBotByPlayerId,
     getBidBotById,
     updateBidBot,
+    updateBidBotMany
 };
 
 export default bidBotQueries;
