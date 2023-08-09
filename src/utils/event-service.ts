@@ -251,26 +251,33 @@ eventService.on(
         plays_balance: number;
         auction_id: string;
     }) => {
-        const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
-        if (playersBalance) {
-            if (playersBalance[data.player_id]) {
-                playersBalance[data.player_id] =
-                    +playersBalance[data.player_id] - data.plays_balance;
-                await redisClient.set(
-                    "player:plays:balance",
-                    JSON.stringify(playersBalance)
-                );
-            }
-            if (data.auction_id) {
-                await userQueries.createBidtransaction({
-                    player_id: data.player_id,
-                    plays: data.plays_balance,
-                    auction_id: data.auction_id,
-                });
-            }
+    const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+    const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${data.auction_id}`) as string);
+        
+    if (playersBalance) {
+        if (playersBalance[data.player_id]) {
+            playersBalance[data.player_id] =
+                +playersBalance[data.player_id] - data.plays_balance;
+            await redisClient.set("player:plays:balance",JSON.stringify(playersBalance));
         }
+
+        if (data.auction_id) {
+            await userQueries.createBidtransaction({
+                player_id: data.player_id,
+                plays: data.plays_balance,
+                auction_id: data.auction_id,
+            });
+        }
+    }
+
+    if (existingBotData) {
+        const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_balance);
+        if (existingBotData[data.player_id]) {
+            existingBotData[data.player_id].plays_limit = updatedLimit;
+            existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
+            await redisClient.set(`BidBotCount:${data.auction_id}`, JSON.stringify(existingBotData));
+        }
+    }
     }
 );
 

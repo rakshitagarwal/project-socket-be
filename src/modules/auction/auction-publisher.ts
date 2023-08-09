@@ -10,6 +10,7 @@ import {
     SOCKET_EVENT,
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
+
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
 
@@ -57,6 +58,7 @@ export const auctionStart = (auctionId: string) => {
                 auctionId,
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
+            eventService.emit(NODE_EVENT_SERVICE.COUNTDOWN, countdowns[auctionId], auctionId); //emit live countdown
             setTimeout(timerRunEverySecond, 1000);
         }
     }
@@ -107,10 +109,9 @@ const bidTransaction = async (playload: {
                   auctionData.opening_price +
                   auctionData.bid_increment_price)
                 : (auctionData.bid_increment_price + auctionData.opening_price);
-                socket.playerSocket
-                .to(playload.socketId)
-                .emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS,play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
-            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId,plays_balance:auctionData.plays_consumed_on_bid,auction_id:playload.auctionId})
+                socket.playerSocket.to(playload.socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS, play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
+            
+                eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId, plays_balance:auctionData.plays_consumed_on_bid, auction_id:playload.auctionId })
             return { status: true, bidNumber, bidPrice };
         }
     }
@@ -150,7 +151,7 @@ const auctionBidderHistory = async (
             );
             recentBid(newBidData.auction_id);
         }
-    } else {
+    } else {   
         socket.playerSocket
             .to(socketId)
             .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -169,7 +170,7 @@ const auctionBidderHistory = async (
 export const newBiDRecieved = async (
     bidPayload: IBidAuction,
     socketId: string
-) => {
+) => {    
     const isValid = await bidRequestValidator<IBidAuction>(
         bidPayload,
         auctionSchemas.ZbidAuction
@@ -217,7 +218,7 @@ export const newBiDRecieved = async (
                         if (
                             iscontinue[iscontinue.length - 1].player_id ===
                             bidData.player_id
-                        ) {
+                        ) {                            
                             socket.playerSocket
                                 .to(socketId)
                                 .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -225,7 +226,7 @@ export const newBiDRecieved = async (
                                         MESSAGES.SOCKET
                                             .CONTINUE_BID_NOT_ALLOWED,
                                 });
-                        } else {
+                        } else {                            
                             auctionBidderHistory(
                                 bidData,
                                 socketId,
