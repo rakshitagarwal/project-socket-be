@@ -12,15 +12,15 @@ bidBotRouter.get(
     validateRequest.query(bidbotSchemas.ZSearch),
     handleAsync(bidbotHandler.getBidBotByAuctionAndPlayerId)
 );
-bidBotRouter.get(
-    ENDPOINTS.BASE + "auction/:id",
-    handleAsync(bidbotHandler.getBidBotByAuctionId)
-);
-bidBotRouter.get(
-    ENDPOINTS.BASE + "player/:id",
-    handleAsync(bidbotHandler.getBidBotByPlayerId)
-);
-bidBotRouter.patch(
-    ENDPOINTS.BASE + "update",
-    handleAsync(bidbotHandler.updateBidBot)
-);
+// bidBotRouter.get(
+//     ENDPOINTS.BASE + "auction/:id",
+//     handleAsync(bidbotHandler.getBidBotByAuctionId)
+// );
+// bidBotRouter.get(
+//     ENDPOINTS.BASE + "player/:id",
+//     handleAsync(bidbotHandler.getBidBotByPlayerId)
+// );
+// bidBotRouter.patch(
+//     ENDPOINTS.BASE + "update",
+//     handleAsync(bidbotHandler.updateBidBot)
+// );

@@ -1,7 +1,7 @@
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import bidBotQueries from "./bid-bot-queries";
-import { IBidBotData, ISearch } from "./typings/bid-bot-types";
+import { IBidBotData, IFindBidBot } from "./typings/bid-bot-types";
 
 /**
  * @description addBidBot is used to add bidbot information to the database.
@@ -26,7 +26,7 @@ const addBidBot = async (botData: IBidBotData) => {
  * @param {string} id - The id of auction is passed here using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const getBidBotByAuctionAndPlayerId = async (data: ISearch) => {
+const getBidBotByAuctionAndPlayerId = async (data: IFindBidBot) => {
     if (data) {
         const { player_id, auction_id } = data;
         const result = await bidBotQueries.getByAuctionAndPlayerId(player_id, auction_id);
@@ -69,7 +69,7 @@ const getBidBotByPlayerId = async (id: string) => {
  * @param {IUpdate} updateData - auction and player ids with plays limit is passed using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const updateBidBot = async (updateData: ISearch) => {
+const updateBidBot = async (updateData: IFindBidBot) => {
     const existBot = await bidBotQueries.getByAuctionAndPlayerId(updateData.player_id, updateData.auction_id);
     if (existBot) {
         const result = await bidBotQueries.updateBidBot(existBot.id, updateData.plays_limit as number);

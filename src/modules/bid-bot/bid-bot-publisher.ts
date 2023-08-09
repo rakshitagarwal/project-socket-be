@@ -94,7 +94,6 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                         auction_id: auctionId,
                         player_id: playerId,
                         total_bot_bid: total_bot_bid,
-                        is_active: false,
                         plays_limit: 0
                     };
                     await bidBotQueries.updateBidBotMany(data);

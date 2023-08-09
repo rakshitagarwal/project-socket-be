@@ -22,30 +22,6 @@ const addBidBot = async function (bidBodData: IBidBotData) {
     return queryResult;
 };
 
-/**
- * @description bidBotCollection is used to retrieve all bidbots with plays more than 0.
- * @returns {queryResult} - the result of execution of query.
- */
-const bidBotCollection = async function (id: string) {
-    const queryResult = await db.bidBot.findMany({
-        select: {
-          id: true,
-          player_id: true,
-          auction_id: true,
-          plays_limit: true,
-          total_bot_bid: true,
-          is_active: true,
-          created_at: true,
-        },
-        where: {
-          auction_id: id,
-          plays_limit: {
-            gt: 0,
-          },
-        },
-      });
-      return queryResult;
-};
 
 /**
  * @description getByAuctionAndPlayerId is used to retrieve the bid bot based on its id.
@@ -173,7 +149,6 @@ const updateBidBotMany = async function (bidBotData: IBidBotData) {
 
 const bidBotQueries = {
     addBidBot,
-    bidBotCollection,
     getByAuctionAndPlayerId,
     getBidBotByAuctionId,
     getBidBotByPlayerId,

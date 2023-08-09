@@ -210,7 +210,6 @@ eventService.on(
         player_id: string;
         plays_balance: number;
         auction_id: string;
-        plays_consumed_on_bid: number;
     }) => {
     const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
     const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${data.auction_id}`) as string);
@@ -223,7 +222,7 @@ eventService.on(
         }
         
         if (existingBotData) {
-            const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_consumed_on_bid);
+            const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_balance);
             if (existingBotData[data.player_id]) {
                 existingBotData[data.player_id].plays_limit = updatedLimit;
                 existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;

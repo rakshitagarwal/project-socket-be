@@ -12,7 +12,7 @@ import {
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 
 const socket = global as unknown as AppGlobal;
-export const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
+const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
 
 /**
  * Starts the auction with the given auctionId.
@@ -59,7 +59,6 @@ export const auctionStart = (auctionId: string) => {
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             eventService.emit(NODE_EVENT_SERVICE.COUNTDOWN, countdowns[auctionId], auctionId); //emit live countdown
-            // console.log(countdowns[auctionId]);
             setTimeout(timerRunEverySecond, 1000);
         }
     }
@@ -110,9 +109,9 @@ const bidTransaction = async (playload: {
                   auctionData.opening_price +
                   auctionData.bid_increment_price)
                 : (auctionData.bid_increment_price + auctionData.opening_price);
-                socket.playerSocket.to(playload.socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS,play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
+                socket.playerSocket.to(playload.socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS, play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
             
-                eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId,plays_balance:auctionData.plays_consumed_on_bid,auction_id:playload.auctionId,  plays_consumed_on_bid:  auctionData.plays_consumed_on_bid})
+                eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId, plays_balance:auctionData.plays_consumed_on_bid, auction_id:playload.auctionId })
             return { status: true, bidNumber, bidPrice };
         }
     }

@@ -11,7 +11,7 @@ export interface IBidBotData {
     socket_id?: string;
 }
 
-export interface ISearch {
+export interface IFindBidBot {
     player_id: string;
     auction_id: string;
     plays_limit: number | undefined;
