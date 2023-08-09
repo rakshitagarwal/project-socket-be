@@ -33,7 +33,7 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
             // ... Rest of the code for bidding logic
             const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${auctionId}`) as string);
             if (!existingBotData) {
-                console.log(`No existing bot data found for auction ID ${auctionId}`);
+                logger.error(`No existing bot data found for auction ID ${auctionId}`);
             } else {
                 const bidBotCollection = Object.keys(existingBotData);
             const bidHistory = JSON.parse((await redisClient.get(`${auctionId}:bidHistory`)) as string);
@@ -67,8 +67,7 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
 
         if (!countdown) {
             // ... Rest of the code for finalizing auction and updating bot data
-            const existingBotDataString = await redisClient.get(`BidBotCount:${auctionId}`);
-            const existingBotData = JSON.parse(existingBotDataString || '{}');
+            const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${auctionId}`) as string);
             if (!existingBotData) {
                 logger.error(`No existing bot data found for auction ID ${auctionId}`);
             } else {
@@ -94,7 +93,7 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
 );
 
 /**
- * Handles the bid received from a bid bot.
+ * @description Handles the bid received from a bid bot.
  * @param {IBidBotData} botData - The bid bot's data.
  * @param {string} socketId - The ID of the socket connection.
  */
