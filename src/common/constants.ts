@@ -254,7 +254,6 @@ export const SOCKET_EVENT = {
     BIDBOT_ERROR: "bidbot:error",
     AUCTION_BIDBOT: "auction:bidbot",
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach"
-
 };
 export const NODE_EVENT_SERVICE = {
     USER_MAIL: "send:user:mail",

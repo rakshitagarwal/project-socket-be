@@ -4,4 +4,6 @@ export interface Itoken {
     id: string;
 }
 
-export type IBidAuction = z.infer<typeof auctionSchemas.ZbidAuction>;
+export type IBidAuction = z.infer<typeof auctionSchemas.ZbidAuction> & {
+    is_active?: boolean;
+};
