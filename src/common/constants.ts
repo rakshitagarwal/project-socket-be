@@ -18,6 +18,7 @@ export const ENDPOINTS = {
     VERIFY: "/verify",
     ID: "/:id",
     PRODUCT: "/product",
+    BIDBOT: "/bidbot",
     ADD_PLAYS: "add/plays",
     TERM_CONDITION: "/term-condition",
     MEDIA: "/media",
@@ -189,6 +190,13 @@ export const MESSAGES = {
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
+    BIDBOT: {
+        BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
+        BIDBOT_FOUND: "bidbot found successfully",
+        BIDBOT_CREATE_FAIL: "bidbot creation failed",
+        BIDBOT_NOT_FOUND: "bidbot not found or id not valid",
+        BIDBOT_UPDATE_LIMIT: "bidbot limit updated successfully",
+    },
     ALL: {
         MULTER_ERROR: "multer error",
     },
@@ -243,6 +251,10 @@ export const SOCKET_EVENT = {
     AUCTION_STATE: "auction:state",
     AUCTION_REGISTER_COUNT: "auction:register:count",
     AUCTION_RUNNER_UP: "auction:runner:up",
+    BIDBOT_ERROR: "bidbot:error",
+    AUCTION_BIDBOT: "auction:bidbot",
+    BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach"
+
 };
 export const NODE_EVENT_SERVICE = {
     USER_MAIL: "send:user:mail",
@@ -251,6 +263,7 @@ export const NODE_EVENT_SERVICE = {
     AUCTION_CLOSED: "auction:closed",
     AUCTION_REGISTER_COUNT: "auction:register:count",
     UPDATE_PLAYER_REGISTER_STATUS: "auction:player:register:status",
+    COUNTDOWN: "auction:countdown",
     DELETE_PRODUCT_MEDIA_IMAGES: "product:media:delete",
     PLAYER_PLAYS_BALANCE_CREDITED: "auction:player:balance:credit",
     PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",

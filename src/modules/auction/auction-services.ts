@@ -205,7 +205,6 @@ const playerRegister = async (data: IPlayerRegister) => {
             MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
         );
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
-    console.log(playerRegisered);
     if (!playerRegisered.id)
         return responseBuilder.expectationField(
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
