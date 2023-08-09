@@ -75,6 +75,9 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         },
         take: query.limit,
         skip: query.page * query.limit,
+        orderBy:{
+            updated_at:"desc"
+        },
         select: {
             email: true,
             id: true,
@@ -88,6 +91,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                     title: true,
                 },
             },
+    
         },
     });
     const count = await db.user.count({

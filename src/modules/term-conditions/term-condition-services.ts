@@ -78,7 +78,7 @@ const deleteOne = async (id: Iid) => {
  */
 const findTermAndCondition = async () => {
     const result = await termAndConditionQuery.findTermAndCondition()
-    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.FOUNDED, result as object)
+    return responseBuilder.okSuccess(MESSAGES.TERM_CONDITION.FOUNDED, result as object ||{})
 }
 
 const fetchAll = async (query: Ipagination) => {

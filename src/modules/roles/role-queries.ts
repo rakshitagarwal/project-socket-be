@@ -11,6 +11,9 @@ const fetchAllRoles = async (query: IrolePagination) => {
             { title: { contains: query.search, mode: 'insensitive' } }
         ,
         take: query.limit as number, skip: (query.page as number) * (query.limit as number),
+        orderBy:{
+            updated_at:"desc"
+        }
     })
     return { count, user }
 }

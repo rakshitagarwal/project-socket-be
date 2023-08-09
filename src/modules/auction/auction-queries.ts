@@ -245,6 +245,9 @@ const fetchAuctionLogs = async (id: string) => {
         where: {
             auction_id: id,
         },
+        orderBy:{
+            created_at:"desc"
+        }
     });
     return query;
 };
@@ -412,6 +415,9 @@ const playerRegistrationAuction = async (auction_id: string) => {
                 },
             },
         },
+        orderBy:{
+            created_at:"desc"
+        }
     });
     return query;
 };

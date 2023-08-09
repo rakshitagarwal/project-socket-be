@@ -154,6 +154,9 @@ const getProductCategoryAll = async function (ids: string[]) {
                 is_deleted: false,
             },
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return queryResult;
 };
