@@ -49,12 +49,6 @@ export interface ItokenQuery {
     access_token?: string;
 }
 
-export interface IupdateUser {
-    first_name?: string;
-    last_name?: string;
-    mobile_id?: string;
-}
-
 export interface IrefreshToken {
     refresh_token: string;
     ip_address: string;
@@ -117,4 +111,25 @@ export enum Ispend_on {
     BUY_PLAYS = "BUY_PLAYS",
     REFUND_PLAYS = "REFUND_PLAYS",
     BID_PLAYS = "BID_PLAYS",
+}
+
+export interface IMultipleUsers {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    country: string;
+    is_verified: boolean;
+    avatar: string;
+    role_id: string;
+}
+
+export interface IMultipleSimulationBots {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+    avatar: string | null;
+    country: string | null;
+    is_bot: boolean;
 }

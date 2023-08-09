@@ -12,6 +12,7 @@ redisClient
     .connect()
     .then(() => console.log("🚀 Redis connected 🚀"))
     .catch((error) => {
+        console.log(error);
         logger.error(error);
     });
 

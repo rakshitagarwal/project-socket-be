@@ -364,12 +364,11 @@ const addWalletTransaction = async (data: IWalletTx) => {
     if (isExists.roles.title !== "Player") {
         return responseBuilder.badRequestError(
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
-    );
+        );
     }
     if (data.currency === "CRYPTO") {
         if (data.currencyType === "BIGTOKEN") {
             current_plays = data.plays + (data.plays * 10) / 100;
-
         } else {
             current_plays = data.plays;
         }
@@ -381,7 +380,7 @@ const addWalletTransaction = async (data: IWalletTx) => {
         });
         await userQueries.addPlayBalanceTx(prisma, {
             ...data,
-            plays:current_plays,
+            plays: current_plays,
             currency_transaction_id: currency_trx.id,
         });
 
@@ -389,7 +388,7 @@ const addWalletTransaction = async (data: IWalletTx) => {
     });
     if (createTrax.currency_trx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
-            player_id:data.player_id,
+            player_id: data.player_id,
             plays_balance: current_plays,
         });
         return responseBuilder.okSuccess(

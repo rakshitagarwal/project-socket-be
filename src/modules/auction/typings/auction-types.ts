@@ -33,6 +33,8 @@ export type IPurchase = z.infer<typeof auctionSchemas.ZPlayerWinner>;
 
 export type IStartAuction = z.infer<typeof auctionSchemas.ZStartAuction>;
 
+export type IStartSimulation = z.infer<typeof auctionSchemas.ZSimulation>;
+
 export interface IPlayerAuctionInfo {
     id: string;
     auction_id: string;
@@ -43,4 +45,14 @@ export interface IPlayerAuctionInfo {
     bid_increment_price: number;
     plays_consumed_on_bid: number;
     last_bidding_price: number;
+}
+
+export interface IRandomSimulationBot {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+    avatar: string | null;
+    country: string | null;
+    is_bot: boolean;
 }

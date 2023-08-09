@@ -79,6 +79,8 @@ export const AUCTION_MESSAGES = {
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
     DATE_NOT_PROPER: "start_date should be greater than current date!",
     AUCTION_ALREADY_SET: "cannot update start date already added!",
+    BOT_SIMULATION_NOT_LIVE: "auction is not live, so simulation cannot start",
+    SIMULATION_STARTED: "simulation started",
 };
 
 export const productMessage = {
@@ -254,6 +256,9 @@ export const NODE_EVENT_SERVICE = {
     DELETE_PRODUCT_MEDIA_IMAGES: "product:media:delete",
     PLAYER_PLAYS_BALANCE_CREDITED: "auction:player:balance:credit",
     PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",
+    START_SIMULATION_LIVE_AUCTION: "start:simulation:auction",
+    MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED:
+        "multiple:player:playbalance:credited",
 };
 
 export const AUCTION_STATE = [

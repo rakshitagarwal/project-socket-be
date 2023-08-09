@@ -15,6 +15,7 @@ import {
     IPurchase,
     IRegisterPlayer,
     IStartAuction,
+    IStartSimulation,
 } from "./typings/auction-types";
 import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
@@ -205,7 +206,6 @@ const playerRegister = async (data: IPlayerRegister) => {
             MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
         );
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
-    console.log(playerRegisered);
     if (!playerRegisered.id)
         return responseBuilder.expectationField(
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
@@ -400,6 +400,19 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
     );
 };
 
+const startSimulation = async (data: IStartSimulation) => {
+    // const auctionStatus = await auctionQueries.getActiveAuctioById(
+    //     data.auction_id
+    // );
+    // if (auctionStatus?.state !== "live") {
+    //     return responseBuilder.badRequestError(
+    //         AUCTION_MESSAGES.BOT_SIMULATION_NOT_LIVE
+    //     );
+    // }
+    eventService.emit(NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION, data);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STARTED);
+};
+
 export const auctionService = {
     create,
     getById,
@@ -412,4 +425,5 @@ export const auctionService = {
     getAllMyAuction,
     playerAuctionDetails,
     purchaseAuctionProduct,
+    startSimulation,
 };

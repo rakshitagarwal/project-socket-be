@@ -291,6 +291,25 @@ const ZPlayerWinner = z.object({
     }),
 });
 
+const ZSimulation = z.object({
+    user_count: z.number({
+        required_error: "user_count is required",
+        invalid_type_error: "user_count should be number",
+    }),
+    credit_plays: z.number({
+        required_error: "credit_plays is required",
+        invalid_type_error: "credit_plays should be number",
+    }),
+    auction_id: z
+        .string({
+            required_error: "auction_id should be required!",
+            invalid_type_error: "auction_id should be string!",
+        })
+        .uuid({
+            message: "auction_id should be UUID!",
+        }),
+});
+
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
@@ -301,4 +320,5 @@ export const auctionSchemas = {
     IPlayerAuction,
     ZStartAuction,
     ZPlayerWinner,
+    ZSimulation,
 };

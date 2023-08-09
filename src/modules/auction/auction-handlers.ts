@@ -139,6 +139,16 @@ const purchase = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description handlers for starting the simulation
+ * @param {Request} req
+ * @param {Response} res
+ */
+const startSimulation = async (req: Request, res: Response) => {
+    const response = await auctionService.startSimulation(req.body);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
@@ -151,4 +161,5 @@ export const auctionHandler = {
     playerAuctionDetails,
     startAuction,
     purchase,
+    startSimulation,
 };

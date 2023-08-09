@@ -10,8 +10,9 @@ import {
     // IPlayerActionWinner,
     PlayerBidLogGroup,
     Ispend_on,
+    IMultipleUsers,
 } from "./typings/user-types";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -49,7 +50,10 @@ const fetchUser = async (query: IuserQuery) => {
  * @returns
  */
 const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
-    const user = await db.user.update({ where: { ...query }, data: payload });
+    const user = await db.user.update({
+        where: { ...query },
+        data: payload,
+    });
     return user;
 };
 
@@ -208,12 +212,14 @@ const getPlayerTrxById = async (player_id: string, trx_id: string) => {
  * @param {IDeductPlx} data
  * @returns
  */
-const createBidtransaction = async (data: IDeductPlx & {auction_id:string}) => {
+const createBidtransaction = async (
+    data: IDeductPlx & { auction_id: string }
+) => {
     const query = await db.playerWalletTx.create({
         data: {
             play_debit: data.plays,
             created_by: data.player_id,
-            auction_id:data.auction_id,
+            auction_id: data.auction_id,
             spend_on: "BID_PLAYS",
         },
     });
@@ -296,6 +302,79 @@ const playerPlaysBalance = async (
     return queryResult;
 };
 
+/**
+ * @description Get the player Role Id from the users
+ * @returns id of players
+ */
+const getPlayerRoleId = async () => {
+    const query = await db.masterRole.findFirst({
+        where: {
+            title: "Player",
+        },
+        select: {
+            id: true,
+        },
+    });
+    return query;
+};
+
+/**
+ * @param {IMultipleUsers[]} users - creating the nultuple users for Bots
+ * @description creating the multiple users
+ */
+const createMultipleUsers = async (users: IMultipleUsers[]) => {
+    const query = await db.user.createMany({
+        data: users,
+    });
+    return query;
+};
+
+const addMultiplePlayBlx = async (data: string[], plays: number) => {
+    const BUY_PLAYS: PlaySpend = "BUY_PLAYS";
+    const query = await db.user.findMany({
+        where: {
+            email: {
+                in: data,
+            },
+        },
+        select: {
+            id: true,
+        },
+    });
+    const details = query.map((qx) => {
+        return {
+            play_credit: plays,
+            created_by: qx.id,
+            spend_on: BUY_PLAYS,
+        };
+    });
+    const queries = await db.playerWalletTx.createMany({
+        data: details,
+    });
+    return { queries, details };
+};
+
+/**
+ * @description Get Random Bots for simulations
+ */
+const getRandomBot = async () => {
+    const query = await db.user.findMany({
+        where: {
+            is_bot: true,
+        },
+        select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            avatar: true,
+            country: true,
+            is_bot: true,
+        },
+    });
+    return query;
+};
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -311,5 +390,9 @@ const userQueries = {
     createTrx,
     createPaymentTrx,
     playerPlaysBalance,
+    getPlayerRoleId,
+    createMultipleUsers,
+    addMultiplePlayBlx,
+    getRandomBot,
 };
 export default userQueries;

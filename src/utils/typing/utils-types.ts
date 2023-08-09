@@ -7,13 +7,19 @@ export interface Imail {
     message?: string;
 }
 export enum AUCTION_STATE {
-    upcoming="upcoming",
-    live="live",
-    completed="completed",
-    cancelled="cancelled"
+    upcoming = "upcoming",
+    live = "live",
+    completed = "completed",
+    cancelled = "cancelled",
 }
 
 export enum PRE_REGISTER_THRESHOLD_STATUS {
-   completed="completed",
-   not_completed="not_completed"
+    completed = "completed",
+    not_completed = "not_completed",
+}
+
+export interface IMultiplePlayerRegister {
+    player_id: string;
+    auction_id: string;
+    transaction_id: string;
 }

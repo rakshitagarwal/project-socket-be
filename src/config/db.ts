@@ -1,10 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prismaClient = new PrismaClient();
 
-prismaClient.$on("beforeExit", async () => {
-    prismaClient.$disconnect();
-});
-
 export async function checkHealth() {
     const result = await prismaClient.$queryRaw`SELECT 1`;
     return result;
