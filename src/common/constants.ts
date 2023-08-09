@@ -28,6 +28,7 @@ export const ENDPOINTS = {
     PLAYER_AUCTION_ID: "/player-auction/:id",
     PLAYER_AUCTION: "/player/auction/result",
     PAY_NOW: "product/purchase",
+    ASSETS:"/assets/"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -256,6 +257,8 @@ export const SOCKET_EVENT = {
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach"
 
 };
+
+
 export const NODE_EVENT_SERVICE = {
     USER_MAIL: "send:user:mail",
     AUCTION_STATE_UPDATE: "auction:state:update",

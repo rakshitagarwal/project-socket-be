@@ -75,6 +75,9 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         },
         take: query.limit,
         skip: query.page * query.limit,
+        orderBy:{
+            updated_at:"desc"
+        },
         select: {
             email: true,
             id: true,
@@ -88,6 +91,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                     title: true,
                 },
             },
+    
         },
     });
     const count = await db.user.count({
@@ -280,7 +284,7 @@ const createPaymentTrx = async (data: IWalletTx) => {
 };
 
 const playerPlaysBalance = async (
-    auctionId: string
+    player_id: string
 ): Promise<PlayerBidLogGroup[]> => {
     const query: Sql = Prisma.sql`SELECT 
                 (COALESCE(SUM(play_credit), 0) - COALESCE(SUM(play_debit), 0)) as play_balance,
@@ -288,7 +292,7 @@ const playerPlaysBalance = async (
                 FROM 
                     player_wallet_transaction
                 WHERE 
-                    created_by = ${auctionId}
+                    created_by = ${player_id}
                 GROUP BY 
                      player_wallet_transaction.created_by;
   `;

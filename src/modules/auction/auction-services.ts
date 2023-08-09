@@ -42,7 +42,7 @@ const create = async (auction: IAuction, userId: string) => {
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     const auctionData = await auctionQueries.create(auction, userId);
     if (!auctionData)
-        return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
+        return responseBuilder.expectationFaild(AUCTION_MESSAGES.NOT_CREATED);
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
@@ -134,7 +134,7 @@ const update = async (
         userId
     );
     if (!createdAuction)
-        return responseBuilder.expectationField(AUCTION_MESSAGES.NOT_CREATED);
+        return responseBuilder.expectationFaild(AUCTION_MESSAGES.NOT_CREATED);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
             status: "cancelled",
@@ -160,7 +160,7 @@ const remove = async (id: string[]) => {
     const isDeleted = await auctionQueries.remove(id);
     if (isDeleted.count)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
-    return responseBuilder.expectationField();
+    return responseBuilder.expectationFaild();
 };
 
 const getBidLogs = async (id: string) => {
@@ -206,7 +206,7 @@ const playerRegister = async (data: IPlayerRegister) => {
         );
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
     if (!playerRegisered.id)
-        return responseBuilder.expectationField(
+        return responseBuilder.expectationFaild(
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
         );
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
@@ -319,7 +319,7 @@ const startAuction = async (data: IStartAuction) => {
     }
 
     if (!auction.id) {
-        return responseBuilder.expectationField(
+        return responseBuilder.expectationFaild(
             AUCTION_MESSAGES.SOMETHING_WENT_WRONG
         );
     }
@@ -390,7 +390,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
     }
     const createTransactionHash = await auctionQueries.createPaymentTrx(data);
     if (!createTransactionHash.id) {
-        return responseBuilder.expectationField(
+        return responseBuilder.expectationFaild(
             MESSAGES.TRANSACTION_CRYPTO.NOT_CREATED
         );
     }
