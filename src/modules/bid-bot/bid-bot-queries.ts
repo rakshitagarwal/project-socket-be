@@ -1,12 +1,12 @@
 import { db } from "../../config/db";
-import { IBidBotInfo, IBidBotUpdate } from "./typings/bid-bot-types";
+import { IBidBotData } from "./typings/bid-bot-types";
 
 /**
  * @description addbidBot is used to add bidbot information to the database.
  * @param {IBidBotInfo} bidBodData - All info related to bidbpt is passed using this variable
  * @returns {queryResult} - the result of execution of query.
  */
-const addBidBot = async function (bidBodData: IBidBotInfo) {
+const addBidBot = async function (bidBodData: IBidBotData) {
     const queryResult = await db.bidBot.create({
         data: bidBodData,
         select: {
@@ -49,13 +49,13 @@ const bidBotCollection = async function (id: string) {
 
 /**
  * @description getByAuctionAndPlayerId is used to retrieve the bid bot based on its id.
- * @param {string} id1 - The id of player is passed here using this variable
- * @param {string} id2 - The id of auction is passed here using this variable
+ * @param {string} player_id - The id of player is passed here using this variable
+ * @param {string} auction_id - The id of auction is passed here using this variable
  * @returns {queryResult} - the result of execution of query.
  */
-const getByAuctionAndPlayerId = async function (id1: string, id2: string) {
+const getByAuctionAndPlayerId = async function (player_id: string, auction_id: string) {
     const queryResult = await db.bidBot.findFirst({
-        where: { player_id: id1, auction_id: id2 },
+        where: { player_id: player_id, auction_id: auction_id },
         select: {
             id: true,
             player_id: true,
@@ -157,10 +157,10 @@ const updateBidBot = async function (id: string, bidsUpdated: number) {
 
 /**
  * @description updateBidBotMany is used to update total_bot_bid of bidbot.
- * @param {IBidBotUpdate} bidBotData - data required to updata total_bot_bid type definition
+ * @param {IBidBotData} bidBotData - data required to updata total_bot_bid type definition
  * @returns {queryResult} - the result of execution of query.
  */
-const updateBidBotMany = async function (bidBotData: IBidBotUpdate) {
+const updateBidBotMany = async function (bidBotData: IBidBotData) {
     const queryResult = await db.bidBot.updateMany({
         where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
         data: { 

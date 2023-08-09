@@ -12,13 +12,13 @@ const addBidBot = async (botData: IBidBotData) => {
     const dbEntry = {
         player_id: botData.player_id,
         auction_id: botData.auction_id,
+        plays_limit: botData.plays_limit,
         total_bot_bid: 0,
         is_active: true,
-        plays_limit: botData.plays_limit
     }
     const queryResult = await bidBotQueries.addBidBot(dbEntry);
     if (queryResult) return queryResult.id;
-    return null;
+    return responseBuilder.badRequestError(MESSAGES.BIDBOT.BIDBOT_CREATE_FAIL);
 };
 
 /**
@@ -26,7 +26,7 @@ const addBidBot = async (botData: IBidBotData) => {
  * @param {string} id - The id of auction is passed here using this variable
  * @returns {object} - the response object using responseBuilder.
  */
-const getByAuctionAndPlayerId = async (data: ISearch) => {
+const getBidBotByAuctionAndPlayerId = async (data: ISearch) => {
     if (data) {
         const { player_id, auction_id } = data;
         const result = await bidBotQueries.getByAuctionAndPlayerId(player_id, auction_id);
@@ -80,7 +80,7 @@ const updateBidBot = async (updateData: ISearch) => {
 
 const bidBotService = {
     addBidBot,
-    getByAuctionAndPlayerId,
+    getBidBotByAuctionAndPlayerId,
     getBidBotByAuctionId,
     getBidBotByPlayerId,
     updateBidBot,
