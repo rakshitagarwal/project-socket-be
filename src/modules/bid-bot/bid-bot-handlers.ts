@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import bidBotService from "./bid-bot-services";
-import { ISearch } from "./typings/bid-bot-types";
+import { IFindBidBot } from "./typings/bid-bot-types";
 
 /**
  * @description Get bidbot using auction id and player id.
@@ -9,7 +9,7 @@ import { ISearch } from "./typings/bid-bot-types";
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const getBidBotByAuctionAndPlayerId = async (req: Request, res: Response) => {
-    const response = await bidBotService.getBidBotByAuctionAndPlayerId(req.query as unknown as ISearch)
+    const response = await bidBotService.getBidBotByAuctionAndPlayerId(req.query as unknown as IFindBidBot)
     res.status(response.code).json(response)
 }
 
@@ -42,7 +42,7 @@ const getBidBotByPlayerId = async (req: Request, res: Response) => {
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const updateBidBot = async (req: Request, res: Response) => {    
-    const response = await bidBotService.updateBidBot(req.body as ISearch);
+    const response = await bidBotService.updateBidBot(req.body as IFindBidBot);
     res.status(response.code).json(response);
 };
 
