@@ -112,7 +112,7 @@ const bidTransaction = async (playload: {
                 socket.playerSocket.to(playload.socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS, play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
             
                 eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId, plays_balance:auctionData.plays_consumed_on_bid, auction_id:playload.auctionId })
-            return { status: true, bidNumber, bidPrice:bidPrice.toFixed(2) };
+            return { status: true, bidNumber, bidPrice:parseFloat(bidPrice.toFixed(2) )};
         }
     }
     return { status: false };
