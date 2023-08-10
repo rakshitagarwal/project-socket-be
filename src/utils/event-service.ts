@@ -23,7 +23,7 @@ import {
 import { faker } from "@faker-js/faker";
 import logger from "../config/logger";
 import { Imail } from "./typing/utils-types";
-import { startBots } from "../modules/auction/auction-publisher";
+import { randomBid } from "../modules/auction/auction-publisher";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 
@@ -325,8 +325,6 @@ eventService.on(
                 );
             }
         });
-
-        startBots(auctionId);
     }
 );
 
@@ -385,6 +383,13 @@ eventService.on(
                 message: "something went wrong for creating the random bots",
             });
         }
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.SIMULATION_BOTS,
+    async (data: { auction_id: string; count: number }) => {
+        randomBid(data.auction_id, data.count);
     }
 );
 

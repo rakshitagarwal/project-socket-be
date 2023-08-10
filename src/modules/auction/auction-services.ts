@@ -401,14 +401,14 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
 };
 
 const startSimulation = async (data: IStartSimulation) => {
-    // const auctionStatus = await auctionQueries.getActiveAuctioById(
-    //     data.auction_id
-    // );
-    // if (auctionStatus?.state !== "live") {
-    //     return responseBuilder.badRequestError(
-    //         AUCTION_MESSAGES.BOT_SIMULATION_NOT_LIVE
-    //     );
-    // }
+    const auctionStatus = await auctionQueries.getActiveAuctioById(
+        data.auction_id
+    );
+    if (auctionStatus?.state !== "live") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.BOT_SIMULATION_NOT_LIVE
+        );
+    }
     eventService.emit(NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION, data);
     return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STARTED);
 };

@@ -11,14 +11,9 @@ import {
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import userQueries from "../users/user-queries";
-import logger from "../../config/logger";
-import { IMultipleSimulationBots } from "../users/typings/user-types";
-import { IRandomSimulationBot } from "./typings/auction-types";
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
-let randomTimeout: NodeJS.Timeout | null = null;
-let usersbots: IRandomSimulationBot[] = [];
-
+const BidBotCountDown: { [auctionId: string]: number } = {};
 /**
  * Starts the auction with the given auctionId.
  * @param {string} auctionId - The ID of the auction to start.
@@ -61,6 +56,10 @@ export const auctionStart = (auctionId: string) => {
                 message: MESSAGES.SOCKET.AUCTION_COUNT_DOWN,
                 count: countdowns[auctionId],
                 auctionId,
+            });
+            eventService.emit(NODE_EVENT_SERVICE.SIMULATION_BOTS, {
+                auction_id: auctionId,
+                count: countdowns[auctionId],
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             setTimeout(timerRunEverySecond, 1000);
@@ -163,6 +162,8 @@ const auctionBidderHistory = async (
         socketId,
         auctionId: bidderPayload.auction_id,
     });
+    console.log(isBalance, "tansa>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
     if (isBalance.status) {
         const newBidData = {
             ...bidderPayload,
@@ -186,6 +187,8 @@ const auctionBidderHistory = async (
             recentBid(newBidData.auction_id);
         }
     } else {
+        console.log("ballance error >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
         });
@@ -201,14 +204,16 @@ const auctionBidderHistory = async (
  */
 export const newBiDRecieved = async (
     bidPayload: IBidAuction,
-    socketId: string,
-    is_bots?: true
+    socketId: string
 ) => {
+    console.log(bidPayload);
+
     const isValid = await bidRequestValidator<IBidAuction>(
         bidPayload,
         auctionSchemas.ZbidAuction
     );
     if (!isValid.status) {
+        console.log("validation error >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         socket.playerSocket
             .to(socketId)
             .emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
@@ -216,6 +221,8 @@ export const newBiDRecieved = async (
         const { bidData } = isValid;
         const isAuction = countdowns[bidData.auction_id];
         if (!isAuction) {
+            console.log("auction error >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
             });
@@ -239,16 +246,6 @@ export const newBiDRecieved = async (
                     const isBidHistory = await redisClient.get(
                         `${bidData.auction_id}:bidHistory`
                     );
-
-                    /** RANDOM SIMULATION FOR BOTS */
-                    if (is_bots && randomTimeout && usersbots) {
-                        clearTimeout(randomTimeout);
-                        randomBid(
-                            usersbots,
-                            2000 + Math.floor(Math.random() * 7000),
-                            bidPayload.auction_id
-                        );
-                    }
                     if (!isBidHistory) {
                         auctionBidderHistory(
                             bidData,
@@ -262,6 +259,10 @@ export const newBiDRecieved = async (
                             iscontinue[iscontinue.length - 1].player_id ===
                             bidData.player_id
                         ) {
+                            console.log(
+                                "continue error >>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+                            );
+
                             socket.playerSocket
                                 .to(socketId)
                                 .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -280,6 +281,8 @@ export const newBiDRecieved = async (
                     }
                 }
             } else {
+                console.log("register error >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
                 socket.playerSocket
                     .to(socketId)
                     .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -289,50 +292,30 @@ export const newBiDRecieved = async (
         }
     }
 };
+let counter = 0;
 
-export const randomBid = (
-    bots: IMultipleSimulationBots[],
-    timeout: number,
-    auction_id: string
-) => {
-    randomTimeout = setTimeout(() => {
-        const randomIndex = Math.floor(Math.random() * (bots.length - 1));
-        const bot = bots[randomIndex];
+export const randomBid = async (auction_id: string, count: number) => {
+    if (!BidBotCountDown[auction_id]) {
+        BidBotCountDown[auction_id] = Math.floor(Math.random() * 9);
+    }
+    if (BidBotCountDown[auction_id] === count) {
+        const usersbots = await userQueries.getRandomBot();
+        console.log(count, "--->>>>", counter);
+        counter++;
+        const randomIndex = Math.floor(Math.random() * (usersbots.length - 1));
+
+        const bot = usersbots[randomIndex];
+        console.log(bot);
         if (bot) {
             const botData: IBidAuction = {
                 auction_id: auction_id,
                 player_id: bot.id,
                 player_name: bot.first_name as unknown as string,
                 profile_image: bot.avatar as unknown as string,
-                remaining_seconds: timeout,
+                remaining_seconds: count,
             };
-            newBiDRecieved(botData, bot.id, true);
-            randomBid(
-                bots,
-                2000 + Math.floor(Math.random() * 6000),
-                auction_id
-            );
+            newBiDRecieved(botData, bot.id);
         }
-    }, timeout);
-};
-
-/**
- * @description start the bit bots automatically for simulations
- * @param {string} auction_id
- * @async
- */
-export const startBots = async (auction_id: string) => {
-    if (!usersbots) usersbots = await userQueries.getRandomBot();
-    if ((countdowns[auction_id] as number) <= 0) {
-        if (randomTimeout) {
-            clearTimeout(randomTimeout);
-            logger.info({
-                type: "bots",
-                status: "bots ended",
-            });
-            return;
-        }
+        BidBotCountDown[auction_id] = Math.floor(Math.random() * 9);
     }
-    logger.info({ type: "bots", status: "starting" });
-    randomBid(usersbots, 2000 + Math.floor(Math.random() * 6000), auction_id);
 };

@@ -259,6 +259,7 @@ export const NODE_EVENT_SERVICE = {
     START_SIMULATION_LIVE_AUCTION: "start:simulation:auction",
     MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED:
         "multiple:player:playbalance:credited",
+    SIMULATION_BOTS: "simulation:bots",
 };
 
 export const AUCTION_STATE = [
