@@ -124,6 +124,13 @@ eventService.on(
         await auctionQueries.updateAuctionState(data.auctionId, data.state);
     }
 );
+
+/**
+ * Updates the registration status of a player for the specified auction to 'live'.
+ * @param {string} auctionId - The ID of the auction.
+ * @param {string} status - The status to set for the player's registration (e.g., 'live').
+ * @returns {Promise<void>}
+ */
 eventService.on(
     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
     async (auction_id: string) => {
@@ -134,6 +141,11 @@ eventService.on(
     }
 );
 
+/**
+ * Registers a callback function for the 'AUCTION_CLOSED' event.
+ * @param {string} auctionId - The ID of the closed auction associated with the event.
+ * @returns {void}
+ */
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_CLOSED,
     async (auctionId: string) => {
@@ -150,6 +162,13 @@ eventService.on(
     }
 );
 
+/**
+ * Handles the logic to emit the total auction registration count and percentage.
+ * @param {Object} data - The data object containing information about the auction registration count.
+ * @param {string} data.auctionId - The ID of the auction.
+ * @param {number} data.registeration_count - The total count of registrations for the auction.
+ * @returns {void}
+ */
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT,
     async (data: { auctionId: string; registeration_count: number }) => {
@@ -167,6 +186,11 @@ eventService.on(
     }
 );
 
+/**
+ * Handles the logic to delete product media images based on their IDs.
+ * @param {string[]} productMediaIds - An array of IDs of product media images to be deleted.
+ * @returns {void}
+ */
 eventService.on(
     NODE_EVENT_SERVICE.DELETE_PRODUCT_MEDIA_IMAGES,
     async (productMediaIds: string[]) => {
@@ -174,6 +198,13 @@ eventService.on(
     }
 );
 
+/**
+ * Registers a callback function for the 'PLAYER_PLAYS_BALANCE_CREDITED' event.
+ * @param {Object} data - The data object containing information about the player's plays balance credited.
+ * @param {string} data.player_id - The ID of the player associated with the event.
+ * @param {number} data.plays_balance - The amount of plays balance credited to the player.
+ * @returns {void}
+ */
 eventService.on(
     NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,
     async (data: { player_id: string; plays_balance: number }) => {
@@ -204,6 +235,15 @@ eventService.on(
     }
 );
 
+
+/**
+ * Registers a callback function for the 'PLAYER_PLAYS_BALANCE_DEBIT' event.
+ * @param {Object} data - The data object containing information about the player's plays balance debit.
+ * @param {string} data.player_id - The ID of the player associated with the event.
+ * @param {number} data.plays_balance - The amount of plays balance debited from the player.
+ * @param {string} data.auction_id - The ID of the auction associated with the event.
+ * @returns {void}
+ */
 eventService.on(
     NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,
     async (data: {
@@ -211,26 +251,33 @@ eventService.on(
         plays_balance: number;
         auction_id: string;
     }) => {
-        const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
-        if (playersBalance) {
-            if (playersBalance[data.player_id]) {
-                playersBalance[data.player_id] =
-                    +playersBalance[data.player_id] - data.plays_balance;
-                await redisClient.set(
-                    "player:plays:balance",
-                    JSON.stringify(playersBalance)
-                );
-            }
-            if (data.auction_id) {
-                await userQueries.createBidtransaction({
-                    player_id: data.player_id,
-                    plays: data.plays_balance,
-                    auction_id: data.auction_id,
-                });
-            }
+    const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+    const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${data.auction_id}`) as string);
+        
+    if (playersBalance) {
+        if (playersBalance[data.player_id]) {
+            playersBalance[data.player_id] =
+                +playersBalance[data.player_id] - data.plays_balance;
+            await redisClient.set("player:plays:balance",JSON.stringify(playersBalance));
         }
+
+        if (data.auction_id) {
+            await userQueries.createBidtransaction({
+                player_id: data.player_id,
+                plays: data.plays_balance,
+                auction_id: data.auction_id,
+            });
+        }
+    }
+
+    if (existingBotData) {
+        const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_balance);
+        if (existingBotData[data.player_id]) {
+            existingBotData[data.player_id].plays_limit = updatedLimit;
+            existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
+            await redisClient.set(`BidBotCount:${data.auction_id}`, JSON.stringify(existingBotData));
+        }
+    }
     }
 );
 

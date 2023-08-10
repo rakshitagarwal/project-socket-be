@@ -397,7 +397,7 @@ const addWalletTransaction = async (data: IWalletTx) => {
             { plays: current_plays }
         );
     }
-    return responseBuilder.expectationField(
+    return responseBuilder.expectationFaild(
         MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED
     );
 };
@@ -468,7 +468,7 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
         }
     );
     if (!transaction.walletTrx)
-        return responseBuilder.expectationField(
+        return responseBuilder.expectationFaild(
             MESSAGES.PLAYER_WALLET_TRAX.TRANSACTION_FAILED
         );
     eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {

@@ -19,10 +19,11 @@ import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
 import startServer from "./utils/start-server";
 import "./utils/cron-schedule"
+import { ENDPOINTS } from "./common/constants";
 
 const app = express();
 
-app.use("/assets/", express.static("assets"));
+app.use(ENDPOINTS.ASSETS, express.static("assets"));
 app.use(helmet());
 app.use(cors());
 app.disable("x-powered-by");

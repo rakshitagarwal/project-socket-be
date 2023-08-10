@@ -116,6 +116,9 @@ const isIdExists = async (data: IDeleteIds) => {
                 is_deleted: false,
             },
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return query;
 };

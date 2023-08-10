@@ -291,6 +291,27 @@ const ZPlayerWinner = z.object({
     }),
 });
 
+const ZPlayerAuction= z
+.object({
+    page: z
+        .preprocess(
+            (val) => parseInt(val as string),
+            z.number({ invalid_type_error: "page must be number" })
+        )
+        .default(0),
+    limit: z
+        .preprocess(
+            (val) => parseInt(val as string),
+            z.number({ invalid_type_error: "limit must be number" })
+        )
+        .default(10),
+    search: z
+        .string()
+        .regex(/^[a-zA-Z0-9._-]+$/)
+        .optional(),
+})
+.strict();
+
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
@@ -301,4 +322,5 @@ export const auctionSchemas = {
     IPlayerAuction,
     ZStartAuction,
     ZPlayerWinner,
+    ZPlayerAuction
 };

@@ -9,6 +9,7 @@ import { productRoutes } from "../modules/product/product-routes";
 import { termAndConditionRouter } from "../modules/term-conditions/term-condition-routes";
 import isAuthenticated from "../middlewares/authentication";
 import { mediaRouter } from "../modules/media/media-routes";
+import { bidBotRouter } from "../modules/bid-bot/bid-bot-routes";
 
 /**
  * Index Routes
@@ -26,6 +27,7 @@ v1Router.use(
 v1Router.use(ENDPOINTS.PRODUCT, [isAuthenticated], productRoutes);
 v1Router.use(ENDPOINTS.TERM_CONDITION, isAuthenticated, termAndConditionRouter);
 v1Router.use(ENDPOINTS.MEDIA, isAuthenticated, mediaRouter);
+v1Router.use(ENDPOINTS.BIDBOT, isAuthenticated, bidBotRouter);
 v1Router.use(
     ENDPOINTS.AUCTION_CATEGORY,
     [isAuthenticated],

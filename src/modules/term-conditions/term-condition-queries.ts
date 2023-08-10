@@ -57,6 +57,9 @@ const findAll = async (query: IpaginationQuery) => {
         },
         take: query.limit,
         skip: query.page * query.limit,
+        orderBy:{
+            updated_at:"desc"
+        },
         select: {
             id: true,
             content: true,

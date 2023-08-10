@@ -290,7 +290,7 @@ class ResponseBuilder {
      * @param {object} metadata response metadata
      * @returns {IResponseBody} response body
      */
-    expectationField(
+    expectationFaild(
         msg = "Expectation faild!",
         data = {},
         metadata: object = {}

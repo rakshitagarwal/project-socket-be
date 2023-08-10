@@ -61,7 +61,7 @@ auctionRouter.get(
     ENDPOINTS.PLAYER_AUCTION_ID,
     [
         validateRequest.params(auctionSchemas.ZAuctionId),
-        validateRequest.query(auctionSchemas.Zpagination),
+        validateRequest.query(auctionSchemas.ZPlayerAuction),
     ],
     handleAsync(auctionHandler.getAllMyAuction)
 );

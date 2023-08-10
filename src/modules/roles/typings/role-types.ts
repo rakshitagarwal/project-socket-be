@@ -7,12 +7,8 @@ export interface IroleQuery {
     id?: string
 }
 export interface IrolePagination {
-    limit: string
-    page: string
+    limit: string| number
+    page: string| number
     search: string
 }
-export interface IrolePaginationQuery {
-    limit: number
-    page: number
-    search: string
-}
+    
