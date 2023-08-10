@@ -261,9 +261,7 @@ eventService.on(
                 [udx.created_by]: udx.play_credit,
             };
         });
-        const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
+        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string );
         if (!playersBalance) {
             await redisClient.set(
                 "player:plays:balance",
@@ -276,10 +274,10 @@ eventService.on(
             );
         }
 
-        const playerBlxInfo = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
-        userDetails.forEach(async (udx) => {
+        const playerBlxInfo = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+        const newRedisObject: { [id: string]: IRegisterPlayer } = {};
+        const getRegisteredPlayer = JSON.parse(await redisClient.get(`auction:pre-register:${auctionId}`) as string)  || {};
+        await userDetails.map(async (udx) => {
             const key = Object.entries(udx);
             const transaction = await prismaTransaction(
                 async (prisma: PrismaClient) => {
@@ -307,23 +305,15 @@ eventService.on(
                 player_id: `${key[0]?.[0]}`,
                 player_wallet_transaction_id: transaction.walletTrx.id,
             });
-            const getRegisteredPlayer = await redisClient.get(
-                `auction:pre-register:${auctionId}`
-            );
-            const newRedisObject: { [id: string]: IRegisterPlayer } = {};
-            if (!getRegisteredPlayer) {
-                newRedisObject[`${key[0]?.[0] + auctionId}`] = {
-                    created_at: transaction.walletTrx.created_at,
-                    auction_id: auctionId,
-                    player_id: `${key[0]?.[0]}`,
-                    player_wallet_transaction_id: transaction.walletTrx.id,
-                    id: "",
-                };
-                await redisClient.set(
-                    `auction:pre-register:${auctionId}`,
-                    JSON.stringify(newRedisObject)
-                );
-            }
+
+            newRedisObject[auctionId + `${key[0]?.[0]}`] = {
+                created_at: transaction.walletTrx.created_at,
+                auction_id: auctionId,
+                player_id: `${key[0]?.[0]}`,
+                player_wallet_transaction_id: transaction.walletTrx.id,
+                id: "",
+            };
+            await redisClient.set(`auction:pre-register:${auctionId}`,JSON.stringify({ ...newRedisObject, ...getRegisteredPlayer }));
         });
     }
 );

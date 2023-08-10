@@ -371,6 +371,10 @@ const getRandomBot = async () => {
             country: true,
             is_bot: true,
         },
+        orderBy:{
+            updated_at:"desc"
+        },
+        take:10
     });
     return query;
 };

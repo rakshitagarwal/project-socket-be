@@ -206,12 +206,13 @@ export const newBiDRecieved = async (
     bidPayload: IBidAuction,
     socketId: string
 ) => {
-    console.log(bidPayload);
 
     const isValid = await bidRequestValidator<IBidAuction>(
         bidPayload,
         auctionSchemas.ZbidAuction
     );
+    console.log(isValid,"isValid");
+
     if (!isValid.status) {
         console.log("validation error >>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         socket.playerSocket
@@ -227,6 +228,8 @@ export const newBiDRecieved = async (
                 message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
             });
         } else {
+            console.log(isAuction,"isValid");
+
             const isPre_register = await redisClient.get(
                 `auction:pre-register:${bidData.auction_id}`
             );
