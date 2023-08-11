@@ -86,6 +86,7 @@ const getActiveAuctioById = async (id: string) => {
                 select: {
                     id: true,
                     title: true,
+                    price: true
                 },
             },
         },
