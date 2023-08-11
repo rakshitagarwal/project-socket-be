@@ -83,7 +83,7 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                 });
             });
             await Promise.all(updatePromises);
-            // await redisClient.del(`BidBotCount:${auctionId}`);
+            await redisClient.del(`BidBotCount:${auctionId}`);
             delete tempStorage[auctionId]; // Remove the object from memory
         }
         
