@@ -60,34 +60,27 @@ const getActiveAuctioById = async (id: string) => {
             is_deleted: false,
             status: true,
         },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            bid_increment_price: true,
-            plays_consumed_on_bid: true,
-            opening_price: true,
-            new_participants_limit: true,
-            start_date: true,
-            registeration_count: true,
-            registeration_fees: true,
-            terms_and_conditions: true,
-            status: true,
-            is_preRegistered: true,
-            state: true,
-            auctionCategory: {
+        include: {
+            _count: {
                 select: {
-                    id: true,
-                    title: true,
+                    PlayerAuctionRegister: true,
                 },
             },
-            PlayerAuctionRegister: true,
             products: {
                 select: {
                     id: true,
                     title: true,
+                    description: true,
+                    price: true,
+                    medias: true,
+                    productMedias: {
+                        select: {
+                            medias: true,
+                        },
+                    },
                 },
             },
+            auctionCategory: true,
         },
     });
 
@@ -665,6 +658,7 @@ const checkPlayerRegisteration = async (registeration_id: string) => {
  * @returns
  */
 const createPaymentTrx = async (data: IPurchase) => {
+
     const queryRx = await db.currencyTx.create({
         data: {
             credit_amount: data.amount,
@@ -678,6 +672,21 @@ const createPaymentTrx = async (data: IPurchase) => {
     return queryRx;
 };
 
+const updateRegistrationAuctionStatus = async (
+    auction_id: string,
+) => {
+    const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
+    const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
+        where: { AND: [{ auction_id }] },
+        data: { status: "lost", buy_now_expiration: lostexpirationTime },
+    })
+    return lostQueryResult
+};
+
+const updatetRegisterPaymentStatus = async(id:string)=>{
+   const queryResult= await db.playerAuctionRegsiter.update({where:{id:id},data:{payment_status:"success"}},)
+    return queryResult
+}
 export const auctionQueries = {
     create,
     getAll,
@@ -701,4 +710,6 @@ export const auctionQueries = {
     getplayerRegistrationAuctionDetails,
     checkPlayerRegisteration,
     createPaymentTrx,
+    updateRegistrationAuctionStatus,
+    updatetRegisterPaymentStatus
 };

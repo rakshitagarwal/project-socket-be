@@ -158,6 +158,10 @@ eventService.on(
                 auctionId,
                 newWinnerPayload.player_id
             );
+        }else{
+            await auctionQueries.updateRegistrationAuctionStatus(
+                auctionId,
+            );
         }
     }
 );
