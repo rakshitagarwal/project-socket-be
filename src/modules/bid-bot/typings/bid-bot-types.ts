@@ -6,10 +6,10 @@ export interface IBidBotData {
     price_limit?: number;
     total_bot_bid: number;
     is_active?: boolean;
-    // player_name?: string;
-    // profile_image?: string;
+    player_name?: string;
+    profile_image?: string;
     // remaining_seconds?: number;
-    // socket_id?: string;
+    socket_id?: string;
 }
 
 export interface IFindBidBot {
