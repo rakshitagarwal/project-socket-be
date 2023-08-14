@@ -23,6 +23,18 @@ const addBidBot = async function (bidBodData: IBidBotData) {
 };
 
 /**
+ * @description addBidBotMany is used to add all bidbot information to the database.
+ * @param {IBidBotInfo} bidBodData - All info related to bidbpt is passed using this variable
+ * @returns {queryResult} - the result of execution of query.
+ */
+const addBidBotMany = async function (bidBodData: IBidBotData[]) {
+    const queryResult = await db.bidBot.createMany({
+        data: bidBodData
+    });
+    return queryResult;
+};
+
+/**
  * @description getByAuctionAndPlayerId is used to retrieve the bid bot based on its id.
  * @param {string} player_id - The id of player is passed here using this variable
  * @param {string} auction_id - The id of auction is passed here using this variable
@@ -136,32 +148,10 @@ const updateBidBot = async function (id: string, bidsUpdated: number) {
  * @returns {queryResult} - the result of execution of query.
  */
 const updateBidBotMany = async function (bidBotData: IBidBotData) {
-    const query = await db.bidBot.findFirst({
-        where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
-        select: { total_bot_bid: true },
-    });
-
     const queryResult = await db.bidBot.updateMany({
         where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
         data: { 
-            total_bot_bid: bidBotData.total_bot_bid + Number(query?.total_bot_bid),
-            is_active: false
-        },
-    });
-    return queryResult;
-};
-
-/**
- * @description updateBidBotDeactivate is used to update total_bot_bid of bidbot.
- * @param {string} id - unique id to find one particular bot
- * @param {number} total_bot_bid - updation of total_bot_bid after deactivation
- * @returns {queryResult} - the result of execution of query.
- */
-const updateBidBotDeactivate = async function (id:string, total_bot_bid: number) {
-    const queryResult = await db.bidBot.update({
-        where: { id: id },
-        data: { 
-            total_bot_bid: total_bot_bid,
+            total_bot_bid: bidBotData.total_bot_bid,
             is_active: false
         },
     });
@@ -176,7 +166,7 @@ const bidBotQueries = {
     getBidBotById,
     updateBidBot,
     updateBidBotMany,
-    updateBidBotDeactivate
+    addBidBotMany
 };
 
 export default bidBotQueries;
