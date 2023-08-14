@@ -337,7 +337,7 @@ const startAuction = async (data: IStartAuction) => {
 
     if (auction.registeration_count) {
         if (
-            auction.PlayerAuctionRegister.length < auction.registeration_count
+            auction._count.PlayerAuctionRegister < auction.registeration_count
         ) {
             return responseBuilder.badRequestError(
                 AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
@@ -389,6 +389,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
         }
     }
     const createTransactionHash = await auctionQueries.createPaymentTrx(data);
+    await auctionQueries.updatetRegisterPaymentStatus(data.player_register_id)
     if (!createTransactionHash.id) {
         return responseBuilder.expectationFaild(
             MESSAGES.TRANSACTION_CRYPTO.NOT_CREATED
