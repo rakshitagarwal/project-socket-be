@@ -261,7 +261,9 @@ eventService.on(
                 [udx.created_by]: udx.play_credit,
             };
         });
-        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string );
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
         if (!playersBalance) {
             await redisClient.set(
                 "player:plays:balance",
@@ -274,47 +276,62 @@ eventService.on(
             );
         }
 
-        const playerBlxInfo = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+        const playerBlxInfo = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
         const newRedisObject: { [id: string]: IRegisterPlayer } = {};
-        const getRegisteredPlayer = JSON.parse(await redisClient.get(`auction:pre-register:${auctionId}`) as string)  || {};
-        await userDetails.map(async (udx) => {
-            const key = Object.entries(udx);
-            const transaction = await prismaTransaction(
-                async (prisma: PrismaClient) => {
-                    const walletTrx = await userQueries.createTrx(
-                        prisma,
-                        `${key[0]?.[0]}`,
-                        150
-                    );
-                    return { walletTrx };
+        const getRegisteredPlayer =
+            JSON.parse(
+                (await redisClient.get(
+                    `auction:pre-register:${auctionId}`
+                )) as string
+            ) || {};
+        await Promise.all([
+            userDetails.map(async (udx) => {
+                const key = Object.entries(udx);
+                const transaction = await prismaTransaction(
+                    async (prisma: PrismaClient) => {
+                        const walletTrx = await userQueries.createTrx(
+                            prisma,
+                            `${key[0]?.[0]}`,
+                            150
+                        );
+                        return { walletTrx };
+                    }
+                );
+                if (playerBlxInfo) {
+                    if (playerBlxInfo[`${key[0]?.[0]}`]) {
+                        playerBlxInfo[`${key[0]?.[0]}`] =
+                            playerBlxInfo[`${key[0]?.[0]}`] - 150;
+                        await redisClient.set(
+                            "player:plays:balance",
+                            JSON.stringify({ ...playerBlxInfo })
+                        );
+                    }
                 }
-            );
-            if (playerBlxInfo) {
-                if (playerBlxInfo[`${key[0]?.[0]}`]) {
-                    playerBlxInfo[`${key[0]?.[0]}`] =
-                        playerBlxInfo[`${key[0]?.[0]}`] - 150;
-                    await redisClient.set(
-                        "player:plays:balance",
-                        JSON.stringify({ ...playerBlxInfo })
-                    );
-                }
-            }
 
-            await auctionQueries.playerAuctionRegistered({
-                auction_id: auctionId,
-                player_id: `${key[0]?.[0]}`,
-                player_wallet_transaction_id: transaction.walletTrx.id,
-            });
+                await auctionQueries.playerAuctionRegistered({
+                    auction_id: auctionId,
+                    player_id: `${key[0]?.[0]}`,
+                    player_wallet_transaction_id: transaction.walletTrx.id,
+                });
 
-            newRedisObject[auctionId + `${key[0]?.[0]}`] = {
-                created_at: transaction.walletTrx.created_at,
-                auction_id: auctionId,
-                player_id: `${key[0]?.[0]}`,
-                player_wallet_transaction_id: transaction.walletTrx.id,
-                id: "",
-            };
-            await redisClient.set(`auction:pre-register:${auctionId}`,JSON.stringify({ ...newRedisObject, ...getRegisteredPlayer }));
-        });
+                newRedisObject[auctionId + `${key[0]?.[0]}`] = {
+                    created_at: transaction.walletTrx.created_at,
+                    auction_id: auctionId,
+                    player_id: `${key[0]?.[0]}`,
+                    player_wallet_transaction_id: transaction.walletTrx.id,
+                    id: "",
+                };
+                await redisClient.set(
+                    `auction:pre-register:${auctionId}`,
+                    JSON.stringify({
+                        ...newRedisObject,
+                        ...getRegisteredPlayer,
+                    })
+                );
+            }),
+        ]);
     }
 );
 
@@ -379,7 +396,7 @@ eventService.on(
 eventService.on(
     NODE_EVENT_SERVICE.SIMULATION_BOTS,
     async (data: { auction_id: string; count: number }) => {
-        randomBid(data.auction_id, data.count);
+        await randomBid(data.auction_id, data.count);
     }
 );
 
