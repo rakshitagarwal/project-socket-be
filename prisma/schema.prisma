@@ -293,6 +293,7 @@ model PlayerAuctionRegister {
   status                       auctionResultType        @default(value: registered)
   buy_now_expiration           DateTime?                @db.Timestamptz()
   created_at                   DateTime                 @default(now()) @db.Timestamptz()
+  payment_status               paymentStatus            @default(pending)
   AuctionResult                AuctionResult[]
   Auctions                     Auctions?                @relation(fields: [auction_id], references: [id])
   User                         User                     @relation(fields: [player_id], references: [id])
@@ -418,4 +419,9 @@ enum auctionResultType {
   live
   registered
   cancelled
+}
+
+enum paymentStatus {
+  pending
+  success
 }
