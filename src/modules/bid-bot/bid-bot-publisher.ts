@@ -41,6 +41,7 @@ async function filterBotCollection(
             is_active: boolean;
             price_limit: number | undefined;
             auction_id: string;
+            player_id: string;
             socket_id: string;
         };
     },
@@ -55,7 +56,7 @@ async function filterBotCollection(
                 if (playerPriceLimit && lastBidPrice >= playerPriceLimit) {
                     const bidBotInfo = JSON.parse((await redisClient.get(`BidBotCount:${auctionId}`)) as string);
                     bidBotInfo[playerId].is_active = false;
-                    socket.playerSocket.to(playerinfo.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {message: "bidbot not active"});
+                    socket.playerSocket.to(playerinfo.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {message: `bidbot not active:${playerinfo.auction_id}:${playerinfo.player_id}`});
                     await redisClient.set(`BidBotCount:${bidBotInfo[playerId].auction_id}`, JSON.stringify(bidBotInfo));
                 } else {
                     filteredIds.push(playerId);
@@ -104,18 +105,15 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                 }
                 const randomBot = existingBotData[`${selectRandom}`];
                 if (randomBot) {
-                    await newBiDRecieved(
-                        {
+                    await newBiDRecieved({
                             player_id: randomBot.player_id,
                             auction_id: randomBot.auction_id,
                             player_name: randomBot.player_name as string,
                             profile_image: randomBot.profile_image as string,
                             remaining_seconds: countdown,
                             player_bot_id: randomBot.player_bot_id,
-                        },
-                        randomBot.socket_id as string
-                    );
-                    socket.playerSocket.to(randomBot.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {message: "bidbot active"});
+                        }, randomBot.socket_id as string);
+                    socket.playerSocket.to(randomBot.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {message: `bidbot active:${randomBot.auction_id}:${randomBot.player_id}`});
                 }
                 randomTime(auctionId);
             }
@@ -124,14 +122,11 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
         if (!countdown) {
             const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${auctionId}`)) as string);
             if (!existingBotData) {
-                logger.error(`No existing bot data found for auction ID ${auctionId}`);
+                logger.error(`No existing bot data found for auction ID: ${auctionId}`);
             } else {
                 const bidBotCollection: IBidBotData[] = Object.values(existingBotData);
                 const bidBodData = bidBotCollection.map((items) => {
-                    delete items.player_name;
-                    delete items.profile_image;
-                    delete items.plays;
-                    delete items.socket_id;
+                    delete items.player_name, items.profile_image, items.plays, items.socket_id;
                     items.is_active = false;
                     return items;
                 });
@@ -187,12 +182,12 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
             existingBotData[botData.player_id].is_active = true;
             existingBotData[botData.player_id].plays_limit = botData.plays_limit;
             existingBotData[botData.player_id].plays = botData.plays_limit;
-            existingBotData[botData.player_id].price_limit = botData?.price_limit;
+            existingBotData[botData.player_id].price_limit = botData?.price_limit || 0.00;
             await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
         }
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { message: "bidbot active" });
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { message: `bidbot active:${botData.auction_id}:${botData.player_id}` });
     } else {
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_BIDBOT, {message: "auction not active"});
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_BIDBOT, {message: `auction not active:${botData.auction_id}`});
     }
 };
 
@@ -206,9 +201,9 @@ export const deactivateBidbot = async (botData: { auction_id: string; player_id:
     if (auctionData?.state === "live") {
         const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${botData.auction_id}`)) as string);
         existingBotData[botData.player_id].is_active = false;
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { message: "bidbot not active" });
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { message: `bidbot not active:${botData.auction_id}:${botData.player_id}`});
         await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
     } else {
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_BIDBOT, {message: "auction not active"});
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_BIDBOT, {message: `auction not active:${botData.auction_id}`});
     }
 };
