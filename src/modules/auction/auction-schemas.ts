@@ -300,6 +300,7 @@ const ZSimulation = z.object({
         required_error: "credit_plays is required",
         invalid_type_error: "credit_plays should be number",
     }),
+    bot_status: z.boolean().default(false).optional(),
     auction_id: z
         .string({
             required_error: "auction_id should be required!",
