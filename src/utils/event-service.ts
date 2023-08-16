@@ -288,8 +288,7 @@ eventService.on(
             existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
             if (updatedLimit === 0) {
                 existingBotData[data.player_id].is_active = false;
-                socket.playerSocket.to(existingBotData[data.player_id].socket_id)
-                                   .emit(SOCKET_EVENT.BIDBOT_ERROR, {message: "plays limit reached"});
+                socket.playerSocket.to(existingBotData[data.player_id].socket_id).emit(SOCKET_EVENT.BIDBOT_ERROR, {message: "plays limit reached"});
             }
             await redisClient.set(`BidBotCount:${data.auction_id}`, JSON.stringify(existingBotData));
         }

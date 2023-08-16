@@ -91,7 +91,7 @@ const recentBid = async (auctionId: string) => {
     });
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_BIDS, {
         message: MESSAGES.SOCKET.RECENT_BIDS,
-        data: bidHistory.slice(-10).reverse(),
+        data: bidHistory.slice(-30).reverse(),
         auctionId,
     });
 };
