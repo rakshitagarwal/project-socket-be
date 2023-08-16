@@ -9,6 +9,7 @@ export interface IBidBotData {
     remaining_seconds?: number;
     player_bot_id?: string;
     socket_id?: string;
+    price_limit?: number;
 }
 
 export interface IFindBidBot {
