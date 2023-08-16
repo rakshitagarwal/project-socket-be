@@ -238,9 +238,9 @@ const fetchAuctionLogs = async (id: string) => {
         where: {
             auction_id: id,
         },
-        orderBy:{
-            created_at:"desc"
-        }
+        orderBy: {
+            created_at: "desc",
+        },
     });
     return query;
 };
@@ -408,9 +408,9 @@ const playerRegistrationAuction = async (auction_id: string) => {
                 },
             },
         },
-        orderBy:{
-            created_at:"desc"
-        }
+        orderBy: {
+            created_at: "desc",
+        },
     });
     return query;
 };
@@ -658,7 +658,6 @@ const checkPlayerRegisteration = async (registeration_id: string) => {
  * @returns
  */
 const createPaymentTrx = async (data: IPurchase) => {
-
     const queryRx = await db.currencyTx.create({
         data: {
             credit_amount: data.amount,
@@ -672,21 +671,22 @@ const createPaymentTrx = async (data: IPurchase) => {
     return queryRx;
 };
 
-const updateRegistrationAuctionStatus = async (
-    auction_id: string,
-) => {
+const updateRegistrationAuctionStatus = async (auction_id: string) => {
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
     const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
         where: { AND: [{ auction_id }] },
         data: { status: "lost", buy_now_expiration: lostexpirationTime },
-    })
-    return lostQueryResult
+    });
+    return lostQueryResult;
 };
 
-const updatetRegisterPaymentStatus = async(id:string)=>{
-   const queryResult= await db.playerAuctionRegsiter.update({where:{id:id},data:{payment_status:"success"}},)
-    return queryResult
-}
+const updatetRegisterPaymentStatus = async (id: string) => {
+    const queryResult = await db.playerAuctionRegsiter.update({
+        where: { id: id },
+        data: { payment_status: "success" },
+    });
+    return queryResult;
+};
 export const auctionQueries = {
     create,
     getAll,
@@ -711,5 +711,5 @@ export const auctionQueries = {
     checkPlayerRegisteration,
     createPaymentTrx,
     updateRegistrationAuctionStatus,
-    updatetRegisterPaymentStatus
+    updatetRegisterPaymentStatus,
 };

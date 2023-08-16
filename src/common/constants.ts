@@ -28,7 +28,7 @@ export const ENDPOINTS = {
     PLAYER_AUCTION_ID: "/player-auction/:id",
     PLAYER_AUCTION: "/player/auction/result",
     PAY_NOW: "product/purchase",
-    ASSETS:"/assets/"
+    ASSETS: "/assets/",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -127,6 +127,7 @@ export const MESSAGES = {
         NOT_CREATED: "transaction not created!",
         CREATED_SUCCESS: "transaction created successfully!",
         GET_NOW_EXPIRED: "product purchase time is expired!",
+        AUCTION_NOT_COMPELETED: "auction is not completed!",
     },
     SOCKET: {
         TOTAL_AUCTION_REGISTERED: "total auction registered",
@@ -255,9 +256,8 @@ export const SOCKET_EVENT = {
     AUCTION_BIDBOT: "auction:bidbot",
     BIDBOT_ERROR: "bidbot:error",
     BIDBOT_DEACTIVATE: "auction:bidbot:deactivate",
-    BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach"
+    BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
 };
-
 
 export const NODE_EVENT_SERVICE = {
     USER_MAIL: "send:user:mail",
