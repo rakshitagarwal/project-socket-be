@@ -145,7 +145,8 @@ const updateBidBotMany = async function (bidBotData: IBidBotData) {
         where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
         data: { 
             total_bot_bid: bidBotData.total_bot_bid + Number(query?.total_bot_bid),
-            is_active: false
+            is_active: false,
+            price_limit:bidBotData.price_limit
         },
     });
     return queryResult;
@@ -157,12 +158,13 @@ const updateBidBotMany = async function (bidBotData: IBidBotData) {
  * @param {number} total_bot_bid - updation of total_bot_bid after deactivation
  * @returns {queryResult} - the result of execution of query.
  */
-const updateBidBotDeactivate = async function (id:string, total_bot_bid: number) {
+const updateBidBotDeactivate = async function (id:string, total_bot_bid: number,price_limit:number) {
     const queryResult = await db.bidBot.update({
         where: { id: id },
         data: { 
             total_bot_bid: total_bot_bid,
-            is_active: false
+            is_active: false,
+            price_limit
         },
     });
     return queryResult;
