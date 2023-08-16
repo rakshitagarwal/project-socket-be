@@ -375,6 +375,11 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             MESSAGES.USERS.PLAYER_NOT_REGISTERED
         );
     }
+    if (isauction.state === "completed") {
+        return responseBuilder.badRequestError(
+            MESSAGES.TRANSACTION_CRYPTO.AUCTION_NOT_COMPELETED
+        );
+    }
     if (
         isplayerAuctionDetail.status === "won" ||
         isplayerAuctionDetail.status === "lost"
@@ -389,7 +394,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
         }
     }
     const createTransactionHash = await auctionQueries.createPaymentTrx(data);
-    await auctionQueries.updatetRegisterPaymentStatus(data.player_register_id)
+    await auctionQueries.updatetRegisterPaymentStatus(data.player_register_id);
     if (!createTransactionHash.id) {
         return responseBuilder.expectationFaild(
             MESSAGES.TRANSACTION_CRYPTO.NOT_CREATED
