@@ -17,6 +17,7 @@ export const db = {
     productMedia: prismaClient.productMedia,
     media: prismaClient.media,
     termsAndConditions: prismaClient.termsAndCondition,
+    bidBot: prismaClient.bidBot,
     auction: prismaClient.auctions,
     countries: prismaClient.countries,
     currencyTx: prismaClient.currencyTransaction,

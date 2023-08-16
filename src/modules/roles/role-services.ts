@@ -40,8 +40,8 @@ const AddNewRole = async (body: Irole) => {
  * @returns {Promise}
  */
 const fetchAllRoles = async (query: IrolePagination) => {
-    const page = parseInt(query.page) || 0
-    const limit = parseInt(query.limit) || 10
+    const page = parseInt(query.page as string) || 0
+    const limit = parseInt(query.limit as string) || 10
     const result = await roleQueries.fetchAllRoles({ page, limit, search: query.search || '' })
     return responseBuilder.okSuccess(MESSAGES.ROLE.FOUND_ROLE, result.user, { limit, page, totalRecord: result.count, totalPage: Math.ceil(result.count / limit) })
 }

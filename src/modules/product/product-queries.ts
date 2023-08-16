@@ -280,6 +280,9 @@ const getFindAllId = async function (ids: string[]) {
                 },
             },
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return queryResult;
 };
@@ -319,6 +322,9 @@ const findProductMediaAll = async function (ids: string[]) {
                 is_deleted: false,
             },
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return queryResult;
 };

@@ -4,7 +4,12 @@ import swaggerDoc from "../../openapi.json";
 import { ENDPOINTS } from "../common/constants";
 import { name } from "../../package.json";
 
-export const generateDocs = (app: Express) => {
+/**
+ * Generates and serves API documentation using Swagger UI.
+ * @param {Express} app - The Express app to which the documentation route will be added.
+ * @returns {void}
+ */
+export const generateDocs = (app:Express) => {
     app.use(
         ENDPOINTS.DOCS,
         serve,
@@ -16,3 +21,4 @@ export const generateDocs = (app: Express) => {
         })
     );
 };
+

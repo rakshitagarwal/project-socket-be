@@ -4,6 +4,7 @@ import env from "../config/env";
 import logger from "../config/logger";
 import socketAuthentication from "../middlewares/socket-authentication";
 import { newBiDRecieved } from "../modules/auction/auction-publisher";
+import { bidByBotRecieved, deactivateBidbot } from "../modules/bid-bot/bid-bot-publisher";
 export interface AppGlobal {
     playerSocket: Namespace;
 }
@@ -44,6 +45,12 @@ const socketService = async (server: Server) => {
             });
             socket.on("auction:bid", (data) => {
                 newBiDRecieved(data, socket.id);
+            });
+            socket.on("auction:bidbot", (data) => {
+                bidByBotRecieved(data, socket.id);
+            });
+            socket.on("auction:bidbot:deactivate", (data) => {
+                deactivateBidbot(data, socket.id);
             });
         }
     });

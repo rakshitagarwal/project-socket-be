@@ -49,6 +49,9 @@ const allMedias = async function () {
             tag: true,
             mime_type: true,
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return queryResult;
 };
@@ -74,6 +77,9 @@ const findManyMedias = async function (ids: string | string[]) {
             tag: true,
             mime_type: true,
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return queryResult;
 };
@@ -153,6 +159,9 @@ const getMultipleActiveMediaByIds = async (ids: string[]) => {
                 is_deleted: false,
             },
         },
+        orderBy:{
+            updated_at:"desc"
+        }
     });
     return query;
 };

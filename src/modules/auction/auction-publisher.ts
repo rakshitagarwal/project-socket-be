@@ -11,6 +11,7 @@ import {
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import userQueries from "../users/user-queries";
+
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
 const BidBotCountDown: { [auctionId: string]: number } = {};
@@ -41,13 +42,13 @@ export const auctionStart = (auctionId: string) => {
                     message: MESSAGES.SOCKET.AUCTION_WINNER,
                     ...winnerPlayer,
                 });
-                eventService.emit(NODE_EVENT_SERVICE.AUCTION_CLOSED, auctionId);
             } else {
                 // TODO: Delete this code
                 socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
                     message: MESSAGES.SOCKET.AUCTION_ENDED,
                 });
             }
+            eventService.emit(NODE_EVENT_SERVICE.AUCTION_CLOSED, auctionId);
             eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {
                 auctionId: auctionId,
                 state: AUCTION_STATE.completed,
@@ -63,6 +64,11 @@ export const auctionStart = (auctionId: string) => {
                 count: countdowns[auctionId],
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
+            eventService.emit(
+                NODE_EVENT_SERVICE.COUNTDOWN,
+                countdowns[auctionId],
+                auctionId
+            ); //emit live countdown
             setTimeout(timerRunEverySecond, 1000);
         }
     }
@@ -141,12 +147,17 @@ const bidTransaction = async (playload: {
                         isBalance[playload.playerId] -
                         auctionData.plays_consumed_on_bid,
                 });
+
             eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
                 player_id: playload.playerId,
                 plays_balance: auctionData.plays_consumed_on_bid,
                 auction_id: playload.auctionId,
             });
-            return { status: true, bidNumber, bidPrice };
+            return {
+                status: true,
+                bidNumber,
+                bidPrice: parseFloat(bidPrice.toFixed(2)),
+            };
         }
     }
     return { status: false };
@@ -186,7 +197,7 @@ const auctionBidderHistory = async (
             recentBid(newBidData.auction_id);
         }
     } else {
-        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
         });
     }
@@ -247,14 +258,13 @@ export const newBiDRecieved = async (
                             iscontinue[iscontinue.length - 1].player_id ===
                             bidData.player_id
                         ) {
-                            socket.playerSocket.emit(
-                                SOCKET_EVENT.AUCTION_ERROR,
-                                {
+                            socket.playerSocket
+                                .to(socketId)
+                                .emit(SOCKET_EVENT.AUCTION_ERROR, {
                                     message:
                                         MESSAGES.SOCKET
                                             .CONTINUE_BID_NOT_ALLOWED,
-                                }
-                            );
+                                });
                         } else {
                             auctionBidderHistory(
                                 bidData,
