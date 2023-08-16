@@ -10,6 +10,7 @@ export interface IBidBotData {
     profile_image?: string;
     // remaining_seconds?: number;
     socket_id?: string;
+    plays?: number;
 }
 
 export interface IFindBidBot {

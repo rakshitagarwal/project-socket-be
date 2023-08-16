@@ -158,6 +158,10 @@ eventService.on(
                 auctionId,
                 newWinnerPayload.player_id
             );
+        }else{
+            await auctionQueries.updateRegistrationAuctionStatus(
+                auctionId,
+            );
         }
     }
 );
@@ -271,9 +275,9 @@ eventService.on(
     }
 
     if (existingBotData) {
-        const updatedLimit = Number(existingBotData?.[data.player_id]?.plays_limit - data.plays_balance);
+        const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
         if (existingBotData[data.player_id]) {
-            existingBotData[data.player_id].plays_limit = updatedLimit;
+            existingBotData[data.player_id].plays = updatedLimit;
             existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
             if (updatedLimit === 0) {
                 existingBotData[data.player_id].is_active = false;

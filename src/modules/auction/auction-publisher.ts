@@ -41,12 +41,12 @@ export const auctionStart = (auctionId: string) => {
                     message: MESSAGES.SOCKET.AUCTION_WINNER,
                     ...winnerPlayer,
                 });
-                eventService.emit(NODE_EVENT_SERVICE.AUCTION_CLOSED, auctionId);
             } else {
                 socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
                     message: MESSAGES.SOCKET.AUCTION_ENDED,
                 });
             }
+            eventService.emit(NODE_EVENT_SERVICE.AUCTION_CLOSED, auctionId);
             eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {
                 auctionId: auctionId,
                 state: AUCTION_STATE.completed,
@@ -81,7 +81,7 @@ const recentBid = async (auctionId: string) => {
     });
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_BIDS, {
         message: MESSAGES.SOCKET.RECENT_BIDS,
-        data: bidHistory.slice(-10).reverse(),
+        data: bidHistory.slice(-30).reverse(),
         auctionId,
     });
 };
