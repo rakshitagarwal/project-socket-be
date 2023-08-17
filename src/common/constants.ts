@@ -83,6 +83,7 @@ export const AUCTION_MESSAGES = {
     AUCTION_ALREADY_SET: "cannot update start date already added!",
     BOT_SIMULATION_NOT_LIVE: "auction is not live, so simulation cannot start",
     SIMULATION_STARTED: "simulation started",
+    SIMULATION_STOPPED: "simulation stopped",
 };
 
 export const productMessage = {

@@ -413,6 +413,7 @@ const startSimulation = async (data: IStartSimulation) => {
             NODE_EVENT_SERVICE.STOP_BOT_SIMULATIONS,
             data.bot_status
         );
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STOPPED);
     }
     eventService.emit(NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION, data);
     return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STARTED);

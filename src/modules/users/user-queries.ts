@@ -79,8 +79,8 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         },
         take: query.limit,
         skip: query.page * query.limit,
-        orderBy:{
-            updated_at:"desc"
+        orderBy: {
+            updated_at: "desc",
         },
         select: {
             email: true,
@@ -95,7 +95,6 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                     title: true,
                 },
             },
-    
         },
     });
     const count = await db.user.count({
@@ -365,6 +364,8 @@ const getRandomBot = async () => {
     const query = await db.user.findMany({
         where: {
             is_bot: true,
+            status: true,
+            is_deleted: false,
         },
         select: {
             id: true,

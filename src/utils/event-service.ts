@@ -475,12 +475,16 @@ eventService.on(
     NODE_EVENT_SERVICE.STOP_BOT_SIMULATIONS,
     async (ids: string[]) => {
         await Promise.all([
-            db.user.deleteMany({
+            db.user.updateMany({
                 where: {
                     id: {
                         in: ids,
                     },
                     is_bot: true,
+                },
+                data: {
+                    is_deleted: true,
+                    status: false,
                 },
             }),
         ]);
