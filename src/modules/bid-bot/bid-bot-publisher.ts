@@ -85,9 +85,7 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
         
         if (tempStorage[auctionId] && tempStorage[auctionId] === countdown) {
             const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${auctionId}`)) as string);
-            if (!existingBotData) {
-                logger.error(`No existing bot data found for auction ID ${auctionId}`);
-            } else {
+            if (existingBotData){
                 const bidBotCollection = Object.keys(existingBotData);
                 const bidHistory = JSON.parse((await redisClient.get(`${auctionId}:bidHistory`)) as string);
                 let selectRandom;
@@ -122,12 +120,16 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                     });
                 }
                 randomTime(auctionId);
+            } else {
+                return;
             }
         }
 
         if (!countdown) {
             const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${auctionId}`)) as string);
-            if (existingBotData) {
+            if (!existingBotData) {
+                logger.error(`No existing bot data found for auction ID ${auctionId}`);
+            } else {
                 const bidBotCollection: IBidBotData[] = Object.values(existingBotData);
                 const arr: IBidBotData[] = [];
                 bidBotCollection.map((items) => {
@@ -141,14 +143,9 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                         is_active: false
                     })
                 });
-                const promises = [
-                    bidBotQueries.addBidBotMany(arr as unknown as IBidBotData[]),
-                    redisClient.del(`BidBotCount:${auctionId}`),
-                    redisClient.del(`auction:live:${auctionId}`) ];
-                await Promise.all(promises);
+                await Promise.all([ bidBotQueries.addBidBotMany(arr as IBidBotData[]),
+                    redisClient.del(`BidBotCount:${auctionId}`), redisClient.del(`auction:live:${auctionId}`) ]);
                 delete tempStorage[auctionId];
-            } else {
-                return;
             }
         }
     }
