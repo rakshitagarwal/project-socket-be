@@ -687,6 +687,33 @@ const updatetRegisterPaymentStatus = async (id: string) => {
     });
     return queryResult;
 };
+
+const getAuctionWinnerInfo=async(auction_id:string)=>{
+    const queryResult = await db.playerAuctionRegsiter.findFirst({
+        where: { auction_id ,status:"won" },
+        select: {
+            id: true,
+            player_id: true,
+            status: true,
+            buy_now_expiration: true,
+            PlayerBidLogs: {
+                orderBy: {
+                    created_at: "desc",
+                },
+            },
+            User: {
+                select: {
+                    avatar: true,
+                    country: true,
+                    status: true,
+                    first_name: true,
+                    last_name: true,
+                },
+            },
+        },
+    });
+    return queryResult
+}
 export const auctionQueries = {
     create,
     getAll,
@@ -711,5 +738,6 @@ export const auctionQueries = {
     checkPlayerRegisteration,
     createPaymentTrx,
     updateRegistrationAuctionStatus,
+    getAuctionWinnerInfo,
     updatetRegisterPaymentStatus,
 };
