@@ -20,7 +20,3 @@ bidBotRouter.get(
 //     ENDPOINTS.BASE + "player/:id",
 //     handleAsync(bidbotHandler.getBidBotByPlayerId)
 // );
-// bidBotRouter.patch(
-//     ENDPOINTS.BASE + "update",
-//     handleAsync(bidbotHandler.updateBidBot)
-// );

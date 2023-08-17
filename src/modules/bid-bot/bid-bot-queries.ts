@@ -119,54 +119,14 @@ const getBidBotById = async function (id: string) {
     return queryResult;
 };
 
-/**
- * @description updateBidBot is used to update bid limit entry of one bidbot.
- * @param {string} id - The id of bidbot is passed here using this variable
- * @param {number} bidsUpdated - The bid limit to be updated is passed using this variable
- * @returns {queryResult} - the result of execution of query.
- */
-const updateBidBot = async function (id: string, bidsUpdated: number) {
-    const queryResult = await db.bidBot.update({
-        where: { id },
-        data: { plays_limit: bidsUpdated },
-        select: {
-            id: true,
-            player_id: true,
-            auction_id: true,
-            plays_limit: true,
-            total_bot_bid: true,
-            is_active: true,
-            created_at: true,
-        },
-    });
-    return queryResult;
-};
-
-/**
- * @description updateBidBotMany is used to update total_bot_bid of bidbot.
- * @param {IBidBotData} bidBotData - data required to update total_bot_bid type definition
- * @returns {queryResult} - the result of execution of query.
- */
-const updateBidBotMany = async function (bidBotData: IBidBotData) {
-    const queryResult = await db.bidBot.updateMany({
-        where: { player_id: bidBotData.player_id, auction_id: bidBotData.auction_id },
-        data: { 
-            total_bot_bid: bidBotData.total_bot_bid,
-            is_active: false
-        },
-    });
-    return queryResult;
-};
 
 const bidBotQueries = {
     addBidBot,
+    addBidBotMany,
     getByAuctionAndPlayerId,
     getBidBotByAuctionId,
     getBidBotByPlayerId,
     getBidBotById,
-    updateBidBot,
-    updateBidBotMany,
-    addBidBotMany
 };
 
 export default bidBotQueries;

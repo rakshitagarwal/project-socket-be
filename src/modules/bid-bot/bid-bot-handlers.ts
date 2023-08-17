@@ -35,21 +35,9 @@ const getBidBotByPlayerId = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
-/**
- * @description Update bidlimit of a specific bidbot using id and limit data.
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {object} response gets data from services and is sent to api call with code and json.
- */
-const updateBidBot = async (req: Request, res: Response) => {    
-    const response = await bidBotService.updateBidBot(req.body as IFindBidBot);
-    res.status(response.code).json(response);
-};
-
 const bidbotHandler = {
     getBidBotByAuctionAndPlayerId,
     getBidBotByAuctionId,
     getBidBotByPlayerId,
-    updateBidBot,
 };
 export default bidbotHandler;

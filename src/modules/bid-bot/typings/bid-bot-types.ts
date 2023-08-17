@@ -8,7 +8,6 @@ export interface IBidBotData {
     is_active?: boolean;
     player_name?: string;
     profile_image?: string;
-    // remaining_seconds?: number;
     socket_id?: string;
     plays?: number;
 }
