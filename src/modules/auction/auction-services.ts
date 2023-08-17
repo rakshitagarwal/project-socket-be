@@ -388,7 +388,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             MESSAGES.USERS.PLAYER_NOT_REGISTERED
         );
     }
-    if (isauction.state === "completed") {
+    if (isauction.state !== "completed") {
         return responseBuilder.badRequestError(
             MESSAGES.TRANSACTION_CRYPTO.AUCTION_NOT_COMPELETED
         );
