@@ -125,12 +125,19 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                 logger.error(`No existing bot data found for auction ID: ${auctionId}`);
             } else {
                 const bidBotCollection: IBidBotData[] = Object.values(existingBotData);
-                const bidBodData = bidBotCollection.map((items) => {
-                    delete items.player_name, items.profile_image, items.plays, items.socket_id;
-                    items.is_active = false;
-                    return items;
+                const arr: IBidBotData[] = [];
+                bidBotCollection.map((items) => {
+                    const { player_id, auction_id, plays_limit, price_limit, total_bot_bid } = items;
+                    arr.push({
+                        player_id, 
+                        auction_id, 
+                        plays_limit, 
+                        price_limit, 
+                        total_bot_bid, 
+                        is_active: false
+                    })
                 });
-                await bidBotQueries.addBidBotMany(bidBodData as IBidBotData[]);
+                await bidBotQueries.addBidBotMany(arr as unknown as IBidBotData[]);
                 await redisClient.del(`BidBotCount:${auctionId}`);
                 await redisClient.del(`auction:live:${auctionId}`);
                 delete tempStorage[auctionId];
