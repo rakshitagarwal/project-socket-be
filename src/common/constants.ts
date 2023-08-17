@@ -257,6 +257,7 @@ export const SOCKET_EVENT = {
     BIDBOT_ERROR: "bidbot:error",
     BIDBOT_DEACTIVATE: "auction:bidbot:deactivate",
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
+    BIDBOT_STATUS: "bidbot:status"
 };
 
 export const NODE_EVENT_SERVICE = {
