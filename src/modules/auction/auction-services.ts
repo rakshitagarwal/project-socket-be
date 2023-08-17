@@ -377,7 +377,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             MESSAGES.USERS.PLAYER_NOT_REGISTERED
         );
     }
-    if (isauction.state === "completed") {
+    if (isauction.state !== "completed") {
         return responseBuilder.badRequestError(
             MESSAGES.TRANSACTION_CRYPTO.AUCTION_NOT_COMPELETED
         );
@@ -408,6 +408,12 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
 };
 
 const startSimulation = async (data: IStartSimulation) => {
+    if (!data.bot_status) {
+        eventService.emit(
+            NODE_EVENT_SERVICE.STOP_BOT_SIMULATIONS,
+            data.bot_status
+        );
+    }
     eventService.emit(NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION, data);
     return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STARTED);
 };

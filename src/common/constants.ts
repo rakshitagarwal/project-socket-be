@@ -276,6 +276,7 @@ export const NODE_EVENT_SERVICE = {
     MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED:
         "multiple:player:playbalance:credited",
     SIMULATION_BOTS: "simulation:bots",
+    STOP_BOT_SIMULATIONS: "stop:bot:simulations",
 };
 
 export const AUCTION_STATE = [

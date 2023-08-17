@@ -292,11 +292,11 @@ export const newBiDRecieved = async (
  */
 export const randomBid = async (auction_id: string, count: number) => {
     if (!BidBotCountDown[auction_id]) {
-        // (max - min + 1)) + min;
         BidBotCountDown[auction_id] = Math.floor(Math.random() * (10 - 6)) + 3;
     }
     if (BidBotCountDown[auction_id] === count && count > 1) {
         const usersbots = await userQueries.getRandomBot();
+        if (!usersbots) return;
         const randomIndex = Math.floor(Math.random() * (usersbots.length - 1));
         let bot = usersbots[randomIndex];
         const isContinueBids = JSON.parse(
