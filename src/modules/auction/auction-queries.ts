@@ -671,6 +671,12 @@ const createPaymentTrx = async (data: IPurchase) => {
     return queryRx;
 };
 
+/**
+ * Updates the auction status and buy-now expiration time for all players who lost the auction.
+ * @async
+ * @param {string} auction_id - The ID of the auction for which auction statuses are to be updated.
+ * @returns {Promise<Object>} - A Promise that resolves to the updated database object containing the results of the update operation.
+ */
 const updateRegistrationAuctionStatus = async (auction_id: string) => {
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
     const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
@@ -680,6 +686,11 @@ const updateRegistrationAuctionStatus = async (auction_id: string) => {
     return lostQueryResult;
 };
 
+/**
+ * Updates the payment status of a player's auction registration.
+ * @param {string} id - The ID of the auction registration to update.
+ * @returns {Promise<Object>} - A Promise that resolves to the updated database object.
+ */
 const updatetRegisterPaymentStatus = async (id: string) => {
     const queryResult = await db.playerAuctionRegsiter.update({
         where: { id: id },
@@ -687,6 +698,39 @@ const updatetRegisterPaymentStatus = async (id: string) => {
     });
     return queryResult;
 };
+
+/**
+ * Retrieves information about the winner of a specific auction.
+ * @async
+ * @param {string} auction_id - The ID of the auction for which winner information is to be retrieved.
+ * @returns {Promise<Object|null>} - A Promise that resolves to an object containing winner information, or null if no winner is found.
+ */
+const getAuctionWinnerInfo=async(auction_id:string)=>{
+    const queryResult = await db.playerAuctionRegsiter.findFirst({
+        where: { auction_id ,status:"won" },
+        select: {
+            id: true,
+            player_id: true,
+            status: true,
+            buy_now_expiration: true,
+            PlayerBidLogs: {
+                orderBy: {
+                    created_at: "desc",
+                },
+            },
+            User: {
+                select: {
+                    avatar: true,
+                    country: true,
+                    status: true,
+                    first_name: true,
+                    last_name: true,
+                },
+            },
+        },
+    });
+    return queryResult
+}
 export const auctionQueries = {
     create,
     getAll,
@@ -711,5 +755,6 @@ export const auctionQueries = {
     checkPlayerRegisteration,
     createPaymentTrx,
     updateRegistrationAuctionStatus,
+    getAuctionWinnerInfo,
     updatetRegisterPaymentStatus,
 };
