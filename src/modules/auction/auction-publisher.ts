@@ -219,12 +219,14 @@ export const newBiDRecieved = async (
         auctionSchemas.ZbidAuction
     );
     if (!isValid.status) {
-        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
+        socket.playerSocket
+            .to(socketId)
+            .emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
     } else {
         const { bidData } = isValid;
         const isAuction = countdowns[bidData.auction_id];
         if (!isAuction) {
-            socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
             });
         } else {
@@ -238,9 +240,11 @@ export const newBiDRecieved = async (
                         `${bidData.auction_id + bidData.player_id}`
                     ]
                 ) {
-                    socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
-                        message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-                    });
+                    socket.playerSocket
+                        .to(socketId)
+                        .emit(SOCKET_EVENT.AUCTION_ERROR, {
+                            message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                        });
                 } else {
                     const isBidHistory = await redisClient.get(
                         `${bidData.auction_id}:bidHistory`
@@ -276,10 +280,12 @@ export const newBiDRecieved = async (
                     }
                 }
             } else {
-                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
-                    message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-                    data: bidPayload.player_id,
-                });
+                socket.playerSocket
+                    .to(socketId)
+                    .emit(SOCKET_EVENT.AUCTION_ERROR, {
+                        message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                        data: bidPayload.player_id,
+                    });
             }
         }
     }
