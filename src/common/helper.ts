@@ -2,8 +2,6 @@ import bcrypt from "bcrypt";
 import { generateKeyPairSync } from "crypto";
 import jwt from "jsonwebtoken";
 import env from "../config/env";
-import { faker } from "@faker-js/faker";
-import userQueries from "../modules/users/user-queries";
 
 /**
  * @param data user password
