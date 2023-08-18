@@ -113,23 +113,9 @@ export enum Ispend_on {
     BID_PLAYS = "BID_PLAYS",
 }
 
-export interface IMultipleUsers {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-    country: string;
-    is_verified: boolean;
+export type IMultipleUsers = IupdateUser & {
     avatar: string;
-    role_id: string;
-}
-
-export interface IMultipleSimulationBots {
-    id: string;
-    first_name: string | null;
-    last_name: string | null;
     email: string;
-    avatar: string | null;
-    country: string | null;
-    is_bot: boolean;
-}
+    country: string;
+    role_id: string;
+};
