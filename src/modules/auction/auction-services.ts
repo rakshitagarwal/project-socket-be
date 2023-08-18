@@ -273,13 +273,15 @@ const playerAuctionDetails = async (data: {
     player_id: string;
     auction_id: string;
 }) => {
-    const [auction, player, playerAuctionDetail] = await Promise.all([
+    const [auction, player, playerAuctionDetail,winnerInfo] = await Promise.all([
         auctionQueries.getActiveAuctioById(data.auction_id),
         userQueries.fetchPlayerId(data.player_id),
         auctionQueries.getplayerRegistrationAuctionDetails(
             data.player_id,
             data.auction_id
         ),
+        auctionQueries.getAuctionWinnerInfo(data.auction_id)
+        
     ]);
     if (!auction)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
@@ -302,8 +304,19 @@ const playerAuctionDetails = async (data: {
                   playerAuctionDetail?.PlayerBidLogs.length *
                   ONE_PLAY_VALUE_IN_DOLLAR;
     const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
+    let winnerInfoDetails
+    if(winnerInfo?.status==="won"){
+        const {PlayerBidLogs,...winnerInfoData}=winnerInfo
+        const buy_now_price=PlayerBidLogs[0]?.bid_price
+       winnerInfoDetails={
+            buy_now_price,
+            totalBid: PlayerBidLogs.length,
+            ...winnerInfoData
+        }
+    }
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
         ...bidInfoDetails,
+        winnerInfo:winnerInfoDetails||{},
         buy_now_price,
         totalBid: PlayerBidLogs.length,
     });

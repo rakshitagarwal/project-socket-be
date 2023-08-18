@@ -64,26 +64,11 @@ const getBidBotByPlayerId = async (id: string) => {
     return responseBuilder.notFoundError(MESSAGES.BIDBOT.BIDBOT_NOT_FOUND);
 };
 
-/**
- * @description updateBidBot is used to update bid limit entry of one bidbot.
- * @param {IUpdate} updateData - auction and player ids with plays limit is passed using this variable
- * @returns {object} - the response object using responseBuilder.
- */
-const updateBidBot = async (updateData: IFindBidBot) => {
-    const existBot = await bidBotQueries.getByAuctionAndPlayerId(updateData.player_id, updateData.auction_id);
-    if (existBot) {
-        const result = await bidBotQueries.updateBidBot(existBot.id, updateData.plays_limit as number);
-        if (result) return responseBuilder.okSuccess(MESSAGES.BIDBOT.BIDBOT_UPDATE_LIMIT, result);
-    }
-    return responseBuilder.notFoundError(MESSAGES.BIDBOT.BIDBOT_NOT_FOUND);
-};
-
 const bidBotService = {
     addBidBot,
     getBidBotByAuctionAndPlayerId,
     getBidBotByAuctionId,
     getBidBotByPlayerId,
-    updateBidBot,
 };
 
 export default bidBotService;
