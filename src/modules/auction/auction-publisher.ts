@@ -98,10 +98,10 @@ const recentBid = async (auctionId: string) => {
 
 /**
  * @description - create a bid transaction if player wallet balance greater than auction consumed bid value othrewise return false
- * @param playload - playload containing player ID and socket Id and auction Id
+ * @param payload - payload containing player ID and socket Id and auction Id
  * @returns {Promise<void>}
  */
-const bidTransaction = async (playload: {
+const bidTransaction = async (payload: {
     playerId: string;
     socketId: string;
     auctionId: string;
@@ -111,16 +111,16 @@ const bidTransaction = async (playload: {
     );
     const auctionData = JSON.parse(
         (await redisClient.get(
-            `auction:live:${playload.auctionId}`
+            `auction:live:${payload.auctionId}`
         )) as unknown as string
     );
     if (
         isBalance &&
-        +isBalance[playload.playerId] > auctionData.plays_consumed_on_bid
+        +isBalance[payload.playerId] > auctionData.plays_consumed_on_bid
     ) {
         const bidHistory = JSON.parse(
             (await redisClient.get(
-                `${playload.auctionId}:bidHistory`
+                `${payload.auctionId}:bidHistory`
             )) as unknown as string
         );
         if (
@@ -129,6 +129,7 @@ const bidTransaction = async (playload: {
                 auctionData.opening_price >=
                 auctionData.products.price
         ) {
+            countdowns[`${payload.auctionId}`] = 0;
             socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: MESSAGES.SOCKET.AUCTION_ENDED,
             });
@@ -140,18 +141,18 @@ const bidTransaction = async (playload: {
                   auctionData.bid_increment_price
                 : auctionData.bid_increment_price + auctionData.opening_price;
             socket.playerSocket
-                .to(playload.socketId)
+                .to(payload.socketId)
                 .emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {
                     message: MESSAGES.SOCKET.CURRENT_PLAYS,
                     play_balance:
-                        isBalance[playload.playerId] -
+                        isBalance[payload.playerId] -
                         auctionData.plays_consumed_on_bid,
                 });
 
             eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
-                player_id: playload.playerId,
+                player_id: payload.playerId,
                 plays_balance: auctionData.plays_consumed_on_bid,
-                auction_id: playload.auctionId,
+                auction_id: payload.auctionId,
             });
             return {
                 status: true,
