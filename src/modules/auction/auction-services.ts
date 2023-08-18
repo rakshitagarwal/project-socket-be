@@ -4,6 +4,7 @@ import {
     MESSAGES,
     productMessage,
     NODE_EVENT_SERVICE,
+    ONE_PLAY_VALUE_IN_DOLLAR,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
@@ -15,6 +16,7 @@ import {
     IPurchase,
     IRegisterPlayer,
     IStartAuction,
+    IStartSimulation,
 } from "./typings/auction-types";
 import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
@@ -136,6 +138,7 @@ const update = async (
     if (!createdAuction)
         return responseBuilder.expectationFaild(AUCTION_MESSAGES.NOT_CREATED);
     if (auction.auction_state && auction.auction_state === "cancelled") {
+        // TODO: Add transaction lock
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
             status: "cancelled",
             auctionId,
@@ -220,9 +223,7 @@ const playerRegister = async (data: IPlayerRegister) => {
             JSON.stringify(newRedisObject)
         );
     } else {
-        const registeredObj = JSON.parse(
-            getRegisteredPlayer as unknown as string
-        );
+        const registeredObj = JSON.parse(getRegisteredPlayer);
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
         await redisClient.set(
             `auction:pre-register:${data.auction_id}`,
@@ -245,8 +246,8 @@ const playerRegister = async (data: IPlayerRegister) => {
  * @returns {Promise<Object>} - A Promise that resolves to an object containing auction information.
  */
 const getAllMyAuction = async (player_id: string, query: IPagination) => {
-    const limit = parseInt(query.limit as unknown as string) || 10;
-    const offset = parseInt(query.page as unknown as string) || 0;
+    const limit = +query.limit || 10;
+    const offset = +query.page || 0;
     const playerAuction = await auctionQueries.fetchPlayerAuction(
         player_id,
         offset,
@@ -291,16 +292,17 @@ const playerAuctionDetails = async (data: {
             MESSAGES.USERS.PLAYER_NOT_REGISTERED
         );
     }
+
+    if (!playerAuctionDetail || !playerAuctionDetail.Auctions) {
+        return responseBuilder.internalserverError();
+    }
     const buy_now_price =
-        playerAuctionDetail?.status === "won"
+        playerAuctionDetail.status === "won"
             ? playerAuctionDetail.PlayerBidLogs[0]?.bid_price
-            : (playerAuctionDetail?.Auctions?.products
-                  .price as unknown as number) -
-              (playerAuctionDetail?.Auctions
-                  ?.plays_consumed_on_bid as unknown as number) *
-                  (playerAuctionDetail?.PlayerBidLogs as unknown as object[])
-                      .length *
-                  0.1;
+            : playerAuctionDetail.Auctions.products.price -
+              playerAuctionDetail.Auctions.plays_consumed_on_bid *
+                  playerAuctionDetail?.PlayerBidLogs.length *
+                  ONE_PLAY_VALUE_IN_DOLLAR;
     const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
     let winnerInfoDetails
     if(winnerInfo?.status==="won"){
@@ -341,13 +343,14 @@ const startAuction = async (data: IStartAuction) => {
             AUCTION_MESSAGES.AUCTION_ALREADY_SET
         );
     }
-
+    // FIXME: You can't compare strings :/
     if (new Date(data.start_date).toISOString() < new Date().toISOString()) {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
 
+    // TODO: Combine these conditions
     if (auction.registeration_count) {
         if (
             auction._count.PlayerAuctionRegister < auction.registeration_count
@@ -418,6 +421,18 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
     );
 };
 
+const startSimulation = async (data: IStartSimulation) => {
+    if (!data.bot_status) {
+        eventService.emit(
+            NODE_EVENT_SERVICE.STOP_BOT_SIMULATIONS,
+            data.bot_status
+        );
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STOPPED);
+    }
+    eventService.emit(NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION, data);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STARTED);
+};
+
 export const auctionService = {
     create,
     getById,
@@ -430,4 +445,5 @@ export const auctionService = {
     getAllMyAuction,
     playerAuctionDetails,
     purchaseAuctionProduct,
+    startSimulation,
 };

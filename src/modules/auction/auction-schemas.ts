@@ -291,26 +291,45 @@ const ZPlayerWinner = z.object({
     }),
 });
 
-const ZPlayerAuction= z
-.object({
-    page: z
-        .preprocess(
-            (val) => parseInt(val as string),
-            z.number({ invalid_type_error: "page must be number" })
-        )
-        .default(0),
-    limit: z
-        .preprocess(
-            (val) => parseInt(val as string),
-            z.number({ invalid_type_error: "limit must be number" })
-        )
-        .default(10),
-    search: z
-        .string()
-        .regex(/^[a-zA-Z0-9._-]+$/)
-        .optional(),
-})
-.strict();
+const ZSimulation = z.object({
+    user_count: z.number({
+        required_error: "user_count is required",
+        invalid_type_error: "user_count should be number",
+    }),
+    credit_plays: z.number({
+        required_error: "credit_plays is required",
+        invalid_type_error: "credit_plays should be number",
+    }),
+    bot_status: z.boolean().default(false).optional(),
+    auction_id: z
+        .string({
+            required_error: "auction_id should be required!",
+            invalid_type_error: "auction_id should be string!",
+        })
+        .uuid({
+            message: "auction_id should be UUID!",
+        }),
+});
+const ZPlayerAuction = z
+    .object({
+        page: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "page must be number" })
+            )
+            .default(0),
+        limit: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "limit must be number" })
+            )
+            .default(10),
+        search: z
+            .string()
+            .regex(/^[a-zA-Z0-9._-]+$/)
+            .optional(),
+    })
+    .strict();
 
 export const auctionSchemas = {
     ZAuctionAdd,
@@ -322,5 +341,6 @@ export const auctionSchemas = {
     IPlayerAuction,
     ZStartAuction,
     ZPlayerWinner,
-    ZPlayerAuction
+    ZSimulation,
+    ZPlayerAuction,
 };
