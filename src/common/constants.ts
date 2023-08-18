@@ -286,3 +286,5 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;

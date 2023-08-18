@@ -4,6 +4,7 @@ import {
     MESSAGES,
     productMessage,
     NODE_EVENT_SERVICE,
+    ONE_PLAY_VALUE_IN_DOLLAR,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
@@ -299,7 +300,7 @@ const playerAuctionDetails = async (data: {
             : playerAuctionDetail.Auctions.products.price -
               playerAuctionDetail.Auctions.plays_consumed_on_bid *
                   playerAuctionDetail?.PlayerBidLogs.length *
-                  0.1;
+                  ONE_PLAY_VALUE_IN_DOLLAR;
     const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
         ...bidInfoDetails,
