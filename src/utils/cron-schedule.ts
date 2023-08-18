@@ -27,18 +27,33 @@ const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
      * Get the upcoming player auctions.
      * @type {Array<UpcomingAuctionInfo>}
      */
-    const upcomingAuction = await auctionQueries.upcomingPlayerAuction();    
+    const upcomingAuction = await auctionQueries.upcomingPlayerAuction();
     if (upcomingAuction.length) {
         upcomingAuction.forEach(async (upcomingInfo): Promise<void> => {
             const currectDate = new Date();
             if (
                 upcomingInfo.is_preRegistered &&
-                upcomingInfo.start_date && currectDate >= new Date(upcomingInfo.start_date as unknown as string)) {
-                eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {auctionId: upcomingInfo.id,state: AUCTION_STATE.live,});
-                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_STATE, {message: MESSAGES.SOCKET.AUCTION_LIVE,auctionId: upcomingInfo.id});
+                upcomingInfo.start_date &&
+                currectDate >=
+                    new Date(upcomingInfo.start_date as unknown as string)
+            ) {
+                eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {
+                    auctionId: upcomingInfo.id,
+                    state: AUCTION_STATE.live,
+                });
+                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_STATE, {
+                    message: MESSAGES.SOCKET.AUCTION_LIVE,
+                    auctionId: upcomingInfo.id,
+                });
                 auctionStart(upcomingInfo.id);
-                await redisClient.set(`auction:live:${upcomingInfo.id}`,JSON.stringify(upcomingInfo));
-                await eventService.emit(NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,upcomingInfo.id)
+                await redisClient.set(
+                    `auction:live:${upcomingInfo.id}`,
+                    JSON.stringify(upcomingInfo)
+                );
+                await eventService.emit(
+                    NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
+                    upcomingInfo.id
+                );
             }
         });
     }

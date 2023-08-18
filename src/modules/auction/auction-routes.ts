@@ -77,3 +77,9 @@ auctionRouter.post(
     [validateRequest.body(auctionSchemas.ZPlayerWinner)],
     handleAsync(auctionHandler.purchase)
 );
+
+auctionRouter.post(
+    ENDPOINTS.BASE + "start/simulation",
+    [validateRequest.body(auctionSchemas.ZSimulation)],
+    handleAsync(auctionHandler.startSimulation)
+);

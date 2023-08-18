@@ -49,12 +49,6 @@ export interface ItokenQuery {
     access_token?: string;
 }
 
-export interface IupdateUser {
-    first_name?: string;
-    last_name?: string;
-    mobile_id?: string;
-}
-
 export interface IrefreshToken {
     refresh_token: string;
     ip_address: string;
@@ -118,3 +112,10 @@ export enum Ispend_on {
     REFUND_PLAYS = "REFUND_PLAYS",
     BID_PLAYS = "BID_PLAYS",
 }
+
+export type IMultipleUsers = IupdateUser & {
+    avatar: string;
+    email: string;
+    country: string;
+    role_id: string;
+};

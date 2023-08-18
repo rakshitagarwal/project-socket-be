@@ -29,6 +29,7 @@ model User {
   password    String?
   avatar      String?
   is_verified Boolean    @default(false)
+  is_bot      Boolean    @default(false)
   role_id     String
   status      Boolean    @default(true)
   is_deleted  Boolean    @default(false)
@@ -37,7 +38,6 @@ model User {
   roles       MasterRole @relation(fields: [role_id], references: [id])
   countries   Countries? @relation(fields: [country], references: [name])
 
-  PlayerWallet            PlayerWallet[]
   userPersistent          UserPersistent[]
   TermsAndCondition       TermsAndCondition[]
   medias                  Media[]
@@ -250,16 +250,6 @@ model CurrencyTransaction {
   @@map("currency_transaction")
 }
 
-model PlayerWallet {
-  id           String   @id @default(uuid())
-  play_balance Int      @db.Integer
-  player_id    String
-  created_at   DateTime @default(now()) @db.Timestamptz()
-  updated_at   DateTime @default(now()) @db.Timestamptz()
-
-  User                    User                      @relation(fields: [player_id], references: [id])
-  PlayerWalletTransaction PlayerWalletTransaction[]
-}
 
 model PlayerWalletTransaction {
   id                      String    @id @default(uuid())
@@ -273,9 +263,7 @@ model PlayerWalletTransaction {
   plays_refund_id         String?
   created_by              String
   auction_id              String?
-  wallet_id               String?
 
-  PlayerWallet           PlayerWallet?           @relation(fields: [wallet_id], references: [id])
   PlayerAuctionRefund    PlayerAuctionRefund?    @relation(fields: [plays_refund_id], references: [id])
   Auctions               Auctions?               @relation(fields: [auction_id], references: [id])
   User                   User                    @relation(fields: [created_by], references: [id])

@@ -10,10 +10,11 @@ import {
     SOCKET_EVENT,
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
+import userQueries from "../users/user-queries";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
-
+const BidBotCountDown: { [auctionId: string]: number } = {};
 /**
  * Starts the auction with the given auctionId.
  * @param {string} auctionId - The ID of the auction to start.
@@ -42,6 +43,7 @@ export const auctionStart = (auctionId: string) => {
                     ...winnerPlayer,
                 });
             } else {
+                // TODO: Delete this code
                 socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
                     message: MESSAGES.SOCKET.AUCTION_ENDED,
                 });
@@ -57,8 +59,16 @@ export const auctionStart = (auctionId: string) => {
                 count: countdowns[auctionId],
                 auctionId,
             });
+            eventService.emit(NODE_EVENT_SERVICE.SIMULATION_BOTS, {
+                auction_id: auctionId,
+                count: countdowns[auctionId],
+            });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
-            eventService.emit(NODE_EVENT_SERVICE.COUNTDOWN, countdowns[auctionId], auctionId); //emit live countdown
+            eventService.emit(
+                NODE_EVENT_SERVICE.COUNTDOWN,
+                countdowns[auctionId],
+                auctionId
+            ); //emit live countdown
             setTimeout(timerRunEverySecond, 1000);
         }
     }
@@ -88,31 +98,67 @@ const recentBid = async (auctionId: string) => {
 
 /**
  * @description - create a bid transaction if player wallet balance greater than auction consumed bid value othrewise return false
- * @param playload - playload containing player ID and socket Id and auction Id
+ * @param payload - payload containing player ID and socket Id and auction Id
  * @returns {Promise<void>}
  */
-const bidTransaction = async (playload: {
+const bidTransaction = async (payload: {
     playerId: string;
     socketId: string;
     auctionId: string;
 }) => {
-    const isBalance = JSON.parse(await redisClient.get("player:plays:balance") as unknown as string);
-    const auctionData = JSON.parse((await redisClient.get(`auction:live:${playload.auctionId}`)) as unknown as string);
-    if(isBalance && +isBalance[playload.playerId]>auctionData.plays_consumed_on_bid){
-        const bidHistory = JSON.parse((await redisClient.get(`${playload.auctionId}:bidHistory`)) as unknown as string);
-        if ( bidHistory && bidHistory.length * auctionData.bid_increment_price +auctionData.opening_price >=auctionData.products.price) {
-                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {message: MESSAGES.SOCKET.AUCTION_ENDED,});
-        }else{
+    const isBalance = JSON.parse(
+        (await redisClient.get("player:plays:balance")) as unknown as string
+    );
+    const auctionData = JSON.parse(
+        (await redisClient.get(
+            `auction:live:${payload.auctionId}`
+        )) as unknown as string
+    );
+    if (
+        isBalance &&
+        +isBalance[payload.playerId] > auctionData.plays_consumed_on_bid
+    ) {
+        const bidHistory = JSON.parse(
+            (await redisClient.get(
+                `${payload.auctionId}:bidHistory`
+            )) as unknown as string
+        );
+        if (
+            bidHistory &&
+            bidHistory.length * auctionData.bid_increment_price +
+                auctionData.opening_price >=
+                auctionData.products.price
+        ) {
+            countdowns[`${payload.auctionId}`] = 0;
+            socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.AUCTION_ENDED,
+            });
+        } else {
             const bidNumber = bidHistory ? bidHistory.length + 1 : 1;
             const bidPrice = bidHistory
-                ? (bidHistory.length * auctionData.bid_increment_price +
+                ? bidHistory.length * auctionData.bid_increment_price +
                   auctionData.opening_price +
-                  auctionData.bid_increment_price)
-                : (auctionData.bid_increment_price + auctionData.opening_price);
-                socket.playerSocket.to(playload.socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {message: MESSAGES.SOCKET.CURRENT_PLAYS, play_balance:isBalance[playload.playerId] - auctionData.plays_consumed_on_bid});
-            
-                eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT,{player_id:playload.playerId, plays_balance:auctionData.plays_consumed_on_bid, auction_id:playload.auctionId })
-            return { status: true, bidNumber, bidPrice:parseFloat(bidPrice.toFixed(2) )};
+                  auctionData.bid_increment_price
+                : auctionData.bid_increment_price + auctionData.opening_price;
+            socket.playerSocket
+                .to(payload.socketId)
+                .emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {
+                    message: MESSAGES.SOCKET.CURRENT_PLAYS,
+                    play_balance:
+                        isBalance[payload.playerId] -
+                        auctionData.plays_consumed_on_bid,
+                });
+
+            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
+                player_id: payload.playerId,
+                plays_balance: auctionData.plays_consumed_on_bid,
+                auction_id: payload.auctionId,
+            });
+            return {
+                status: true,
+                bidNumber,
+                bidPrice: parseFloat(bidPrice.toFixed(2)),
+            };
         }
     }
     return { status: false };
@@ -151,12 +197,10 @@ const auctionBidderHistory = async (
             );
             recentBid(newBidData.auction_id);
         }
-    } else {   
-        socket.playerSocket
-            .to(socketId)
-            .emit(SOCKET_EVENT.AUCTION_ERROR, {
-                message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
-            });
+    } else {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+            message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
+        });
     }
 };
 
@@ -170,7 +214,7 @@ const auctionBidderHistory = async (
 export const newBiDRecieved = async (
     bidPayload: IBidAuction,
     socketId: string
-) => {    
+) => {
     const isValid = await bidRequestValidator<IBidAuction>(
         bidPayload,
         auctionSchemas.ZbidAuction
@@ -190,7 +234,7 @@ export const newBiDRecieved = async (
             const isPre_register = await redisClient.get(
                 `auction:pre-register:${bidData.auction_id}`
             );
-            if (isPre_register?.length) {
+            if (isPre_register) {
                 const preRegisterData = JSON.parse(isPre_register);
                 if (
                     !preRegisterData[
@@ -218,7 +262,7 @@ export const newBiDRecieved = async (
                         if (
                             iscontinue[iscontinue.length - 1].player_id ===
                             bidData.player_id
-                        ) {                            
+                        ) {
                             socket.playerSocket
                                 .to(socketId)
                                 .emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -226,7 +270,7 @@ export const newBiDRecieved = async (
                                         MESSAGES.SOCKET
                                             .CONTINUE_BID_NOT_ALLOWED,
                                 });
-                        } else {                            
+                        } else {
                             auctionBidderHistory(
                                 bidData,
                                 socketId,
@@ -241,8 +285,52 @@ export const newBiDRecieved = async (
                     .to(socketId)
                     .emit(SOCKET_EVENT.AUCTION_ERROR, {
                         message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                        data: bidPayload.player_id,
                     });
             }
         }
+    }
+};
+
+/**
+ * @description create the random bid for the simulations
+ * @param {string} auction_id
+ * @param {number} count
+ */
+export const randomBid = async (auction_id: string, count: number) => {
+    if (!BidBotCountDown[auction_id]) {
+        BidBotCountDown[auction_id] = Math.floor(Math.random() * (10 - 6)) + 3;
+    }
+    if (BidBotCountDown[auction_id] === count && count > 1) {
+        const usersbots = await userQueries.getRandomBot();
+        if (!usersbots) return;
+        const randomIndex = Math.floor(Math.random() * (usersbots.length - 1));
+        let bot = usersbots[randomIndex];
+        const isContinueBids = JSON.parse(
+            (await redisClient.get(`${auction_id}:bidHistory`)) as string
+        );
+        if (isContinueBids?.length) {
+            const lastBids = isContinueBids[isContinueBids.length - 1];
+            if (lastBids.player_id === bot?.id) {
+                const isFilteredBots = usersbots.filter(
+                    (bot) => bot.id !== lastBids.player_id
+                );
+                const randomIndex = Math.floor(
+                    Math.random() * (usersbots.length - 1)
+                );
+                bot = isFilteredBots[randomIndex];
+            }
+        }
+        if (bot && count > 0) {
+            const botData: IBidAuction = {
+                auction_id: auction_id,
+                player_id: bot.id,
+                player_name: bot.first_name as unknown as string,
+                profile_image: bot.avatar as unknown as string,
+                remaining_seconds: count,
+            };
+            await newBiDRecieved(botData, bot.id);
+        }
+        BidBotCountDown[auction_id] = Math.floor(Math.random() * (10 - 6)) + 3;
     }
 };

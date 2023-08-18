@@ -2,7 +2,6 @@ import { EventEmitter } from "events";
 import { auctionState } from "@prisma/client";
 import { mailService } from "./mail-service";
 import { auctionQueries } from "../modules/auction/auction-queries";
-import { Imail } from "./typing/utils-types";
 import {
     TEMPLATE,
     NODE_EVENT_SERVICE,
@@ -17,6 +16,15 @@ import { PrismaClient } from "@prisma/client";
 
 import { prismaTransaction } from "./prisma-transactions";
 import productQueries from "../modules/product/product-queries";
+import {
+    IRegisterPlayer,
+    IStartSimulation,
+} from "../modules/auction/typings/auction-types";
+import { faker } from "@faker-js/faker";
+import logger from "../config/logger";
+import { Imail } from "./typing/utils-types";
+import { randomBid } from "../modules/auction/auction-publisher";
+import { db } from "../config/db";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 
@@ -158,10 +166,8 @@ eventService.on(
                 auctionId,
                 newWinnerPayload.player_id
             );
-        }else{
-            await auctionQueries.updateRegistrationAuctionStatus(
-                auctionId,
-            );
+        } else {
+            await auctionQueries.updateRegistrationAuctionStatus(auctionId);
         }
     }
 );
@@ -239,7 +245,6 @@ eventService.on(
     }
 );
 
-
 /**
  * Registers a callback function for the 'PLAYER_PLAYS_BALANCE_DEBIT' event.
  * @param {Object} data - The data object containing information about the player's plays balance debit.
@@ -255,42 +260,242 @@ eventService.on(
         plays_balance: number;
         auction_id: string;
     }) => {
-    const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
-    const existingBotData = JSON.parse(await redisClient.get(`BidBotCount:${data.auction_id}`) as string);
-        
-    if (playersBalance) {
-        if (playersBalance[data.player_id]) {
-            playersBalance[data.player_id] =
-                +playersBalance[data.player_id] - data.plays_balance;
-            await redisClient.set("player:plays:balance",JSON.stringify(playersBalance));
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        const existingBotData = JSON.parse(
+            (await redisClient.get(`BidBotCount:${data.auction_id}`)) as string
+        );
+
+        if (playersBalance) {
+            if (playersBalance[data.player_id]) {
+                playersBalance[data.player_id] =
+                    +playersBalance[data.player_id] - data.plays_balance;
+                await redisClient.set(
+                    "player:plays:balance",
+                    JSON.stringify(playersBalance)
+                );
+            }
+
+            if (data.auction_id) {
+                await userQueries.createBidtransaction({
+                    player_id: data.player_id,
+                    plays: data.plays_balance,
+                    auction_id: data.auction_id,
+                });
+            }
         }
 
-        if (data.auction_id) {
-            await userQueries.createBidtransaction({
-                player_id: data.player_id,
-                plays: data.plays_balance,
-                auction_id: data.auction_id,
+        if (existingBotData) {
+            const updatedLimit = Number(
+                existingBotData?.[data.player_id]?.plays - data.plays_balance
+            );
+            if (existingBotData[data.player_id]) {
+                existingBotData[data.player_id].plays = updatedLimit;
+                existingBotData[data.player_id].total_bot_bid =
+                    Number(existingBotData[data.player_id].total_bot_bid) + 1;
+                if (!updatedLimit) {
+                    existingBotData[data.player_id].is_active = false;
+                    socket.playerSocket
+                        .to(existingBotData[data.player_id].socket_id)
+                        .emit(SOCKET_EVENT.BIDBOT_ERROR, {
+                            message: "plays limit reached",
+                        });
+                    socket.playerSocket
+                        .to(existingBotData[data.player_id].socket_id)
+                        .emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                            message: "bidbot not active",
+                            auction_id:
+                                existingBotData[data.player_id].auction_id,
+                            player_id:
+                                existingBotData[data.player_id].player_id,
+                        });
+                }
+                await redisClient.set(
+                    `BidBotCount:${data.auction_id}`,
+                    JSON.stringify(existingBotData)
+                );
+            }
+        }
+    }
+);
+
+/**
+ * @param details - array of object with play_credit, created_by
+ * @description - implementing the multiple updates in the redis client of players play balances
+ */
+eventService.on(
+    NODE_EVENT_SERVICE.MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED,
+    async (
+        details: {
+            play_credit: number;
+            created_by: string;
+        }[],
+        auctionId: string
+    ) => {
+        const playerPlaysBalance: { [player_id: string]: number } = {};
+        const userDetails = details.map((udx) => {
+            playerPlaysBalance[udx.created_by] = udx.play_credit;
+            return {
+                [udx.created_by]: udx.play_credit,
+            };
+        });
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        if (!playersBalance) {
+            await redisClient.set(
+                "player:plays:balance",
+                JSON.stringify({ ...playerPlaysBalance })
+            );
+        } else {
+            await redisClient.set(
+                "player:plays:balance",
+                JSON.stringify({ ...playerPlaysBalance, ...playersBalance })
+            );
+        }
+
+        const playerBlxInfo = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        const newRedisObject: { [id: string]: IRegisterPlayer } = {};
+        const getRegisteredPlayer =
+            JSON.parse(
+                (await redisClient.get(
+                    `auction:pre-register:${auctionId}`
+                )) as string
+            ) || {};
+        await Promise.all([
+            userDetails.map(async (udx) => {
+                const key = Object.entries(udx);
+                const transaction = await prismaTransaction(
+                    async (prisma: PrismaClient) => {
+                        const walletTrx = await userQueries.createTrx(
+                            prisma,
+                            `${key[0]?.[0]}`,
+                            150
+                        );
+                        return { walletTrx };
+                    }
+                );
+                if (playerBlxInfo) {
+                    if (playerBlxInfo[`${key[0]?.[0]}`]) {
+                        playerBlxInfo[`${key[0]?.[0]}`] =
+                            playerBlxInfo[`${key[0]?.[0]}`] - 150;
+                        await redisClient.set(
+                            "player:plays:balance",
+                            JSON.stringify({ ...playerBlxInfo })
+                        );
+                    }
+                }
+
+                await auctionQueries.playerAuctionRegistered({
+                    auction_id: auctionId,
+                    player_id: `${key[0]?.[0]}`,
+                    player_wallet_transaction_id: transaction.walletTrx.id,
+                });
+
+                newRedisObject[auctionId + `${key[0]?.[0]}`] = {
+                    created_at: transaction.walletTrx.created_at,
+                    auction_id: auctionId,
+                    player_id: `${key[0]?.[0]}`,
+                    player_wallet_transaction_id: transaction.walletTrx.id,
+                    id: "",
+                };
+                await redisClient.set(
+                    `auction:pre-register:${auctionId}`,
+                    JSON.stringify({
+                        ...newRedisObject,
+                        ...getRegisteredPlayer,
+                    })
+                );
+            }),
+        ]);
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION,
+    async (data: IStartSimulation) => {
+        const roles = await userQueries.getPlayerRoleId();
+        const users = faker.helpers.multiple(
+            () => {
+                return {
+                    first_name: faker.internet.displayName(),
+                    last_name: faker.internet.userName(),
+                    email: faker.internet.email(),
+                    password:
+                        "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                    country: "Australia",
+                    is_bot: true,
+                    is_verified: true,
+                    avatar: `assets/avatar/${
+                        faker.internet.userName().length
+                    }.png`,
+                };
+            },
+            {
+                count: data.user_count,
+            }
+        );
+        const updateUsers = users.map((user) => {
+            return {
+                ...user,
+                role_id: roles?.id as unknown as string,
+            };
+        });
+        const createdBots = await userQueries.createMultipleUsers(updateUsers);
+        if (createdBots.count > 0) {
+            const emails = updateUsers.map((user) => {
+                return user.email;
+            });
+            const addPlaysInPlayBlx = await userQueries.addMultiplePlayBlx(
+                emails,
+                data.credit_plays
+            );
+            if (addPlaysInPlayBlx.queries.count > 0) {
+                eventService.emit(
+                    NODE_EVENT_SERVICE.MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED,
+                    addPlaysInPlayBlx.details,
+                    data.auction_id
+                );
+                logger.info({
+                    level: "log",
+                    message: "Random User Created in database",
+                });
+            }
+        } else {
+            logger.error({
+                message: "something went wrong for creating the random bots",
             });
         }
     }
+);
 
-    if (existingBotData) {
-        const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
-        if (existingBotData[data.player_id]) {
-            existingBotData[data.player_id].plays = updatedLimit;
-            existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
-            if (!updatedLimit) {
-                existingBotData[data.player_id].is_active = false;
-                socket.playerSocket.to(existingBotData[data.player_id].socket_id).emit(SOCKET_EVENT.BIDBOT_ERROR, {message: "plays limit reached"});
-                socket.playerSocket.to(existingBotData[data.player_id].socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, { 
-                    message: "bidbot not active",
-                    auction_id: existingBotData[data.player_id].auction_id,
-                    player_id: existingBotData[data.player_id].player_id
-                });
-            }
-            await redisClient.set(`BidBotCount:${data.auction_id}`, JSON.stringify(existingBotData));
-        }
+eventService.on(
+    NODE_EVENT_SERVICE.SIMULATION_BOTS,
+    async (data: { auction_id: string; count: number }) => {
+        await randomBid(data.auction_id, data.count);
     }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.STOP_BOT_SIMULATIONS,
+    async (ids: string[]) => {
+        await Promise.all([
+            db.user.updateMany({
+                where: {
+                    id: {
+                        in: ids,
+                    },
+                    is_bot: true,
+                },
+                data: {
+                    is_deleted: true,
+                    status: false,
+                },
+            }),
+        ]);
     }
 );
 
