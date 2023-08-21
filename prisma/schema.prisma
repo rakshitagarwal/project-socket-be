@@ -52,9 +52,9 @@ model User {
   PlayerAuctionRefund     PlayerAuctionRefund[]
   AuctionResult           AuctionResult[]
   BidBot                  BidBot[]
-  referredByPlayer    UserReferral[] @relation("PlayerReferralPlayer")
-  referredToPlayer    UserReferral[] @relation("PlayerReferralReferral")
-  Referral            Referral[]
+  referredByPlayer        UserReferral[] @relation("Player")
+  referredToPlayer        UserReferral[] @relation("PlayerReferral")
+  Referral                Referral[]
 
   @@unique([email])
   @@index([email])
@@ -233,8 +233,8 @@ model UserReferral {
   is_deleted               Boolean
   created_at               DateTime                  @default(now()) @db.Timestamptz()
   updated_at               DateTime                  @default(now()) @db.Timestamptz()
-  player                   User                      @relation("PlayerReferralPlayer", fields: [player_id], references: [id])
-  playerReferral           User                      @relation("PlayerReferralReferral", fields: [player_referral_id], references: [id])
+  player                   User                      @relation("Player", fields: [player_id], references: [id])
+  playerReferral           User                      @relation("PlayerReferral", fields: [player_referral_id], references: [id])
 
   @@map("user_referral")
 }
