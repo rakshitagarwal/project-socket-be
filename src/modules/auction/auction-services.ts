@@ -11,6 +11,7 @@ import { auctionCatgoryQueries } from "../auction-category/auction-category-quer
 import { auctionQueries } from "./auction-queries";
 import {
     IAuction,
+    IAuctionListing,
     IPagination,
     IPlayerRegister,
     IPurchase,
@@ -23,6 +24,7 @@ import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
 import { auctionState } from "@prisma/client";
+import { AUCTION_STATE } from "../../utils/typing/utils-types";
 
 /**
  * Auction Creation
@@ -273,16 +275,16 @@ const playerAuctionDetails = async (data: {
     player_id: string;
     auction_id: string;
 }) => {
-    const [auction, player, playerAuctionDetail,winnerInfo] = await Promise.all([
-        auctionQueries.getActiveAuctioById(data.auction_id),
-        userQueries.fetchPlayerId(data.player_id),
-        auctionQueries.getplayerRegistrationAuctionDetails(
-            data.player_id,
-            data.auction_id
-        ),
-        auctionQueries.getAuctionWinnerInfo(data.auction_id)
-        
-    ]);
+    const [auction, player, playerAuctionDetail, winnerInfo] =
+        await Promise.all([
+            auctionQueries.getActiveAuctioById(data.auction_id),
+            userQueries.fetchPlayerId(data.player_id),
+            auctionQueries.getplayerRegistrationAuctionDetails(
+                data.player_id,
+                data.auction_id
+            ),
+            auctionQueries.getAuctionWinnerInfo(data.auction_id),
+        ]);
     if (!auction)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     if (!player)
@@ -304,19 +306,19 @@ const playerAuctionDetails = async (data: {
                   playerAuctionDetail?.PlayerBidLogs.length *
                   ONE_PLAY_VALUE_IN_DOLLAR;
     const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
-    let winnerInfoDetails
-    if(winnerInfo?.status==="won"){
-        const {PlayerBidLogs,...winnerInfoData}=winnerInfo
-        const buy_now_price=PlayerBidLogs[0]?.bid_price
-       winnerInfoDetails={
+    let winnerInfoDetails;
+    if (winnerInfo?.status === "won") {
+        const { PlayerBidLogs, ...winnerInfoData } = winnerInfo;
+        const buy_now_price = PlayerBidLogs[0]?.bid_price;
+        winnerInfoDetails = {
             buy_now_price,
             totalBid: PlayerBidLogs.length,
-            ...winnerInfoData
-        }
+            ...winnerInfoData,
+        };
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
         ...bidInfoDetails,
-        winnerInfo:winnerInfoDetails||{},
+        winnerInfo: winnerInfoDetails || {},
         buy_now_price,
         totalBid: PlayerBidLogs.length,
     });
@@ -421,6 +423,10 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
     );
 };
 
+/**
+ * @description the start simulation of the auctions
+ * @param {IStartSimulation} data
+ */
 const startSimulation = async (data: IStartSimulation) => {
     if (!data.bot_status) {
         eventService.emit(
@@ -431,6 +437,38 @@ const startSimulation = async (data: IStartSimulation) => {
     }
     eventService.emit(NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION, data);
     return responseBuilder.okSuccess(AUCTION_MESSAGES.SIMULATION_STARTED);
+};
+
+/**
+ * @description created the auction listing
+ * @param {IAuctionListing} data
+ */
+const auctionLists = async (data: IAuctionListing) => {
+    let filter: IAuctionListing = {
+        page: +data.page || 0,
+        limit: +data.limit || 1,
+        player_id: data.player_id,
+    };
+    if (data.auction_id) {
+        filter = { ...filter, auction_id: data.auction_id };
+    }
+    if (data.state) {
+        filter = { ...filter, state: data.state };
+    }
+    if (filter.auction_id) {
+        const auction = await auctionQueries.getPlayerAuctionDetailsById(
+            filter.player_id,
+            filter.auction_id,
+            filter.state as AUCTION_STATE
+        );
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
+    }
+    const auctions = await auctionQueries.getAuctionLists(filter);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auctions, {
+        ...filter,
+        totalRecord: auctions.length,
+        totalPage: Math.ceil(auctions.length / filter.limit),
+    });
 };
 
 export const auctionService = {
@@ -446,4 +484,5 @@ export const auctionService = {
     playerAuctionDetails,
     purchaseAuctionProduct,
     startSimulation,
+    auctionLists,
 };

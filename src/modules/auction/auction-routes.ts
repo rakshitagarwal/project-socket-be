@@ -7,6 +7,12 @@ import { auctionHandler } from "./auction-handlers";
 
 export const auctionRouter = Router();
 
+auctionRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.AUCTION_LISTING,
+    [validateRequest.query(auctionSchemas.ZAuctionListing)],
+    handleAsync(auctionHandler.auctionListing)
+);
+
 auctionRouter.post(
     ENDPOINTS.BASE,
     validateRequest.body(auctionSchemas.ZAuctionAdd),
