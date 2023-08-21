@@ -63,6 +63,11 @@ const getActiveAuctioById = async (id: string) => {
             status: true,
         },
         include: {
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
             products: {
                 select: {
                     id: true,
