@@ -10,6 +10,7 @@ import { auctionResultType } from "@prisma/client";
 import { db } from "../../config/db";
 import {
     IAuction,
+    IAuctionListing,
     IPagination,
     IPlayerAuctionInfo,
     IPlayerRegister,
@@ -17,6 +18,7 @@ import {
     IStartAuction,
 } from "./typings/auction-types";
 import { Sql } from "@prisma/client/runtime";
+import { AUCTION_STATE } from "../../utils/typing/utils-types";
 
 const prisma = new PrismaClient();
 /**
@@ -705,9 +707,9 @@ const updatetRegisterPaymentStatus = async (id: string) => {
  * @param {string} auction_id - The ID of the auction for which winner information is to be retrieved.
  * @returns {Promise<Object|null>} - A Promise that resolves to an object containing winner information, or null if no winner is found.
  */
-const getAuctionWinnerInfo=async(auction_id:string)=>{
+const getAuctionWinnerInfo = async (auction_id: string) => {
     const queryResult = await db.playerAuctionRegsiter.findFirst({
-        where: { auction_id ,status:"won" },
+        where: { auction_id, status: "won" },
         select: {
             id: true,
             player_id: true,
@@ -729,8 +731,112 @@ const getAuctionWinnerInfo=async(auction_id:string)=>{
             },
         },
     });
-    return queryResult
-}
+    return queryResult;
+};
+
+/**
+ * @description get the auction listing
+ * @param {number} page
+ * @param {number} limit
+ */
+const getAuctionLists = async (data: IAuctionListing) => {
+    const queryResult = await db.auction.findMany({
+        where: {
+            AND: [
+                {
+                    is_deleted: false,
+                },
+                {
+                    state: data.state && data.state,
+                },
+            ],
+        },
+        include: {
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
+            products: {
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    price: true,
+                    medias: true,
+                    productMedias: {
+                        select: {
+                            medias: true,
+                        },
+                    },
+                },
+            },
+            PlayerAuctionRegister: {
+                where: {
+                    player_id: data.player_id,
+                },
+                select: {
+                    status: true,
+                },
+            },
+            auctionCategory: true,
+        },
+        take: data.limit,
+        skip: data.page * data.limit,
+        orderBy: {
+            created_at: "desc",
+        },
+    });
+    return queryResult;
+};
+
+const getPlayerAuctionDetailsById = async (
+    id: string,
+    auction_id: string,
+    state: AUCTION_STATE
+) => {
+    const query = await db.auction.findFirst({
+        where: {
+            id: auction_id,
+            is_deleted: false,
+            status: true,
+            state: state,
+        },
+        include: {
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
+            products: {
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    price: true,
+                    medias: true,
+                    productMedias: {
+                        select: {
+                            medias: true,
+                        },
+                    },
+                },
+            },
+            PlayerAuctionRegister: {
+                where: {
+                    player_id: id,
+                },
+                select: {
+                    status: true,
+                },
+            },
+            auctionCategory: true,
+        },
+    });
+
+    return query;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -757,4 +863,6 @@ export const auctionQueries = {
     updateRegistrationAuctionStatus,
     getAuctionWinnerInfo,
     updatetRegisterPaymentStatus,
+    getAuctionLists,
+    getPlayerAuctionDetailsById,
 };

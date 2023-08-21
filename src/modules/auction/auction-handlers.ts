@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { auctionService } from "./auction-services";
-import { IPagination } from "./typings/auction-types";
+import { IAuctionListing, IPagination } from "./typings/auction-types";
 
 /**
  * Auction Creation
@@ -149,6 +149,18 @@ const startSimulation = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description Listing of the auction
+ * @param {Request} req - Request
+ * @param {Response} res - Response
+ */
+const auctionListing = async (req: Request, res: Response) => {
+    const response = await auctionService.auctionLists(
+        req.query as unknown as IAuctionListing
+    );
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
@@ -162,4 +174,5 @@ export const auctionHandler = {
     startAuction,
     purchase,
     startSimulation,
+    auctionListing,
 };
