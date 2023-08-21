@@ -35,6 +35,7 @@ export type IStartAuction = z.infer<typeof auctionSchemas.ZStartAuction>;
 
 export type IStartSimulation = z.infer<typeof auctionSchemas.ZSimulation>;
 
+export type IAuctionListing = z.infer<typeof auctionSchemas.ZAuctionListing>;
 export interface IPlayerAuctionInfo {
     id: string;
     auction_id: string;
