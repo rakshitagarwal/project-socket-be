@@ -205,7 +205,7 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
             message: `auction not active`,
-            auction_id: `${botData.auction_id}`
+            auction_id: botData.auction_id
         });
     }
 };
@@ -229,7 +229,7 @@ export const deactivateBidbot = async (botData: { auction_id: string; player_id:
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
             message: `auction not active`,
-            auction_id: `${botData.auction_id}`
+            auction_id: botData.auction_id
     });
     }
 };
