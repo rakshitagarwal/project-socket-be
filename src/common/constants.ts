@@ -29,6 +29,7 @@ export const ENDPOINTS = {
     PLAYER_AUCTION: "/player/auction/result",
     PAY_NOW: "product/purchase",
     ASSETS: "/assets/",
+    AUCTION_LISTING: "list/",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -260,7 +261,7 @@ export const SOCKET_EVENT = {
     BIDBOT_ERROR: "bidbot:error",
     BIDBOT_DEACTIVATE: "auction:bidbot:deactivate",
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
-    BIDBOT_STATUS: "bidbot:status"
+    BIDBOT_STATUS: "bidbot:status",
 };
 
 export const NODE_EVENT_SERVICE = {

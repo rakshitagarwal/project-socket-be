@@ -330,6 +330,51 @@ const ZPlayerAuction = z
             .optional(),
     })
     .strict();
+const ZAuctionListing = z
+    .object({
+        page: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "page must be number" })
+            )
+            .default(0),
+        limit: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "limit must be number" })
+            )
+            .default(10),
+        search: z
+            .string({
+                invalid_type_error: "search should be type of string",
+                required_error: "search should be error",
+            })
+            .optional(),
+        player_id: z
+            .string({
+                invalid_type_error: "player_id should be type of string",
+                required_error: "player_id should be error",
+            })
+            .uuid({
+                message: "player_id should be string",
+            }),
+        auction_id: z
+            .string({
+                required_error: "auction_id is required",
+                invalid_type_error: "auction_id should be type of string",
+            })
+            .uuid({
+                message: "auction_id should be UUID",
+            })
+            .optional(),
+        state: z
+            .enum(AUCTION_STATE, {
+                invalid_type_error: "auction_state should be string!",
+                required_error: "auction_state is required!",
+            })
+            .optional(),
+    })
+    .strict();
 
 export const auctionSchemas = {
     ZAuctionAdd,
@@ -343,4 +388,5 @@ export const auctionSchemas = {
     ZPlayerWinner,
     ZSimulation,
     ZPlayerAuction,
+    ZAuctionListing,
 };
