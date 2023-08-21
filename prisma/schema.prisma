@@ -28,6 +28,7 @@ model User {
   mobile_no   String?
   password    String?
   avatar      String?
+  referral_code String
   is_verified Boolean    @default(false)
   is_bot      Boolean    @default(false)
   role_id     String
@@ -51,6 +52,9 @@ model User {
   PlayerAuctionRefund     PlayerAuctionRefund[]
   AuctionResult           AuctionResult[]
   BidBot                  BidBot[]
+  referredByPlayer    UserReferral[] @relation("PlayerReferralPlayer")
+  referredToPlayer    UserReferral[] @relation("PlayerReferralReferral")
+  Referral            Referral[]
 
   @@unique([email])
   @@index([email])
@@ -221,6 +225,34 @@ model Auctions {
   @@map("auctions")
 }
 
+model UserReferral {
+  id                       String                    @id @default(uuid())
+  player_id                String
+  player_referral_id       String
+  status                   Boolean
+  is_deleted               Boolean
+  created_at               DateTime                  @default(now()) @db.Timestamptz()
+  updated_at               DateTime                  @default(now()) @db.Timestamptz()
+  player                   User                      @relation("PlayerReferralPlayer", fields: [player_id], references: [id])
+  playerReferral           User                      @relation("PlayerReferralReferral", fields: [player_referral_id], references: [id])
+
+  @@map("user_referral")
+}
+
+model Referral {
+  id                       String                    @id @default(uuid())
+  reward_plays             String
+  credit_plays             String
+  status                   Boolean
+  is_deleted               Boolean
+  created_at               DateTime                  @default(now()) @db.Timestamptz()
+  updated_at               DateTime                  @default(now()) @db.Timestamptz()
+  updated_by               String
+  User                     User                      @relation(fields: [updated_by], references: [id])
+
+  @@map("referral")
+}
+
 model Countries {
   id         String   @id @default(uuid())
   name       String
@@ -290,6 +322,7 @@ model PlayerAuctionRegister {
 
   @@unique([auction_id, player_id])
   @@map("player_auction_register")
+  @@unique([player_id, auction_id])
 }
 
 model PlayerBidLogs {
@@ -392,6 +425,7 @@ enum PlaySpend {
   BUY_PLAYS
   REFUND_PLAYS
   BID_PLAYS
+  REFERRAL_PLAYS
 }
 
 enum auctionState {
