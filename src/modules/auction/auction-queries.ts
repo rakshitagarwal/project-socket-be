@@ -63,11 +63,6 @@ const getActiveAuctioById = async (id: string) => {
             status: true,
         },
         include: {
-            _count: {
-                select: {
-                    PlayerAuctionRegister: true,
-                },
-            },
             products: {
                 select: {
                     id: true,
@@ -136,11 +131,6 @@ const getAll = async (query: IPagination, state: auctionState) => {
             ],
         },
         include: {
-            _count: {
-                select: {
-                    PlayerAuctionRegister: true,
-                },
-            },
             products: {
                 select: {
                     id: true,
@@ -155,7 +145,6 @@ const getAll = async (query: IPagination, state: auctionState) => {
                     },
                 },
             },
-            PlayerAuctionRegister: true,
             auctionCategory: true,
         },
         take: +query.limit,
@@ -790,6 +779,13 @@ const getAuctionLists = async (data: IAuctionListing) => {
     return queryResult;
 };
 
+/**
+ * @description Get the Player Auction Details By the Id
+ * @param {string} id
+ * @param {string} auction_id
+ * @param {AUCTION_STATE} state
+ * @returns
+ */
 const getPlayerAuctionDetailsById = async (
     id: string,
     auction_id: string,

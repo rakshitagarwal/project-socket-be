@@ -446,7 +446,7 @@ const startSimulation = async (data: IStartSimulation) => {
 const auctionLists = async (data: IAuctionListing) => {
     let filter: IAuctionListing = {
         page: +data.page || 0,
-        limit: +data.limit || 5,
+        limit: +data.limit || 1,
         player_id: data.player_id,
     };
     if (data.auction_id) {
