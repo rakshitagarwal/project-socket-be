@@ -31,6 +31,7 @@ import { generateAccessToken, setReferralCode } from "../../common/helper";
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries";
 import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
+import referralService from "../referral/referral-services";
 /**
  * @description register user into databse
  * @param body - admin or player registration's request body
@@ -49,8 +50,9 @@ const register = async (body: Iuser) => {
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
-    const getReferralCode = setReferralCode();
-    payload.referral_code = getReferralCode
+    const applied_code = payload?.applied_referral;
+    delete payload.applied_referral;
+    payload.referral_code = setReferralCode();
     const randomNum = randomInt(1, 28);
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
@@ -64,6 +66,13 @@ const register = async (body: Iuser) => {
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
     });
+    if (applied_code) {
+        const result = await userQueries.getPlayerByReferral(payload.referral_code, applied_code)
+        console.log(result);
+
+        const data = await referralService.addReferral(result[0]?.id as string, result[1]?.id as string)
+        console.log(data);
+    }
     return responseBuilder.createdSuccess(MESSAGES.USERS.SIGNUP);
 };
 
