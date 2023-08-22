@@ -5,13 +5,16 @@ CREATE TYPE "Currency" AS ENUM ('FIAT', 'CRYPTO');
 CREATE TYPE "currencyType" AS ENUM ('USDTERC20', 'USDTRC20', 'BIGTOKEN');
 
 -- CreateEnum
-CREATE TYPE "PlaySpend" AS ENUM ('BUY_PLAYS', 'REFUND_PLAYS', 'BID_PLAYS');
+CREATE TYPE "PlaySpend" AS ENUM ('BUY_PLAYS', 'REFUND_PLAYS', 'BID_PLAYS', 'REFERRAL_PLAYS');
 
 -- CreateEnum
 CREATE TYPE "auctionState" AS ENUM ('upcoming', 'live', 'completed', 'cancelled');
 
 -- CreateEnum
 CREATE TYPE "auctionResultType" AS ENUM ('won', 'lost', 'live', 'registered', 'cancelled');
+
+-- CreateEnum
+CREATE TYPE "paymentStatus" AS ENUM ('pending', 'success');
 
 -- CreateTable
 CREATE TABLE "master_roles" (
@@ -31,11 +34,13 @@ CREATE TABLE "users" (
     "first_name" TEXT,
     "last_name" TEXT,
     "email" TEXT NOT NULL,
-    "country" TEXT NOT NULL,
+    "country" TEXT,
     "mobile_no" TEXT,
     "password" TEXT,
     "avatar" TEXT,
+    "referral_code" TEXT,
     "is_verified" BOOLEAN NOT NULL DEFAULT false,
+    "is_bot" BOOLEAN NOT NULL DEFAULT false,
     "role_id" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT true,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
@@ -184,6 +189,33 @@ CREATE TABLE "auctions" (
 );
 
 -- CreateTable
+CREATE TABLE "user_referral" (
+    "id" TEXT NOT NULL,
+    "player_id" TEXT NOT NULL,
+    "player_referral_id" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL,
+    "is_deleted" BOOLEAN NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "user_referral_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "referral" (
+    "id" TEXT NOT NULL,
+    "reward_plays" INTEGER NOT NULL,
+    "credit_plays" INTEGER NOT NULL,
+    "status" BOOLEAN NOT NULL,
+    "is_deleted" BOOLEAN NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" TEXT NOT NULL,
+
+    CONSTRAINT "referral_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "countries" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -201,22 +233,12 @@ CREATE TABLE "currency_transaction" (
     "currency" "Currency",
     "currency_type" "currencyType" NOT NULL,
     "crypto_transacation_hash" TEXT,
+    "wallet_address" TEXT,
     "payment_gateway_id" TEXT,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" TEXT NOT NULL,
 
     CONSTRAINT "currency_transaction_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "PlayerWallet" (
-    "id" TEXT NOT NULL,
-    "play_balance" INTEGER NOT NULL,
-    "player_id" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "PlayerWallet_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -232,7 +254,6 @@ CREATE TABLE "player_wallet_transaction" (
     "plays_refund_id" TEXT,
     "created_by" TEXT NOT NULL,
     "auction_id" TEXT,
-    "wallet_id" TEXT,
 
     CONSTRAINT "player_wallet_transaction_pkey" PRIMARY KEY ("id")
 );
@@ -243,7 +264,10 @@ CREATE TABLE "player_auction_register" (
     "auction_id" TEXT NOT NULL,
     "player_wallet_transaction_id" TEXT,
     "player_id" TEXT NOT NULL,
+    "status" "auctionResultType" NOT NULL DEFAULT 'registered',
+    "buy_now_expiration" TIMESTAMPTZ,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "payment_status" "paymentStatus" NOT NULL DEFAULT 'pending',
 
     CONSTRAINT "player_auction_register_pkey" PRIMARY KEY ("id")
 );
@@ -299,6 +323,7 @@ CREATE TABLE "bid_bot" (
     "player_id" TEXT NOT NULL,
     "auction_id" TEXT NOT NULL,
     "plays_limit" INTEGER NOT NULL,
+    "price_limit" DOUBLE PRECISION DEFAULT 0.00,
     "total_bot_bid" INTEGER NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -352,11 +377,17 @@ CREATE INDEX "auctions_title_idx" ON "auctions"("title");
 -- CreateIndex
 CREATE UNIQUE INDEX "countries_name_key" ON "countries"("name");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "player_auction_register_auction_id_player_id_key" ON "player_auction_register"("auction_id", "player_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "player_auction_register_player_id_auction_id_key" ON "player_auction_register"("player_id", "auction_id");
+
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "master_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_country_fkey" FOREIGN KEY ("country") REFERENCES "countries"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_country_fkey" FOREIGN KEY ("country") REFERENCES "countries"("name") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_otp" ADD CONSTRAINT "user_otp_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -395,13 +426,16 @@ ALTER TABLE "auctions" ADD CONSTRAINT "auctions_auction_category_id_fkey" FOREIG
 ALTER TABLE "auctions" ADD CONSTRAINT "auctions_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "user_referral" ADD CONSTRAINT "user_referral_player_id_fkey" FOREIGN KEY ("player_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_referral" ADD CONSTRAINT "user_referral_player_referral_id_fkey" FOREIGN KEY ("player_referral_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "referral" ADD CONSTRAINT "referral_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "currency_transaction" ADD CONSTRAINT "currency_transaction_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PlayerWallet" ADD CONSTRAINT "PlayerWallet_player_id_fkey" FOREIGN KEY ("player_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "player_wallet_transaction" ADD CONSTRAINT "player_wallet_transaction_wallet_id_fkey" FOREIGN KEY ("wallet_id") REFERENCES "PlayerWallet"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "player_wallet_transaction" ADD CONSTRAINT "player_wallet_transaction_plays_refund_id_fkey" FOREIGN KEY ("plays_refund_id") REFERENCES "player_auction_refund"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -423,6 +457,9 @@ ALTER TABLE "player_auction_register" ADD CONSTRAINT "player_auction_register_pl
 
 -- AddForeignKey
 ALTER TABLE "player_auction_register" ADD CONSTRAINT "player_auction_register_player_wallet_transaction_id_fkey" FOREIGN KEY ("player_wallet_transaction_id") REFERENCES "player_wallet_transaction"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "player_bid_log" ADD CONSTRAINT "player_bid_log_player_id_auction_id_fkey" FOREIGN KEY ("player_id", "auction_id") REFERENCES "player_auction_register"("player_id", "auction_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "player_bid_log" ADD CONSTRAINT "player_bid_log_player_bot_id_fkey" FOREIGN KEY ("player_bot_id") REFERENCES "bid_bot"("id") ON DELETE SET NULL ON UPDATE CASCADE;
