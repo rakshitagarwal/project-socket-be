@@ -464,11 +464,15 @@ const auctionLists = async (data: IAuctionListing) => {
         return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
     }
     const auctions = await auctionQueries.getAuctionLists(filter);
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auctions, {
-        ...filter,
-        totalRecord: auctions.length,
-        totalPage: Math.ceil(auctions.length / filter.limit),
-    });
+    return responseBuilder.okSuccess(
+        AUCTION_MESSAGES.FOUND,
+        auctions.queryResult,
+        {
+            ...filter,
+            totalRecord: auctions.queryCount,
+            totalPage: Math.ceil(auctions.queryCount / filter.limit),
+        }
+    );
 };
 
 export const auctionService = {
