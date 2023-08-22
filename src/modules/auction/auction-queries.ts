@@ -113,13 +113,12 @@ const getMultipleActiveById = async (id: string[]) => {
  * @description retrieval of all auctions
  * @returns - all auction entities
  */
-const getAll = async (query: IPagination, state: auctionState) => {
+const getAll = async (query: IPagination) => {
     const queryCount = await db.auction.count({
         where: {
             AND: [
                 {
                     is_deleted: false,
-                    state: state,
                 },
                 { OR: query.filter },
             ],
@@ -130,7 +129,6 @@ const getAll = async (query: IPagination, state: auctionState) => {
             AND: [
                 {
                     is_deleted: false,
-                    state: state,
                 },
                 { OR: query.filter },
             ],
