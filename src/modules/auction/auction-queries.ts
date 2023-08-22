@@ -734,6 +734,18 @@ const getAuctionWinnerInfo = async (auction_id: string) => {
  * @param {number} limit
  */
 const getAuctionLists = async (data: IAuctionListing) => {
+    const queryCount = await db.auction.count({
+        where: {
+            AND: [
+                {
+                    is_deleted: false,
+                },
+                {
+                    state: data.state && data.state,
+                },
+            ],
+        },
+    });
     const queryResult = await db.auction.findMany({
         where: {
             AND: [
@@ -781,7 +793,7 @@ const getAuctionLists = async (data: IAuctionListing) => {
             created_at: "desc",
         },
     });
-    return queryResult;
+    return { queryResult, queryCount };
 };
 
 /**
