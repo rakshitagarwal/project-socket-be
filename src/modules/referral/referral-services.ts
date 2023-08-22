@@ -28,6 +28,7 @@ const updateReferralConfig = async (data: { reward_plays: number, credit_plays: 
     return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
 };
 
+
 const referralService = {
     addReferral,
     getReferral,
