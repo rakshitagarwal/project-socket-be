@@ -67,14 +67,18 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
+    const filter = [];
     if (query.search) {
-        query.filter = {
+        filter?.push({
             title: { contains: query.search, mode: "insensitive" },
-        };
+        });
     }
     if (query.state) {
-        query.filter = { ...query.filter, state: query.state };
+        filter?.push({
+            state: query.state,
+        });
     }
+    query = { ...query, filter: filter };
     const auctions = await auctionQueries.getAll(query);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
