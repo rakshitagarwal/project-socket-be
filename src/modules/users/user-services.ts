@@ -50,11 +50,12 @@ const register = async (body: Iuser) => {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
     const getReferralCode = setReferralCode();
+    payload.referral_code = getReferralCode
     const randomNum = randomInt(1, 28);
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
-            data: { ...payload, role_id: isRole.id, referral_code: getReferralCode, avatar: randomAvatar },
+            data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
@@ -202,7 +203,7 @@ const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
     }
     const user = await userQueries.updateUser({ id: parmas.id }, body);
     if (!user) {
-        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+        return responseBuilder.expectationFaild();
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
 };

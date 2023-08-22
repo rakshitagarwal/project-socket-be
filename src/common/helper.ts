@@ -45,16 +45,16 @@ export const generateAccessToken = (payload: { id: string }) => {
     };
 };
 
-export const setReferralCode=()=> {
+export const setReferralCode = () => {
     const alphanumericCharacters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let code = "";
-  
-    for (let i = 0; i <= 7; i++) {
-      const randomIndex = Math.floor(
-        Math.random() * alphanumericCharacters.length
-      );
-      code += alphanumericCharacters[randomIndex];
+
+    for (let i = 0; i < 7; i++) {
+        const randomIndex = Math.floor(
+            Math.random() * alphanumericCharacters.length
+        );
+        code += alphanumericCharacters[randomIndex];
     }
     return code;
-  }
+}
