@@ -5,13 +5,9 @@ export type IAuction = z.infer<typeof auctionSchemas.ZAuctionAdd> & {
     auction_pre_registeration_startDate: string;
 };
 
-export interface IPagination {
-    limit: string | number;
-    page: string | number;
-    search?: string;
-    state?: auction_state;
-    filter?: object[];
-}
+export type IPagination = z.infer<typeof auctionSchemas.Zpagination> & {
+    filter: object[];
+};
 
 export enum auction_state {
     "upcoming",

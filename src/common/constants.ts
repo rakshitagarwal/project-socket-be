@@ -79,12 +79,16 @@ export const AUCTION_MESSAGES = {
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
+    AUCTION_LIVE_UPDATE: "auction is live, so you cannot update!",
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
+    CANNOT_DELETE_AUCTION: "something went wrong",
     DATE_NOT_PROPER: "start_date should be greater than current date!",
     AUCTION_ALREADY_SET: "cannot update start date already added!",
     BOT_SIMULATION_NOT_LIVE: "auction is not live, so simulation cannot start",
     SIMULATION_STARTED: "simulation started",
     SIMULATION_STOPPED: "simulation stopped",
+    GET_BID_LOGS: "All BigLogs",
+    BID_LOGS_NOT_FOUND: "BidLogs not found",
 };
 
 export const productMessage = {
