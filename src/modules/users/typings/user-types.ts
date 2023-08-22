@@ -10,6 +10,7 @@ export interface Iuser {
     role: string;
     status: boolean;
     password?: string;
+    referral?:string;
 }
 
 export interface IuserQuery {

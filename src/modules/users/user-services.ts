@@ -27,7 +27,7 @@ import {
 } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
-import { generateAccessToken } from "../../common/helper";
+import { generateAccessToken, setReferralCode } from "../../common/helper";
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries";
 import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
@@ -49,11 +49,12 @@ const register = async (body: Iuser) => {
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
+    const getReferralCode = setReferralCode();
     const randomNum = randomInt(1, 28);
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
-            data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
+            data: { ...payload, role_id: isRole.id, referral_code: getReferralCode, avatar: randomAvatar },
         });
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
