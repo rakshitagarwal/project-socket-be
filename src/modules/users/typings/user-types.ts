@@ -11,6 +11,7 @@ export interface Iuser {
     status: boolean;
     password?: string;
     referral_code?: string;
+    applied_referral?: string;
 }
 
 export interface IuserQuery {

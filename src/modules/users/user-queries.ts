@@ -380,6 +380,21 @@ const getRandomBot = async () => {
     });
     return query;
 };
+//referral code for player
+const getPlayerByReferral = async (player_code: string, player_referral_code: string) => {
+    const query = await db.user.findMany({
+        where: {
+            OR: [
+                { referral_code: player_code },
+                { referral_code: player_referral_code }
+            ]
+        },
+        select: {
+            id: true,
+        },
+    });
+    return query;
+};
 
 const userQueries = {
     fetchUser,
@@ -400,5 +415,6 @@ const userQueries = {
     createMultipleUsers,
     addMultiplePlayBlx,
     getRandomBot,
+    getPlayerByReferral,
 };
 export default userQueries;

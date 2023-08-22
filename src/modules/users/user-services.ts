@@ -49,8 +49,7 @@ const register = async (body: Iuser) => {
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
-    const getReferralCode = setReferralCode();
-    payload.referral_code = getReferralCode
+    payload.referral_code = setReferralCode();
     const randomNum = randomInt(1, 28);
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
@@ -64,6 +63,12 @@ const register = async (body: Iuser) => {
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
     });
+    if (payload.applied_referral) {
+        const result = await userQueries.getPlayerByReferral(payload.referral_code, payload.applied_referral)
+        console.log("hii", result);
+        
+
+    }
     return responseBuilder.createdSuccess(MESSAGES.USERS.SIGNUP);
 };
 
