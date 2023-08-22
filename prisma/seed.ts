@@ -48,7 +48,7 @@ async function startSeed() {
                 title: "English action",
             },
         });
-        await prismaClient.user.create({
+        const adminData = await prismaClient.user.create({
             data: {
                 first_name: "admin",
                 last_name: "admin",
@@ -59,6 +59,17 @@ async function startSeed() {
                 is_verified: true,
                 avatar: "assets/avatar/1.png",
                 role_id: roleAdmin?.id as string,
+            },
+        });
+        await prismaClient.referral.create({
+            data: {
+                reward_plays: 5,
+                credit_plays: 20,
+                status: true,
+                is_deleted: false,
+                created_at: new Date(),
+                updated_at: new Date(),
+                updated_by: adminData.id,
             },
         });
         return "Db Seeding Compeleted.";

@@ -395,6 +395,9 @@ const addWalletTransaction = async (data: IWalletTx) => {
 
         return { currency_trx };
     });
+
+    await referralService.referralCheck(data.player_id);
+
     if (createTrax.currency_trx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: data.player_id,

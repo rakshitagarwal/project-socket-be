@@ -10,7 +10,7 @@ const addReferral = async function (referralData: ReferralData) {
 
 const getReferral = async function (player_id: string) {
     const queryResult = await db.userReferral.findFirst({
-        where: { id: player_id }
+        where: { player_id: player_id }
     });
     return queryResult;
 }
@@ -27,6 +27,11 @@ const updateReferral = async function (player_id: string) {
     return queryResult;
 }
 
+const referralConfig = async function() {
+    const queryResult = await db.referral.findMany();
+    return queryResult[0];
+}
+
 const updateReferralConfig = async function (reward_plays: number, credit_plays: number) {
     const query = await db.referral.findMany();
 
@@ -41,6 +46,7 @@ const referralQueries = {
     addReferral,
     getReferral,
     updateReferral,
+    referralConfig,
     updateReferralConfig,
 };
 
