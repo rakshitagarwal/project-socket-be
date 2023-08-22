@@ -3,8 +3,16 @@ import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import referralQueries from "./referral-queries";
 
-const addReferral = async (ReferralData: ReferralData) => {  
-    const mediaResult = await referralQueries.addReferral(ReferralData);
+const addReferral = async (player_id: string, player_referral_id: string) => {  
+    const dbData = {
+        player_id: player_id,
+        player_referral_id: player_referral_id,
+        status: true,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+    }
+    const mediaResult = await referralQueries.addReferral(dbData as ReferralData);
     if (mediaResult) return responseBuilder.createdSuccess("", mediaResult);
     return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);
 };

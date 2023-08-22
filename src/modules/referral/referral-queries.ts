@@ -3,16 +3,7 @@ import { ReferralData } from "./typings/referral.type";
 
 const addReferral = async function (referralData: ReferralData) {
     const queryResult = await db.userReferral.create({
-        data: referralData,
-        select: {
-            id: true,
-            player_id: true,
-            player_referral_id: true,
-            status: true,
-            is_deleted: true,
-            created_at: true,
-            updated_at: true,
-        },
+        data: referralData
     });
     return queryResult;
 };
