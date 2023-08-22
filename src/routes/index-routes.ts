@@ -10,6 +10,7 @@ import { termAndConditionRouter } from "../modules/term-conditions/term-conditio
 import isAuthenticated from "../middlewares/authentication";
 import { mediaRouter } from "../modules/media/media-routes";
 import { bidBotRouter } from "../modules/bid-bot/bid-bot-routes";
+import { referralRouter } from "../modules/referral/referral-routes";
 
 /**
  * Index Routes
@@ -19,17 +20,10 @@ export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRouter);
 v1Router.use(ENDPOINTS.USERS, userRouter);
 v1Router.use(ENDPOINTS.AUCTIONS, [isAuthenticated], auctionRouter);
-v1Router.use(
-    ENDPOINTS.PRODUCT_CATEGORY,
-    [isAuthenticated],
-    productCategoryRoutes
-);
+v1Router.use(ENDPOINTS.PRODUCT_CATEGORY, [isAuthenticated], productCategoryRoutes);
 v1Router.use(ENDPOINTS.PRODUCT, [isAuthenticated], productRoutes);
 v1Router.use(ENDPOINTS.TERM_CONDITION, isAuthenticated, termAndConditionRouter);
 v1Router.use(ENDPOINTS.MEDIA, isAuthenticated, mediaRouter);
 v1Router.use(ENDPOINTS.BIDBOT, isAuthenticated, bidBotRouter);
-v1Router.use(
-    ENDPOINTS.AUCTION_CATEGORY,
-    [isAuthenticated],
-    auctionCategoryRouter
-);
+v1Router.use(ENDPOINTS.BIDBOT, referralRouter);
+v1Router.use(ENDPOINTS.AUCTION_CATEGORY, [isAuthenticated], auctionCategoryRouter);

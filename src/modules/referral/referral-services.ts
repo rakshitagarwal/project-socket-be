@@ -5,7 +5,7 @@ import referralQueries from "./referral-queries";
 
 const addReferral = async (ReferralData: ReferralData) => {  
     const mediaResult = await referralQueries.addReferral(ReferralData);
-    if (mediaResult) return responseBuilder.createdSuccess(MESSAGES.MEDIA.MEDIA_CREATE_SUCCESS, mediaResult);
+    if (mediaResult) return responseBuilder.createdSuccess("", mediaResult);
     return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);
 };
 
