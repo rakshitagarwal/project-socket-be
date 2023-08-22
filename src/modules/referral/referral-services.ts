@@ -5,8 +5,8 @@ import referralQueries from "./referral-queries";
 
 const addReferral = async (player_id: string, player_referral_id: string) => {
     const dbData = {
-        player_id: player_referral_id,
-        player_referral_id: player_id,
+        player_id: player_id,
+        player_referral_id: player_referral_id,
         status: true,
         is_deleted: false,
         created_at: new Date(),

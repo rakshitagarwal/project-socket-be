@@ -386,15 +386,19 @@ const getPlayerByReferral = async (player_code: string, player_referral_code: st
         where: {
             OR: [
                 { referral_code: player_code },
-                { referral_code: player_referral_code }
+                { referral_code: player_referral_code },
             ]
         },
         select: {
             id: true,
         },
+        orderBy: {
+            created_at: 'desc',
+        },
     });
     return query;
 };
+
 
 const userQueries = {
     fetchUser,

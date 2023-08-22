@@ -28,6 +28,7 @@ const register = z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
         applied_referral: z.string({ invalid_type_error: "applied referral must be string" })
+            .min(7)
             .optional(),
     })
     .strict();

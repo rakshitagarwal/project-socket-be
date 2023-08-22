@@ -53,8 +53,8 @@ async function startSeed() {
                 first_name: "admin",
                 last_name: "admin",
                 email: "admin929@yopmail.com",
-                password:
-                    "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                password: "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                referral_code: "admin23",
                 country: "India",
                 is_verified: true,
                 avatar: "assets/avatar/1.png",

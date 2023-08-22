@@ -32,11 +32,11 @@ import tokenPersistanceQuery from "../token-persistent/token-persistent-queries"
 import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
 import referralService from "../referral/referral-services";
+
 /**
  * @description register user into databse
  * @param body - admin or player registration's request body
  */
-
 const register = async (body: Iuser) => {
     const { role, ...payload } = body;
     const isRole = await roleQueries.fetchRole({ title: role });
@@ -67,11 +67,9 @@ const register = async (body: Iuser) => {
         });
     });
     if (applied_code) {
-        const result = await userQueries.getPlayerByReferral(payload.referral_code, applied_code)
-        console.log(result);
-
-        const data = await referralService.addReferral(result[0]?.id as string, result[1]?.id as string)
-        console.log(data);
+        const result = await userQueries.getPlayerByReferral(payload.referral_code, applied_code);
+        if(result.length === 1) return responseBuilder.badRequestError("apllied code is not valid");
+        await referralService.addReferral(result[0]?.id as string, result[1]?.id as string);
     }
     return responseBuilder.createdSuccess(MESSAGES.USERS.SIGNUP);
 };

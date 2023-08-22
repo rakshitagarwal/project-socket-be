@@ -28,7 +28,7 @@ model User {
   mobile_no     String?
   password      String?
   avatar        String?
-  referral_code String?
+  referral_code String     @unique
   is_verified   Boolean    @default(false)
   is_bot        Boolean    @default(false)
   role_id       String
