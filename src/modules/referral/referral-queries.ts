@@ -4,13 +4,21 @@ import { ReferralData } from "./typings/referral.type";
 
 const addReferral = async function (referralData: ReferralData,  prisma: PrismaClient) {    
     const queryResult = await prisma.userReferral.create({
-        data: {
-            player_id: referralData.player_id,
-            player_referral_id: referralData.player_referral_id
-        }
+        data: referralData
     });
     return queryResult;
 };
+
+const addPlaysByReferral = async function (plays: number, player_id: string) {
+    const queryResult = await db.playerWalletTx.create({
+        data: {
+            play_credit: plays,
+            spend_on: "REFERRAL_PLAYS",
+            created_by: player_id,
+        }
+    });
+    return queryResult;   
+}
 
 const getReferral = async function (player_id: string) {
     const queryResult = await db.userReferral.findFirst({
@@ -20,8 +28,11 @@ const getReferral = async function (player_id: string) {
 }
 
 const updateReferral = async function (player_id: string) {
+    const query = await db.userReferral.findFirst({
+        where: { player_id: player_id }
+    });
     const queryResult = await db.userReferral.update({
-        where: { id : player_id },
+        where: { id : query?.id },
         data: {
             status: false,
             is_deleted: true,
@@ -48,6 +59,7 @@ const updateReferralConfig = async function (reward_plays: number, credit_plays:
 
 const referralQueries = {
     addReferral,
+    addPlaysByReferral,
     getReferral,
     updateReferral,
     referralConfig,
