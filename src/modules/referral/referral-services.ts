@@ -1,19 +1,17 @@
-import { ReferralData } from './typings/referral.type';
+// import { ReferralData } from './typings/referral.type';
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import referralQueries from "./referral-queries";
 import userQueries from '../users/user-queries';
+import { PrismaClient } from '@prisma/client';
 
-const addReferral = async (player_id: string, player_referral_id: string) => {
+const addReferral = async (player_id: string, player_referral_id: string, prisma: PrismaClient) => {
+    if(!player_referral_id) return;
     const dbData = {
         player_id: player_id,
-        player_referral_id: player_referral_id,
-        status: true,
-        is_deleted: false,
-        created_at: new Date(),
-        updated_at: new Date(),
-    }
-    const result = await referralQueries.addReferral(dbData as ReferralData);
+        player_referral_id: player_referral_id
+    }    
+    const result = await referralQueries.addReferral(dbData , prisma);
     if (result) return responseBuilder.createdSuccess("", result);
     return responseBuilder.badRequestError(MESSAGES.MEDIA.MEDIA_CREATE_FAIL);
 };

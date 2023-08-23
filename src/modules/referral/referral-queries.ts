@@ -1,9 +1,13 @@
+import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
 import { ReferralData } from "./typings/referral.type";
 
-const addReferral = async function (referralData: ReferralData) {
-    const queryResult = await db.userReferral.create({
-        data: referralData
+const addReferral = async function (referralData: ReferralData,  prisma: PrismaClient) {    
+    const queryResult = await prisma.userReferral.create({
+        data: {
+            player_id: referralData.player_id,
+            player_referral_id: referralData.player_referral_id
+        }
     });
     return queryResult;
 };

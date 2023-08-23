@@ -38,7 +38,7 @@ import referralService from "../referral/referral-services";
  * @param body - admin or player registration's request body
  */
 const register = async (body: Iuser) => {
-    const { role, ...payload } = body;
+    const { role, applied_referral,...payload } = body;
     const isRole = await roleQueries.fetchRole({ title: role });
     if (isRole?.title?.toLocaleLowerCase() === "admin") {
         return responseBuilder.conflictError(MESSAGES.USERS.ADMIN_EXIST);
@@ -50,15 +50,20 @@ const register = async (body: Iuser) => {
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
-    const applied_code = payload?.applied_referral;
-    delete payload.applied_referral;
+    let applied_id: string;
     payload.referral_code = setReferralCode();
+    if (applied_referral) {
+        const result = await userQueries.getPlayerByReferral(applied_referral);
+        if(!result) return responseBuilder.badRequestError("applied code is not valid");
+        applied_id = result.id;
+    }
     const randomNum = randomInt(1, 28);
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
+        if (applied_referral) await referralService.addReferral(user.id, applied_id, prisma);
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
             user_name: `${user.first_name}`,
@@ -66,11 +71,6 @@ const register = async (body: Iuser) => {
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
     });
-    if (applied_code) {
-        const result = await userQueries.getPlayerByReferral(payload.referral_code, applied_code);
-        if(result.length === 1) return responseBuilder.badRequestError("apllied code is not valid");
-        await referralService.addReferral(result[0]?.id as string, result[1]?.id as string);
-    }
     return responseBuilder.createdSuccess(MESSAGES.USERS.SIGNUP);
 };
 
