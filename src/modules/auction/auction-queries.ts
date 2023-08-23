@@ -133,8 +133,9 @@ const getAll = async (query: IPagination) => {
                 {
                     is_deleted: false,
                 },
+                {OR: query.filter},
             ],
-            OR: query.filter,
+           
         },
         include: {
             products: {
