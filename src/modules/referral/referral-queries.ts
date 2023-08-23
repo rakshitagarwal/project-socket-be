@@ -3,23 +3,14 @@ import { ReferralData } from "./typings/referral.type";
 
 const addReferral = async function (referralData: ReferralData) {
     const queryResult = await db.userReferral.create({
-        data: referralData,
-        select: {
-            id: true,
-            player_id: true,
-            player_referral_id: true,
-            status: true,
-            is_deleted: true,
-            created_at: true,
-            updated_at: true,
-        },
+        data: referralData
     });
     return queryResult;
 };
 
 const getReferral = async function (player_id: string) {
     const queryResult = await db.userReferral.findFirst({
-        where: { id: player_id }
+        where: { player_id: player_id }
     });
     return queryResult;
 }
@@ -36,6 +27,11 @@ const updateReferral = async function (player_id: string) {
     return queryResult;
 }
 
+const referralConfig = async function() {
+    const queryResult = await db.referral.findMany();
+    return queryResult[0];
+}
+
 const updateReferralConfig = async function (reward_plays: number, credit_plays: number) {
     const query = await db.referral.findMany();
 
@@ -50,6 +46,7 @@ const referralQueries = {
     addReferral,
     getReferral,
     updateReferral,
+    referralConfig,
     updateReferralConfig,
 };
 

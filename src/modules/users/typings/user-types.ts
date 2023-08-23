@@ -10,7 +10,7 @@ export interface Iuser {
     role: string;
     status: boolean;
     password?: string;
-    referral_code?: string;
+    referral_code: string;
     applied_referral?: string;
 }
 
@@ -120,4 +120,5 @@ export type IMultipleUsers = IupdateUser & {
     email: string;
     country: string;
     role_id: string;
+    referral_code: string;
 };

@@ -429,6 +429,7 @@ eventService.on(
                     country: "Australia",
                     is_bot: true,
                     is_verified: true,
+                    referral_code: "hg7Ybot",
                     avatar: `assets/avatar/${
                         faker.internet.userName().length
                     }.png`,

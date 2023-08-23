@@ -1,5 +1,4 @@
 export interface ReferralData {
-    id: string,
     player_id: string,
     player_referral_id: string,
     status: boolean,
