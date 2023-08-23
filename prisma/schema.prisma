@@ -229,8 +229,8 @@ model UserReferral {
   id                 String   @id @default(uuid())
   player_id          String
   player_referral_id String
-  status             Boolean
-  is_deleted         Boolean
+  status             Boolean  @default(true)
+  is_deleted         Boolean  @default(false)
   created_at         DateTime @default(now()) @db.Timestamptz()
   updated_at         DateTime @default(now()) @db.Timestamptz()
   player             User     @relation("Player", fields: [player_id], references: [id])
