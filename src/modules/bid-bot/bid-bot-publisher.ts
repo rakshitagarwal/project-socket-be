@@ -113,11 +113,11 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                             profile_image: randomBot.profile_image as string,
                             remaining_seconds: countdown,
                         }, randomBot.socket_id as string);
-                    socket.playerSocket.to(randomBot.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                        message: "bidbot active",
-                        auction_id: randomBot.auction_id,
-                        player_id: randomBot.player_id
-                    });
+                    // socket.playerSocket.to(randomBot.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                    //     message: "bidbot active",
+                    //     auction_id: randomBot.auction_id,
+                    //     player_id: randomBot.player_id
+                    // });
                 }
                 randomTime(auctionId);
             } else {
