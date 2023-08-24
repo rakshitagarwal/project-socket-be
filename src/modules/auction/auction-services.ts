@@ -23,7 +23,6 @@ import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
-import { auctionState } from "@prisma/client";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 
 /**
@@ -44,9 +43,7 @@ const create = async (auction: IAuction, userId: string) => {
         );
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-    const auctionData = await auctionQueries.create(auction, userId);
-    if (!auctionData)
-        return responseBuilder.expectationFaild(AUCTION_MESSAGES.NOT_CREATED);
+    await auctionQueries.create(auction, userId);
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
@@ -70,16 +67,19 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
-    let state: auctionState = "upcoming";
+    const filter = [];
     if (query.search) {
-        query.filter?.push({
+        filter?.push({
             title: { contains: query.search, mode: "insensitive" },
         });
     }
     if (query.state) {
-        state = query.state as unknown as auctionState;
+        filter?.push({
+            state: query.state,
+        });
     }
-    const auctions = await auctionQueries.getAll(query, state);
+    query = { ...query, filter: filter };
+    const auctions = await auctionQueries.getAll(query);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
@@ -89,6 +89,7 @@ const getAll = async (query: IPagination) => {
             totalRecord: auctions.queryCount,
             totalPage: Math.ceil(auctions.queryCount / +query.limit),
             search: query.search,
+            state: query.state,
         }
     );
 };
@@ -130,17 +131,10 @@ const update = async (
     }
     if (isAuctionExists.state === "live")
         return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_LIVE_DELETE
+            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
         );
-    const createdAuction = await auctionQueries.update(
-        auction,
-        auctionId,
-        userId
-    );
-    if (!createdAuction)
-        return responseBuilder.expectationFaild(AUCTION_MESSAGES.NOT_CREATED);
+    await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
-        // TODO: Add transaction lock
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
             status: "cancelled",
             auctionId,
@@ -165,14 +159,19 @@ const remove = async (id: string[]) => {
     const isDeleted = await auctionQueries.remove(id);
     if (isDeleted.count)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
-    return responseBuilder.expectationFaild();
+    return responseBuilder.expectationFaild(
+        AUCTION_MESSAGES.CANNOT_DELETE_AUCTION
+    );
 };
 
 const getBidLogs = async (id: string) => {
     const isExists = await auctionQueries.fetchAuctionLogs(id);
-    //TODO: put these messages into constants, after the PR merge
-    if (isExists.length) return responseBuilder.okSuccess("get logs", isExists);
-    return responseBuilder.notFoundError("not bid logs found");
+    if (isExists.length)
+        return responseBuilder.okSuccess(
+            AUCTION_MESSAGES.GET_BID_LOGS,
+            isExists
+        );
+    return responseBuilder.notFoundError(AUCTION_MESSAGES.BID_LOGS_NOT_FOUND);
 };
 
 /**
@@ -240,6 +239,7 @@ const playerRegister = async (data: IPlayerRegister) => {
         MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
     );
 };
+
 /**
  * @param {string} player_id - The ID of the player for whom auctions are to be retrieved.
  * @param {IPagination} query - Pagination information to limit and offset the results.
@@ -263,7 +263,6 @@ const getAllMyAuction = async (player_id: string, query: IPagination) => {
 
 /**
  * Retrieves details of a player's auction.
- *
  * @async
  * @param {Object} data - An object containing player_id and auction_id for which auction details are to be retrieved.
  * @property {string} data.player_id - The ID of the player for whom the auction details are to be retrieved.
@@ -351,8 +350,6 @@ const startAuction = async (data: IStartAuction) => {
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
-
-    // TODO: Combine these conditions
     if (auction.registeration_count) {
         if (
             auction._count.PlayerAuctionRegister < auction.registeration_count
@@ -464,11 +461,15 @@ const auctionLists = async (data: IAuctionListing) => {
         return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
     }
     const auctions = await auctionQueries.getAuctionLists(filter);
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auctions, {
-        ...filter,
-        totalRecord: auctions.length,
-        totalPage: Math.ceil(auctions.length / filter.limit),
-    });
+    return responseBuilder.okSuccess(
+        AUCTION_MESSAGES.FOUND,
+        auctions.queryResult,
+        {
+            ...filter,
+            totalRecord: auctions.queryCount,
+            totalPage: Math.ceil(auctions.queryCount / filter.limit),
+        }
+    );
 };
 
 export const auctionService = {
