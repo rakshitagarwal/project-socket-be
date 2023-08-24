@@ -380,11 +380,12 @@ const getRandomBot = async () => {
     });
     return query;
 };
+
 //referral code for player
 const getPlayerByReferral = async (player_referral_code: string) => {
     const query = await db.user.findFirst({
         where: {
-            referral_code: player_referral_code 
+            referral_code: player_referral_code
         },
         select: {
             id: true,

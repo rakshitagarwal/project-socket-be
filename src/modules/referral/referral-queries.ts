@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
 import { ReferralData } from "./typings/referral.type";
 
-const addReferral = async function (referralData: ReferralData,  prisma: PrismaClient) {    
+const addReferral = async function (referralData: ReferralData, prisma: PrismaClient) {
     const queryResult = await prisma.userReferral.create({
         data: referralData
     });
@@ -17,7 +17,7 @@ const addPlaysByReferral = async function (plays: number, player_id: string) {
             created_by: player_id,
         }
     });
-    return queryResult;   
+    return queryResult;
 }
 
 const getReferral = async function (player_id: string) {
@@ -32,7 +32,7 @@ const updateReferral = async function (player_id: string) {
         where: { player_id: player_id }
     });
     const queryResult = await db.userReferral.update({
-        where: { id : query?.id },
+        where: { id: query?.id },
         data: {
             status: false,
             is_deleted: true,
@@ -42,7 +42,7 @@ const updateReferral = async function (player_id: string) {
     return queryResult;
 }
 
-const referralConfig = async function() {
+const referralConfig = async function () {
     const queryResult = await db.referral.findMany();
     return queryResult[0];
 }

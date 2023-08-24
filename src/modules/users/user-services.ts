@@ -32,13 +32,14 @@ import tokenPersistanceQuery from "../token-persistent/token-persistent-queries"
 import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
 import referralService from "../referral/referral-services";
+import referralQueries from "../referral/referral-queries";
 
 /**
  * @description register user into databse
  * @param body - admin or player registration's request body
  */
 const register = async (body: Iuser) => {
-    const { role, applied_referral,...payload } = body;
+    const { role, applied_referral, ...payload } = body;
     const isRole = await roleQueries.fetchRole({ title: role });
     if (isRole?.title?.toLocaleLowerCase() === "admin") {
         return responseBuilder.conflictError(MESSAGES.USERS.ADMIN_EXIST);
@@ -54,7 +55,7 @@ const register = async (body: Iuser) => {
     payload.referral_code = setReferralCode();
     if (applied_referral) {
         const result = await userQueries.getPlayerByReferral(applied_referral);
-        if(!result) return responseBuilder.badRequestError("applied code is not valid");
+        if (!result) return responseBuilder.badRequestError("applied code is not valid");
         applied_id = result.id;
     }
     const randomNum = randomInt(1, 28);
@@ -63,7 +64,10 @@ const register = async (body: Iuser) => {
         const user = await prisma.user.create({
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
-        if (applied_referral) await referralService.addReferral(user.id, applied_id, prisma);
+
+        if (applied_referral) await referralQueries.addReferral(
+            { player_id: user.id, player_referral_id: applied_id }, prisma);
+
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
             user_name: `${user.first_name}`,
