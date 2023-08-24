@@ -1,7 +1,7 @@
 import { AppGlobal } from "../../utils/socket-service";
 import redisClient from "../../config/redis";
 import userQueries from "../users/user-queries";
-import { NODE_EVENT_SERVICE, SOCKET_EVENT } from "../../common/constants";
+import { MESSAGES, NODE_EVENT_SERVICE, SOCKET_EVENT } from "../../common/constants";
 import bidBotQueries from "./bid-bot-queries";
 import { IBidBotData } from "./typings/bid-bot-types";
 import { newBiDRecieved } from "../auction/auction-publisher";
@@ -113,11 +113,6 @@ eventService.on(NODE_EVENT_SERVICE.COUNTDOWN, async function (countdown: number,
                             profile_image: randomBot.profile_image as string,
                             remaining_seconds: countdown,
                         }, randomBot.socket_id as string);
-                    // socket.playerSocket.to(randomBot.socket_id).emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                    //     message: "bidbot active",
-                    //     auction_id: randomBot.auction_id,
-                    //     player_id: randomBot.player_id
-                    // });
                 }
                 randomTime(auctionId);
             } else {
@@ -231,5 +226,35 @@ export const deactivateBidbot = async (botData: { auction_id: string; player_id:
             message: `auction not active`,
             auction_id: botData.auction_id
     });
+    }
+};
+
+/**
+ * @description sends the status of bid bot during a new session.
+ * @param {IBidBotData} botData - The bid bot's data.
+ * @param {string} socketId - The ID of the socket connection.
+ */
+export const bidbotStatus = async (botData: { auction_id: string; player_id: string }, socketId: string) => {
+    const auctionData = await auctionQueries.getActiveAuctioById(botData.auction_id);
+    if (auctionData?.state === "live") {
+        const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${botData.auction_id}`)) as string);
+        const player_bot = existingBotData[`${botData.player_id}`];
+        if (player_bot) {
+            existingBotData[botData.player_id].socket_id = socketId;
+            const status = existingBotData[botData.player_id].is_active;
+            socket.playerSocket
+                .to(socketId)
+                .emit(SOCKET_EVENT.BIDBOT_SESSION_STATUS, {
+                    message: status ? "bidbot active" : "bidbot not active",
+                    auction_id: botData.auction_id,
+                    player_id: botData.player_id,
+                    status: status,
+                });
+            await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
+        } 
+    } else {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+            message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
+        });
     }
 };
