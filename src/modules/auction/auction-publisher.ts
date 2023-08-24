@@ -250,6 +250,30 @@ export const newBiDRecieved = async (
                     const isBidHistory = await redisClient.get(
                         `${bidData.auction_id}:bidHistory`
                     );
+                    const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${bidPayload.auction_id}`)) as string);
+                    if (existingBotData) {
+                        if (existingBotData[`${bidPayload.player_id}`]) {
+                            const player_bot = existingBotData[`${bidPayload.player_id}`];
+                            socket.playerSocket
+                                .to(socketId)
+                                .emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                                    message: player_bot.is_active ? "bidbot active": "bidbot not active",
+                                    auction_id: player_bot.auction_id,
+                                    player_id: player_bot.player_id,
+                                    status: player_bot.is_active,
+                                });
+                        }
+                    } else {
+                        socket.playerSocket
+                            .to(socketId)
+                            .emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                                message: "bidbot not active",
+                                auction_id: bidPayload.auction_id,
+                                player_id: bidPayload.player_id,
+                                status: false,
+                            });
+                    }
+
                     if (!isBidHistory) {
                         auctionBidderHistory(
                             bidData,
