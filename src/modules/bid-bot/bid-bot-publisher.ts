@@ -186,6 +186,14 @@ export const bidByBotRecieved = async (botData: IBidBotData, socketId: string) =
             existingBotData[botData.player_id] = bidByBotInfo;
             await redisClient.set(`BidBotCount:${botData.auction_id}`,JSON.stringify(existingBotData));
         } else if (existingBotData[botData.player_id]) {
+            if (existingBotData[botData.player_id].is_active) {
+                socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { 
+                    message: "bidbot is already active",
+                    auction_id: botData.auction_id,
+                    player_id: botData.player_id
+                });
+                return;
+            }
             existingBotData[botData.player_id].is_active = true;
             existingBotData[botData.player_id].plays_limit = botData.plays_limit;
             existingBotData[botData.player_id].plays = botData.plays_limit;
