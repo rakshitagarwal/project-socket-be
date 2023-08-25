@@ -257,7 +257,7 @@ export const newBiDRecieved = async (
                             socket.playerSocket
                                 .to(socketId)
                                 .emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                                    message: player_bot.is_active ? "bidbot active": "bidbot not active",
+                                    message: player_bot.is_active ? MESSAGES.BIDBOT.BIDBOT_ACTIVE : MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                                     auction_id: player_bot.auction_id,
                                     player_id: player_bot.player_id,
                                     status: player_bot.is_active,
@@ -267,7 +267,7 @@ export const newBiDRecieved = async (
                         socket.playerSocket
                             .to(socketId)
                             .emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                                message: "bidbot not active",
+                                message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                                 auction_id: bidPayload.auction_id,
                                 player_id: bidPayload.player_id,
                                 status: false,
