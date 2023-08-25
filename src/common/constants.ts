@@ -30,6 +30,8 @@ export const ENDPOINTS = {
     PAY_NOW: "product/purchase",
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
+    REFERRAL: "/referral",
+    REFERRAL_CONFIG: "config"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
