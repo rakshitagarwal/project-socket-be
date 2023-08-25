@@ -269,7 +269,7 @@ export const deactivateBidbot = async (botData: { auction_id: string; player_id:
 };
 
 /**
- * @description sends the status of bid bot during a new session.
+ * @description sends the bid bot status during a new session.
  * @param {IBidBotData} botData - The bid bot's data.
  * @param {string} socketId - The ID of the socket connection.
  */
