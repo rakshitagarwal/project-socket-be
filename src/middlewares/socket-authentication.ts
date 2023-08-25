@@ -19,7 +19,7 @@ const socketAuthentication = async (
     socket: Socket,
     next: (err?: Error) => void
 ) => {
-    const { accesstoken } = socket.handshake.auth;
+    const { accesstoken } = socket.handshake.query;
     if (accesstoken) {
         const publicKey = await tokenPersistanceQuery.findPersistentToken({
             access_token: accesstoken as string,
