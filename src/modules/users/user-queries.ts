@@ -306,6 +306,16 @@ const playerPlaysBalance = async (
     return queryResult;
 };
 
+const userCreditHistory = async function (player_id: string){
+    const queryResult = await db.playerWalletTx.findMany({
+        where: {
+            created_by: player_id,
+            spend_on:"BUY_PLAYS"
+        }
+    });
+    return queryResult;
+}
+
 /**
  * @description Get the player Role Id from the users
  * @returns id of players
@@ -415,5 +425,6 @@ const userQueries = {
     addMultiplePlayBlx,
     getRandomBot,
     getPlayerByReferral,
+    userCreditHistory,
 };
 export default userQueries;

@@ -23,11 +23,16 @@ const getReferral = async (player_id: string) => {
 const referralCheck = async (player_id: string) => {
     const result = await referralQueries.getReferral(player_id);
     if (result?.status) {
-        const transactions = await userQueries.playerPlaysBalance(player_id);
-        const transactionsBalance = transactions[0]?.play_balance;
+        let sum = 0;
+        const transactions = await userQueries.userCreditHistory(player_id);
+        transactions.map(transaction => {
+            const credit  = transaction.play_credit ? transaction.play_credit : 0;
+            sum = sum + credit;
+        });
+        
         const referralConfig = await referralQueries.referralConfig();
         if (referralConfig) {
-            if (((transactionsBalance as number) >= referralConfig?.credit_plays) as unknown as number) {
+            if ((sum >= referralConfig?.credit_plays) as unknown as number) {
                 const player_ids = [result.player_id, result.player_referral_id];
                 await Promise.all(player_ids.map(async (player_id) => {
                     await referralQueries.addPlaysByReferral(referralConfig.reward_plays, player_id);
