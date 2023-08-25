@@ -3,19 +3,23 @@ import { responseBuilder } from "../../common/responses";
 import referralQueries from "./referral-queries";
 import userQueries from "../users/user-queries";
 import eventService from "../../utils/event-service";
+import { ReferralConfig } from "./typings/referral.type";
 
 /**
- * Get Referral Retrieve
- * @description retrieval of one plyer using its unique id
- * @param {string} player_id - player ObjectID
- * @returns - response builder with { code, success, message, data, metadata }
+ * @description getReferral is used to give details of referral and its details
+ * @param {string} player_id - player id to check referral config
+ * @returns {object} - the response object using responseBuilder.
  */
 const getReferral = async (player_id: string) => {
     const result = await referralQueries.getReferral(player_id);
-    if (result) return responseBuilder.okSuccess(MESSAGES.MEDIA.REQUEST_MEDIA, result);
-    return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_FOUND, result);
+    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_NOT_FOUND);
 };
 
+/**
+ * @description referralCheck is where the validation to give extra plays is checked
+ * @param {string} player_id - player id to check referral config
+ */
 const referralCheck = async (player_id: string) => {
     const result = await referralQueries.getReferral(player_id);
     if (result?.status) {
@@ -39,23 +43,33 @@ const referralCheck = async (player_id: string) => {
     }
 };
 
-const updateReferral = async (player_id: string) => {
-    const result = await referralQueries.updateReferral(player_id);
-    if (result) return responseBuilder.okSuccess(MESSAGES.MEDIA.MEDIA_STATUS_CHANGE_SUCCESS, result);
-    return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+/**
+ * @description referralConfig give details set for referral logic
+ * @returns {object} - the response object using responseBuilder.
+ */
+const referralConfig = async () => {
+    const result = await referralQueries.referralConfig();
+    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND, result);
+    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND);
 };
 
-const updateReferralConfig = async (data: { reward_plays: number, credit_plays: number }) => {
+/**
+ * @description updateReferralConfig is used to update configuration for referral code.
+ * @param {ReferralConfig} data - data containing config is passed
+ * @returns {object} - the response object using responseBuilder.
+ */
+const updateReferralConfig = async (data: ReferralConfig) => {
+    const config = await referralQueries.referralConfig();
     const { reward_plays, credit_plays } = data;
-    const result = await referralQueries.updateReferralConfig(reward_plays, credit_plays);
-    if (result) return responseBuilder.okSuccess(MESSAGES.MEDIA.MEDIA_STATUS_CHANGE_SUCCESS, result);
-    return responseBuilder.notFoundError(MESSAGES.MEDIA.MEDIA_NOT_FOUND);
+    const result = await referralQueries.updateReferralConfig(config?.id as string, reward_plays, credit_plays);
+    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED, result);
+    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
 };
 
 const referralService = {
     getReferral,
-    updateReferral,
     referralCheck,
+    referralConfig,
     updateReferralConfig,
 };
 

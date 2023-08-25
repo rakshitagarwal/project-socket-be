@@ -198,6 +198,14 @@ export const MESSAGES = {
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
+    REFERRAL: {
+        REFERRAL_FOUND: "Referral found successfully",
+        REFERRAL_NOT_FOUND: "Referral not found",
+        REFERRAL_CONFIG_FOUND: "Referral config found successfully",
+        REFERRAL_CONFIG_NOT_FOUND: "Referral config not found",
+        REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
+        REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
+    },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
         BIDBOT_FOUND: "bidbot found successfully",

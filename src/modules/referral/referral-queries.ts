@@ -22,14 +22,14 @@ const addPlaysByReferral = async function (plays: number, player_id: string) {
 
 const getReferral = async function (player_id: string) {
     const queryResult = await db.userReferral.findFirst({
-        where: { player_id: player_id }
+        where: { player_id }
     });
     return queryResult;
 }
 
 const updateReferral = async function (player_id: string) {
     const query = await db.userReferral.findFirst({
-        where: { player_id: player_id }
+        where: { player_id }
     });
     const queryResult = await db.userReferral.update({
         where: { id: query?.id },
@@ -43,15 +43,13 @@ const updateReferral = async function (player_id: string) {
 }
 
 const referralConfig = async function () {
-    const queryResult = await db.referral.findFirst();
+    const queryResult = await db.referral.findFirst();    
     return queryResult;
 }
 
-const updateReferralConfig = async function (reward_plays: number, credit_plays: number) {
-    const query = await db.referral.findFirst();
-
+const updateReferralConfig = async function (id: string, reward_plays: number, credit_plays: number) {
     const queryResult = await db.referral.update({
-        where: { id: query?.id },
+        where: { id },
         data: { reward_plays, credit_plays },
     });
     return queryResult;
