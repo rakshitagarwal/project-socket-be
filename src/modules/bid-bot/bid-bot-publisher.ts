@@ -248,13 +248,18 @@ export const deactivateBidbot = async (botData: { auction_id: string; player_id:
     const auctionData = await auctionQueries.getActiveAuctioById(botData.auction_id);
     if (auctionData?.state === "live") {
         const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${botData.auction_id}`)) as string);
-        existingBotData[botData.player_id].is_active = false;
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { 
-            message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
-            auction_id: botData.auction_id,
-            player_id: botData.player_id
-        });
-        await redisClient.set(`BidBotCount:${botData.auction_id}`, JSON.stringify(existingBotData));
+        if (existingBotData) {
+            existingBotData[botData.player_id].is_active = false;
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, { 
+                message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
+                auction_id: botData.auction_id,
+                player_id: botData.player_id
+            });
+            await redisClient.set(`BidBotCount:${botData.auction_id}`, JSON.stringify(existingBotData));
+        } else {
+            logger.error(MESSAGES.BIDBOT.BIDBOT_DATA_EMPTY + botData.auction_id);
+            return;
+        }
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
             message: AUCTION_MESSAGES.NOT_ACTIVE,
