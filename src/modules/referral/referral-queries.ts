@@ -1,10 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
-import { ReferralData } from "./typings/referral.type";
+import { ReferralConfig, ReferralData } from "./typings/referral.type";
 
-const addReferral = async function (referralData: ReferralData, prisma: PrismaClient) {
+const addReferral = async function (
+    referralData: ReferralData,
+    prisma: PrismaClient
+) {
     const queryResult = await prisma.userReferral.create({
-        data: referralData
+        data: referralData,
     });
     return queryResult;
 };
@@ -15,21 +18,21 @@ const addPlaysByReferral = async function (plays: number, player_id: string) {
             play_credit: plays,
             spend_on: "REFERRAL_PLAYS",
             created_by: player_id,
-        }
+        },
     });
     return queryResult;
-}
+};
 
 const getReferral = async function (player_id: string) {
     const queryResult = await db.userReferral.findFirst({
-        where: { player_id }
+        where: { player_id },
     });
     return queryResult;
-}
+};
 
 const updateReferral = async function (player_id: string) {
     const query = await db.userReferral.findFirst({
-        where: { player_id }
+        where: { player_id },
     });
     const queryResult = await db.userReferral.update({
         where: { id: query?.id },
@@ -37,20 +40,22 @@ const updateReferral = async function (player_id: string) {
             status: false,
             is_deleted: true,
             updated_at: new Date(),
-        }
+        },
     });
     return queryResult;
-}
+};
 
 const referralConfig = async function () {
-    const queryResult = await db.referral.findFirst();    
+    const queryResult = await db.referral.findFirst();
     return queryResult;
-}
+};
 
-const updateReferralConfig = async function (id: string, reward_plays: number, credit_plays: number) {
+const updateReferralConfig = async function (data: ReferralConfig) {
+    const query = await db.referral.findFirst();
+
     const queryResult = await db.referral.update({
-        where: { id },
-        data: { reward_plays, credit_plays },
+        where: { id: query?.id as string},
+        data: data,
     });
     return queryResult;
 };

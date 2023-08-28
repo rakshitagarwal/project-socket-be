@@ -19,7 +19,7 @@ const getReferral = async (req: Request, res: Response) => {
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
-const referralConfig = async (_req: Request, res: Response) => {    
+const referralConfig = async (_req: Request, res: Response) => {
     const response = await referralService.referralConfig();
     res.status(response.code).json(response);
 };

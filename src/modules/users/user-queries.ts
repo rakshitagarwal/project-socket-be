@@ -306,15 +306,20 @@ const playerPlaysBalance = async (
     return queryResult;
 };
 
-const userCreditHistory = async function (player_id: string){
-    const queryResult = await db.playerWalletTx.findMany({
-        where: {
-            created_by: player_id,
-            spend_on:"BUY_PLAYS"
-        }
-    });
+const creditTransactions = async (player_id: string): Promise<PlayerBidLogGroup[]> => {
+    const query:Sql = Prisma.sql`SELECT  (COALESCE(SUM(play_credit), 0)) as credit_sum,
+                                        player_wallet_transaction.created_by as player_id
+                                FROM 
+                                    player_wallet_transaction
+                                WHERE 
+                                    created_by = ${player_id}
+                                    AND spend_on = 'BUY_PLAYS'
+                                    AND play_credit IS NOT NULL
+                                GROUP BY 
+                                    player_wallet_transaction.created_by;`;
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
     return queryResult;
-}
+};
 
 /**
  * @description Get the player Role Id from the users
@@ -425,6 +430,6 @@ const userQueries = {
     addMultiplePlayBlx,
     getRandomBot,
     getPlayerByReferral,
-    userCreditHistory,
+    creditTransactions,
 };
 export default userQueries;
