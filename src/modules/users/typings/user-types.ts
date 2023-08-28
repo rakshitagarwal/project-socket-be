@@ -107,6 +107,7 @@ export type PlayerBidLogGroup = {
     auction_id: string;
     profile_image: string;
     count: number;
+    play_balance: number;
     credit_sum?: number;
 };
 

@@ -12,7 +12,11 @@ import { ReferralConfig } from "./typings/referral.type";
  */
 const getReferral = async (player_id: string) => {
     const result = await referralQueries.getReferral(player_id);
-    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_FOUND, result);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.REFERRAL.REFERRAL_FOUND,
+            result
+        );
     return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_NOT_FOUND);
 };
 
@@ -25,22 +29,18 @@ const referralCheck = async (player_id: string) => {
     if (result?.status) {
         const transactionSum = await userQueries.creditTransactions(player_id);
         const referralConfig = await referralQueries.referralConfig();
+
         if (referralConfig && transactionSum) {
-            if (((transactionSum[0]?.credit_sum as number) >= referralConfig?.credit_plays) as unknown as number) {
-                const player_ids = [ result.player_id, result.player_referral_id ];
-                await Promise.all(
-                    player_ids.map(async (player_id) => {
-                        await referralQueries.addPlaysByReferral(referralConfig.reward_plays, player_id);
-                        const balance = await referralQueries.getReferral(player_id);
-                        eventService.emit(
-                            NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,
-                            {
-                                player_id: player_id,
-                                plays_balance: balance,
-                            }
-                        );
-                    })
-                );
+            if ((transactionSum[0]?.credit_sum as number) >= referralConfig?.credit_plays) {
+                const player_ids = [result.player_id, result.player_referral_id];
+                for (const id of player_ids) {
+                    await referralQueries.addPlaysByReferral(id, referralConfig.reward_plays);
+                    const balance = await userQueries.playerPlaysBalance(id);
+                    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
+                            player_id: id,
+                            plays_balance: parseFloat((balance[0]?.play_balance as number).toString()),
+                        });
+                }
                 await referralQueries.updateReferral(result.player_id);
             }
         }
@@ -53,8 +53,14 @@ const referralCheck = async (player_id: string) => {
  */
 const referralConfig = async () => {
     const result = await referralQueries.referralConfig();
-    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND, result);
-    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND,
+            result
+        );
+    return responseBuilder.notFoundError(
+        MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND
+    );
 };
 
 /**
@@ -64,10 +70,19 @@ const referralConfig = async () => {
  */
 const updateReferralConfig = async (data: ReferralConfig) => {
     const check = Object.keys(data);
-    if (!check.length) return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
+    if (!check.length)
+        return responseBuilder.notFoundError(
+            MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED
+        );
     const result = await referralQueries.updateReferralConfig(data);
-    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED, result);
-    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED,
+            result
+        );
+    return responseBuilder.notFoundError(
+        MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED
+    );
 };
 
 const referralService = {

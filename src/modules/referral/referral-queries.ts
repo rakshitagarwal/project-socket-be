@@ -12,7 +12,7 @@ const addReferral = async function (
     return queryResult;
 };
 
-const addPlaysByReferral = async function (plays: number, player_id: string) {
+const addPlaysByReferral = async function (player_id: string, plays: number) {
     const queryResult = await db.playerWalletTx.create({
         data: {
             play_credit: plays,
