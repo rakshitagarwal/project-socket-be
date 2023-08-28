@@ -4,6 +4,7 @@ import referralQueries from "./referral-queries";
 import userQueries from "../users/user-queries";
 import eventService from "../../utils/event-service";
 import { ReferralConfig } from "./typings/referral.type";
+import { PrismaClient } from "@prisma/client";
 
 /**
  * @description getReferral is used to give details of referral and its details
@@ -24,32 +25,25 @@ const getReferral = async (player_id: string) => {
  * @description referralCheck is where the validation to give extra plays is checked
  * @param {string} player_id - player id to check referral config
  */
-const referralCheck = async (player_id: string) => {
-    const result = await referralQueries.getReferral(player_id);
-    if (result?.status) {
-        const transactionSum = await userQueries.creditTransactions(player_id);
-        const referralConfig = await referralQueries.referralConfig();
+const referralCheck = async (player_id: string, prisma: PrismaClient) => {
+    const result = await prisma.userReferral.findFirst({where:{player_id}});
+    if (!result?.status) return;
 
-        if (referralConfig && transactionSum) {
-            if ((transactionSum[0]?.credit_sum as number) >= referralConfig?.credit_plays) {
-                const player_ids = [result.player_id, result.player_referral_id];
-                const promises = [];
+    const [transactionSum, referralConfig] = await Promise.all([ 
+        userQueries.creditTransactions(player_id, prisma), prisma.referral.findFirst() ]);
+    if (!referralConfig || !transactionSum) return;
 
-                for (const id of player_ids) {
-                    const promise = (async () => {
-                        await referralQueries.addPlaysByReferral(id, referralConfig.reward_plays);
-                        const balance = await userQueries.playerPlaysBalance(id);
-                        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
-                            player_id: id,
-                            plays_balance: parseInt((balance[0]?.play_balance as number).toString()),
-                        });
-                    })();
-                    promises.push(promise);
-                }
-                await Promise.all(promises);
-                await referralQueries.updateReferral(result.player_id);
-            }
-        }
+    if (transactionSum[0]?.credit_sum as number>= referralConfig.credit_plays) {
+        const player_ids = [result.player_id, result.player_referral_id];
+        await Promise.all(player_ids.map(async (id) => {
+            await referralQueries.addPlaysByReferral(id, referralConfig.reward_plays, prisma);
+            const balance = await userQueries.userPlaysBalance(id, prisma);
+            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
+                player_id: id,
+                plays_balance: parseInt((balance[0]?.play_balance as number).toString()) || 0,
+            });
+        }));
+        await referralQueries.updateReferral(result.player_id, prisma);
     }
 };
 

@@ -306,7 +306,22 @@ const playerPlaysBalance = async (
     return queryResult;
 };
 
-const creditTransactions = async (player_id: string): Promise<PlayerBidLogGroup[]> => {
+const userPlaysBalance = async (player_id: string,  prisma: PrismaClient): Promise<PlayerBidLogGroup[]> => {
+    const query: Sql = Prisma.sql`SELECT 
+                (COALESCE(SUM(play_credit), 0) - COALESCE(SUM(play_debit), 0)) as play_balance,
+                    player_wallet_transaction.created_by as player_id
+                FROM 
+                    player_wallet_transaction
+                WHERE 
+                    created_by = ${player_id}
+                GROUP BY 
+                     player_wallet_transaction.created_by;
+  `;
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    return queryResult;
+};
+
+const creditTransactions = async (player_id: string, prisma: PrismaClient): Promise<PlayerBidLogGroup[]> => {
     const query:Sql = Prisma.sql`SELECT  (COALESCE(SUM(play_credit), 0)) as credit_sum,
                                         player_wallet_transaction.created_by as player_id
                                 FROM 
@@ -431,5 +446,6 @@ const userQueries = {
     getRandomBot,
     getPlayerByReferral,
     creditTransactions,
+    userPlaysBalance,
 };
 export default userQueries;

@@ -12,8 +12,8 @@ const addReferral = async function (
     return queryResult;
 };
 
-const addPlaysByReferral = async function (player_id: string, plays: number) {
-    const queryResult = await db.playerWalletTx.create({
+const addPlaysByReferral = async function (player_id: string, plays: number, prisma: PrismaClient) {
+    const queryResult = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: plays,
             spend_on: "REFERRAL_PLAYS",
@@ -30,11 +30,11 @@ const getReferral = async function (player_id: string) {
     return queryResult;
 };
 
-const updateReferral = async function (player_id: string) {
-    const query = await db.userReferral.findFirst({
+const updateReferral = async function (player_id: string, prisma: PrismaClient) {
+    const query = await prisma.userReferral.findFirst({
         where: { player_id },
     });
-    const queryResult = await db.userReferral.update({
+    const queryResult = await prisma.userReferral.update({
         where: { id: query?.id },
         data: {
             status: false,
