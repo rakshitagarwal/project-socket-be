@@ -55,7 +55,7 @@ const register = async (body: Iuser) => {
     payload.referral_code = setReferralCode();
     if (applied_referral) {
         const result = await userQueries.getPlayerByReferral(applied_referral);
-        if (!result) return responseBuilder.badRequestError("applied code is not valid");
+        if (!result) return responseBuilder.badRequestError(MESSAGES.REFERRAL.REFERRAL_NOT_VALID);
         applied_id = result.id;
     }
     const randomNum = randomInt(1, 28);

@@ -33,14 +33,20 @@ const referralCheck = async (player_id: string) => {
         if (referralConfig && transactionSum) {
             if ((transactionSum[0]?.credit_sum as number) >= referralConfig?.credit_plays) {
                 const player_ids = [result.player_id, result.player_referral_id];
+                const promises = [];
+
                 for (const id of player_ids) {
-                    await referralQueries.addPlaysByReferral(id, referralConfig.reward_plays);
-                    const balance = await userQueries.playerPlaysBalance(id);
-                    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
+                    const promise = (async () => {
+                        await referralQueries.addPlaysByReferral(id, referralConfig.reward_plays);
+                        const balance = await userQueries.playerPlaysBalance(id);
+                        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
                             player_id: id,
-                            plays_balance: parseFloat((balance[0]?.play_balance as number).toString()),
+                            plays_balance: parseInt((balance[0]?.play_balance as number).toString()),
                         });
+                    })();
+                    promises.push(promise);
                 }
+                await Promise.all(promises);
                 await referralQueries.updateReferral(result.player_id);
             }
         }

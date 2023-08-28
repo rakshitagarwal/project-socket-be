@@ -205,6 +205,7 @@ export const MESSAGES = {
         REFERRAL_CONFIG_NOT_FOUND: "Referral config not found",
         REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
         REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
+        REFERRAL_NOT_VALID: "referral code is not valid",
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
