@@ -320,7 +320,6 @@ model PlayerAuctionRegister {
   PlayerBidLogs                PlayerBidLogs[]
 
   @@unique([auction_id, player_id])
-  @@unique([player_id, auction_id])
   @@map("player_auction_register")
 }
 

@@ -2,6 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { db } from "../../config/db";
 import { ReferralConfig, ReferralData } from "./typings/referral.type";
 
+/**
+ * @description addReferral is used to add referral and its details
+ * @param {ReferralData} referralData - data which contains ids of users
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
 const addReferral = async function (
     referralData: ReferralData,
     prisma: PrismaClient
@@ -12,6 +18,13 @@ const addReferral = async function (
     return queryResult;
 };
 
+/**
+ * @description addPlaysByReferral is used to add plays when checks are valid
+ * @param {string} player_id - it contains the player id to whom extra plays are given in transaction
+ * @param {number} plays - it contains the number of plays to be given in the transaction
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
 const addPlaysByReferral = async function (player_id: string, plays: number, prisma: PrismaClient) {
     const queryResult = await prisma.playerWalletTransaction.create({
         data: {
@@ -23,6 +36,11 @@ const addPlaysByReferral = async function (player_id: string, plays: number, pri
     return queryResult;
 };
 
+/**
+ * @description getReferral is used to give details of referral and its status
+ * @param {string} player_id - it contains the player id to find if referral is available
+ * @returns {queryResult} - the result of execution of query.
+ */
 const getReferral = async function (player_id: string) {
     const queryResult = await db.userReferral.findFirst({
         where: { player_id },
@@ -30,6 +48,12 @@ const getReferral = async function (player_id: string) {
     return queryResult;
 };
 
+/**
+ * @description updateReferral is used to update referral and its status
+ * @param {string} player_id - it contains the player id to find if referral is available
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
 const updateReferral = async function (player_id: string, prisma: PrismaClient) {
     const query = await prisma.userReferral.findFirst({
         where: { player_id },
@@ -45,17 +69,25 @@ const updateReferral = async function (player_id: string, prisma: PrismaClient) 
     return queryResult;
 };
 
+/**
+ * @description referralConfig is used to give referral configuration
+ * @returns {queryResult} - the result of execution of query.
+ */
 const referralConfig = async function () {
     const queryResult = await db.referral.findFirst();
     return queryResult;
 };
 
-const updateReferralConfig = async function (data: ReferralConfig) {
+/**
+ * @description updateReferralConfig is used to give updated configuration of referral code
+ * @param {ReferralConfig} configData - it contains how many plays to be rewarded and whats the credit limit
+ * @returns {queryResult} - the result of execution of query.
+ */
+const updateReferralConfig = async function (configData: ReferralConfig) {
     const query = await db.referral.findFirst();
-
     const queryResult = await db.referral.update({
         where: { id: query?.id as string},
-        data: data,
+        data: configData,
     });
     return queryResult;
 };

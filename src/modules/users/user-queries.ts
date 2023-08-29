@@ -306,6 +306,12 @@ const playerPlaysBalance = async (
     return queryResult;
 };
 
+/**
+ * @description userPlaysBalance is used to give play_balance of one user/player
+ * @param {string} player_id - it contains the player id to find user in transactions
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
 const userPlaysBalance = async (player_id: string,  prisma: PrismaClient): Promise<PlayerBidLogGroup[]> => {
     const query: Sql = Prisma.sql`SELECT 
                 (COALESCE(SUM(play_credit), 0) - COALESCE(SUM(play_debit), 0)) as play_balance,
@@ -321,6 +327,12 @@ const userPlaysBalance = async (player_id: string,  prisma: PrismaClient): Promi
     return queryResult;
 };
 
+/**
+ * @description creditTransactions is used to give credit_sum of one user/player
+ * @param {string} player_id - it contains the player id to find user in transactions
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
 const creditTransactions = async (player_id: string, prisma: PrismaClient): Promise<PlayerBidLogGroup[]> => {
     const query:Sql = Prisma.sql`SELECT  (COALESCE(SUM(play_credit), 0)) as credit_sum,
                                         player_wallet_transaction.created_by as player_id

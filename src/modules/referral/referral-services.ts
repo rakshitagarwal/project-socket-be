@@ -8,7 +8,7 @@ import { PrismaClient } from "@prisma/client";
 
 /**
  * @description getReferral is used to give details of referral and its details
- * @param {string} player_id - player id to check referral config
+ * @param {string} player_id - player id to check referral details
  * @returns {object} - the response object using responseBuilder.
  */
 const getReferral = async (player_id: string) => {
@@ -24,6 +24,7 @@ const getReferral = async (player_id: string) => {
 /**
  * @description referralCheck is where the condition to give extra plays is checked
  * @param {string} player_id - player id to check referral config
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
  */
 const referralCheck = async (player_id: string, prisma: PrismaClient) => {
     const result = await prisma.userReferral.findFirst({where:{player_id}});
