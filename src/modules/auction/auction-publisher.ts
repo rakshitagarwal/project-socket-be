@@ -30,6 +30,7 @@ export const auctionStart = (auctionId: string) => {
      */
     async function timerRunEverySecond() {
         if ((countdowns[auctionId] as number) <= 0) {
+            delete countdowns[auctionId];
             const bidHistory = JSON.parse(
                 (await redisClient.get(
                     `${auctionId}:bidHistory`
@@ -37,7 +38,6 @@ export const auctionStart = (auctionId: string) => {
             );
             if (bidHistory) {
                 const winnerPlayer = bidHistory[bidHistory.length - 1];
-                delete countdowns[auctionId];
                 socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
                     message: MESSAGES.SOCKET.AUCTION_WINNER,
                     ...winnerPlayer,
@@ -59,6 +59,7 @@ export const auctionStart = (auctionId: string) => {
                 count: countdowns[auctionId],
                 auctionId,
             });
+            countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             eventService.emit(NODE_EVENT_SERVICE.SIMULATION_BOTS, {
                 auction_id: auctionId,
                 count: countdowns[auctionId],
@@ -68,7 +69,6 @@ export const auctionStart = (auctionId: string) => {
                 countdowns[auctionId],
                 auctionId
             ); //emit live countdown
-            countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             setTimeout(timerRunEverySecond, 1000);
         }
     }
