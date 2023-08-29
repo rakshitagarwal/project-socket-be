@@ -274,8 +274,8 @@ const fetchAuctionHigherBider = async (
     return queryResult;
 };
 
-const createPaymentTrx = async (data: IWalletTx) => {
-    const queries = await db.currencyTx.create({
+const createPaymentTrx = async (prisma: PrismaClient, data: IWalletTx) => {
+    const queries = await prisma.currencyTransaction.create({
         data: {
             credit_amount: data.amount,
             currency: data.currency,
