@@ -22,7 +22,7 @@ const getReferral = async (player_id: string) => {
 };
 
 /**
- * @description referralCheck is where the validation to give extra plays is checked
+ * @description referralCheck is where the condition to give extra plays is checked
  * @param {string} player_id - player id to check referral config
  */
 const referralCheck = async (player_id: string, prisma: PrismaClient) => {
