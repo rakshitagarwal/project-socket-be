@@ -359,6 +359,11 @@ export const deactivateBidbot = async (
                 JSON.stringify(existingBotData)
             );
         } else {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
+                message: MESSAGES.BIDBOT.BIDBOT_DATA_EMPTY,
+                auction_id: botData.auction_id,
+                player_id: botData.player_id,
+            });
             logger.error(
                 MESSAGES.BIDBOT.BIDBOT_DATA_EMPTY + botData.auction_id
             );
@@ -410,6 +415,12 @@ export const bidbotStatus = async (
                 `BidBotCount:${botData.auction_id}`,
                 JSON.stringify(existingBotData)
             );
+        } else {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
+                message: MESSAGES.BIDBOT.BIDBOT_NOT_FOUND,
+                auction_id: botData.auction_id,
+                player_id: botData.player_id,
+            });
         }
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
