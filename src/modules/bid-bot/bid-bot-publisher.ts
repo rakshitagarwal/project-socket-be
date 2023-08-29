@@ -418,6 +418,8 @@ export const bidbotStatus = async (
         } else {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
                 message: MESSAGES.BIDBOT.BIDBOT_NOT_FOUND,
+                auction_id: botData.auction_id,
+                player_id: botData.player_id,
             });
         }
     } else {
