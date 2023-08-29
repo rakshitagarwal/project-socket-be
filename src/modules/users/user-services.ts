@@ -381,13 +381,13 @@ const addWalletTransaction = async (data: IWalletTx) => {
     }
     if (data.currency === "CRYPTO") {
         if (data.currencyType === "BIGTOKEN") {
-            current_plays = data.plays + (data.plays * 10) / 100;
+            current_plays = data.plays + Math.floor((data.plays * 10) / 100);
         } else {
             current_plays = data.plays;
         }
     }
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
-        const currency_trx = await userQueries.createPaymentTrx({
+        const currency_trx = await userQueries.createPaymentTrx(prisma, {
             ...data,
             plays: current_plays,
         });

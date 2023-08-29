@@ -6,7 +6,6 @@ import { IAuctionListing, IPagination } from "./typings/auction-types";
  * Auction Creation
  * @param {Request} req - HTTP Request
  * @param {Response} res - HTTP Response
- * @return {Promise<Response>}
  */
 const create = async (req: Request, res: Response) => {
     const response = await auctionService.create(
@@ -20,7 +19,6 @@ const create = async (req: Request, res: Response) => {
  * Auction retrieve By Id
  * @param {Request} req - HTTP Request
  * @param {Response} res - HTTP Response
- * @return {Promise<Response>}
  */
 const getById = async (req: Request, res: Response) => {
     const response = await auctionService.getById(req.params.id as string);
@@ -28,14 +26,14 @@ const getById = async (req: Request, res: Response) => {
 };
 
 /**
- * Auction retrieve Many By Query
+ * Auction retrieve using pagination
  * @param {Request} req - HTTP Request
  * @param {Response} res - HTTP Response
  * @return {Promise<Response>}
  */
 const getAll = async (req: Request, res: Response) => {
     const response = await auctionService.getAll(
-        req.query as unknown as IPagination
+        req.query as Record<string, string> & IPagination
     );
     res.status(response.code).json(response);
 };
@@ -50,7 +48,7 @@ const update = async (req: Request, res: Response) => {
     const response = await auctionService.update(
         req.body,
         req.params.id as string,
-        res.locals.id as string
+        res.locals.id
     );
     res.status(response.code).json(response);
 };
@@ -67,19 +65,17 @@ const remove = async (req: Request, res: Response) => {
 };
 
 /**
- * @description - for fetching the bid-logs from auction_id
+ * fetching the bid-logs from auction_id
  * @param {Request} req
  * @param {Response }res
  */
 const getBidLogs = async (req: Request, res: Response) => {
-    const response = await auctionService.getBidLogs(
-        req.params.id as unknown as string
-    );
+    const response = await auctionService.getBidLogs(req.params.id as string);
     res.status(response.code).json(response);
 };
 
 /**
- * @description - for player registering the auction
+ * Register Player in Auction
  * @param {Request} req
  * @param {Response }res
  */
@@ -89,7 +85,7 @@ const playerAuctionRegister = async (req: Request, res: Response) => {
 };
 
 /**
- * @description - find a player registered All auction
+ * Find a player with all registered auctions
  * @param {Request} req
  * @param {Response }res
  */
@@ -108,7 +104,7 @@ const getAllMyAuction = async (req: Request, res: Response): Promise<void> => {
 };
 
 /**
- * @description - find a player registered auction details
+ * Find a player registered with auction details
  * @param {Request} req
  * @param {Response }res
  */
@@ -120,7 +116,7 @@ const playerAuctionDetails = async (req: Request, res: Response) => {
 };
 
 /**
- * @description starting the auction with the start date
+ * Start the auction with DateTime
  * @param {Request} req - request
  * @param {Response} res - response
  */
@@ -130,7 +126,7 @@ const startAuction = async (req: Request, res: Response) => {
 };
 
 /**
- * @description - for the purchase o product auction
+ * Purchase products from auction
  * @param {Request} req - request
  * @param {Response} res - response
  */
@@ -140,7 +136,7 @@ const purchase = async (req: Request, res: Response) => {
 };
 
 /**
- * @description handlers for starting the simulation
+ * Start the random simulation
  * @param {Request} req
  * @param {Response} res
  */
@@ -150,7 +146,7 @@ const startSimulation = async (req: Request, res: Response) => {
 };
 
 /**
- * @description Listing of the auction
+ * Listing of the auction with registered players
  * @param {Request} req - Request
  * @param {Response} res - Response
  */

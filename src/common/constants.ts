@@ -77,16 +77,21 @@ export const AUCTION_MESSAGES = {
     FOUND: "auction found!",
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
+    NOT_ACTIVE: "auction not active",
     PLAYER_COUNT_NOT_REACHED: "player registeration count not reached",
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
+    AUCTION_LIVE_UPDATE: "auction is live, so you cannot update!",
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
+    CANNOT_DELETE_AUCTION: "something went wrong",
     DATE_NOT_PROPER: "start_date should be greater than current date!",
     AUCTION_ALREADY_SET: "cannot update start date already added!",
     BOT_SIMULATION_NOT_LIVE: "auction is not live, so simulation cannot start",
     SIMULATION_STARTED: "simulation started",
     SIMULATION_STOPPED: "simulation stopped",
+    GET_BID_LOGS: "All BigLogs",
+    BID_LOGS_NOT_FOUND: "BidLogs not found",
 };
 
 export const productMessage = {
@@ -213,6 +218,16 @@ export const MESSAGES = {
         BIDBOT_CREATE_FAIL: "bidbot creation failed",
         BIDBOT_NOT_FOUND: "bidbot not found or id not valid",
         BIDBOT_UPDATE_LIMIT: "bidbot limit updated successfully",
+        BIDBOT_ACTIVE: "bidbot active",
+        BIDBOT_ALREADY_ACTIVE: "bidbot already active",
+        BIDBOT_NOT_ACTIVE: "bidbot not active",
+        BIDBOT_DATA_EMPTY: "No existing bot data found for auction ID",
+        BITBOT_PLAYS_REQUIRED: "plays limit is required",
+        BIDBOT_PLAYS_NEGATIVE: "plays limit should be valid i.e. more than 0",
+        BIDBOT_PRICE_NEGATIVE: "price limit can't be negative",
+        BIDBOT_PRICE_REACHED: "auction price already crossed price limit",
+        BIDBOT_PRICE_GREATER: "bid price should be less than product price",
+        BIDBOT_WALLET_INSUFFICIENT: "wallet balance insufficient",
     },
     ALL: {
         MULTER_ERROR: "multer error",
@@ -273,6 +288,7 @@ export const SOCKET_EVENT = {
     BIDBOT_DEACTIVATE: "auction:bidbot:deactivate",
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
     BIDBOT_STATUS: "bidbot:status",
+    BIDBOT_SESSION_STATUS: "session:bidbot:status",
 };
 
 export const NODE_EVENT_SERVICE = {

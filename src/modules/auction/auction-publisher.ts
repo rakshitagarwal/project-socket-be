@@ -63,12 +63,12 @@ export const auctionStart = (auctionId: string) => {
                 auction_id: auctionId,
                 count: countdowns[auctionId],
             });
-            countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             eventService.emit(
                 NODE_EVENT_SERVICE.COUNTDOWN,
                 countdowns[auctionId],
                 auctionId
             ); //emit live countdown
+            countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             setTimeout(timerRunEverySecond, 1000);
         }
     }
@@ -175,7 +175,7 @@ const auctionBidderHistory = async (
         socketId,
         auctionId: bidderPayload.auction_id,
     });
-    if (isBalance.status) {
+    if (isBalance.status && countdowns[bidderPayload.auction_id]) {
         const newBidData = {
             ...bidderPayload,
             bid_price: isBalance.bidPrice,
@@ -250,6 +250,37 @@ export const newBiDRecieved = async (
                     const isBidHistory = await redisClient.get(
                         `${bidData.auction_id}:bidHistory`
                     );
+                    const existingBotData = JSON.parse(
+                        (await redisClient.get(
+                            `BidBotCount:${bidPayload.auction_id}`
+                        )) as string
+                    );
+                    if (existingBotData) {
+                        if (existingBotData[`${bidPayload.player_id}`]) {
+                            const player_bot =
+                                existingBotData[`${bidPayload.player_id}`];
+                            socket.playerSocket
+                                .to(socketId)
+                                .emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                                    message: player_bot.is_active
+                                        ? MESSAGES.BIDBOT.BIDBOT_ACTIVE
+                                        : MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
+                                    auction_id: player_bot.auction_id,
+                                    player_id: player_bot.player_id,
+                                    status: player_bot.is_active,
+                                });
+                        } else {
+                            socket.playerSocket
+                                .to(socketId)
+                                .emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                                    message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
+                                    auction_id: bidPayload.auction_id,
+                                    player_id: bidPayload.player_id,
+                                    status: false,
+                                });
+                        }
+                    }
+
                     if (!isBidHistory) {
                         auctionBidderHistory(
                             bidData,
