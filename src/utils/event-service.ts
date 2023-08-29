@@ -169,6 +169,7 @@ eventService.on(
         } else {
             await auctionQueries.updateRegistrationAuctionStatus(auctionId);
         }
+        await redisClient.del(`auction:live:${auctionId}`);
     }
 );
 

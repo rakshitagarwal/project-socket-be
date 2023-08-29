@@ -184,7 +184,6 @@ eventService.on(
                 await Promise.all([
                     bidBotQueries.addBidBotMany(arr as IBidBotData[]),
                     redisClient.del(`BidBotCount:${auctionId}`),
-                    redisClient.del(`auction:live:${auctionId}`),
                 ]);
                 delete tempStorage[auctionId];
             }
@@ -228,7 +227,10 @@ export const bidByBotRecieved = async (
             return;
         }
         if (botData.price_limit) {
-            const bidPrices = JSON.parse((await redisClient.get(`${botData.auction_id}:bidHistory`)) as string
+            const bidPrices = JSON.parse(
+                (await redisClient.get(
+                    `${botData.auction_id}:bidHistory`
+                )) as string
             );
             if (
                 bidPrices &&
