@@ -168,9 +168,8 @@ eventService.on(
             );
         } else {
             await auctionQueries.updateRegistrationAuctionStatus(auctionId);
-
         }
-        await redisClient.del(`auction:live:${auctionId}`)
+        await redisClient.del(`auction:live:${auctionId}`);
     }
 );
 
@@ -431,8 +430,9 @@ eventService.on(
                     country: "Australia",
                     is_bot: true,
                     is_verified: true,
-                    avatar: `assets/avatar/${faker.internet.userName().length
-                        }.png`,
+                    avatar: `assets/avatar/${
+                        faker.internet.userName().length
+                    }.png`,
                 };
             },
             {

@@ -227,7 +227,10 @@ export const bidByBotRecieved = async (
             return;
         }
         if (botData.price_limit) {
-            const bidPrices = JSON.parse((await redisClient.get(`${botData.auction_id}:bidHistory`)) as string
+            const bidPrices = JSON.parse(
+                (await redisClient.get(
+                    `${botData.auction_id}:bidHistory`
+                )) as string
             );
             if (
                 bidPrices &&
