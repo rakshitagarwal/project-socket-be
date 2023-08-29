@@ -184,7 +184,6 @@ eventService.on(
                 await Promise.all([
                     bidBotQueries.addBidBotMany(arr as IBidBotData[]),
                     redisClient.del(`BidBotCount:${auctionId}`),
-                    redisClient.del(`auction:live:${auctionId}`),
                 ]);
                 delete tempStorage[auctionId];
             }
