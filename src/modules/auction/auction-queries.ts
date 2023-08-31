@@ -20,6 +20,7 @@ import {
 import { Sql } from "@prisma/client/runtime";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import { prismaTransaction } from "../../utils/prisma-transactions";
+import logger from "../../config/logger";
 
 const prisma = new PrismaClient();
 /**
@@ -590,19 +591,32 @@ const updatePlayerRegistrationAuctionResultStatus = async (
     winexpirationTime.setDate(new Date().getDate() + 2);
     const resultTransactions = await prismaTransaction(
         async (prisma: PrismaClient) => {
-            const lostQueryResult = await prisma.playerAuctionRegister.updateMany({
-                where: { AND: [{ auction_id }, { NOT: { player_id } }] },
-                data: { status: "lost", buy_now_expiration: lostexpirationTime },
+            const lostQueryResult =
+                await prisma.playerAuctionRegister.updateMany({
+                    where: { AND: [{ auction_id }, { NOT: { player_id } }] },
+                    data: {
+                        status: "lost",
+                        buy_now_expiration: lostexpirationTime,
+                    },
+                });
+            logger.log({
+                level: "log",
+                message:
+                    "Update the player auction registeration prisma trax" +
+                    auction_id,
             });
-            const wonQueryResult = await prisma.playerAuctionRegister.updateMany({
-                where: { auction_id, player_id },
-                data: { status: "won", buy_now_expiration: winexpirationTime },
-            });
+            const wonQueryResult =
+                await prisma.playerAuctionRegister.updateMany({
+                    where: { auction_id, player_id },
+                    data: {
+                        status: "won",
+                        buy_now_expiration: winexpirationTime,
+                    },
+                });
             return { lostQueryResult, wonQueryResult };
         }
     );
-    return resultTransactions
-    
+    return resultTransactions;
 };
 /**
  * Retrieves auction registration details for a specific player in a given auction.
@@ -699,6 +713,10 @@ const createPaymentTrx = async (data: IPurchase) => {
  * @returns {Promise<Object>} - A Promise that resolves to the updated database object containing the results of the update operation.
  */
 const updateRegistrationAuctionStatus = async (auction_id: string) => {
+    logger.log({
+        level: "log",
+        message: "registeration auction status updated" + auction_id,
+    });
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
     const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
         where: { AND: [{ auction_id }] },
