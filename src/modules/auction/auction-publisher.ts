@@ -11,6 +11,7 @@ import {
 } from "../../common/constants";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import userQueries from "../users/user-queries";
+import logger from "../../config/logger";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
@@ -53,11 +54,19 @@ export const auctionStart = (auctionId: string) => {
                 auctionId: auctionId,
                 state: AUCTION_STATE.completed,
             });
+            logger.log({
+                level: "log",
+                message: "auction ended" + auctionId,
+            });
         } else {
             socket.playerSocket.emit(SOCKET_EVENT.AUCTION_COUNT_DOWN, {
                 message: MESSAGES.SOCKET.AUCTION_COUNT_DOWN,
                 count: countdowns[auctionId],
                 auctionId,
+            });
+            logger.log({
+                level: "log",
+                message: "auction is running" + auctionId,
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             eventService.emit(NODE_EVENT_SERVICE.SIMULATION_BOTS, {
