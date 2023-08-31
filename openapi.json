@@ -24,18 +24,401 @@
             "variables": { "basePath": { "default": "/v1", "enum": ["/v1"] } }
         }
     ],
-    "components": {},
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "Bearer auth security schema",
+                "bearerFormat": "JWT"
+            }
+        },
+        "responses": {
+            "200": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 200
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": true
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Success response!"
+            },
+            "201": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 201
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": true
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "New resource added!"
+            },
+            "500": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 500
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Internal server error!"
+            },
+            "501": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 501
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "The server does not support the functionality required to fulfill the request!"
+            },
+            "502": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 502
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Bad gateway!"
+            },
+            "503": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 503
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Service unavailable!"
+            },
+            "400": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 400
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Bad request!"
+            },
+            "401": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 401
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Unauthorized!"
+            },
+            "404": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 404
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Not Found!"
+            },
+            "403": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 403
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Access Forbidden!"
+            },
+            "406": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 406
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "default": "{}"
+                                },
+                                "metadata": {
+                                    "type": "object",
+                                    "default": "{}"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Not Acceptable!"
+            },
+            "409": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "default": 409
+                                },
+                                "success": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "default": "Already Existed"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Already Existed"
+            }
+        }
+    },
     "paths": {
         "/product-category": {
-            "get":{
+            "get": {
                 "tags": ["product-category"],
                 "description": "Get the product category for product",
                 "summary": "Get the product category",
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "parameters": [
                     {
                         "in": "query",
@@ -55,8 +438,26 @@
                           "default": 0
                         }
                       }
-                ]
-                
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
             },
             "post":{
                 "tags": ["product-category"],
@@ -85,65 +486,57 @@
                         }
                       }
                     }
-                  }
-            },
-            "patch": {
-                "tags": ["product-category"],
-                "summary": "update the product category",
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "string",
-                                        "nullable": false,
-                                        "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
-                                    },
-                                    "title": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "nullable": false,
-                                        "description": "name in product category"
-                                      },
-                                    "status": {
-                                        "type": "boolean",
-                                        "example": "true"
-                                    }
-                                }
-                            }
-                        }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
                     }
                 }
-            
             }
         },
         "/product-category/{id}": {
-            "get":{
+            "get": {
                 "tags": ["product-category"],
                 "summary": "get the product category Id",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "parameters": [
-                    {
-                      "in": "path",
-                      "name": "id",
-                      "required": true,
-                      "schema": {
-                        "type": "string"
-                      }
+                "description": "Admin user can get specific faq category!",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
                     }
-                ]
+                }
             }
         },
         "/product": {
@@ -176,12 +569,26 @@
                       },
                       {
                         "in": "query",
-                        "name": "filterText",
+                        "name": "search",
                         "schema": {
                             "type": "string"
                         }
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
                 
             },
             "post":{
@@ -209,24 +616,105 @@
                             },
                             "description": {
                                 "type": "string",
-                                "format": "string",
-                                "nullable": false,
                                 "description": "description product"
                             },
-                            "product-category-id": {
-                                "type": "string",
-                                "nullable": false,
-                                "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
+                            "price": {
+                                "type": "number",
+                                "description": "price product"
+                            },
+                            "product_category_id": {
+                                "type": "string"
+                            },
+                            "landing_image": {
+                                "type": "string"
+                            },
+                            "media_id": {
+                                "type": "array",
+                                "items":{
+                                       "type": "string"
+                                },
+                                "maxItems": 2
                             }
+
                           }
                         }
                       }
                     }
-                  }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
             },
+            "delete":{
+                "tags": ["product"],
+                "summary": "get the product Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "ids": {
+                                "type": "array",
+                                "items":{
+                                       "type": "string"
+                                },
+                                "maxItems": 2
+                            }
+
+                          }
+                        }
+                      }
+                    }
+                  },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/product/{id}": {
             "patch": {
                 "tags": ["product"],
                 "summary": "update the product",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
                 "security": [
                     {
                         "BearerAuth": []
@@ -239,35 +727,54 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "id": {
-                                        "type": "string",
-                                        "nullable": false,
-                                        "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
-                                    },
                                     "title": {
                                         "type": "string",
                                         "format": "string",
                                         "nullable": false,
-                                        "description": "name in product"
+                                        "description": "title in product"
                                       },
-                                    "status": {
-                                        "type": "boolean",
-                                        "example": "true"
-                                    },
-                                    "product-category-id": {
-                                        "type": "string",
-                                        "nullable": false,
-                                        "example": "3e2b50c1-338c-4d70-9809-24840dc9d494"
+                                      "description": {
+                                          "type": "string",
+                                          "description": "description product"
+                                      },
+                                      "price": {
+                                          "type": "number",
+                                          "description": "price product"
+                                      },
+                                      "product_category_id": {
+                                          "type": "string"
+                                      },
+                                      "landing_image": {
+                                          "type": "string"
+                                      },
+                                      "media_id": {
+                                        "type": "array",
+                                        "items":{
+                                               "type": "string"
+                                        },
+                                        "maxItems": 2
                                     }
                                 }
                             }
                         }
                     }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
                 }
             
-            }
-        },
-        "/product/{id}": {
+            },
             "get":{
                 "tags": ["product"],
                 "summary": "get the product Id",
@@ -285,27 +792,22 @@
                         "type": "string"
                       }
                     }
-                ]
-            },
-            "delete":{
-                "tags": ["product"],
-                "summary": "get the product Id",
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
                 ],
-                "parameters": [
-                    {
-                      "in": "path",
-                      "name": "id",
-                      "required": true,
-                      "schema": {
-                        "type": "string"
-                      }
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
                     }
-                ]
+                }
             }
-        }   
+        } 
     }
 }
