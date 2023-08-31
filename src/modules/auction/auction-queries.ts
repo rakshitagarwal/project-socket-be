@@ -19,6 +19,7 @@ import {
 } from "./typings/auction-types";
 import { Sql } from "@prisma/client/runtime";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
+import { prismaTransaction } from "../../utils/prisma-transactions";
 
 const prisma = new PrismaClient();
 /**
@@ -587,15 +588,21 @@ const updatePlayerRegistrationAuctionResultStatus = async (
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
     const winexpirationTime: Date = new Date();
     winexpirationTime.setDate(new Date().getDate() + 2);
-    const lostQueryResult = await db.playerAuctionRegsiter.updateMany({
-        where: { AND: [{ auction_id }, { NOT: { player_id } }] },
-        data: { status: "lost", buy_now_expiration: lostexpirationTime },
-    });
-    const wonQueryResult = await db.playerAuctionRegsiter.updateMany({
-        where: { auction_id, player_id },
-        data: { status: "won", buy_now_expiration: winexpirationTime },
-    });
-    return { lostQueryResult, wonQueryResult };
+    const resultTransactions = await prismaTransaction(
+        async (prisma: PrismaClient) => {
+            const lostQueryResult = await prisma.playerAuctionRegister.updateMany({
+                where: { AND: [{ auction_id }, { NOT: { player_id } }] },
+                data: { status: "lost", buy_now_expiration: lostexpirationTime },
+            });
+            const wonQueryResult = await prisma.playerAuctionRegister.updateMany({
+                where: { auction_id, player_id },
+                data: { status: "won", buy_now_expiration: winexpirationTime },
+            });
+            return { lostQueryResult, wonQueryResult };
+        }
+    );
+    return resultTransactions
+    
 };
 /**
  * Retrieves auction registration details for a specific player in a given auction.
