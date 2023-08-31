@@ -170,6 +170,7 @@ eventService.on(
             await auctionQueries.updateRegistrationAuctionStatus(auctionId);
         }
         await redisClient.del(`auction:live:${auctionId}`);
+        await redisClient.del(`${auctionId}:bidHistory`);
     }
 );
 

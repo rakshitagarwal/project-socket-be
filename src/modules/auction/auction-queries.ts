@@ -119,12 +119,9 @@ const getAll = async (query: IPagination) => {
             AND: [
                 {
                     is_deleted: false,
-                    
                 },
-               { OR: query.filter},
-                
+                { OR: query.filter },
             ],
-   
         },
     });
     const queryResult = await db.auction.findMany({
@@ -133,9 +130,8 @@ const getAll = async (query: IPagination) => {
                 {
                     is_deleted: false,
                 },
-                {OR: query.filter},
+                { OR: query.filter },
             ],
-           
         },
         include: {
             products: {
@@ -621,7 +617,7 @@ const getplayerRegistrationAuctionDetails = async (
             player_id: true,
             status: true,
             buy_now_expiration: true,
-            payment_status:true,
+            payment_status: true,
             Auctions: {
                 select: {
                     title: true,

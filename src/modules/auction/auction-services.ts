@@ -5,6 +5,7 @@ import {
     productMessage,
     NODE_EVENT_SERVICE,
     ONE_PLAY_VALUE_IN_DOLLAR,
+    SOCKET_EVENT,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
@@ -24,6 +25,8 @@ import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
+import { AppGlobal } from "../../utils/socket-service";
+const socket = global as unknown as AppGlobal;
 
 /**
  * Auction Creation
@@ -231,10 +234,20 @@ const playerRegister = async (data: IPlayerRegister) => {
             JSON.stringify(registeredObj)
         );
     }
-    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT, {
-        auctionId: data.auction_id,
-        registeration_count: auction.registeration_count,
-    });
+    if (auction && auction.registeration_count) {
+        const auctionData = await auctionQueries.auctionRegistrationCount(
+            data.auction_id
+        );
+        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
+            message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
+            data: {
+                auction_registration_percentage:
+                    (auctionData * 100) / auction.registeration_count,
+                auctionId: data.auction_id,
+            },
+        });
+    }
+
     return responseBuilder.createdSuccess(
         MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
     );
