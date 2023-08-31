@@ -160,17 +160,21 @@ eventService.on(
         const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
         if (auctionBidLog) {
             const winnerePayload = JSON.parse(auctionBidLog);
-            await userQueries.playerBidLog(winnerePayload);
             const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
-            await auctionQueries.updatePlayerRegistrationAuctionResultStatus(
-                auctionId,
-                newWinnerPayload.player_id
-            );
+            const bitLog = await Promise.all([
+                await userQueries.playerBidLog(winnerePayload),
+                await auctionQueries.updatePlayerRegistrationAuctionResultStatus(
+                    auctionId,
+                    newWinnerPayload.player_id
+                ),
+            ]);
+            if (bitLog) {
+                await redisClient.del(`${auctionId}:bidHistory`);
+            }
         } else {
             await auctionQueries.updateRegistrationAuctionStatus(auctionId);
         }
         await redisClient.del(`auction:live:${auctionId}`);
-        await redisClient.del(`${auctionId}:bidHistory`);
     }
 );
 
