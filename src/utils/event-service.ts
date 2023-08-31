@@ -157,6 +157,10 @@ eventService.on(
 eventService.on(
     NODE_EVENT_SERVICE.AUCTION_CLOSED,
     async (auctionId: string) => {
+        logger.log({
+            level: "log",
+            message: "auction event is close and " + auctionId,
+        });
         const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
         if (auctionBidLog) {
             const winnerePayload = JSON.parse(auctionBidLog);
@@ -168,6 +172,10 @@ eventService.on(
                     newWinnerPayload.player_id
                 ),
             ]);
+            logger.log({
+                level: "log",
+                message: "bidlogs for the auctions are:- " + auctionId,
+            });
             if (bitLog) {
                 await redisClient.del(`${auctionId}:bidHistory`);
             }
@@ -175,6 +183,10 @@ eventService.on(
             await auctionQueries.updateRegistrationAuctionStatus(auctionId);
         }
         await redisClient.del(`auction:live:${auctionId}`);
+        logger.log({
+            level: "log",
+            message: "live auctio status closed" + auctionId,
+        });
     }
 );
 
