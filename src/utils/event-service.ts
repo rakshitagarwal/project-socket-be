@@ -141,15 +141,12 @@ eventService.on(
  */
 eventService.on(
     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
-    async (auction_id: string,upcomingInfo:string) => {
+    async (auction_id: string, upcomingInfo: string) => {
         await auctionQueries.updatePlayerRegistrationAuctionStatus(
             auction_id,
             "live"
         );
-         await redisClient.set(
-                    `auction:live:${auction_id}`,
-                    upcomingInfo
-                );
+        await redisClient.set(`auction:live:${auction_id}`, upcomingInfo);
     }
 );
 
@@ -187,6 +184,7 @@ eventService.on(
             await auctionQueries.updateRegistrationAuctionStatus(auctionId);
         }
         await redisClient.del(`auction:live:${auctionId}`);
+        await redisClient.del(`auction:pre-register:${auctionId}`);
         logger.log({
             level: "warn",
             message: "live auctio status closed" + auctionId,
