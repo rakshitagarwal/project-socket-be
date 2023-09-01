@@ -15,7 +15,8 @@
         }
     , 
              { "name": "product-category", "description": "Product Category Operations" },
-             { "name": "product", "description": "Product Operations" }
+             { "name": "product", "description": "Product Operations" },
+             { "name": "media", "description": "Media Operations" }
             ],
     "servers": [
         {
@@ -704,6 +705,287 @@
         "/product/{id}": {
             "patch": {
                 "tags": ["product"],
+                "summary": "update the product",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "nullable": false,
+                                        "description": "title in product"
+                                      },
+                                      "description": {
+                                          "type": "string",
+                                          "description": "description product"
+                                      },
+                                      "price": {
+                                          "type": "number",
+                                          "description": "price product"
+                                      },
+                                      "product_category_id": {
+                                          "type": "string"
+                                      },
+                                      "landing_image": {
+                                          "type": "string"
+                                      },
+                                      "media_id": {
+                                        "type": "array",
+                                        "items":{
+                                               "type": "string"
+                                        },
+                                        "maxItems": 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            },
+            "get":{
+                "tags": ["product"],
+                "summary": "get the product Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/media": {
+            "patch": {
+                "tags": ["product"],
+                "summary": "update the product",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "nullable": false,
+                                        "description": "title in product"
+                                      },
+                                      "description": {
+                                          "type": "string",
+                                          "description": "description product"
+                                      },
+                                      "price": {
+                                          "type": "number",
+                                          "description": "price product"
+                                      },
+                                      "product_category_id": {
+                                          "type": "string"
+                                      },
+                                      "landing_image": {
+                                          "type": "string"
+                                      },
+                                      "media_id": {
+                                        "type": "array",
+                                        "items":{
+                                               "type": "string"
+                                        },
+                                        "maxItems": 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            },
+            "get":{
+                "tags": ["product"],
+                "summary": "get the product Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            },
+            "post":{
+                "tags": ["media"],
+                "description": "Add the product for product",
+                "summary": "add the product",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "type": "string",
+                              "format": "string",
+                              "nullable": false,
+                              "description": "title in product"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "description product"
+                            },
+                            "price": {
+                                "type": "number",
+                                "description": "price product"
+                            },
+                            "product_category_id": {
+                                "type": "string"
+                            },
+                            "landing_image": {
+                                "type": "string"
+                            },
+                            "media_id": {
+                                "type": "array",
+                                "items":{
+                                       "type": "string"
+                                },
+                                "maxItems": 2
+                            }
+
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/media/{id}": {
+            "patch": {
+                "tags": ["media"],
                 "summary": "update the product",
                  "parameters": [
                     {
