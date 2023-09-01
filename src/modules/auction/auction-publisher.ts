@@ -116,10 +116,15 @@ const bidTransaction = async (payload: {
         redisClient.get("player:plays:balance"),
         redisClient.get(`auction:live:${payload.auctionId}`)
     ])
-    const isBalance =JSON.parse(balanceInfo as string)
-    const auctionData=JSON.parse(auctionInfo as string)
+    console.log(">>>>>>>>>>>>>>>>>>>>",balanceInfo,"++++++++++++++++++++++++");
+    console.log(">>>>>>>>>>>>>>>>>>>>",auctionInfo,"--------------------------------");
+    
+    
+    const isBalance =JSON.parse(balanceInfo||"" as string)
+    const auctionData=JSON.parse(auctionInfo||"" as string)
     if (Object.keys(auctionData).length && isBalance && +isBalance[payload.playerId] > auctionData.plays_consumed_on_bid) {
-        const bidHistory = JSON.parse(payload.bidHistoryData)
+       
+        const bidHistory = JSON.parse((await redisClient.get(`${payload.auctionId}:bidHistory`)) as unknown as string)
         if (
             bidHistory &&
             bidHistory.length * auctionData.bid_increment_price +
@@ -158,7 +163,6 @@ const bidTransaction = async (payload: {
             };
         }
     }
-    console.log(auctionData);
     return { status: false };
 };
 
