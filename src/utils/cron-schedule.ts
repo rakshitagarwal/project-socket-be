@@ -9,7 +9,6 @@ import {
 } from "../common/constants";
 import { AUCTION_STATE } from "./typing/utils-types";
 import { auctionStart } from "../modules/auction/auction-publisher";
-import redisClient from "../config/redis";
 /**
  * @description - Define the cron expression for the job to run every 2 minutes
  */
@@ -46,13 +45,10 @@ const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
                     auctionId: upcomingInfo.id,
                 });
                 auctionStart(upcomingInfo.id);
-                await redisClient.set(
-                    `auction:live:${upcomingInfo.id}`,
-                    JSON.stringify(upcomingInfo)
-                );
-                await eventService.emit(
+                eventService.emit(
                     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
-                    upcomingInfo.id
+                    upcomingInfo.id,
+                    JSON.stringify(upcomingInfo)
                 );
             }
         });
