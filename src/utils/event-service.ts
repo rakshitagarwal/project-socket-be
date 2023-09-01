@@ -158,7 +158,7 @@ eventService.on(
     NODE_EVENT_SERVICE.AUCTION_CLOSED,
     async (auctionId: string) => {
         logger.log({
-            level: "log",
+            level: "warn",
             message: "auction event is close and " + auctionId,
         });
         const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
@@ -173,7 +173,7 @@ eventService.on(
                 ),
             ]);
             logger.log({
-                level: "log",
+                level: "warn",
                 message: "bidlogs for the auctions are:- " + auctionId,
             });
             if (bitLog) {
@@ -184,7 +184,7 @@ eventService.on(
         }
         await redisClient.del(`auction:live:${auctionId}`);
         logger.log({
-            level: "log",
+            level: "warn",
             message: "live auctio status closed" + auctionId,
         });
     }
@@ -478,7 +478,7 @@ eventService.on(
                     data.auction_id
                 );
                 logger.info({
-                    level: "log",
+                    level: "warn",
                     message: "Random User Created in database",
                 });
             }

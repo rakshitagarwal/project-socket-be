@@ -600,9 +600,9 @@ const updatePlayerRegistrationAuctionResultStatus = async (
                     },
                 });
             logger.log({
-                level: "log",
+                level: "warn",
                 message:
-                    "Update the player auction registeration prisma trax" +
+                    "Update the player auction registeration prisma trax " +
                     auction_id,
             });
             const wonQueryResult =
@@ -714,7 +714,7 @@ const createPaymentTrx = async (data: IPurchase) => {
  */
 const updateRegistrationAuctionStatus = async (auction_id: string) => {
     logger.log({
-        level: "log",
+        level: "warn",
         message: "registeration auction status updated" + auction_id,
     });
     const lostexpirationTime: Date = new Date(new Date().getTime() + 1800000);
