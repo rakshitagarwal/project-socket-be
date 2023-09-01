@@ -56,3 +56,17 @@ export const setReferralCode = () => {
     });
     return codeArray.join('');
 }
+
+/**
+ * @description setBotReferralCode is used to set referral code for bot accounts
+ * @returns {code} - the referral code selected from available range ending with bot.
+ */
+export const setBotReferralCode = () => {
+    const alphanumericCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const codeArray = Array.from({ length: 4 }, () => {
+        const randomIndex = Math.floor(Math.random() * alphanumericCharacters.length);
+        return alphanumericCharacters[randomIndex];
+    });
+    codeArray.push("b", "o", "t");
+    return codeArray.join('');
+}

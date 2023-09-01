@@ -25,6 +25,7 @@ import logger from "../config/logger";
 import { Imail } from "./typing/utils-types";
 import { randomBid } from "../modules/auction/auction-publisher";
 import { db } from "../config/db";
+import { setBotReferralCode } from "../common/helper";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 
@@ -429,7 +430,7 @@ eventService.on(
                     country: "Australia",
                     is_bot: true,
                     is_verified: true,
-                    referral_code: "hg7Ybot",
+                    referral_code: setBotReferralCode(),
                     avatar: `assets/avatar/${
                         faker.internet.userName().length
                     }.png`,
