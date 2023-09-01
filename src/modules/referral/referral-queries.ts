@@ -8,10 +8,7 @@ import { ReferralConfig, ReferralData } from "./typings/referral.type";
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns {queryResult} - the result of execution of query.
  */
-const addReferral = async function (
-    referralData: ReferralData,
-    prisma: PrismaClient
-) {
+const addReferral = async function (referralData: ReferralData, prisma: PrismaClient) {
     const queryResult = await prisma.userReferral.create({
         data: referralData,
     });
@@ -86,7 +83,7 @@ const referralConfig = async function () {
 const updateReferralConfig = async function (configData: ReferralConfig) {
     const query = await db.referral.findFirst();
     const queryResult = await db.referral.update({
-        where: { id: query?.id as string},
+        where: { id: query?.id as string },
         data: configData,
     });
     return queryResult;

@@ -18,7 +18,7 @@ referralRouter.patch(
 );
 
 referralRouter.get(
-    ENDPOINTS.BASE + "/:id",
+    ENDPOINTS.ID,
     validateRequest.params(referralSchema.uuidSchema),
     handleAsync(referralHandler.getReferral)
 );

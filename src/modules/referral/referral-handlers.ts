@@ -25,7 +25,7 @@ const updateReferralConfig = async (req: Request, res: Response) => {
 };
 
 /**
- * @description getReferral is used to give details of referral and its details
+ * @description getReferral is used to give details of referral if applied
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {object} response gets data from services and is sent to api call with code and json.
@@ -36,8 +36,8 @@ const getReferral = async (req: Request, res: Response) => {
 };
 
 const referralHandler = {
-    getReferral,
     referralConfig,
     updateReferralConfig,
+    getReferral,
 };
 export default referralHandler;

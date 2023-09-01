@@ -13,11 +13,7 @@ import { PrismaClient } from "@prisma/client";
  */
 const getReferral = async (player_id: string) => {
     const result = await referralQueries.getReferral(player_id);
-    if (result)
-        return responseBuilder.okSuccess(
-            MESSAGES.REFERRAL.REFERRAL_FOUND,
-            result
-        );
+    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_FOUND, result);
     return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_NOT_FOUND);
 };
 
@@ -54,14 +50,8 @@ const referralCheck = async (player_id: string, prisma: PrismaClient) => {
  */
 const referralConfig = async () => {
     const result = await referralQueries.referralConfig();
-    if (result)
-        return responseBuilder.okSuccess(
-            MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND,
-            result
-        );
-    return responseBuilder.notFoundError(
-        MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND
-    );
+    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND, result);
+    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND);
 };
 
 /**
@@ -71,19 +61,10 @@ const referralConfig = async () => {
  */
 const updateReferralConfig = async (data: ReferralConfig) => {
     const check = Object.keys(data);
-    if (!check.length)
-        return responseBuilder.notFoundError(
-            MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED
-        );
+    if (!check.length) return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
     const result = await referralQueries.updateReferralConfig(data);
-    if (result)
-        return responseBuilder.okSuccess(
-            MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED,
-            result
-        );
-    return responseBuilder.notFoundError(
-        MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED
-    );
+    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED, result);
+    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
 };
 
 const referralService = {
