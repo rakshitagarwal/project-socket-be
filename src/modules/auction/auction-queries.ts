@@ -599,12 +599,6 @@ const updatePlayerRegistrationAuctionResultStatus = async (
                         buy_now_expiration: lostexpirationTime,
                     },
                 });
-            logger.log({
-                level: "warn",
-                message:
-                    "Update the player auction registeration prisma trax " +
-                    auction_id,
-            });
             const wonQueryResult =
                 await prisma.playerAuctionRegister.updateMany({
                     where: { auction_id, player_id },
@@ -613,9 +607,15 @@ const updatePlayerRegistrationAuctionResultStatus = async (
                         buy_now_expiration: winexpirationTime,
                     },
                 });
+            logger.log({
+                    level: "warn",
+                    message:`${JSON.stringify(wonQueryResult)}, player_id: ${player_id } auction_id: ${auction_id}`
+                     
+                });
             return { lostQueryResult, wonQueryResult };
         }
     );
+   
     return resultTransactions;
 };
 /**
