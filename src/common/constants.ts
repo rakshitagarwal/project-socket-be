@@ -81,6 +81,8 @@ export const AUCTION_MESSAGES = {
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
     AUCTION_LIVE_UPDATE: "auction is live, so you cannot update!",
+    AUCTION_COMPLETED_DELETE: "auction is completed, so you cannot delete!",
+    AUCTION_COMPLETED_UPDATE: "auction is completed, so you cannot update!",
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
     CANNOT_DELETE_AUCTION: "something went wrong",
     DATE_NOT_PROPER: "start_date should be greater than current date!",

@@ -127,15 +127,21 @@ const update = async (
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 
+    if (isAuctionExists.state === "live")
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
+        );
+    if (isAuctionExists.state === "completed") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
+        );
+    }
+
     if (auction.start_date && auction.start_date > new Date()) {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
         );
     }
-    if (isAuctionExists.state === "live")
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
-        );
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
@@ -159,6 +165,11 @@ const remove = async (id: string[]) => {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_LIVE_DELETE
         );
+    if (isExists.state === "completed") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
+        );
+    }
     const isDeleted = await auctionQueries.remove(id);
     if (isDeleted.count)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
