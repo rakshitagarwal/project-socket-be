@@ -141,11 +141,15 @@ eventService.on(
  */
 eventService.on(
     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
-    async (auction_id: string) => {
+    async (auction_id: string,upcomingInfo:string) => {
         await auctionQueries.updatePlayerRegistrationAuctionStatus(
             auction_id,
             "live"
         );
+         await redisClient.set(
+                    `auction:live:${auction_id}`,
+                    upcomingInfo
+                );
     }
 );
 
