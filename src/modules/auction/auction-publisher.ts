@@ -110,24 +110,16 @@ const bidTransaction = async (payload: {
     playerId: string;
     socketId: string;
     auctionId: string;
+    bidHistoryData:string
 }) => {
-    const isBalance = JSON.parse(
-        (await redisClient.get("player:plays:balance")) as unknown as string
-    );
-    const auctionData = JSON.parse(
-        (await redisClient.get(
-            `auction:live:${payload.auctionId}`
-        )) as unknown as string
-    );
-    if (
-        isBalance &&
-        +isBalance[payload.playerId] > auctionData.plays_consumed_on_bid
-    ) {
-        const bidHistory = JSON.parse(
-            (await redisClient.get(
-                `${payload.auctionId}:bidHistory`
-            )) as unknown as string
-        );
+    const [balanceInfo,auctionInfo]=await Promise.all([
+        redisClient.get("player:plays:balance"),
+        redisClient.get(`auction:live:${payload.auctionId}`)
+    ])
+    const isBalance =JSON.parse(balanceInfo as string)
+    const auctionData=JSON.parse(auctionInfo as string)
+    if (Object.keys(auctionData).length && isBalance && +isBalance[payload.playerId] > auctionData.plays_consumed_on_bid) {
+        const bidHistory = JSON.parse(payload.bidHistoryData)
         if (
             bidHistory &&
             bidHistory.length * auctionData.bid_increment_price +
@@ -166,6 +158,7 @@ const bidTransaction = async (payload: {
             };
         }
     }
+    console.log(auctionData);
     return { status: false };
 };
 
@@ -179,6 +172,7 @@ const auctionBidderHistory = async (
         playerId: bidderPayload.player_id,
         socketId,
         auctionId: bidderPayload.auction_id,
+        bidHistoryData
     });
     if (isBalance.status && countdowns[bidderPayload.auction_id]) {
         const newBidData = {
