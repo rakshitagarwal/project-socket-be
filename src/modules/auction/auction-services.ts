@@ -127,13 +127,15 @@ const update = async (
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 
-    if (
-        isAuctionExists.state === "live" ||
-        isAuctionExists.state === "completed"
-    )
+    if (isAuctionExists.state === "live")
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
         );
+    if (isAuctionExists.state === "completed") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
+        );
+    }
 
     if (auction.start_date && auction.start_date > new Date()) {
         return responseBuilder.badRequestError(
@@ -159,10 +161,15 @@ const remove = async (id: string[]) => {
     const isExists = await auctionQueries.getMultipleActiveById(id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    if (isExists.state === "live" || isExists.state === "completed")
+    if (isExists.state === "live")
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_LIVE_DELETE
         );
+    if (isExists.state === "completed") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
+        );
+    }
     const isDeleted = await auctionQueries.remove(id);
     if (isDeleted.count)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
