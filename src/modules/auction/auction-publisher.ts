@@ -121,7 +121,7 @@ const bidTransaction = async (payload: {
     );
     if (
         isBalance &&
-        +isBalance[payload.playerId] > auctionData?.plays_consumed_on_bid
+        +isBalance[payload.playerId] > auctionData.plays_consumed_on_bid
     ) {
         const bidHistory = JSON.parse(
             (await redisClient.get(
