@@ -31,7 +31,8 @@ export const ENDPOINTS = {
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
     REFERRAL: "/referral",
-    REFERRAL_CONFIG: "config"
+    REFERRAL_CONFIG: "config",
+    MULTIPLE: "multiple"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",

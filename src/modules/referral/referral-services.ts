@@ -23,11 +23,11 @@ const getReferral = async (player_id: string) => {
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  */
 const referralCheck = async (player_id: string, prisma: PrismaClient) => {
-    const result = await prisma.userReferral.findFirst({where:{player_id}});
+    const result = await referralQueries.getReferralPrisma(prisma, player_id);
     if (!result?.status) return;
 
     const [transactionSum, referralConfig] = await Promise.all([ 
-        userQueries.creditTransactions(player_id, prisma), prisma.referral.findFirst() ]);
+        userQueries.creditTransactions(player_id, prisma), referralQueries.referralConfigPrisma(prisma) ]);
     if (!referralConfig || !transactionSum) return;
 
     if (transactionSum[0]?.credit_sum as number>= referralConfig.credit_plays) {
