@@ -55,18 +55,14 @@ export const auctionStart = (auctionId: string) => {
                 state: AUCTION_STATE.completed,
             });
             logger.log({
-                level: "log",
-                message: "auction ended" + auctionId,
+                level: "warn",
+                message: "auction ended " + auctionId,
             });
         } else {
             socket.playerSocket.emit(SOCKET_EVENT.AUCTION_COUNT_DOWN, {
                 message: MESSAGES.SOCKET.AUCTION_COUNT_DOWN,
                 count: countdowns[auctionId],
                 auctionId,
-            });
-            logger.log({
-                level: "log",
-                message: "auction is running" + auctionId,
             });
             countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
             eventService.emit(NODE_EVENT_SERVICE.SIMULATION_BOTS, {
@@ -124,7 +120,6 @@ const bidTransaction = async (payload: {
         )) as unknown as string
     );
     if (
-        auctionData &&
         isBalance &&
         +isBalance[payload.playerId] > auctionData?.plays_consumed_on_bid
     ) {
