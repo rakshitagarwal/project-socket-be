@@ -27,7 +27,7 @@ const add = async (auctionCategory: IAuctionCategory) => {
 };
 
 /**
- * @param {string} id - auction category id
+ * @param {string} id - auction category id 
  * @param {IPutAuctionCategory} auctionCategory - auction data object contain title and status
  * @description - it used for updating the auction status and category
  * @returns response builder which contain {code, message, data , metadata}
