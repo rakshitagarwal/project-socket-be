@@ -90,6 +90,10 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
             country: true,
             avatar: true,
             mobile_no: true,
+
+
+
+
             roles: {
                 select: {
                     title: true,
