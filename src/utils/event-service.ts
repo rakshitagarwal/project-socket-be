@@ -141,15 +141,12 @@ eventService.on(
  */
 eventService.on(
     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
-    async (auction_id: string,upcomingInfo:string) => {
+    async (auction_id: string, upcomingInfo: string) => {
         await auctionQueries.updatePlayerRegistrationAuctionStatus(
             auction_id,
             "live"
         );
-         await redisClient.set(
-                    `auction:live:${auction_id}`,
-                    upcomingInfo
-                );
+        await redisClient.set(`auction:live:${auction_id}`, upcomingInfo);
     }
 );
 
@@ -158,41 +155,40 @@ eventService.on(
  * @param {string} auctionId - The ID of the closed auction associated with the event.
  * @returns {void}
  */
-eventService.on(
-    NODE_EVENT_SERVICE.AUCTION_CLOSED,
-    async (auctionId: string) => {
+
+export const auctionClosed = async (auctionId: string) => {
+    logger.log({
+        level: "warn",
+        message: "auction event is close and " + auctionId,
+    });
+    const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
+    if (auctionBidLog) {
+        const winnerePayload = JSON.parse(auctionBidLog);
+        const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
+        const bitLog = await Promise.all([
+            await userQueries.playerBidLog(winnerePayload),
+            await auctionQueries.updatePlayerRegistrationAuctionResultStatus(
+                auctionId,
+                newWinnerPayload.player_id
+            ),
+        ]);
         logger.log({
             level: "warn",
-            message: "auction event is close and " + auctionId,
+            message: "bidlogs for the auctions are:- " + auctionId,
         });
-        const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
-        if (auctionBidLog) {
-            const winnerePayload = JSON.parse(auctionBidLog);
-            const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
-            const bitLog = await Promise.all([
-                await userQueries.playerBidLog(winnerePayload),
-                await auctionQueries.updatePlayerRegistrationAuctionResultStatus(
-                    auctionId,
-                    newWinnerPayload.player_id
-                ),
-            ]);
-            logger.log({
-                level: "warn",
-                message: "bidlogs for the auctions are:- " + auctionId,
-            });
-            if (bitLog) {
-                await redisClient.del(`${auctionId}:bidHistory`);
-            }
-        } else {
-            await auctionQueries.updateRegistrationAuctionStatus(auctionId);
+        if (bitLog) {
+            await redisClient.del(`${auctionId}:bidHistory`);
         }
-        await redisClient.del(`auction:live:${auctionId}`);
-        logger.log({
-            level: "warn",
-            message: "live auctio status closed" + auctionId,
-        });
+    } else {
+        await auctionQueries.updateRegistrationAuctionStatus(auctionId);
     }
-);
+    await redisClient.del(`auction:live:${auctionId}`);
+    await redisClient.del(`auction:pre-register:${auctionId}`);
+    logger.log({
+        level: "warn",
+        message: "live auctio status closed" + auctionId,
+    });
+}
 
 /**
  * Handles the logic to emit the total auction registration count and percentage.

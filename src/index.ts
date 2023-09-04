@@ -65,7 +65,7 @@ app.use(env.API_VERSION, v1Router);
 app.use("*", (req, res) => {
     const response = responseBuilder.notFoundError();
     logger.error(
-        `${response.code} - ${response.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        `${process.env.NODE_ENV} - ${response.code} - ${response.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
     );
     res.status(response.code).json(response);
 });
