@@ -30,7 +30,7 @@ export const auctionStart = (auctionId: string) => {
      * @returns {Promise<void>}
      */
     async function timerRunEverySecond() {
-        if ((countdowns[auctionId] as number) <= 0) {
+        if (auctionId !== 'undefined' && countdowns[auctionId] !== undefined && countdowns[auctionId] as number <= 0) {
             delete countdowns[auctionId];
             const bidHistory = JSON.parse((await redisClient.get(`${auctionId}:bidHistory`)) as unknown as string);
             if (bidHistory) {
@@ -42,6 +42,7 @@ export const auctionStart = (auctionId: string) => {
             } else {
                 socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
                     message: MESSAGES.SOCKET.AUCTION_ENDED,
+                    auctionId
                 });
             }
             eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, { auctionId: auctionId, state: AUCTION_STATE.completed});
