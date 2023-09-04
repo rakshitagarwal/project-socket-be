@@ -1,6 +1,6 @@
-import { AUCTION_CATEGORY_MESSAGES } from "../../common/constants";
-import { responseBuilder } from "../../common/responses";
-import { auctionCatgoryQueries } from "./auction-category-queries";
+import { AUCTION_CATEGORY_MESSAGES, AUCTION_MESSAGES } from "../../common/constants";
+import { responseBuilder, sanitize } from "../../common/responses";
+import { auctionCategoryQueries } from "./auction-category-queries";
 import {
     IAuctionCategory,
     IDeleteIds,
@@ -13,7 +13,14 @@ import {
  * @return response builder which contian {code, success ,message, data , metadata}
  */
 const add = async (auctionCategory: IAuctionCategory) => {
-    const data = await auctionCatgoryQueries.create(auctionCategory);
+    auctionCategory.title = sanitize(auctionCategory.title);
+    const isExist = await auctionCategoryQueries.getTitle(auctionCategory.title);
+    if (isExist) {
+        return responseBuilder.conflictError(
+            AUCTION_MESSAGES.ALREADY_EXIST
+        );
+    }
+    const data = await auctionCategoryQueries.create(auctionCategory);
     if (data.id)
         return responseBuilder.createdSuccess(AUCTION_CATEGORY_MESSAGES.ADD);
     return responseBuilder.internalserverError();
@@ -26,13 +33,20 @@ const add = async (auctionCategory: IAuctionCategory) => {
  * @returns response builder which contain {code, message, data , metadata}
  */
 const update = async (id: string, auctionCategory: IPutAuctionCategory) => {
-    const isExists = await auctionCatgoryQueries.IsExistsActive(id);
+    const isExists = await auctionCategoryQueries.IsExistsActive(id);
     if (!isExists?.id) {
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_EXISTS
         );
     }
-    const updation = await auctionCatgoryQueries.update(id, auctionCategory);
+    auctionCategory.title = sanitize(auctionCategory.title);
+    const isExist = await auctionCategoryQueries.getTitle(auctionCategory.title);
+    if (isExist) {
+        return responseBuilder.conflictError(
+            AUCTION_MESSAGES.ALREADY_EXIST
+        );
+    } 
+    const updation = await auctionCategoryQueries.update(id, auctionCategory);
     if (updation.id)
         return responseBuilder.okSuccess(AUCTION_CATEGORY_MESSAGES.UPDATE);
     return responseBuilder.internalserverError();
@@ -44,7 +58,7 @@ const update = async (id: string, auctionCategory: IPutAuctionCategory) => {
  * @returns response builder which contain {code, message, data, metadata}
  */
 const get = async (id: string) => {
-    const isExists = await auctionCatgoryQueries.IsExistsActive(id);
+    const isExists = await auctionCategoryQueries.IsExistsActive(id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
@@ -60,7 +74,7 @@ const get = async (id: string) => {
  * @returns response build which contains {code, message, data, metadata}
  */
 const getAll = async (search: string) => {
-    const allDetails = await auctionCatgoryQueries.getAll(search);
+    const allDetails = await auctionCategoryQueries.getAll(search);
     return responseBuilder.okSuccess(
         AUCTION_CATEGORY_MESSAGES.GET_SINGLE,
         allDetails
@@ -73,12 +87,12 @@ const getAll = async (search: string) => {
  * @returns response builder contains {code, message, data, metadata}
  */
 const removeCategories = async (data: IDeleteIds) => {
-    const IsExists = await auctionCatgoryQueries.isIdExists(data);
+    const IsExists = await auctionCategoryQueries.isIdExists(data);
     if (!IsExists.length)
         return responseBuilder.notFoundError(
             AUCTION_CATEGORY_MESSAGES.NOT_FOUND
         );
-    const removeDetail = await auctionCatgoryQueries.removeAll(data);
+    const removeDetail = await auctionCategoryQueries.removeAll(data);
     if (removeDetail.count)
         return responseBuilder.okSuccess(AUCTION_CATEGORY_MESSAGES.DELETE);
     return responseBuilder.internalserverError();

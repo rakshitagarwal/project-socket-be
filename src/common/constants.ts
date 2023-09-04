@@ -92,6 +92,7 @@ export const AUCTION_MESSAGES = {
     SIMULATION_STOPPED: "simulation stopped",
     GET_BID_LOGS: "All BigLogs",
     BID_LOGS_NOT_FOUND: "BidLogs not found",
+    ALREADY_EXIST: "Auction category title already exist",
 };
 
 export const productMessage = {
