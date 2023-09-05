@@ -188,7 +188,7 @@ export const auctionClosed = async (auctionId: string) => {
         level: "warn",
         message: "live auctio status closed" + auctionId,
     });
-}
+};
 
 /**
  * Handles the logic to emit the total auction registration count and percentage.
