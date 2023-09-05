@@ -107,7 +107,10 @@ const bidTransaction = async (payload: {
         return { status: false };
     }
     const isBalance =JSON.parse(balanceInfo||"" as string)
-    const auctionData=JSON.parse(auctionInfo||"" as string)       
+    const auctionData=JSON.parse(auctionInfo||"" as string) 
+    if(isBalance[`${payload.playerId}`]<auctionData.plays_consumed_on_bid){
+        return { status: false };
+    }      
     const bidHistory = JSON.parse((await redisClient.get(`${payload.auctionId}:bidHistory`)) as unknown as string)
     if ( bidHistory && ((bidHistory.length * auctionData.bid_increment_price)+auctionData.opening_price) >=auctionData.products.price) {
         countdowns[`${payload.auctionId}`] = 0;
