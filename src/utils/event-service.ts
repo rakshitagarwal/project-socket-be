@@ -7,6 +7,7 @@ import {
     NODE_EVENT_SERVICE,
     SOCKET_EVENT,
     MESSAGES,
+    dateFormateForMail,
 } from "../common/constants";
 import { Ispend_on } from "../modules/users/typings/user-types";
 import redisClient from "../config/redis";
@@ -55,6 +56,13 @@ eventService.on(
         if (playerInformation.length) {
             const auctionInfo = playerInformation[0];
             if (data.status === "auction_start") {
+                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_START_DATE, {
+                    message: "Auction start",
+                    data: {
+                        auction_id: data.auctionId,
+                        start_date: data.start_date,
+                    },
+                });
                 const userEmail = playerInformation.map((player) => {
                     return player.User.email;
                 });
@@ -67,11 +75,11 @@ eventService.on(
                  * @property {string} subject - The subject of the email.
                  * @property {string} message - The message content of the email.
                  */
-
+                const newDate = dateFormateForMail(data.start_date);
                 const mailData = {
                     email: userEmail,
                     template: TEMPLATE.PLAYER_REGISTERATION,
-                    subject: "Reminder for Auction start",
+                    subject: `Your Auction starts In ${newDate.hours}h ${newDate.minutes}m ${newDate.seconds}ss`,
                     message: `We are thrilled to remind you that the ${auctionInfo?.Auctions?.title} is just around the corner! The auction will go live on ${data.start_date}. Prepare for an exciting event with extraordinary items up for bid. Mark your calendar and be part of this unforgettable experience!`,
                 };
                 await mailService(mailData);
@@ -106,7 +114,7 @@ eventService.on(
                     const mailData = {
                         email: userEmail,
                         template: TEMPLATE.PLAYER_REGISTERATION,
-                        subject: "Auction cancelled",
+                        subject: `Auction Cancelled : ${auctionInfo?.Auctions?.title}`,
                         message: `${auctionInfo?.Auctions?.title} has been cancelled and your ${preRegisterRefund[0]?.play_credit} plays have refunded `,
                     };
                     await mailService(mailData);
@@ -514,6 +522,25 @@ eventService.on(
                 },
             }),
         ]);
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_AUCTION_REGISTER_MAIL,
+    async (payload: {
+        user_name: string;
+        auctionName: string;
+        email: string;
+        registeration_count: number;
+        _count: number;
+    }) => {
+        await mailService({
+            user_name: payload.user_name,
+            email: [payload.email],
+            subject: "You are Registered for the Auction!",
+            template: TEMPLATE.PLAYER_AUCTION_REGISTER,
+            message: payload.auctionName,
+        });
     }
 );
 
