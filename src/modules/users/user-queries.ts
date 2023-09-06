@@ -34,6 +34,7 @@ const fetchUser = async (query: IuserQuery) => {
             mobile_no: true,
             avatar: true,
             referral_code: true,
+            status:true,
             id: true,
             roles: {
                 select: {
