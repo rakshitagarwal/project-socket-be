@@ -45,7 +45,7 @@ const update = async (id: string, auctionCategory: IPutAuctionCategory) => {
         return responseBuilder.conflictError(
             AUCTION_MESSAGES.ALREADY_EXIST
         );
-    } 
+    }
     const updation = await auctionCategoryQueries.update(id, auctionCategory);
     if (updation.id)
         return responseBuilder.okSuccess(AUCTION_CATEGORY_MESSAGES.UPDATE);
