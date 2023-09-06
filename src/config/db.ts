@@ -28,4 +28,6 @@ export const db = {
     auctionResult: prismaClient.auctionResult,
     userBidBot: prismaClient.bidBot,
     buyNow: prismaClient.playerBuyNow,
+    userReferral: prismaClient.userReferral,
+    referral: prismaClient.referral,
 };

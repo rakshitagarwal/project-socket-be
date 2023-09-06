@@ -20,23 +20,24 @@ model MasterRole {
 }
 
 model User {
-  id          String     @id @default(uuid())
-  first_name  String?
-  last_name   String?
-  email       String
-  country     String?
-  mobile_no   String?
-  password    String?
-  avatar      String?
-  is_verified Boolean    @default(false)
-  is_bot      Boolean    @default(false)
-  role_id     String
-  status      Boolean    @default(true)
-  is_deleted  Boolean    @default(false)
-  created_at  DateTime   @default(now()) @db.Timestamptz()
-  updated_at  DateTime   @default(now()) @db.Timestamptz()
-  roles       MasterRole @relation(fields: [role_id], references: [id])
-  countries   Countries? @relation(fields: [country], references: [name])
+  id            String     @id @default(uuid())
+  first_name    String?
+  last_name     String?
+  email         String
+  country       String?
+  mobile_no     String?
+  password      String?
+  avatar        String?
+  referral_code String     @unique
+  is_verified   Boolean    @default(false)
+  is_bot        Boolean    @default(false)
+  role_id       String
+  status        Boolean    @default(true)
+  is_deleted    Boolean    @default(false)
+  created_at    DateTime   @default(now()) @db.Timestamptz()
+  updated_at    DateTime   @default(now()) @db.Timestamptz()
+  roles         MasterRole @relation(fields: [role_id], references: [id])
+  countries     Countries? @relation(fields: [country], references: [name])
 
   userPersistent          UserPersistent[]
   TermsAndCondition       TermsAndCondition[]
@@ -51,6 +52,9 @@ model User {
   PlayerAuctionRefund     PlayerAuctionRefund[]
   AuctionResult           AuctionResult[]
   BidBot                  BidBot[]
+  referredByPlayer        UserReferral[]            @relation("Player")
+  referredToPlayer        UserReferral[]            @relation("PlayerReferral")
+  Referral                Referral[]
 
   @@unique([email])
   @@index([email])
@@ -221,6 +225,34 @@ model Auctions {
   @@map("auctions")
 }
 
+model UserReferral {
+  id                 String   @id @default(uuid())
+  player_id          String
+  player_referral_id String
+  status             Boolean  @default(true)
+  is_deleted         Boolean  @default(false)
+  created_at         DateTime @default(now()) @db.Timestamptz()
+  updated_at         DateTime @default(now()) @db.Timestamptz()
+  player             User     @relation("Player", fields: [player_id], references: [id])
+  playerReferral     User     @relation("PlayerReferral", fields: [player_referral_id], references: [id])
+
+  @@map("user_referral")
+}
+
+model Referral {
+  id           String   @id @default(uuid())
+  reward_plays Int
+  credit_plays Int
+  status       Boolean  @default(true)
+  is_deleted   Boolean  @default(false)
+  created_at   DateTime @default(now()) @db.Timestamptz()
+  updated_at   DateTime @default(now()) @db.Timestamptz()
+  updated_by   String
+  User         User     @relation(fields: [updated_by], references: [id])
+
+  @@map("referral")
+}
+
 model Countries {
   id         String   @id @default(uuid())
   name       String
@@ -249,7 +281,6 @@ model CurrencyTransaction {
 
   @@map("currency_transaction")
 }
-
 
 model PlayerWalletTransaction {
   id                      String    @id @default(uuid())
@@ -392,6 +423,8 @@ enum PlaySpend {
   BUY_PLAYS
   REFUND_PLAYS
   BID_PLAYS
+  REFERRAL_PLAYS
+  LAST_PLAYS
 }
 
 enum auctionState {

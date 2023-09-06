@@ -10,6 +10,8 @@ export interface Iuser {
     role: string;
     status: boolean;
     password?: string;
+    referral_code: string;
+    applied_referral?: string;
 }
 
 export interface IuserQuery {
@@ -79,6 +81,12 @@ export interface IuserPaginationQuery {
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
 export type IDeductPlx = z.infer<typeof userSchemas.ZDeductPlays>;
+export interface ILastPlayTrx {
+    auction_id: string;
+    player_id: string;
+    plays: number;
+    spends_on: Ispend_on;
+}
 
 export interface IPlayerBidLog {
     player_id: string;
@@ -105,12 +113,15 @@ export type PlayerBidLogGroup = {
     auction_id: string;
     profile_image: string;
     count: number;
+    play_balance: number;
+    credit_sum?: number;
 };
 
 export enum Ispend_on {
     BUY_PLAYS = "BUY_PLAYS",
     REFUND_PLAYS = "REFUND_PLAYS",
     BID_PLAYS = "BID_PLAYS",
+    LAST_PLAYS = "LAST_PLAYS",
 }
 
 export type IMultipleUsers = IupdateUser & {
@@ -118,4 +129,5 @@ export type IMultipleUsers = IupdateUser & {
     email: string;
     country: string;
     role_id: string;
+    referral_code: string;
 };

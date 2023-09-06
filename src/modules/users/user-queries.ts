@@ -11,6 +11,7 @@ import {
     PlayerBidLogGroup,
     Ispend_on,
     IMultipleUsers,
+    ILastPlayTrx,
 } from "./typings/user-types";
 import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
 
@@ -32,6 +33,7 @@ const fetchUser = async (query: IuserQuery) => {
             country: true,
             mobile_no: true,
             avatar: true,
+            referral_code: true,
             id: true,
             roles: {
                 select: {
@@ -131,6 +133,9 @@ const fetchPlayerId = async (id: string) => {
         },
         select: {
             id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
             roles: {
                 select: {
                     title: true,
@@ -310,6 +315,54 @@ const playerPlaysBalance = async (
 };
 
 /**
+ * @description userPlaysBalance is used to give play_balance of one user/player
+ * @param {string} player_id - it contains the player id to find user in transactions
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
+const userPlaysBalance = async (
+    player_id: string,
+    prisma: PrismaClient
+): Promise<PlayerBidLogGroup[]> => {
+    const query: Sql = Prisma.sql`SELECT 
+                (COALESCE(SUM(play_credit), 0) - COALESCE(SUM(play_debit), 0)) as play_balance,
+                    player_wallet_transaction.created_by as player_id
+                FROM 
+                    player_wallet_transaction
+                WHERE 
+                    created_by = ${player_id}
+                GROUP BY 
+                     player_wallet_transaction.created_by;
+  `;
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    return queryResult;
+};
+
+/**
+ * @description creditTransactions is used to give credit_sum of one user/player
+ * @param {string} player_id - it contains the player id to find user in transactions
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
+const creditTransactions = async (
+    player_id: string,
+    prisma: PrismaClient
+): Promise<PlayerBidLogGroup[]> => {
+    const query: Sql = Prisma.sql`SELECT  (COALESCE(SUM(play_credit), 0)) as credit_sum,
+                                        player_wallet_transaction.created_by as player_id
+                                FROM 
+                                    player_wallet_transaction
+                                WHERE 
+                                    created_by = ${player_id}
+                                    AND spend_on = 'BUY_PLAYS'
+                                    AND play_credit IS NOT NULL
+                                GROUP BY 
+                                    player_wallet_transaction.created_by;`;
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    return queryResult;
+};
+
+/**
  * @description Get the player Role Id from the users
  * @returns id of players
  */
@@ -384,6 +437,31 @@ const getRandomBot = async () => {
     return query;
 };
 
+//referral code for player
+const getPlayerByReferral = async (player_referral_code: string) => {
+    const query = await db.user.findFirst({
+        where: {
+            referral_code: player_referral_code,
+        },
+        select: {
+            id: true,
+        },
+    });
+    return query;
+};
+
+const addLastPlaysTrx = async (data: ILastPlayTrx) => {
+    const queries = await db.playerWalletTx.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: data.spends_on,
+            auction_id: data.player_id,
+            created_by: data.player_id,
+        },
+    });
+    return queries;
+};
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -403,5 +481,9 @@ const userQueries = {
     createMultipleUsers,
     addMultiplePlayBlx,
     getRandomBot,
+    getPlayerByReferral,
+    creditTransactions,
+    userPlaysBalance,
+    addLastPlaysTrx,
 };
 export default userQueries;
