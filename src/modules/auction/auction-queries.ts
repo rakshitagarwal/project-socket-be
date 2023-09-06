@@ -975,13 +975,14 @@ export const transferLastPlay = async (
         player_bid_log_T1.total_bids,
         player_bid_log_T2.bid_price
     FROM (
-         SELECT
+        SELECT
             player_id,
             auction_id,
             COUNT(*) AS total_bids
     FROM
             player_bid_log
-    where player_bid_log.player_id=${player_id}
+    where   player_bid_log.player_id=${player_id} 
+    AND     player_bid_log.auction_id=${auction_id}
     GROUP BY
             player_id,auction_id ) as player_bid_log_T1
             LEFT JOIN player_bid_log as player_bid_log_T2
