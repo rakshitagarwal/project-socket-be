@@ -30,6 +30,9 @@ export const ENDPOINTS = {
     PAY_NOW: "product/purchase",
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
+    REFERRAL: "/referral",
+    REFERRAL_CONFIG: "config",
+    MULTIPLE: "multiple"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -125,6 +128,8 @@ export const TEMPLATE = {
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
     PLAYER_REGISTERATION: "auction_player_registeration.html",
+    PLAYER_AUCTION_REGISTER: "player_auction_register.html",
+    REGISTER_PRE_ADMIN: "registration_per_admin.html",
 };
 
 export const OTP_TYPE = {
@@ -139,6 +144,7 @@ export const MESSAGES = {
         CREATED_SUCCESS: "transaction created successfully!",
         GET_NOW_EXPIRED: "product purchase time is expired!",
         AUCTION_NOT_COMPELETED: "auction is not completed!",
+        ALREADY_PURCHASE_PRODUCT: "You have already purchased the product",
     },
     SOCKET: {
         TOTAL_AUCTION_REGISTERED: "total auction registered",
@@ -202,6 +208,15 @@ export const MESSAGES = {
         MEDIA_IDS_NOT_FOUND: "some media ids were not found",
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
+    },
+    REFERRAL: {
+        REFERRAL_FOUND: "Referral found successfully",
+        REFERRAL_NOT_FOUND: "Referral not found",
+        REFERRAL_CONFIG_FOUND: "Referral config found successfully",
+        REFERRAL_CONFIG_NOT_FOUND: "Referral config not found",
+        REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
+        REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
+        REFERRAL_NOT_VALID: "referral code is not valid",
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
@@ -280,6 +295,7 @@ export const SOCKET_EVENT = {
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
+    AUCTION_START_DATE: "auction:start:date",
 };
 
 export const NODE_EVENT_SERVICE = {
@@ -298,6 +314,7 @@ export const NODE_EVENT_SERVICE = {
         "multiple:player:playbalance:credited",
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
+    PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
 };
 
 export const AUCTION_STATE = [
@@ -306,5 +323,20 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const dateFormateForMail = (start_date: string) => {
+    const startDateISOString = new Date(start_date).toISOString();
+    const currentDateISOString: string = new Date().toISOString();
+    const startDate: Date = new Date(startDateISOString);
+    const currentDate: Date = new Date(currentDateISOString);
+    const timeDifferenceMs: number =
+        currentDate.getTime() - startDate.getTime();
+    const hours: number = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes: number = Math.floor(
+        (timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds: number = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
+    return { hours, minutes, seconds };
+};
 
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;
