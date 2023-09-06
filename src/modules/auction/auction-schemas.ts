@@ -238,80 +238,85 @@ const ZStartAuction = z.object({
     }),
 });
 
-const ZPlayerWinner = z.object({
-    auction_id: z
-        .string({
-            required_error: "auction_id is required!",
-            invalid_type_error: "auction_id should be string!",
-        })
-        .uuid({
-            message: "auction_id should be UUID",
+const ZPlayerWinner = z
+    .object({
+        auction_id: z
+            .string({
+                required_error: "auction_id is required!",
+                invalid_type_error: "auction_id should be string!",
+            })
+            .uuid({
+                message: "auction_id should be UUID",
+            }),
+        player_id: z
+            .string({
+                required_error: "player_id is required!",
+                invalid_type_error: "player_id should be string!",
+            })
+            .uuid({
+                message: "player_id should be UUID",
+            }),
+        player_register_id: z
+            .string({
+                required_error: "player_register_id is required!",
+                invalid_type_error:
+                    "player_register_id should be of type string!",
+            })
+            .uuid({
+                message: "player_register_id should be in UUID format!",
+            }),
+        wallet_address: z
+            .string({
+                required_error: "wallet_address is required!",
+                invalid_type_error: "wallet_address should be string!",
+            })
+            .regex(/^0x[a-fA-F0-9]{40}$/, {
+                message: "wallet_address is not valid",
+            }),
+        transaction_hash: z
+            .string({
+                required_error: "transaction_hash is required!",
+                invalid_type_error: "transaction_hash should be string!",
+            })
+            .regex(/^0x[a-f0-9]{64}$/, {
+                message: "transaction_hash is not valid!",
+            }),
+        amount: z.number({
+            required_error: "amount is required!",
+            invalid_type_error: "amount should be of type number!",
         }),
-    player_id: z
-        .string({
-            required_error: "player_id is required!",
-            invalid_type_error: "player_id should be string!",
-        })
-        .uuid({
-            message: "player_id should be UUID",
+        currency: z.enum(["FIAT", "CRYPTO"], {
+            required_error: "currency is required!",
+            invalid_type_error: "currency should be type of string!",
         }),
-    player_register_id: z
-        .string({
-            required_error: "player_register_id is required!",
-            invalid_type_error: "player_register_id should be of type string!",
-        })
-        .uuid({
-            message: "player_register_id should be in UUID format!",
+        currency_type: z.enum(["USDTERC20", "USDTRC20", "BIGTOKEN"], {
+            required_error: "currency_type is required!",
+            invalid_type_error: "currency_type type should be of string!",
         }),
-    wallet_address: z
-        .string({
-            required_error: "wallet_address is required!",
-            invalid_type_error: "wallet_address should be string!",
-        })
-        .regex(/^0x[a-fA-F0-9]{40}$/, {
-            message: "wallet_address is not valid",
-        }),
-    transaction_hash: z
-        .string({
-            required_error: "transaction_hash is required!",
-            invalid_type_error: "transaction_hash should be string!",
-        })
-        .regex(/^0x[a-f0-9]{64}$/, {
-            message: "transaction_hash is not valid!",
-        }),
-    amount: z.number({
-        required_error: "amount is required!",
-        invalid_type_error: "amount should be of type number!",
-    }),
-    currency: z.enum(["FIAT", "CRYPTO"], {
-        required_error: "currency is required!",
-        invalid_type_error: "currency should be type of string!",
-    }),
-    currency_type: z.enum(["USDTERC20", "USDTRC20", "BIGTOKEN"], {
-        required_error: "currency_type is required!",
-        invalid_type_error: "currency_type type should be of string!",
-    }),
-});
+    })
+    .strict();
 
-const ZSimulation = z.object({
-    user_count: z.number({
-        required_error: "user_count is required",
-        invalid_type_error: "user_count should be number",
-    }),
-    credit_plays: z.number({
-        required_error: "credit_plays is required",
-        invalid_type_error: "credit_plays should be number",
-    }),
-    bot_status: z.boolean().default(false).optional(),
-    auction_id: z
-        .string({
-            required_error: "auction_id should be required!",
-            invalid_type_error: "auction_id should be string!",
-        })
-        .uuid({
-            message: "auction_id should be UUID!",
+const ZSimulation = z
+    .object({
+        user_count: z.number({
+            required_error: "user_count is required",
+            invalid_type_error: "user_count should be number",
         }),
-});
+        credit_plays: z.number({
+            required_error: "credit_plays is required",
+            invalid_type_error: "credit_plays should be number",
+        }),
+        bot_status: z.boolean().default(false).optional(),
+        auction_id: z
+            .string({
+                required_error: "auction_id should be required!",
+                invalid_type_error: "auction_id should be string!",
+            })
+            .uuid({
+                message: "auction_id should be UUID!",
+            }),
+    })
+    .strict();
 const ZPlayerAuction = z
     .object({
         page: z

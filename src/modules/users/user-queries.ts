@@ -11,6 +11,7 @@ import {
     PlayerBidLogGroup,
     Ispend_on,
     IMultipleUsers,
+    ILastPlayTrx,
 } from "./typings/user-types";
 import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
 
@@ -383,6 +384,18 @@ const getRandomBot = async () => {
     return query;
 };
 
+const addLastPlaysTrx = async (data: ILastPlayTrx) => {
+    const queries = await db.playerWalletTx.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: data.spends_on,
+            auction_id: data.player_id,
+            created_by: data.player_id,
+        },
+    });
+    return queries;
+};
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -402,5 +415,6 @@ const userQueries = {
     createMultipleUsers,
     addMultiplePlayBlx,
     getRandomBot,
+    addLastPlaysTrx,
 };
 export default userQueries;

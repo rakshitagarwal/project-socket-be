@@ -79,6 +79,12 @@ export interface IuserPaginationQuery {
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
 export type IDeductPlx = z.infer<typeof userSchemas.ZDeductPlays>;
+export interface ILastPlayTrx {
+    auction_id: string;
+    player_id: string;
+    plays: number;
+    spends_on: Ispend_on;
+}
 
 export interface IPlayerBidLog {
     player_id: string;
@@ -111,6 +117,7 @@ export enum Ispend_on {
     BUY_PLAYS = "BUY_PLAYS",
     REFUND_PLAYS = "REFUND_PLAYS",
     BID_PLAYS = "BID_PLAYS",
+    LAST_PLAYS = "LAST_PLAYS",
 }
 
 export type IMultipleUsers = IupdateUser & {

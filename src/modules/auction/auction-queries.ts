@@ -534,12 +534,14 @@ const fetchPlayerAuction = async (
     ) as T2
     ON T1.auction_id = T2.auction_id
     AND T1.player_id = T2.player_id
-  ) as T5
-  where T5.player_id = ${player_id}
-  GROUP BY T5.auction_id, T5.player_id, T5.status,T5.total_bids,T5.created_at,T5.title,T5.id ,T5.bid_increment_price,T5.plays_consumed_on_bid,T5.total_bid_consumed
-  order by T5.created_at desc
-  offset ${offset}
-      limit ${limit}`;
+    ) as T5
+    where T5.player_id = ${player_id}
+    GROUP BY T5.auction_id, T5.player_id, T5.status,T5.total_bids,T5.created_at,T5.title,T5.id ,T5.bid_increment_price,T5.plays_consumed_on_bid,T5.total_bid_consumed
+    order by T5.created_at desc
+    offset ${offset}
+    limit ${limit}
+    `;
+
     //     const query: Sql = Prisma.sql`
     //     SELECT
     //     T5.auction_id,
@@ -953,6 +955,65 @@ const getPlayerAuctionDetailsById = async (
     return query;
 };
 
+/**
+ *
+ * @param auction_id
+ * @param player_id
+ * @returns
+ */
+
+export const transferLastPlay = async (
+    auction_id: string,
+    player_id: string
+) => {
+    const query: Sql = Prisma.sql` SELECT
+   (T1.total_bids * T2.plays_consumed_on_bid) as total_plays
+ FROM (
+   SELECT
+        player_bid_log_T1.player_id,
+        player_bid_log_T1.auction_id,
+        player_bid_log_T1.total_bids,
+        player_bid_log_T2.bid_price
+    FROM (
+        SELECT
+            player_id,
+            auction_id,
+            COUNT(*) AS total_bids
+    FROM
+            player_bid_log
+    where   player_bid_log.player_id=${player_id} 
+    AND     player_bid_log.auction_id=${auction_id}
+    GROUP BY
+            player_id,auction_id ) as player_bid_log_T1
+            LEFT JOIN player_bid_log as player_bid_log_T2
+            ON player_bid_log_T1.player_id = player_bid_log_T2.player_id
+            AND player_bid_log_T1.auction_id = player_bid_log_T2.auction_id
+            ORDER BY player_bid_log_T2.created_at
+    ) as T1
+    RIGHT JOIN (
+    SELECT
+        T3.title,
+        T3.bid_increment_price,
+        T3.plays_consumed_on_bid,
+        T4.created_at,
+        T4.auction_id,
+        T4.player_id,
+        T4.status,
+        T4.id
+    FROM
+        player_auction_register as T4
+        INNER JOIN auctions as T3
+    ON T3.id = T4.auction_id ) as T2
+    ON T1.auction_id = T2.auction_id
+    AND T1.player_id = T2.player_id
+    where T2.auction_id = ${auction_id}`;
+
+    const queryResult = await prisma.$queryRaw<{ total_plays: number }[]>(
+        query
+    );
+    return queryResult;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -981,4 +1042,5 @@ export const auctionQueries = {
     updatetRegisterPaymentStatus,
     getAuctionLists,
     getPlayerAuctionDetailsById,
+    transferLastPlay,
 };

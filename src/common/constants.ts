@@ -141,6 +141,7 @@ export const MESSAGES = {
         CREATED_SUCCESS: "transaction created successfully!",
         GET_NOW_EXPIRED: "product purchase time is expired!",
         AUCTION_NOT_COMPELETED: "auction is not completed!",
+        ALREADY_PURCHASE_PRODUCT: "You have already purchased the product",
     },
     SOCKET: {
         TOTAL_AUCTION_REGISTERED: "total auction registered",
