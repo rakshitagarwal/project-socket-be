@@ -30,6 +30,9 @@ export const ENDPOINTS = {
     PAY_NOW: "product/purchase",
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
+    REFERRAL: "/referral",
+    REFERRAL_CONFIG: "config",
+    MULTIPLE: "multiple"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -205,6 +208,15 @@ export const MESSAGES = {
         MEDIA_IDS_NOT_FOUND: "some media ids were not found",
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
+    },
+    REFERRAL: {
+        REFERRAL_FOUND: "Referral found successfully",
+        REFERRAL_NOT_FOUND: "Referral not found",
+        REFERRAL_CONFIG_FOUND: "Referral config found successfully",
+        REFERRAL_CONFIG_NOT_FOUND: "Referral config not found",
+        REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
+        REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
+        REFERRAL_NOT_VALID: "referral code is not valid",
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "bidbot created successfully",

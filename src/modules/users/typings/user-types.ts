@@ -10,6 +10,8 @@ export interface Iuser {
     role: string;
     status: boolean;
     password?: string;
+    referral_code: string;
+    applied_referral?: string;
 }
 
 export interface IuserQuery {
@@ -111,6 +113,8 @@ export type PlayerBidLogGroup = {
     auction_id: string;
     profile_image: string;
     count: number;
+    play_balance: number;
+    credit_sum?: number;
 };
 
 export enum Ispend_on {
@@ -125,4 +129,5 @@ export type IMultipleUsers = IupdateUser & {
     email: string;
     country: string;
     role_id: string;
+    referral_code: string;
 };

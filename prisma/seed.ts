@@ -48,17 +48,28 @@ async function startSeed() {
                 title: "English action",
             },
         });
-        await prismaClient.user.create({
+        const adminData = await prismaClient.user.create({
             data: {
                 first_name: "admin",
                 last_name: "admin",
                 email: "admin929@yopmail.com",
-                password:
-                    "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                password: "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                referral_code: "admin23",
                 country: "India",
                 is_verified: true,
                 avatar: "assets/avatar/1.png",
                 role_id: roleAdmin?.id as string,
+            },
+        });
+        await prismaClient.referral.create({
+            data: {
+                reward_plays: 5,
+                credit_plays: 20,
+                status: true,
+                is_deleted: false,
+                created_at: new Date(),
+                updated_at: new Date(),
+                updated_by: adminData.id,
             },
         });
         return "Db Seeding Compeleted.";

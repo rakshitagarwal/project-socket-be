@@ -27,17 +27,19 @@ import {
 } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
-import { generateAccessToken } from "../../common/helper";
+import { generateAccessToken, setReferralCode } from "../../common/helper";
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries";
 import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
+import referralService from "../referral/referral-services";
+import referralQueries from "../referral/referral-queries";
+
 /**
  * @description register user into databse
  * @param body - admin or player registration's request body
  */
-
 const register = async (body: Iuser) => {
-    const { role, ...payload } = body;
+    const { role, applied_referral, ...payload } = body;
     const isRole = await roleQueries.fetchRole({ title: role });
     if (isRole?.title?.toLocaleLowerCase() === "admin") {
         return responseBuilder.conflictError(MESSAGES.USERS.ADMIN_EXIST);
@@ -49,12 +51,23 @@ const register = async (body: Iuser) => {
     if (isUser) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
+    let applied_id: string;
+    payload.referral_code = setReferralCode();
+    if (applied_referral) {
+        const result = await userQueries.getPlayerByReferral(applied_referral);
+        if (!result) return responseBuilder.badRequestError(MESSAGES.REFERRAL.REFERRAL_NOT_VALID);
+        applied_id = result.id;
+    }
     const randomNum = randomInt(1, 28);
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
+
+        if (applied_referral) await referralQueries.addReferral(
+            { player_id: user.id, player_referral_id: applied_id }, prisma);
+
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
             user_name: `${user.first_name}`,
@@ -201,7 +214,7 @@ const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
     }
     const user = await userQueries.updateUser({ id: parmas.id }, body);
     if (!user) {
-        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+        return responseBuilder.expectationFaild();
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
 };
@@ -384,8 +397,12 @@ const addWalletTransaction = async (data: IWalletTx) => {
             currency_transaction_id: currency_trx.id,
         });
 
+        await referralService.referralCheck(data.player_id, prisma);
+        
         return { currency_trx };
     });
+    
+
     if (createTrax.currency_trx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: data.player_id,
