@@ -109,7 +109,7 @@ const otpVerifcation = async (body: IotpVerification) => {
     if(!isUser.status && body.otp_type!==OTP_TYPE.EMAIL_VERIFICATION){
         return responseBuilder.unauthorizedError(MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL)
     }
-    const isOtp = await otpQuery.findUserOtp({otp: Number(body.otp),user_id: isUser.id,});
+    const isOtp = await otpQuery.findUserOtp({otp: Number(body.otp),user_id: isUser.id,otp_type:body.otp_type});
     if (!isOtp) {
         return responseBuilder.badRequestError(MESSAGES.OTP.INVALID_OTP);
     }

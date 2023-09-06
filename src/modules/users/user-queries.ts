@@ -459,6 +459,27 @@ const addLastPlaysTrx = async (data: ILastPlayTrx) => {
     return queries;
 };
 
+/**
+ * @description Fetch the admin information for email 
+ */
+const fetchAdminInfo = async () => {
+    const user = await db.user.findFirst({
+        where:{
+            roles:{
+                title:"Admin",
+                is_deleted:false,
+                status:true
+            }
+        },
+        select:{
+            first_name:true,
+            email:true,
+        }
+    })
+    return user;
+}
+
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -482,5 +503,6 @@ const userQueries = {
     creditTransactions,
     userPlaysBalance,
     addLastPlaysTrx,
+    fetchAdminInfo
 };
 export default userQueries;
