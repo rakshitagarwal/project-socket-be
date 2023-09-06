@@ -128,6 +128,9 @@ const fetchPlayerId = async (id: string) => {
         },
         select: {
             id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
             roles: {
                 select: {
                     title: true,

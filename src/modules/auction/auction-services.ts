@@ -4,7 +4,7 @@ import {
     MESSAGES,
     productMessage,
     NODE_EVENT_SERVICE,
-    ONE_PLAY_VALUE_IN_DOLLAR,
+    // ONE_PLAY_VALUE_IN_DOLLAR,
     SOCKET_EVENT,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
@@ -250,6 +250,14 @@ const playerRegister = async (data: IPlayerRegister) => {
         const auctionData = await auctionQueries.auctionRegistrationCount(
             data.auction_id
         );
+
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_AUCTION_REGISTER_MAIL, {
+            user_name: player.first_name,
+            email: player.email,
+            auctionName: auction.title,
+            registeration_count: auction.registeration_count,
+            _count: auction._count.PlayerAuctionRegister,
+        });
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
             message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
             data: {
@@ -325,10 +333,10 @@ const playerAuctionDetails = async (data: {
     const buy_now_price =
         playerAuctionDetail.status === "won"
             ? playerAuctionDetail.PlayerBidLogs[0]?.bid_price
-            : playerAuctionDetail.Auctions.products.price -
+            : playerAuctionDetail.Auctions.products.price; /*-
               playerAuctionDetail.Auctions.plays_consumed_on_bid *
                   playerAuctionDetail?.PlayerBidLogs.length *
-                  ONE_PLAY_VALUE_IN_DOLLAR;
+                  ONE_PLAY_VALUE_IN_DOLLAR;*/
     const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
     let winnerInfoDetails;
     if (winnerInfo?.status === "won") {

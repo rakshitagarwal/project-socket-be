@@ -125,6 +125,8 @@ export const TEMPLATE = {
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
     PLAYER_REGISTERATION: "auction_player_registeration.html",
+    PLAYER_AUCTION_REGISTER: "player_auction_register.html",
+    REGISTER_PRE_ADMIN: "registration_per_admin.html",
 };
 
 export const OTP_TYPE = {
@@ -281,6 +283,7 @@ export const SOCKET_EVENT = {
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
+    AUCTION_START_DATE: "auction:start:date",
 };
 
 export const NODE_EVENT_SERVICE = {
@@ -299,6 +302,7 @@ export const NODE_EVENT_SERVICE = {
         "multiple:player:playbalance:credited",
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
+    PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
 };
 
 export const AUCTION_STATE = [
@@ -307,5 +311,20 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const dateFormateForMail = (start_date: string) => {
+    const startDateISOString = new Date(start_date).toISOString();
+    const currentDateISOString: string = new Date().toISOString();
+    const startDate: Date = new Date(startDateISOString);
+    const currentDate: Date = new Date(currentDateISOString);
+    const timeDifferenceMs: number =
+        currentDate.getTime() - startDate.getTime();
+    const hours: number = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes: number = Math.floor(
+        (timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds: number = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
+    return { hours, minutes, seconds };
+};
 
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;
