@@ -76,7 +76,7 @@ export interface IuserPagination {
 export interface IuserPaginationQuery {
     limit: number;
     page: number;
-    filter?: Array<object>;
+    filter?: string;
 }
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
@@ -131,3 +131,16 @@ export type IMultipleUsers = IupdateUser & {
     role_id: string;
     referral_code: string;
 };
+
+export interface IGetAllUsers {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    country: string;
+    avatar: string;
+    mobile_no: string;
+    Plays_In_Wallet: number;
+    Auction_Won: number;
+    Player_Participated: number;
+}

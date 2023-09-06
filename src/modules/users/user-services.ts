@@ -55,7 +55,10 @@ const register = async (body: Iuser) => {
     payload.referral_code = setReferralCode();
     if (applied_referral) {
         const result = await userQueries.getPlayerByReferral(applied_referral);
-        if (!result) return responseBuilder.badRequestError(MESSAGES.REFERRAL.REFERRAL_NOT_VALID);
+        if (!result)
+            return responseBuilder.badRequestError(
+                MESSAGES.REFERRAL.REFERRAL_NOT_VALID
+            );
         applied_id = result.id;
     }
     const randomNum = randomInt(1, 28);
@@ -65,8 +68,11 @@ const register = async (body: Iuser) => {
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
 
-        if (applied_referral) await referralQueries.addReferral(
-            { player_id: user.id, player_referral_id: applied_id }, prisma);
+        if (applied_referral)
+            await referralQueries.addReferral(
+                { player_id: user.id, player_referral_id: applied_id },
+                prisma
+            );
 
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
@@ -342,24 +348,24 @@ const resetPassword = async (body: IresetPassword) => {
  * @param {object} query  - query contain the page limit and search fields
  */
 const fetchAllUsers = async (query: IuserPagination) => {
-    const filter = [];
     const page = parseInt(query.page) || 0;
     const limit = parseInt(query.limit) || 10;
-    if (query.search) {
-        filter.push(
-            { first_name: { contains: query.search, mode: "insensitive" } },
-            { last_name: { contains: query.search, mode: "insensitive" } },
-            { country: { contains: query.search, mode: "insensitive" } }
-        );
-    }
-    const result = await userQueries.fetchAllUsers({ page, limit, filter });
-    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, result.user, {
-        limit,
+    const result = await userQueries.fetchAllUsers({
         page,
-        totalRecord: result.count,
-        totalPage: Math.ceil(result.count / limit),
-        search: query.search,
+        limit,
+        filter: query.search,
     });
+    return responseBuilder.okSuccess(
+        MESSAGES.USERS.USER_FOUND,
+        result.userDetails,
+        {
+            limit,
+            page,
+            totalRecord: result.count,
+            totalPage: Math.ceil(result.count / limit),
+            search: query.search,
+        }
+    );
 };
 
 /**
@@ -398,10 +404,9 @@ const addWalletTransaction = async (data: IWalletTx) => {
         });
 
         await referralService.referralCheck(data.player_id, prisma);
-        
+
         return { currency_trx };
     });
-    
 
     if (createTrax.currency_trx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {

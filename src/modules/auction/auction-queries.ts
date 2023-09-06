@@ -150,6 +150,11 @@ const getAll = async (query: IPagination) => {
                     },
                 },
             },
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
             auctionCategory: true,
         },
         take: +query.limit,
