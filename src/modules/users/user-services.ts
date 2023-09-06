@@ -71,7 +71,7 @@ const register = async (body: Iuser) => {
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
             user_name: `${user.first_name}`,
-            subject: "Welcome to Big Deal",
+            subject: "Welcome to Big Deal : Signup Details",
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
     });
@@ -285,7 +285,7 @@ const forgetPassword = async (body: IplayerLogin) => {
             email: [isUser.email],
             otp: passcode,
             user_name: `${isUser.first_name}`,
-            subject: "Forget password",
+            subject: "Reset Your Password",
             template: TEMPLATE.FORGET_PASSWORD,
         });
     });

@@ -84,6 +84,8 @@ export const AUCTION_MESSAGES = {
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
     AUCTION_LIVE_UPDATE: "auction is live, so you cannot update!",
+    AUCTION_COMPLETED_DELETE: "auction is completed, so you cannot delete!",
+    AUCTION_COMPLETED_UPDATE: "auction is completed, so you cannot update!",
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
     CANNOT_DELETE_AUCTION: "something went wrong",
     DATE_NOT_PROPER: "start_date should be greater than current date!",
@@ -126,6 +128,8 @@ export const TEMPLATE = {
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
     PLAYER_REGISTERATION: "auction_player_registeration.html",
+    PLAYER_AUCTION_REGISTER: "player_auction_register.html",
+    REGISTER_PRE_ADMIN: "registration_per_admin.html",
 };
 
 export const OTP_TYPE = {
@@ -140,6 +144,7 @@ export const MESSAGES = {
         CREATED_SUCCESS: "transaction created successfully!",
         GET_NOW_EXPIRED: "product purchase time is expired!",
         AUCTION_NOT_COMPELETED: "auction is not completed!",
+        ALREADY_PURCHASE_PRODUCT: "You have already purchased the product",
     },
     SOCKET: {
         TOTAL_AUCTION_REGISTERED: "total auction registered",
@@ -290,6 +295,7 @@ export const SOCKET_EVENT = {
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
+    AUCTION_START_DATE: "auction:start:date",
 };
 
 export const NODE_EVENT_SERVICE = {
@@ -308,6 +314,7 @@ export const NODE_EVENT_SERVICE = {
         "multiple:player:playbalance:credited",
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
+    PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
 };
 
 export const AUCTION_STATE = [
@@ -316,5 +323,20 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const dateFormateForMail = (start_date: string) => {
+    const startDateISOString = new Date(start_date).toISOString();
+    const currentDateISOString: string = new Date().toISOString();
+    const startDate: Date = new Date(startDateISOString);
+    const currentDate: Date = new Date(currentDateISOString);
+    const timeDifferenceMs: number =
+        currentDate.getTime() - startDate.getTime();
+    const hours: number = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes: number = Math.floor(
+        (timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds: number = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
+    return { hours, minutes, seconds };
+};
 
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;

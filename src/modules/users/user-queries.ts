@@ -11,6 +11,7 @@ import {
     PlayerBidLogGroup,
     Ispend_on,
     IMultipleUsers,
+    ILastPlayTrx,
 } from "./typings/user-types";
 import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
 
@@ -128,6 +129,9 @@ const fetchPlayerId = async (id: string) => {
         },
         select: {
             id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
             roles: {
                 select: {
                     title: true,
@@ -312,7 +316,10 @@ const playerPlaysBalance = async (
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns {queryResult} - the result of execution of query.
  */
-const userPlaysBalance = async (player_id: string,  prisma: PrismaClient): Promise<PlayerBidLogGroup[]> => {
+const userPlaysBalance = async (
+    player_id: string,
+    prisma: PrismaClient
+): Promise<PlayerBidLogGroup[]> => {
     const query: Sql = Prisma.sql`SELECT 
                 (COALESCE(SUM(play_credit), 0) - COALESCE(SUM(play_debit), 0)) as play_balance,
                     player_wallet_transaction.created_by as player_id
@@ -333,8 +340,11 @@ const userPlaysBalance = async (player_id: string,  prisma: PrismaClient): Promi
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns {queryResult} - the result of execution of query.
  */
-const creditTransactions = async (player_id: string, prisma: PrismaClient): Promise<PlayerBidLogGroup[]> => {
-    const query:Sql = Prisma.sql`SELECT  (COALESCE(SUM(play_credit), 0)) as credit_sum,
+const creditTransactions = async (
+    player_id: string,
+    prisma: PrismaClient
+): Promise<PlayerBidLogGroup[]> => {
+    const query: Sql = Prisma.sql`SELECT  (COALESCE(SUM(play_credit), 0)) as credit_sum,
                                         player_wallet_transaction.created_by as player_id
                                 FROM 
                                     player_wallet_transaction
@@ -427,7 +437,7 @@ const getRandomBot = async () => {
 const getPlayerByReferral = async (player_referral_code: string) => {
     const query = await db.user.findFirst({
         where: {
-            referral_code: player_referral_code
+            referral_code: player_referral_code,
         },
         select: {
             id: true,
@@ -436,6 +446,17 @@ const getPlayerByReferral = async (player_referral_code: string) => {
     return query;
 };
 
+const addLastPlaysTrx = async (data: ILastPlayTrx) => {
+    const queries = await db.playerWalletTx.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: data.spends_on,
+            auction_id: data.player_id,
+            created_by: data.player_id,
+        },
+    });
+    return queries;
+};
 
 const userQueries = {
     fetchUser,
@@ -459,5 +480,6 @@ const userQueries = {
     getPlayerByReferral,
     creditTransactions,
     userPlaysBalance,
+    addLastPlaysTrx,
 };
 export default userQueries;

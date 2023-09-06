@@ -18,14 +18,18 @@ import { responseBuilder } from "./common/responses";
 import { v1Router } from "./routes/index-routes";
 import logger from "./config/logger";
 import startServer from "./utils/start-server";
-import "./utils/cron-schedule"
+import "./utils/cron-schedule";
 import { ENDPOINTS } from "./common/constants";
 
 const app = express();
 
 app.use(ENDPOINTS.ASSETS, express.static("assets"));
 app.use(helmet());
-app.use(cors());
+app.use(
+    cors({
+        origin: "*",
+    })
+);
 app.disable("x-powered-by");
 app.use(
     bodyParser.urlencoded({
@@ -61,7 +65,7 @@ app.use(env.API_VERSION, v1Router);
 app.use("*", (req, res) => {
     const response = responseBuilder.notFoundError();
     logger.error(
-        `${response.code} - ${response.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        `${process.env.NODE_ENV} - ${response.code} - ${response.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
     );
     res.status(response.code).json(response);
 });

@@ -4,7 +4,8 @@ import {
     MESSAGES,
     productMessage,
     NODE_EVENT_SERVICE,
-    ONE_PLAY_VALUE_IN_DOLLAR,
+    // ONE_PLAY_VALUE_IN_DOLLAR,
+    SOCKET_EVENT,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
@@ -24,6 +25,9 @@ import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
+import { AppGlobal } from "../../utils/socket-service";
+import { Ispend_on } from "../users/typings/user-types";
+const socket = global as unknown as AppGlobal;
 
 /**
  * Auction Creation
@@ -124,15 +128,21 @@ const update = async (
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 
+    if (isAuctionExists.state === "live")
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
+        );
+    if (isAuctionExists.state === "completed") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
+        );
+    }
+
     if (auction.start_date && auction.start_date > new Date()) {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
         );
     }
-    if (isAuctionExists.state === "live")
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
-        );
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
@@ -156,6 +166,11 @@ const remove = async (id: string[]) => {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_LIVE_DELETE
         );
+    if (isExists.state === "completed") {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
+        );
+    }
     const isDeleted = await auctionQueries.remove(id);
     if (isDeleted.count)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.REMOVE);
@@ -231,10 +246,28 @@ const playerRegister = async (data: IPlayerRegister) => {
             JSON.stringify(registeredObj)
         );
     }
-    eventService.emit(NODE_EVENT_SERVICE.AUCTION_REGISTER_COUNT, {
-        auctionId: data.auction_id,
-        registeration_count: auction.registeration_count,
-    });
+    if (auction && auction.registeration_count) {
+        const auctionData = await auctionQueries.auctionRegistrationCount(
+            data.auction_id
+        );
+
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_AUCTION_REGISTER_MAIL, {
+            user_name: player.first_name,
+            email: player.email,
+            auctionName: auction.title,
+            registeration_count: auction.registeration_count,
+            _count: auction._count.PlayerAuctionRegister,
+        });
+        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
+            message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
+            data: {
+                auction_registration_percentage:
+                    (auctionData * 100) / auction.registeration_count,
+                auctionId: data.auction_id,
+            },
+        });
+    }
+
     return responseBuilder.createdSuccess(
         MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_REGISTERED
     );
@@ -300,10 +333,10 @@ const playerAuctionDetails = async (data: {
     const buy_now_price =
         playerAuctionDetail.status === "won"
             ? playerAuctionDetail.PlayerBidLogs[0]?.bid_price
-            : playerAuctionDetail.Auctions.products.price -
+            : playerAuctionDetail.Auctions.products.price; /*-
               playerAuctionDetail.Auctions.plays_consumed_on_bid *
                   playerAuctionDetail?.PlayerBidLogs.length *
-                  ONE_PLAY_VALUE_IN_DOLLAR;
+                  ONE_PLAY_VALUE_IN_DOLLAR;*/
     const { PlayerBidLogs, ...bidInfoDetails } = playerAuctionDetail;
     let winnerInfoDetails;
     if (winnerInfo?.status === "won") {
@@ -390,11 +423,13 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             MESSAGES.USERS.PLAYER_NOT_REGISTERED
         );
     }
+
     if (isauction.state !== "completed") {
         return responseBuilder.badRequestError(
             MESSAGES.TRANSACTION_CRYPTO.AUCTION_NOT_COMPELETED
         );
     }
+
     if (
         isplayerAuctionDetail.status === "won" ||
         isplayerAuctionDetail.status === "lost"
@@ -408,6 +443,28 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             );
         }
     }
+
+    if (isplayerAuctionDetail.payment_status === "success") {
+        return responseBuilder.badRequestError(
+            MESSAGES.TRANSACTION_CRYPTO.ALREADY_PURCHASE_PRODUCT
+        );
+    }
+
+    if (isplayerAuctionDetail.status === "lost") {
+        const transferred_plays = await auctionQueries.transferLastPlay(
+            isauction.id,
+            isplayerAuctionDetail.player_id
+        );
+        const totalPlays = Number(transferred_plays[0]?.total_plays);
+        const lastPlaysAdd = {
+            auction_id: data.auction_id,
+            player_id: data.player_id,
+            plays: totalPlays,
+            spends_on: Ispend_on.LAST_PLAYS,
+        };
+        await userQueries.addLastPlaysTrx(lastPlaysAdd);
+    }
+
     const createTransactionHash = await auctionQueries.createPaymentTrx(data);
     await auctionQueries.updatetRegisterPaymentStatus(data.player_register_id);
     if (!createTransactionHash.id) {
