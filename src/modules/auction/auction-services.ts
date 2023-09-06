@@ -26,6 +26,7 @@ import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import { AppGlobal } from "../../utils/socket-service";
+import { Ispend_on } from "../users/typings/user-types";
 const socket = global as unknown as AppGlobal;
 
 /**
@@ -414,11 +415,13 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             MESSAGES.USERS.PLAYER_NOT_REGISTERED
         );
     }
+
     if (isauction.state !== "completed") {
         return responseBuilder.badRequestError(
             MESSAGES.TRANSACTION_CRYPTO.AUCTION_NOT_COMPELETED
         );
     }
+
     if (
         isplayerAuctionDetail.status === "won" ||
         isplayerAuctionDetail.status === "lost"
@@ -432,6 +435,28 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             );
         }
     }
+
+    if (isplayerAuctionDetail.payment_status === "success") {
+        return responseBuilder.badRequestError(
+            MESSAGES.TRANSACTION_CRYPTO.ALREADY_PURCHASE_PRODUCT
+        );
+    }
+
+    if (isplayerAuctionDetail.status === "lost") {
+        const transferred_plays = await auctionQueries.transferLastPlay(
+            isauction.id,
+            isplayerAuctionDetail.player_id
+        );
+        const totalPlays = Number(transferred_plays[0]?.total_plays);
+        const lastPlaysAdd = {
+            auction_id: data.auction_id,
+            player_id: data.player_id,
+            plays: totalPlays,
+            spends_on: Ispend_on.LAST_PLAYS,
+        };
+        await userQueries.addLastPlaysTrx(lastPlaysAdd);
+    }
+
     const createTransactionHash = await auctionQueries.createPaymentTrx(data);
     await auctionQueries.updatetRegisterPaymentStatus(data.player_register_id);
     if (!createTransactionHash.id) {

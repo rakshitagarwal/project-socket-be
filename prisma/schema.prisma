@@ -392,6 +392,7 @@ enum PlaySpend {
   BUY_PLAYS
   REFUND_PLAYS
   BID_PLAYS
+  LAST_PLAYS
 }
 
 enum auctionState {
