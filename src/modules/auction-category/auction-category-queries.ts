@@ -130,10 +130,7 @@ const isIdExists = async (data: IDeleteIds) => {
 const getTitle = async (title: string) => {
     const queryResult = await db.masterAuctionCategory.findFirst({
         where: {
-            AND: {
-                title: title,
-                is_deleted: false
-            },
+            title: title, is_deleted: false
         },
         select: {
             id: true,
