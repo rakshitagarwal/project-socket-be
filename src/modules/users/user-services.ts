@@ -83,6 +83,7 @@ const register = async (body: Iuser) => {
 
         const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
         await prisma.playerWalletTransaction.create({data:{created_by:user.id,play_credit:1000,spend_on:"BUY_PLAYS"}})
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,{player_id:user.id,plays_balance:1000})
         await prisma.userOTP.create({data: {user_id: user.id, otp: Number(passcode), otp_type: OTP_TYPE.EMAIL_VERIFICATION,}});
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
