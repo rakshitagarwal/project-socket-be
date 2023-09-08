@@ -457,9 +457,8 @@ eventService.on(
                     is_bot: true,
                     is_verified: true,
                     referral_code: setBotReferralCode(),
-                    avatar: `assets/avatar/${
-                        faker.internet.userName().length
-                    }.png`,
+                    avatar: `assets/avatar/${faker.internet.userName().length
+                        }.png`,
                 };
             },
             {

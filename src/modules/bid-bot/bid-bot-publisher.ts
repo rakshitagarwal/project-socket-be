@@ -312,14 +312,13 @@ export const bidByBotRecieved = async (
                 JSON.stringify(existingBotData)
             );
         }
-        const status = existingBotData[botData.player_id].is_active;
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, {
             message: MESSAGES.BIDBOT.BIDBOT_ACTIVE,
             auction_id: botData.auction_id,
             player_id: botData.player_id,
             plays_limit: botData.plays_limit,
             price_limit: botData?.price_limit,
-            status: status,
+            status: true,
         });
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
@@ -349,12 +348,12 @@ export const deactivateBidbot = async (
             )) as string
         );
         if (existingBotData && existingBotData[botData?.player_id]) {
-            const status = existingBotData[botData.player_id].is_active = false;
+            existingBotData[botData.player_id].is_active = false;
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, {
                 message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                 auction_id: botData.auction_id,
                 player_id: botData.player_id,
-                status: status
+                status: false
             });
             await redisClient.set(
                 `BidBotCount:${botData.auction_id}`,
