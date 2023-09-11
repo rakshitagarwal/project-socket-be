@@ -146,8 +146,8 @@ const bidTransaction = async (payload: {
     if (
         bidHistory &&
         bidHistory.length * auctionData.bid_increment_price +
-            auctionData.opening_price >=
-            auctionData.products.price
+        auctionData.opening_price >=
+        auctionData.products.price
     ) {
         countdowns[`${payload.auctionId}`] = 0;
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
@@ -158,8 +158,8 @@ const bidTransaction = async (payload: {
     const bidNumber = bidHistory ? bidHistory.length + 1 : 1;
     const bidPrice = bidHistory
         ? bidHistory.length * auctionData.bid_increment_price +
-          auctionData.opening_price +
-          auctionData.bid_increment_price
+        auctionData.opening_price +
+        auctionData.bid_increment_price
         : auctionData.bid_increment_price + auctionData.opening_price;
     socket.playerSocket
         .to(payload.socketId)
@@ -289,6 +289,8 @@ export const newBiDRecieved = async (
                     : MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                 auction_id: player_bot.auction_id,
                 player_id: player_bot.player_id,
+                plays_limit: player_bot.plays_limit,
+                price_limit: player_bot?.price_limit,
                 status: player_bot.is_active,
             });
         } else {
