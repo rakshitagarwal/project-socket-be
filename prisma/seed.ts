@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
+import { AUCTION_CATEGORY } from "../src/common/constants";
+
 async function startSeed() {
     const prismaClient = new PrismaClient();
     const roles = await prismaClient.masterRole.findMany({});
@@ -43,17 +45,16 @@ async function startSeed() {
                 title: "Mobile & Accessories",
             },
         });
-        await prismaClient.masterAuctionCategory.create({
-            data: {
-                title: "English action",
-            },
+        await prismaClient.masterAuctionCategory.createMany({
+            data: AUCTION_CATEGORY,
         });
         const adminData = await prismaClient.user.create({
             data: {
                 first_name: "admin",
                 last_name: "admin",
                 email: "admin929@yopmail.com",
-                password: "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                password:
+                    "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
                 referral_code: "admin23",
                 country: "India",
                 is_verified: true,
