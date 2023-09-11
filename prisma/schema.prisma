@@ -192,8 +192,8 @@ model Auctions {
   title                   String
   description             String                    @db.Text
   bid_increment_price     Float?                    @default(0.01)
-  decimal_count           Int                       @db.Integer
-  total_bids              Int                       @db.Integer    
+  decimal_count           Int?                      @db.Integer
+  total_bids              Int?                      @db.Integer
   plays_consumed_on_bid   Int
   opening_price           Float                     @default(1.00) @db.DoublePrecision
   new_participants_limit  Int?
