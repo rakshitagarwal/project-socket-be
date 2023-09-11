@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
+import { AUCTION_CATEGORY } from "../src/common/constants";
+
 async function startSeed() {
     const prismaClient = new PrismaClient();
     const roles = await prismaClient.masterRole.findMany({});
@@ -44,20 +46,7 @@ async function startSeed() {
             },
         });
         await prismaClient.masterAuctionCategory.createMany({
-            data: [
-                {
-                    title: "THE LAST PLAY",
-                    code: "TLP",
-                },
-                {
-                    title: "Lowest Unique Bid",
-                    code: "MIN",
-                },
-                {
-                    title: "Highest Unique Bid",
-                    code: "MAX",
-                },
-            ],
+            data: AUCTION_CATEGORY,
         });
         const adminData = await prismaClient.user.create({
             data: {

@@ -33,7 +33,7 @@ export const ENDPOINTS = {
     REFERRAL: "/referral",
     REFERRAL_CONFIG: "config",
     MULTIPLE: "multiple",
-    RESEND_OTP:"/resend-otp"
+    RESEND_OTP: "/resend-otp",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -184,7 +184,8 @@ export const MESSAGES = {
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
         PLAYER_NOT_REGISTERED: "user not registered",
-        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:"Please check your email and verify your account!",
+        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:
+            "Please check your email and verify your account!",
         PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
     },
     ROLE: {
@@ -326,6 +327,21 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const AUCTION_CATEGORY = [
+    {
+        title: "THE LAST PLAY",
+        code: "TLP",
+    },
+    {
+        title: "Lowest Unique Bid",
+        code: "MIN",
+    },
+    {
+        title: "Highest Unique Bid",
+        code: "MAX",
+    },
+];
 
 export const dateFormateForMail = (start_date: string) => {
     const startDateISOString = new Date(start_date).toISOString();
