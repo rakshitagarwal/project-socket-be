@@ -395,10 +395,11 @@ export const bidbotStatus = async (
     if (auctionData?.state === "live") {
         const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${botData.auction_id}`)) as string);
         if (!existingBotData || !existingBotData[`${botData.player_id}`]) {
-            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, {
                 message: MESSAGES.BIDBOT.BIDBOT_NOT_FOUND,
                 auction_id: botData.auction_id,
                 player_id: botData.player_id,
+                status: false
             });
             return;
         }
@@ -408,7 +409,7 @@ export const bidbotStatus = async (
             const status = existingBotData[botData.player_id].is_active;
             socket.playerSocket
                 .to(socketId)
-                .emit(SOCKET_EVENT.BIDBOT_SESSION_STATUS, {
+                .emit(SOCKET_EVENT.BIDBOT_STATUS, {
                     message: status
                         ? MESSAGES.BIDBOT.BIDBOT_ACTIVE
                         : MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
