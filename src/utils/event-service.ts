@@ -331,7 +331,7 @@ eventService.on(
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                            message: "bidbot not active",
+                            message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                             auction_id:
                                 existingBotData[data.player_id].auction_id,
                             player_id:
@@ -457,9 +457,8 @@ eventService.on(
                     is_bot: true,
                     is_verified: true,
                     referral_code: setBotReferralCode(),
-                    avatar: `assets/avatar/${
-                        faker.internet.userName().length
-                    }.png`,
+                    avatar: `assets/avatar/${faker.internet.userName().length
+                        }.png`,
                 };
             },
             {
