@@ -13,13 +13,13 @@ export const mediaRouter = Router();
 
 mediaRouter.post(ENDPOINTS.BASE, storeOneMedia, mediaHandler.uploadMedia);
 mediaRouter.post(
-    ENDPOINTS.BASE + "multiple",
+    ENDPOINTS.BASE + ENDPOINTS.MULTIPLE,
     storeMultipleMedia,
     handleAsync(mediaHandler.uploadMultipleMedia)
 );
-mediaRouter.get(ENDPOINTS.BASE + ":id?", handleAsync(mediaHandler.getAllMedia));
+mediaRouter.get(ENDPOINTS.ID, handleAsync(mediaHandler.getAllMedia));
 mediaRouter.patch(
-    ENDPOINTS.BASE + ":id",
+    ENDPOINTS.ID,
     validateRequest.params(mediaSchema.uuidSchema),
     handleAsync(mediaHandler.updateMediaStatus)
 );

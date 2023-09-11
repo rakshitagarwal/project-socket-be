@@ -7,6 +7,7 @@ import {
     NODE_EVENT_SERVICE,
     SOCKET_EVENT,
     MESSAGES,
+    dateFormateForMail,
 } from "../common/constants";
 import { Ispend_on } from "../modules/users/typings/user-types";
 import redisClient from "../config/redis";
@@ -25,6 +26,7 @@ import logger from "../config/logger";
 import { Imail } from "./typing/utils-types";
 import { randomBid } from "../modules/auction/auction-publisher";
 import { db } from "../config/db";
+import { setBotReferralCode } from "../common/helper";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 
@@ -55,6 +57,13 @@ eventService.on(
         if (playerInformation.length) {
             const auctionInfo = playerInformation[0];
             if (data.status === "auction_start") {
+                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_START_DATE, {
+                    message: "Auction start",
+                    data: {
+                        auction_id: data.auctionId,
+                        start_date: data.start_date,
+                    },
+                });
                 const userEmail = playerInformation.map((player) => {
                     return player.User.email;
                 });
@@ -67,11 +76,11 @@ eventService.on(
                  * @property {string} subject - The subject of the email.
                  * @property {string} message - The message content of the email.
                  */
-
+                const newDate = dateFormateForMail(data.start_date);
                 const mailData = {
                     email: userEmail,
                     template: TEMPLATE.PLAYER_REGISTERATION,
-                    subject: "Reminder for Auction start",
+                    subject: `Your Auction starts In ${newDate.hours}h ${newDate.minutes}m ${newDate.seconds}ss`,
                     message: `We are thrilled to remind you that the ${auctionInfo?.Auctions?.title} is just around the corner! The auction will go live on ${data.start_date}. Prepare for an exciting event with extraordinary items up for bid. Mark your calendar and be part of this unforgettable experience!`,
                 };
                 await mailService(mailData);
@@ -106,7 +115,7 @@ eventService.on(
                     const mailData = {
                         email: userEmail,
                         template: TEMPLATE.PLAYER_REGISTERATION,
-                        subject: "Auction cancelled",
+                        subject: `Auction Cancelled : ${auctionInfo?.Auctions?.title}`,
                         message: `${auctionInfo?.Auctions?.title} has been cancelled and your ${preRegisterRefund[0]?.play_credit} plays have refunded `,
                     };
                     await mailService(mailData);
@@ -141,11 +150,12 @@ eventService.on(
  */
 eventService.on(
     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
-    async (auction_id: string) => {
+    async (auction_id: string, upcomingInfo: string) => {
         await auctionQueries.updatePlayerRegistrationAuctionStatus(
             auction_id,
             "live"
         );
+        await redisClient.set(`auction:live:${auction_id}`, upcomingInfo);
     }
 );
 
@@ -154,29 +164,40 @@ eventService.on(
  * @param {string} auctionId - The ID of the closed auction associated with the event.
  * @returns {void}
  */
-eventService.on(
-    NODE_EVENT_SERVICE.AUCTION_CLOSED,
-    async (auctionId: string) => {
-        const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
-        if (auctionBidLog) {
-            const winnerePayload = JSON.parse(auctionBidLog);
-            const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
-            const bitLog = await Promise.all([
-                await userQueries.playerBidLog(winnerePayload),
-                await auctionQueries.updatePlayerRegistrationAuctionResultStatus(
-                    auctionId,
-                    newWinnerPayload.player_id
-                ),
-            ]);
-            if (bitLog) {
-                await redisClient.del(`${auctionId}:bidHistory`);
-            }
-        } else {
-            await auctionQueries.updateRegistrationAuctionStatus(auctionId);
+
+export const auctionClosed = async (auctionId: string) => {
+    logger.log({
+        level: "warn",
+        message: "auction event is close and " + auctionId,
+    });
+    const auctionBidLog = await redisClient.get(`${auctionId}:bidHistory`);
+    if (auctionBidLog) {
+        const winnerePayload = JSON.parse(auctionBidLog);
+        const newWinnerPayload = winnerePayload[winnerePayload.length - 1];
+        const bitLog = await Promise.all([
+            await userQueries.playerBidLog(winnerePayload),
+            await auctionQueries.updatePlayerRegistrationAuctionResultStatus(
+                auctionId,
+                newWinnerPayload.player_id
+            ),
+        ]);
+        logger.log({
+            level: "warn",
+            message: "bidlogs for the auctions are:- " + auctionId,
+        });
+        if (bitLog) {
+            await redisClient.del(`${auctionId}:bidHistory`);
         }
-        await redisClient.del(`auction:live:${auctionId}`);
+    } else {
+        await auctionQueries.updateRegistrationAuctionStatus(auctionId);
     }
-);
+    await redisClient.del(`auction:live:${auctionId}`);
+    await redisClient.del(`auction:pre-register:${auctionId}`);
+    logger.log({
+        level: "warn",
+        message: "live auctio status closed" + auctionId,
+    });
+};
 
 /**
  * Handles the logic to emit the total auction registration count and percentage.
@@ -310,7 +331,7 @@ eventService.on(
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                            message: "bidbot not active",
+                            message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                             auction_id:
                                 existingBotData[data.player_id].auction_id,
                             player_id:
@@ -435,9 +456,9 @@ eventService.on(
                     country: "Australia",
                     is_bot: true,
                     is_verified: true,
-                    avatar: `assets/avatar/${
-                        faker.internet.userName().length
-                    }.png`,
+                    referral_code: setBotReferralCode(),
+                    avatar: `assets/avatar/${faker.internet.userName().length
+                        }.png`,
                 };
             },
             {
@@ -466,7 +487,7 @@ eventService.on(
                     data.auction_id
                 );
                 logger.info({
-                    level: "log",
+                    level: "warn",
                     message: "Random User Created in database",
                 });
             }
@@ -502,6 +523,50 @@ eventService.on(
                 },
             }),
         ]);
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_AUCTION_REGISTER_MAIL,
+    async (payload: {
+        user_name: string;
+        auctionName: string;
+        email: string;
+        registeration_count: number;
+        _count: number;
+    }) => {
+        await mailService({
+            user_name: payload.user_name,
+            email: [payload.email],
+            subject: "You are Registered for the Auction!",
+            template: TEMPLATE.PLAYER_AUCTION_REGISTER,
+            message: payload.auctionName,
+        });
+        if (
+            payload._count %
+                Math.ceil((payload.registeration_count * 10) / 100) ===
+            0
+        ) {
+            const adminInfo = await userQueries.fetchAdminInfo();
+            return await mailService({
+                user_name: `${adminInfo?.first_name}`,
+                email: [adminInfo?.email || ""],
+                subject: "Registration Player On Auction",
+                template: TEMPLATE.REGISTER_PRE_ADMIN,
+                message: `${payload.auctionName} have surged by an outstanding ${Math.ceil(payload._count*100/payload.registeration_count)}%`,
+            });
+        }
+        if (payload._count === payload.registeration_count) {
+            const adminInfo = await userQueries.fetchAdminInfo();
+           return  await mailService({
+                user_name: `${adminInfo?.first_name}`,
+                email: [adminInfo?.email || ""],
+                subject: "Registration Player On Auction",
+                template: TEMPLATE.REGISTER_PRE_ADMIN,
+                message: `${payload.auctionName} have surged by an outstanding 100%`,
+            });
+        }
+        
     }
 );
 

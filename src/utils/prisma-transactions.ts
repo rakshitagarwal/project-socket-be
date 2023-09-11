@@ -11,7 +11,7 @@ import env from "../config/env";
 
 export async function prismaTransaction(callback: any) {
     let result: any | undefined;
-    let transaction: any | undefined
+    let transaction: any | undefined;
     try {
         transaction = await prisma.$transaction(callback);
         result = transaction;

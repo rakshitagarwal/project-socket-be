@@ -30,6 +30,10 @@ export const ENDPOINTS = {
     PAY_NOW: "product/purchase",
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
+    REFERRAL: "/referral",
+    REFERRAL_CONFIG: "config",
+    MULTIPLE: "multiple",
+    RESEND_OTP:"/resend-otp"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -81,6 +85,8 @@ export const AUCTION_MESSAGES = {
         "auction is live,so you can't update the auction detials!",
     AUCTION_LIVE_DELETE: "auction is live, so you cannot delete!",
     AUCTION_LIVE_UPDATE: "auction is live, so you cannot update!",
+    AUCTION_COMPLETED_DELETE: "auction is completed, so you cannot delete!",
+    AUCTION_COMPLETED_UPDATE: "auction is completed, so you cannot update!",
     SOMETHING_WENT_WRONG: "can't start auction, something went wrong!",
     CANNOT_DELETE_AUCTION: "something went wrong",
     DATE_NOT_PROPER: "start_date should be greater than current date!",
@@ -123,6 +129,8 @@ export const TEMPLATE = {
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
     PLAYER_REGISTERATION: "auction_player_registeration.html",
+    PLAYER_AUCTION_REGISTER: "player_auction_register.html",
+    REGISTER_PRE_ADMIN: "registration_per_admin.html",
 };
 
 export const OTP_TYPE = {
@@ -137,6 +145,7 @@ export const MESSAGES = {
         CREATED_SUCCESS: "transaction created successfully!",
         GET_NOW_EXPIRED: "product purchase time is expired!",
         AUCTION_NOT_COMPELETED: "auction is not completed!",
+        ALREADY_PURCHASE_PRODUCT: "You have already purchased the product",
     },
     SOCKET: {
         TOTAL_AUCTION_REGISTERED: "total auction registered",
@@ -175,6 +184,8 @@ export const MESSAGES = {
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
         PLAYER_NOT_REGISTERED: "user not registered",
+        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:"Please check your email and verify your account!",
+        PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
@@ -201,15 +212,24 @@ export const MESSAGES = {
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
+    REFERRAL: {
+        REFERRAL_FOUND: "Referral found successfully",
+        REFERRAL_NOT_FOUND: "Referral not found",
+        REFERRAL_CONFIG_FOUND: "Referral config found successfully",
+        REFERRAL_CONFIG_NOT_FOUND: "Referral config not found",
+        REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
+        REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
+        REFERRAL_NOT_VALID: "referral code is not valid",
+    },
     BIDBOT: {
-        BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
-        BIDBOT_FOUND: "bidbot found successfully",
-        BIDBOT_CREATE_FAIL: "bidbot creation failed",
-        BIDBOT_NOT_FOUND: "bidbot not found or id not valid",
-        BIDBOT_UPDATE_LIMIT: "bidbot limit updated successfully",
-        BIDBOT_ACTIVE: "bidbot active",
-        BIDBOT_ALREADY_ACTIVE: "bidbot already active",
-        BIDBOT_NOT_ACTIVE: "bidbot not active",
+        BIDBOT_CREATE_SUCCESS: "BitBot created successfully",
+        BIDBOT_FOUND: "BitBot found successfully",
+        BIDBOT_CREATE_FAIL: "BitBot creation failed",
+        BIDBOT_NOT_FOUND: "BitBot not found or id not valid",
+        BIDBOT_UPDATE_LIMIT: "BitBot limit updated successfully",
+        BIDBOT_ACTIVE: "BitBot Activated",
+        BIDBOT_ALREADY_ACTIVE: "BitBot already Activated",
+        BIDBOT_NOT_ACTIVE: "BitBot Deactivated",
         BIDBOT_DATA_EMPTY: "No existing bot data found for auction ID",
         BITBOT_PLAYS_REQUIRED: "plays limit is required",
         BIDBOT_PLAYS_NEGATIVE: "plays limit should be valid i.e. more than 0",
@@ -278,6 +298,7 @@ export const SOCKET_EVENT = {
     BIDBOT_LIMIT_REACH: "auction:bidbot:limit:reach",
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
+    AUCTION_START_DATE: "auction:start:date",
 };
 
 export const NODE_EVENT_SERVICE = {
@@ -296,6 +317,7 @@ export const NODE_EVENT_SERVICE = {
         "multiple:player:playbalance:credited",
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
+    PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
 };
 
 export const AUCTION_STATE = [
@@ -304,5 +326,20 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const dateFormateForMail = (start_date: string) => {
+    const startDateISOString = new Date(start_date).toISOString();
+    const currentDateISOString: string = new Date().toISOString();
+    const startDate: Date = new Date(startDateISOString);
+    const currentDate: Date = new Date(currentDateISOString);
+    const timeDifferenceMs: number =
+        currentDate.getTime() - startDate.getTime();
+    const hours: number = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes: number = Math.floor(
+        (timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds: number = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
+    return { hours, minutes, seconds };
+};
 
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;
