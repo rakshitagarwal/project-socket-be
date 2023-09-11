@@ -43,17 +43,29 @@ async function startSeed() {
                 title: "Mobile & Accessories",
             },
         });
-        await prismaClient.masterAuctionCategory.create({
-            data: {
-                title: "English action",
-            },
+        await prismaClient.masterAuctionCategory.createMany({
+            data: [
+                {
+                    title: "THE LAST PLAY",
+                    code: "TLP",
+                },
+                {
+                    title: "Lowest Unique Bid",
+                    code: "MIN",
+                },
+                {
+                    title: "Highest Unique Bid",
+                    code: "MAX",
+                },
+            ],
         });
         const adminData = await prismaClient.user.create({
             data: {
                 first_name: "admin",
                 last_name: "admin",
                 email: "admin929@yopmail.com",
-                password: "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                password:
+                    "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
                 referral_code: "admin23",
                 country: "India",
                 is_verified: true,
