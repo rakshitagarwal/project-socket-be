@@ -4,5 +4,7 @@ export interface IotpQuery {
     otp_type?: string
 }
 export interface IotpId {
-    id: string
+    user_id: string
+    otp_type?: string
+
 }
