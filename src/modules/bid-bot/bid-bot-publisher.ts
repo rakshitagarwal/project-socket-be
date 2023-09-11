@@ -77,6 +77,7 @@ async function filterBotCollection(
                             auction_id: playerinfo.auction_id,
                             player_id: playerinfo.player_id,
                         });
+
                     await redisClient.set(
                         `BidBotCount:${bidBotInfo[playerId].auction_id}`,
                         JSON.stringify(bidBotInfo)
