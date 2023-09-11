@@ -199,6 +199,18 @@ const deductPlays = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * Resends an OTP (One-Time Password) to a user.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @returns {Promise<void>} - A Promise that resolves with the response JSON.
+ */
+const resendOtpToUser=async(req: Request, res: Response) => {
+    const response = await userService.resendOtpToUser(req.body);
+    res.status(response.code).json(response);
+
+}
+
 const userHandlers = {
     register,
     otpVerification,
@@ -216,6 +228,7 @@ const userHandlers = {
     addPlaysInWallet,
     getPlayBalance,
     deductPlays,
+    resendOtpToUser
 };
 
 export default userHandlers;

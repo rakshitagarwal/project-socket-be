@@ -32,7 +32,8 @@ export const ENDPOINTS = {
     AUCTION_LISTING: "list/",
     REFERRAL: "/referral",
     REFERRAL_CONFIG: "config",
-    MULTIPLE: "multiple"
+    MULTIPLE: "multiple",
+    RESEND_OTP:"/resend-otp"
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -183,6 +184,8 @@ export const MESSAGES = {
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
         PLAYER_NOT_REGISTERED: "user not registered",
+        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:"Please check your email and verify your account!",
+        PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",

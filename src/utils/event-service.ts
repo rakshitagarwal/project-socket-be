@@ -542,6 +542,31 @@ eventService.on(
             template: TEMPLATE.PLAYER_AUCTION_REGISTER,
             message: payload.auctionName,
         });
+        if (
+            payload._count %
+                Math.ceil((payload.registeration_count * 10) / 100) ===
+            0
+        ) {
+            const adminInfo = await userQueries.fetchAdminInfo();
+            return await mailService({
+                user_name: `${adminInfo?.first_name}`,
+                email: [adminInfo?.email || ""],
+                subject: "Registration Player On Auction",
+                template: TEMPLATE.REGISTER_PRE_ADMIN,
+                message: `${payload.auctionName} have surged by an outstanding ${Math.ceil(payload._count*100/payload.registeration_count)}%`,
+            });
+        }
+        if (payload._count === payload.registeration_count) {
+            const adminInfo = await userQueries.fetchAdminInfo();
+           return  await mailService({
+                user_name: `${adminInfo?.first_name}`,
+                email: [adminInfo?.email || ""],
+                subject: "Registration Player On Auction",
+                template: TEMPLATE.REGISTER_PRE_ADMIN,
+                message: `${payload.auctionName} have surged by an outstanding 100%`,
+            });
+        }
+        
     }
 );
 
