@@ -411,6 +411,120 @@
         }
     },
     "paths": {
+        "/user/register": {
+            "post":{
+                "tags": ["users"],
+                "description": "Add the User Player",
+                "summary": "add the Player",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "first_name": {
+                              "type": "string",
+                              "format": "string",
+                              "nullable": false,
+                              "description": " add first name"
+                            },
+                            "last_name": {
+                                "type": "string",
+                                "format": "string",
+                                "nullable": false,
+                                "description": "add last name"
+                              },
+                              "email": {
+                                "type": "string",
+                                "format": "string",
+                                "nullable": false,
+                                "description": "player email"
+                              },
+                              "role": {
+                                "type": "string",
+                                "format": "string",
+                                "nullable": false,
+                                "description": "role",
+                                "default":"Player"
+                              },
+                              "country": {
+                                "type": "string",
+                                "format": "string",
+                                "nullable": false,
+                                "description": "add country name",
+                                "default":"India"
+                              }
+                              
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["users"],
+                "description": "Get the product category for product",
+                "summary": "Get the product category",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
         "/product-category": {
             "get": {
                 "tags": ["product-category"],
