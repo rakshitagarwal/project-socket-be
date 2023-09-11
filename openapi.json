@@ -12,8 +12,7 @@
         {
             "name": "auction-category",
             "description": "auction-category Operation"
-        }
-    , 
+        }, 
              { "name": "product-category", "description": "Product Category Operations" },
              { "name": "product", "description": "Product Operations" },
              { "name": "media", "description": "Media Operations" }
