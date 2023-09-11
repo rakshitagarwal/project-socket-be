@@ -305,6 +305,7 @@ export const bidByBotRecieved = async (
                 is_active: true,
                 plays_limit: botData.plays_limit,
                 plays: botData.plays_limit,
+                total_bot_bid: 0,
                 price_limit: botData?.price_limit || 0.0,
             };
             await redisClient.set(
@@ -353,7 +354,7 @@ export const deactivateBidbot = async (
                 message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                 auction_id: botData.auction_id,
                 player_id: botData.player_id,
-                status: false
+                status: existingBotData[botData.player_id].is_active
             });
             await redisClient.set(
                 `BidBotCount:${botData.auction_id}`,

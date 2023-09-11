@@ -331,7 +331,7 @@ eventService.on(
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                            message: "bidbot not active",
+                            message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                             auction_id:
                                 existingBotData[data.player_id].auction_id,
                             player_id:
