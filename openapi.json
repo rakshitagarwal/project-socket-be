@@ -9,13 +9,10 @@
     "tags": [
         { "name": "users", "description": "User's Operation" },
         { "name": "auctions", "description": "Auction's Operation" },
-        {
-            "name": "auction-category",
-            "description": "auction-category Operation"
-        }, 
-             { "name": "product-category", "description": "Product Category Operations" },
-             { "name": "product", "description": "Product Operations" },
-             { "name": "media", "description": "Media Operations" }
+        { "name": "auction-category","description": "auction-category Operation" }, 
+        { "name": "product-category", "description": "Product Category Operations" },
+        { "name": "product", "description": "Product Operations" },
+        { "name": "media", "description": "Media Operations" }
             ],
     "servers": [
         {
