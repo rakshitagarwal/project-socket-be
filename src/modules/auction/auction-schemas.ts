@@ -79,6 +79,18 @@ const ZAuctionAdd = z
                 invalid_type_error: "auction_category_id should be string!",
             })
             .uuid(),
+        total_bids: z
+            .number({
+                required_error: "total_bids is required!",
+                invalid_type_error: "total_bids should be number!",
+            })
+            .optional(),
+        decimal_count: z
+            .number({
+                required_error: "decimal_count is required!",
+                invalid_type_error: "decimal_count should be number!",
+            })
+            .optional(),
     })
     .strict();
 
@@ -383,6 +395,37 @@ const ZAuctionListing = z
     })
     .strict();
 
+const ZMinMaxAuction = z
+    .object({
+        auction_id: z
+            .string({
+                required_error: "Auction Id is required!",
+                invalid_type_error: "Auction Id should be string!",
+            })
+            .uuid({ message: "Auction Id should be UUID!" }),
+        player_id: z
+            .string({
+                required_error: "player Id is required!",
+                invalid_type_error: "player Id should be string!",
+            })
+            .uuid({ message: "player Id should be UUID!" }),
+        bid_price: z.preprocess(
+            (val) => parseFloat(val as string),
+            z.number({
+                invalid_type_error: "bid_price must be number",
+                required_error: "bid_price is required!",
+            })
+        ),
+        player_name: z.string({
+            required_error: "playerName is required!",
+            invalid_type_error: "playerName should be string!",
+        }),
+        profile_image: z.string({
+            required_error: "profileImage is required!",
+            invalid_type_error: "profileImage should be string!",
+        }),
+    })
+    .strict();
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
@@ -396,4 +439,5 @@ export const auctionSchemas = {
     ZSimulation,
     ZPlayerAuction,
     ZAuctionListing,
+    ZMinMaxAuction,
 };

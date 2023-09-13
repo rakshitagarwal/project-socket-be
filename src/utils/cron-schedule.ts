@@ -9,6 +9,7 @@ import {
 } from "../common/constants";
 import { AUCTION_STATE } from "./typing/utils-types";
 import { auctionStart } from "../modules/auction/auction-publisher";
+
 /**
  * @description - Define the cron expression for the job to run every 2 minutes
  */
@@ -43,8 +44,12 @@ const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
                 socket.playerSocket.emit(SOCKET_EVENT.AUCTION_STATE, {
                     message: MESSAGES.SOCKET.AUCTION_LIVE,
                     auctionId: upcomingInfo.id,
+                    code:upcomingInfo.auctionCategory.code,
+                    title: upcomingInfo.auctionCategory.title
                 });
-                auctionStart(upcomingInfo.id);
+                if(upcomingInfo.auctionCategory.code==='TLP'){
+                    auctionStart(upcomingInfo.id)
+                }
                 eventService.emit(
                     NODE_EVENT_SERVICE.UPDATE_PLAYER_REGISTER_STATUS,
                     upcomingInfo.id,

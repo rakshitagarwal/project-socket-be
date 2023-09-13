@@ -98,6 +98,9 @@ export interface IPlayerBidLog {
     created_by: Date;
     player_name: string;
     profile_image: string;
+    is_unique?: boolean;
+    is_lowest?: boolean;
+    is_highest?: boolean;
 }
 
 export interface IPlayerActionWinner {

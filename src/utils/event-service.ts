@@ -27,6 +27,7 @@ import { Imail } from "./typing/utils-types";
 import { randomBid } from "../modules/auction/auction-publisher";
 import { db } from "../config/db";
 import { setBotReferralCode } from "../common/helper";
+import { IMinMaxAuction } from "../middlewares/typings/middleware-types";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 
@@ -34,6 +35,7 @@ const socket = global as unknown as AppGlobal;
  * @description - this event use for sending email notifications
  */
 eventService.on(NODE_EVENT_SERVICE.USER_MAIL, async function (data: Imail) {
+    console.log(data);
     await mailService(data);
 });
 
@@ -554,12 +556,16 @@ eventService.on(
                 email: [adminInfo?.email || ""],
                 subject: "Registration Player On Auction",
                 template: TEMPLATE.REGISTER_PRE_ADMIN,
-                message: `${payload.auctionName} have surged by an outstanding ${Math.ceil(payload._count*100/payload.registeration_count)}%`,
+                message: `${
+                    payload.auctionName
+                } have surged by an outstanding ${Math.ceil(
+                    (payload._count * 100) / payload.registeration_count
+                )}%`,
             });
         }
         if (payload._count === payload.registeration_count) {
             const adminInfo = await userQueries.fetchAdminInfo();
-           return  await mailService({
+            return await mailService({
                 user_name: `${adminInfo?.first_name}`,
                 email: [adminInfo?.email || ""],
                 subject: "Registration Player On Auction",
@@ -567,7 +573,36 @@ eventService.on(
                 message: `${payload.auctionName} have surged by an outstanding 100%`,
             });
         }
-        
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.REGISTER_NEW_PLAYER,
+    async (playerData: IMinMaxAuction) => {
+        await auctionQueries.minMaxPlayerRegisters({
+            player_id: playerData.player_id,
+            auction_id: playerData.auction_id,
+        });
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END,
+    async (data: { auction_id: string; winnerInfo: IMinMaxAuction }) => {
+        await redisClient.del(`auction:live:${data.auction_id}`);
+        const auctionResult = JSON.parse((await redisClient.get(`auction:result:${data.auction_id}`)) as string);
+        if (auctionResult) {
+            const [bidLogs, userInfo] = await Promise.all([
+                userQueries.playerBidLog(auctionResult),
+                auctionQueries.updatePlayerRegistrationAuctionResultStatus(data.auction_id,data.winnerInfo.player_id),
+            ]);
+            if (bidLogs && userInfo) {
+                await Promise.all([
+                redisClient.del(`${data.auction_id}:bidHistory`),
+                redisClient.del(`auction:result:${data.auction_id}`)
+            ])
+            }
+        }
     }
 );
 

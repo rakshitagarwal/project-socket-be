@@ -1,5 +1,11 @@
 import z from "zod";
 
+const auctionCode = ["MIN", "MAX", "TLP"] as const;
+const titles = [
+    "THE LAST PLAY",
+    "Lowest Unique Bid",
+    "Highest Unique Bid",
+] as const;
 const UUID = z
     .string({
         required_error: "id is required in the auction category!",
@@ -10,9 +16,13 @@ const UUID = z
     });
 
 const ZAuctionCategory = z.object({
-    title: z.string({
+    title: z.enum(titles, {
         required_error: "title is required!",
         invalid_type_error: "title should be string!",
+    }),
+    code: z.enum(auctionCode, {
+        required_error: "code is required!",
+        invalid_type_error: "code should be string!",
     }),
 });
 
@@ -22,9 +32,15 @@ const ZVerifyUUID = z.object({
 
 const ZPutAuctionCategory = z.object({
     title: z
-        .string({
+        .enum(titles, {
             required_error: "title is required!",
             invalid_type_error: "title should be string!",
+        })
+        .optional(),
+    code: z
+        .enum(auctionCode, {
+            required_error: "code is required!",
+            invalid_type_error: "code should be string!",
         })
         .optional(),
     status: z
