@@ -34,7 +34,7 @@ const fetchUser = async (query: IuserQuery) => {
             mobile_no: true,
             avatar: true,
             referral_code: true,
-            status:true,
+            status: true,
             id: true,
             roles: {
                 select: {
@@ -447,6 +447,11 @@ const getPlayerByReferral = async (player_referral_code: string) => {
     return query;
 };
 
+/**
+ * PLays refund after the auction END
+ * @param data - player details
+ * @returns
+ */
 const addLastPlaysTrx = async (data: ILastPlayTrx) => {
     const queries = await db.playerWalletTx.create({
         data: {
@@ -460,25 +465,50 @@ const addLastPlaysTrx = async (data: ILastPlayTrx) => {
 };
 
 /**
- * @description Fetch the admin information for email 
+ * @description Fetch the admin information for email
  */
 const fetchAdminInfo = async () => {
     const user = await db.user.findFirst({
-        where:{
-            roles:{
-                title:"Admin",
-                is_deleted:false,
-                status:true
-            }
+        where: {
+            roles: {
+                title: "Admin",
+                is_deleted: false,
+                status: true,
+            },
         },
-        select:{
-            first_name:true,
-            email:true,
-        }
-    })
+        select: {
+            first_name: true,
+            email: true,
+        },
+    });
     return user;
-}
+};
 
+/**
+ * Find the country details
+ * @param {string} name - country name
+ * @returns
+ */
+const getCountries = async (name: string, code: string) => {
+    const countries = await db.countries.findMany({
+        where: {
+            name: {
+                contains: name,
+                mode: "insensitive",
+            },
+            code: {
+                contains: code,
+            },
+        },
+        select: {
+            id: true,
+            name: true,
+            code: true,
+            image: true,
+        },
+    });
+    return countries;
+};
 
 const userQueries = {
     fetchUser,
@@ -503,6 +533,7 @@ const userQueries = {
     creditTransactions,
     userPlaysBalance,
     addLastPlaysTrx,
-    fetchAdminInfo
+    fetchAdminInfo,
+    getCountries,
 };
 export default userQueries;

@@ -31,9 +31,11 @@ export const ENDPOINTS = {
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
     REFERRAL: "/referral",
+    COUNTRIES: "/countries/list",
     REFERRAL_CONFIG: "config",
     MULTIPLE: "multiple",
-    RESEND_OTP:"/resend-otp"
+    RESEND_OTP: "/resend-otp",
+    CURRENT_LOCATION: "/current/address",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -184,7 +186,8 @@ export const MESSAGES = {
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
         PLAYER_NOT_REGISTERED: "user not registered",
-        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:"Please check your email and verify your account!",
+        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:
+            "Please check your email and verify your account!",
         PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
     },
     ROLE: {
@@ -240,6 +243,10 @@ export const MESSAGES = {
     },
     ALL: {
         MULTER_ERROR: "multer error",
+        COUNTRY: "country details ",
+        IP_ADDR_NOT_FOUND: "Cannot fetch IP address",
+        CURRENT_LOCATION: "Get Current Location",
+        LOCATION_NOT_FOUND: "Cannot get the location",
     },
     JWT: {
         JWT_EXPIRED: "jwt expired",

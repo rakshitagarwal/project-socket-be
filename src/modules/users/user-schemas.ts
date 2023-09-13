@@ -1,5 +1,9 @@
 import { z } from "zod";
-const OTP_TYPE = ["email_verification", "login_type", "forget_password"] as const;
+const OTP_TYPE = [
+    "email_verification",
+    "login_type",
+    "forget_password",
+] as const;
 const register = z
     .object({
         first_name: z
@@ -252,7 +256,7 @@ const ZDeductPlays = z.object({
         }),
 });
 
-const resendOtp=z.object({
+const resendOtp = z.object({
     email: z
         .string({
             required_error: "email is required",
@@ -264,8 +268,25 @@ const resendOtp=z.object({
     otp_type: z.enum(OTP_TYPE, {
         required_error: "otp_type is required",
         invalid_type_error: "otp_type must be string",
-    })
-})
+    }),
+});
+
+const countries = z.object({
+    name: z
+        .string({
+            required_error: "name is required",
+            invalid_type_error: "name must be string",
+        })
+        .trim()
+        .optional(),
+    code: z
+        .string({
+            required_error: "code is required",
+            invalid_type_error: "code must be string",
+        })
+        .trim()
+        .optional(),
+});
 
 const userSchemas = {
     register,
@@ -281,7 +302,8 @@ const userSchemas = {
     ZPlayerBalance,
     ZPlayerId,
     ZDeductPlays,
-    resendOtp
+    resendOtp,
+    countries,
 };
 
 export default userSchemas;
