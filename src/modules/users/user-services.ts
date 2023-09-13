@@ -12,7 +12,6 @@ import {
     IuserPagination,
     IWalletTx,
     IDeductPlx,
-    ICountry,
 } from "./typings/user-types";
 import userQueries from "./user-queries";
 import bcrypt from "bcrypt";
@@ -20,7 +19,6 @@ import { responseBuilder } from "../../common/responses";
 import { PrismaClient } from "@prisma/client";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import eventService from "../../utils/event-service";
-import geoip from "geoip-lite";
 import {
     TEMPLATE,
     MESSAGES,
