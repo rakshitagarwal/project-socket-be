@@ -484,32 +484,6 @@ const fetchAdminInfo = async () => {
     return user;
 };
 
-/**
- * Find the country details
- * @param {string} name - country name
- * @returns
- */
-const getCountries = async (name: string, code: string) => {
-    const countries = await db.countries.findMany({
-        where: {
-            name: {
-                contains: name,
-                mode: "insensitive",
-            },
-            code: {
-                contains: code,
-            },
-        },
-        select: {
-            id: true,
-            name: true,
-            code: true,
-            image: true,
-        },
-    });
-    return countries;
-};
-
 const userQueries = {
     fetchUser,
     updateUser,
@@ -534,6 +508,5 @@ const userQueries = {
     userPlaysBalance,
     addLastPlaysTrx,
     fetchAdminInfo,
-    getCountries,
 };
 export default userQueries;

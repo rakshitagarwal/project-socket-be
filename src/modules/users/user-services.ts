@@ -626,41 +626,6 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL);
 };
 
-/**
- * @description Search the countries
- * @param search
- */
-const searchCoutries = async (search: ICountry) => {
-    let name = "";
-    let code = "";
-    if (search.name) {
-        name = search.name;
-    }
-    if (search.code) {
-        code = search.code;
-    }
-    const countries = await userQueries.getCountries(name, code);
-    return responseBuilder.okSuccess(MESSAGES.ALL.COUNTRY, countries);
-};
-
-/**
- * @description Get the Current Location
- * @param ipAddr - Ip Address of Users
- * @returns
- */
-const currentLocation = (ipAddr: string) => {
-    if (!ipAddr)
-        return responseBuilder.notFoundError(MESSAGES.ALL.IP_ADDR_NOT_FOUND);
-    const location = geoip.lookup(ipAddr);
-    if (location) {
-        return responseBuilder.okSuccess(
-            MESSAGES.ALL.CURRENT_LOCATION,
-            location
-        );
-    }
-    return responseBuilder.notFoundError(MESSAGES.ALL.LOCATION_NOT_FOUND);
-};
-
 const userService = {
     register,
     otpVerifcation,
@@ -680,8 +645,6 @@ const userService = {
     debitPlaysForPlayer,
     resendOtpToUser,
     // bidPlaysDebit,
-    searchCoutries,
-    currentLocation,
 };
 
 export default userService;

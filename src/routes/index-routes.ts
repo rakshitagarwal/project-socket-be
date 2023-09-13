@@ -11,6 +11,7 @@ import isAuthenticated from "../middlewares/authentication";
 import { mediaRouter } from "../modules/media/media-routes";
 import { bidBotRouter } from "../modules/bid-bot/bid-bot-routes";
 import { referralRouter } from "../modules/referral/referral-routes";
+import { locationRouter } from "../modules/location/location-routes";
 
 /**
  * Index Routes
@@ -18,6 +19,7 @@ import { referralRouter } from "../modules/referral/referral-routes";
  */
 export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRouter);
+v1Router.use(ENDPOINTS.LOCATION, [isAuthenticated], locationRouter);
 v1Router.use(ENDPOINTS.USERS, userRouter);
 v1Router.use(ENDPOINTS.AUCTIONS, [isAuthenticated], auctionRouter);
 v1Router.use(

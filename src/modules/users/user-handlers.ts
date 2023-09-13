@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import userService from "./user-services";
 import { IuserPagination } from "./typings/user-types";
-import { getClientIp } from "request-ip";
 /**
  * @description handles admin  or player registration
  * @param req { Request } - admin  or player's request object
@@ -211,27 +210,6 @@ const resendOtpToUser = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
-/**
- * Resends an OTP (One-Time Password) to a user.
- * @param {import('express').Request} req - The Express request object.
- * @param {import('express').Response} res - The Express response object.
- */
-const getCountry = async (req: Request, res: Response) => {
-    const response = await userService.searchCoutries(req.query);
-    res.status(response.code).json(response);
-};
-
-/**
- * Resends an OTP (One-Time Password) to a user.
- * @param {import('express').Request} req - The Express request object.
- * @param {import('express').Response} res - The Express response object.
- */
-const currentLocation = (req: Request, res: Response) => {
-    const ipAddr = getClientIp(req);
-    const response = userService.currentLocation(ipAddr as string);
-    res.status(response.code).json(response);
-};
-
 const userHandlers = {
     register,
     otpVerification,
@@ -250,8 +228,6 @@ const userHandlers = {
     getPlayBalance,
     deductPlays,
     resendOtpToUser,
-    getCountry,
-    currentLocation,
 };
 
 export default userHandlers;

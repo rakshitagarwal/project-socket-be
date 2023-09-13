@@ -36,6 +36,7 @@ export const ENDPOINTS = {
     MULTIPLE: "multiple",
     RESEND_OTP: "/resend-otp",
     CURRENT_LOCATION: "/current/address",
+    LOCATION: "/location",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",

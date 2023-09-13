@@ -106,11 +106,3 @@ userRouter.post(
     validateRequest.body(userSchemas.resendOtp),
     asyncHandler(userHandlers.resendOtpToUser)
 );
-
-userRouter.get(
-    ENDPOINTS.COUNTRIES,
-    [validateRequest.query(userSchemas.countries)],
-    asyncHandler(userHandlers.getCountry)
-);
-
-userRouter.get(ENDPOINTS.CURRENT_LOCATION, userHandlers.currentLocation);
