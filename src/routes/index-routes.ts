@@ -19,7 +19,7 @@ import { locationRouter } from "../modules/location/location-routes";
  */
 export const v1Router = Router();
 v1Router.use(ENDPOINTS.ROLE, roleRouter);
-v1Router.use(ENDPOINTS.LOCATION, [isAuthenticated], locationRouter);
+v1Router.use(ENDPOINTS.LOCATION, locationRouter);
 v1Router.use(ENDPOINTS.USERS, userRouter);
 v1Router.use(ENDPOINTS.AUCTIONS, [isAuthenticated], auctionRouter);
 v1Router.use(
