@@ -255,9 +255,9 @@ model Referral {
 
 model Countries {
   id         String   @id @default(uuid())
-  name       String
-  code       String
-  isd_code   String?
+  name       String   @db.VarChar(100)
+  code       String   @db.VarChar(100)
+  image      String   @db.VarChar(100)
   created_at DateTime @default(now()) @db.Timestamptz()
   User       User[]
 

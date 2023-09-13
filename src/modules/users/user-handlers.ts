@@ -205,11 +205,10 @@ const deductPlays = async (req: Request, res: Response) => {
  * @param {import('express').Response} res - The Express response object.
  * @returns {Promise<void>} - A Promise that resolves with the response JSON.
  */
-const resendOtpToUser=async(req: Request, res: Response) => {
+const resendOtpToUser = async (req: Request, res: Response) => {
     const response = await userService.resendOtpToUser(req.body);
     res.status(response.code).json(response);
-
-}
+};
 
 const userHandlers = {
     register,
@@ -228,7 +227,7 @@ const userHandlers = {
     addPlaysInWallet,
     getPlayBalance,
     deductPlays,
-    resendOtpToUser
+    resendOtpToUser,
 };
 
 export default userHandlers;

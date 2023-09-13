@@ -12,6 +12,7 @@ import {
     IuserPagination,
     IWalletTx,
     IDeductPlx,
+    ICountry,
 } from "./typings/user-types";
 import userQueries from "./user-queries";
 import bcrypt from "bcrypt";
@@ -19,6 +20,7 @@ import { responseBuilder } from "../../common/responses";
 import { PrismaClient } from "@prisma/client";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import eventService from "../../utils/event-service";
+import geoip from "geoip-lite";
 import {
     TEMPLATE,
     MESSAGES,
@@ -54,21 +56,32 @@ const register = async (body: Iuser) => {
     let applied_id: string;
     if (applied_referral) {
         const result = await userQueries.getPlayerByReferral(applied_referral);
-        if (!result) return responseBuilder.badRequestError(MESSAGES.REFERRAL.REFERRAL_NOT_VALID);
+        if (!result)
+            return responseBuilder.badRequestError(
+                MESSAGES.REFERRAL.REFERRAL_NOT_VALID
+            );
         applied_id = result.id;
     }
     if (isUser && !isUser.status) {
-        const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
+        const passcode = Math.round(Math.random() * 10000)
+            .toString()
+            .padStart(4, "0");
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [isUser.email],
             otp: passcode,
             user_name: `${isUser.first_name}`,
             subject: "Sign up verification",
             template: TEMPLATE.LOGIN_OTP,
-            message:"Please verify your account using your passcode!"
+            message: "Please verify your account using your passcode!",
         });
-        await otpQuery.createOtp({user_id: isUser.id, otp: Number(passcode), otp_type: OTP_TYPE.EMAIL_VERIFICATION});
-        return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_YOUR_EMAIL_VERIFY_ACCOUNT);
+        await otpQuery.createOtp({
+            user_id: isUser.id,
+            otp: Number(passcode),
+            otp_type: OTP_TYPE.EMAIL_VERIFICATION,
+        });
+        return responseBuilder.createdSuccess(
+            MESSAGES.USERS.CHECK_YOUR_EMAIL_VERIFY_ACCOUNT
+        );
     }
     payload.referral_code = setReferralCode();
     const randomNum = randomInt(1, 28);
@@ -78,20 +91,40 @@ const register = async (body: Iuser) => {
             data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
         });
 
-        if (applied_referral) await referralQueries.addReferral(
-            { player_id: user.id, player_referral_id: applied_id }, prisma);
+        if (applied_referral)
+            await referralQueries.addReferral(
+                { player_id: user.id, player_referral_id: applied_id },
+                prisma
+            );
 
-        const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
-        await prisma.playerWalletTransaction.create({data:{created_by:user.id,play_credit:1000,spend_on:"BUY_PLAYS"}})
-        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,{player_id:user.id,plays_balance:1000})
-        await prisma.userOTP.create({data: {user_id: user.id, otp: Number(passcode), otp_type: OTP_TYPE.EMAIL_VERIFICATION,}});
+        const passcode = Math.round(Math.random() * 10000)
+            .toString()
+            .padStart(4, "0");
+        await prisma.playerWalletTransaction.create({
+            data: {
+                created_by: user.id,
+                play_credit: 1000,
+                spend_on: "BUY_PLAYS",
+            },
+        });
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
+            player_id: user.id,
+            plays_balance: 1000,
+        });
+        await prisma.userOTP.create({
+            data: {
+                user_id: user.id,
+                otp: Number(passcode),
+                otp_type: OTP_TYPE.EMAIL_VERIFICATION,
+            },
+        });
         eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [user.email],
             otp: passcode,
             user_name: `${user.first_name}`,
             subject: "Sign up verification",
             template: TEMPLATE.LOGIN_OTP,
-            message:"Please verify your account using your passcode!"
+            message: "Please verify your account using your passcode!",
         });
     });
     return responseBuilder.createdSuccess(MESSAGES.USERS.CHECK_MAIL);
@@ -107,28 +140,39 @@ const otpVerifcation = async (body: IotpVerification) => {
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    if(!isUser.status && body.otp_type!==OTP_TYPE.EMAIL_VERIFICATION){
-        return responseBuilder.unauthorizedError(MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL)
+    if (!isUser.status && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
+        return responseBuilder.unauthorizedError(
+            MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
+        );
     }
-    const isOtp = await otpQuery.findUserOtp({otp: Number(body.otp),user_id: isUser.id,otp_type:body.otp_type});
+    const isOtp = await otpQuery.findUserOtp({
+        otp: Number(body.otp),
+        user_id: isUser.id,
+        otp_type: body.otp_type,
+    });
     if (!isOtp) {
         return responseBuilder.badRequestError(MESSAGES.OTP.INVALID_OTP);
     }
     const tokenInfo = generateAccessToken({ id: isUser.id });
-    if(body.otp_type===OTP_TYPE.EMAIL_VERIFICATION){
-          eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
+    if (body.otp_type === OTP_TYPE.EMAIL_VERIFICATION) {
+        eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
             email: [isUser.email],
             user_name: `${isUser.first_name}`,
             subject: "Welcome to Big Deal : Signup Details",
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
-        await userQueries.updateUser({id:isUser.id},{status:true})
+        await userQueries.updateUser({ id: isUser.id }, { status: true });
     }
     await Promise.all([
-         otpQuery.deleteOtp({ user_id:isUser.id,otp_type:body.otp_type }),
-         tokenPersistanceQuery.createTokenPersistence({...tokenInfo,user_agent: body.user_agent,user_id: isUser.id,ip_address: body.ip_address})
-    ])
-     delete (isUser as Partial<Pick<Iuser, "password">>).password;
+        otpQuery.deleteOtp({ user_id: isUser.id, otp_type: body.otp_type }),
+        tokenPersistanceQuery.createTokenPersistence({
+            ...tokenInfo,
+            user_agent: body.user_agent,
+            user_id: isUser.id,
+            ip_address: body.ip_address,
+        }),
+    ]);
+    delete (isUser as Partial<Pick<Iuser, "password">>).password;
     return responseBuilder.okSuccess(MESSAGES.USERS.USER_LOGIN, {
         ...isUser,
         accessToken: tokenInfo.access_token,
@@ -177,8 +221,10 @@ const playerLogin = async (body: IplayerLogin) => {
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    if(!isUser.status){
-        return responseBuilder.unauthorizedError(MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL)
+    if (!isUser.status) {
+        return responseBuilder.unauthorizedError(
+            MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
+        );
     }
     await prismaTransaction(async (prisma: PrismaClient) => {
         const passcode = Math.round(Math.random() * 10000)
@@ -197,7 +243,7 @@ const playerLogin = async (body: IplayerLogin) => {
             user_name: `${isUser.first_name}`,
             subject: "Login Passcode",
             template: TEMPLATE.LOGIN_OTP,
-            message:"Please login using your passcode!"
+            message: "Please login using your passcode!",
         });
     });
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL);
@@ -427,10 +473,9 @@ const addWalletTransaction = async (data: IWalletTx) => {
         });
 
         await referralService.referralCheck(data.player_id, prisma);
-        
+
         return { currency_trx };
     });
-    
 
     if (createTrax.currency_trx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
@@ -543,7 +588,6 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
 //     });
 // };
 
-
 /**
  * Resends an OTP (One-Time Password) to a user.
  * @param {Object} body - The request body containing email and otp_type.
@@ -552,23 +596,35 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
  * @returns {Promise<Object>} A Promise that resolves with a response object.
  * @throws {Error} Throws an error if the user is not found.
  */
-const resendOtpToUser= async(body:{email:string,otp_type:string})=>{
+const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
     const isUser = await userQueries.fetchUser({ email: body.email });
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    const passcode = Math.round(Math.random() * 10000).toString().padStart(4, "0");
+    const passcode = Math.round(Math.random() * 10000)
+        .toString()
+        .padStart(4, "0");
     eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
         email: [isUser.email],
         otp: passcode,
         user_name: `${isUser.first_name}`,
-        subject: OTP_TYPE.EMAIL_VERIFICATION===body.otp_type?"Sign up verification":"Login Passcode",
+        subject:
+            OTP_TYPE.EMAIL_VERIFICATION === body.otp_type
+                ? "Sign up verification"
+                : "Login Passcode",
         template: TEMPLATE.LOGIN_OTP,
-        message:OTP_TYPE.EMAIL_VERIFICATION===body.otp_type?'Please verify your account using your passcode':'Please login using your passcode.'
+        message:
+            OTP_TYPE.EMAIL_VERIFICATION === body.otp_type
+                ? "Please verify your account using your passcode"
+                : "Please login using your passcode.",
     });
-    await otpQuery.createOtp({user_id: isUser.id, otp: Number(passcode), otp_type: body.otp_type});
+    await otpQuery.createOtp({
+        user_id: isUser.id,
+        otp: Number(passcode),
+        otp_type: body.otp_type,
+    });
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL);
-}
+};
 
 const userService = {
     register,
@@ -587,7 +643,7 @@ const userService = {
     addWalletTransaction,
     getPlayerWalletBalance,
     debitPlaysForPlayer,
-    resendOtpToUser
+    resendOtpToUser,
     // bidPlaysDebit,
 };
 
