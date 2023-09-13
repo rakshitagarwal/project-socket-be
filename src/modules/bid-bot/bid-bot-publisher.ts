@@ -76,6 +76,7 @@ async function filterBotCollection(
                             message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                             auction_id: playerinfo.auction_id,
                             player_id: playerinfo.player_id,
+                            status: bidBotInfo[playerId].is_active
                         });
 
                     await redisClient.set(
@@ -352,7 +353,7 @@ export const deactivateBidbot = async (
         if (existingBotData && existingBotData[botData?.player_id]) {
             existingBotData[botData.player_id].is_active = false;
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
+                message: MESSAGES.BIDBOT.BIDBOT_DEACTIVATED,
                 auction_id: botData.auction_id,
                 player_id: botData.player_id,
                 status: existingBotData[botData.player_id].is_active

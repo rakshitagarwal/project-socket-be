@@ -321,12 +321,17 @@ eventService.on(
                 existingBotData[data.player_id].plays = updatedLimit;
                 existingBotData[data.player_id].total_bot_bid =
                     Number(existingBotData[data.player_id].total_bot_bid) + 1;
-                if (!updatedLimit) {
+                if (!updatedLimit || updatedLimit < 0) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_ERROR, {
-                            message: "plays limit reached",
+                            message: MESSAGES.BIDBOT.BIDBOT_PLAYS_LIMIT,
+                            auction_id:
+                                existingBotData[data.player_id].auction_id,
+                            player_id:
+                                existingBotData[data.player_id].player_id,
+                            status: existingBotData[data.player_id].is_active,
                         });
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
@@ -336,6 +341,7 @@ eventService.on(
                                 existingBotData[data.player_id].auction_id,
                             player_id:
                                 existingBotData[data.player_id].player_id,
+                            status: existingBotData[data.player_id].is_active,
                         });
                 }
                 await redisClient.set(
@@ -457,8 +463,9 @@ eventService.on(
                     is_bot: true,
                     is_verified: true,
                     referral_code: setBotReferralCode(),
-                    avatar: `assets/avatar/${faker.internet.userName().length
-                        }.png`,
+                    avatar: `assets/avatar/${
+                        faker.internet.userName().length
+                    }.png`,
                 };
             },
             {
@@ -553,12 +560,16 @@ eventService.on(
                 email: [adminInfo?.email || ""],
                 subject: "Registration Player On Auction",
                 template: TEMPLATE.REGISTER_PRE_ADMIN,
-                message: `${payload.auctionName} have surged by an outstanding ${Math.ceil(payload._count*100/payload.registeration_count)}%`,
+                message: `${
+                    payload.auctionName
+                } have surged by an outstanding ${Math.ceil(
+                    (payload._count * 100) / payload.registeration_count
+                )}%`,
             });
         }
         if (payload._count === payload.registeration_count) {
             const adminInfo = await userQueries.fetchAdminInfo();
-           return  await mailService({
+            return await mailService({
                 user_name: `${adminInfo?.first_name}`,
                 email: [adminInfo?.email || ""],
                 subject: "Registration Player On Auction",
@@ -566,7 +577,6 @@ eventService.on(
                 message: `${payload.auctionName} have surged by an outstanding 100%`,
             });
         }
-        
     }
 );
 
