@@ -101,4 +101,8 @@ userRouter.post(
     asyncHandler(userHandlers.deductPlays)
 );
 
-userRouter.post(ENDPOINTS.RESEND_OTP,validateRequest.body(userSchemas.resendOtp),asyncHandler(userHandlers.resendOtpToUser))
+userRouter.post(
+    ENDPOINTS.RESEND_OTP,
+    validateRequest.body(userSchemas.resendOtp),
+    asyncHandler(userHandlers.resendOtpToUser)
+);

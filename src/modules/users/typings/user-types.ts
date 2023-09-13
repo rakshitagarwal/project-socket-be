@@ -131,3 +131,5 @@ export type IMultipleUsers = IupdateUser & {
     role_id: string;
     referral_code: string;
 };
+
+export type ICountry = z.infer<typeof userSchemas.countries>;
