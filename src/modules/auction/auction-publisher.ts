@@ -581,7 +581,7 @@ export const minMaxAuctionBid = async (
     }
     const decimalPlayes = bidData.bid_price.toString().split(".")?.[1];
     if (bidData.bid_price.toString().includes(".") && decimalPlayes) {
-        if (decimalPlayes > isAuctionLive.decimal_count) {
+        if (decimalPlayes.toString().length > isAuctionLive.decimal_count) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: `Decimal value must be ${isAuctionLive.decimal_count}`,
             });

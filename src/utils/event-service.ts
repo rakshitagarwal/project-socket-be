@@ -593,7 +593,7 @@ eventService.on(
         const auctionResult = JSON.parse((await redisClient.get(`auction:result:${data.auction_id}`)) as string);
         if (auctionResult) {
             const [bidLogs, userInfo] = await Promise.all([
-                userQueries.playerBidLog(auctionResult),
+                userQueries.minPlayerBidLogs(auctionResult),
                 auctionQueries.updatePlayerRegistrationAuctionResultStatus(data.auction_id,data.winnerInfo.player_id),
             ]);
             if (bidLogs && userInfo) {

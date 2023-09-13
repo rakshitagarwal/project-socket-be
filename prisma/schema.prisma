@@ -323,8 +323,8 @@ model PlayerAuctionRegister {
 model PlayerBidLogs {
   id                    String                @id @default(uuid())
   bid_price             Float
-  bid_number            Int
-  remaining_seconds     Int
+  bid_number            Int?
+  remaining_seconds     Int?
   is_unique             Boolean?               @db.Boolean @default(false)
   is_lowest             Boolean?               @db.Boolean @default(false)
   is_highest            Boolean?               @db.Boolean @default(false)

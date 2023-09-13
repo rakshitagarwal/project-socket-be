@@ -409,13 +409,10 @@ const ZMinMaxAuction = z
                 invalid_type_error: "player Id should be string!",
             })
             .uuid({ message: "player Id should be UUID!" }),
-        bid_price: z.preprocess(
-            (val) => parseFloat(val as string),
-            z.number({
-                invalid_type_error: "bid_price must be number",
-                required_error: "bid_price is required!",
-            })
-        ),
+        bid_price: z.number({
+            invalid_type_error: "bid_price must be number",
+            required_error: "bid_price is required!"
+        }),
         player_name: z.string({
             required_error: "playerName is required!",
             invalid_type_error: "playerName should be string!",

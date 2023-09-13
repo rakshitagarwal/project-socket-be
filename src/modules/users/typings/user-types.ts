@@ -95,14 +95,22 @@ export interface IPlayerBidLog {
     bid_price: number;
     remaining_seconds: number;
     player_bot_id?: string;
-    created_by: Date;
+    created_at: Date;
     player_name: string;
     profile_image: string;
-    is_unique?: boolean;
-    is_lowest?: boolean;
-    is_highest?: boolean;
 }
 
+export interface IminAuctionBidLog{
+    is_unique: boolean;
+    is_lowest?: boolean;
+    is_highest?: boolean;
+    created_at: Date;
+    player_name: string;
+    profile_image: string;
+    player_id: string;
+    auction_id: string;
+    bid_price: number;
+}
 export interface IPlayerActionWinner {
     player_id: string;
     auction_id: string;
