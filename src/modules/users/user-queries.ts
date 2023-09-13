@@ -67,54 +67,6 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
  * @returns
  */
 const fetchAllUsers = async (query: IuserPaginationQuery) => {
-    // const user = await db.user.findMany({
-    //     where: {
-    //         AND: [
-    //             {
-    //                 is_deleted: false,
-    //             },
-    //             { OR: query.filter },
-    //             {
-    //                 roles: {
-    //                     title: "Player",
-    //                 },
-    //             },
-    //         ],
-    //     },
-    //     take: query.limit,
-    //     skip: query.page * query.limit,
-    //     orderBy: {
-    //         updated_at: "desc",
-    //     },
-    //     select: {
-    //         PlayerAuctionRegister: {
-    //             select: {
-    //                 _count: true,
-    //             },
-    //         },
-    //         AuctionResult: {
-    //             where: {
-    //                 result_status: "won",
-    //             },
-    //             select: {
-    //                 _count: true,
-    //             },
-    //         },
-    //         email: true,
-    //         id: true,
-    //         last_name: true,
-    //         first_name: true,
-    //         country: true,
-    //         avatar: true,
-    //         mobile_no: true,
-    //         referral_code: true,
-    //         roles: {
-    //             select: {
-    //                 title: true,
-    //             },
-    //         },
-    //     },
-    // });
     const user: Sql = Prisma.sql`
     SELECT
         u.id,
@@ -169,14 +121,10 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     ON
         u.role_id=mr.id
     WHERE
-        u.status=TRUE AND u.is_deleted=FALSE AND u.first_name LIKE ${
-            query.filter && query.filter + "%"
-        } OR u.last_name LIKE ${
-        query.filter && query.filter + "%"
-    } OR u.country LIKE ${query.filter && query.filter + "%"}
+        u.status=TRUE AND u.is_deleted=FALSE
     ORDER BY
         u.updated_at DESC
-    offset ${query.page}
+    offset ${query.page * query.limit}
     limit ${query.limit}
     `;
 
@@ -187,28 +135,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
             AND: [
                 {
                     is_deleted: false,
-                },
-                {
-                    OR: [
-                        {
-                            first_name: {
-                                contains: query.filter,
-                                mode: "insensitive",
-                            },
-                        },
-                        {
-                            last_name: {
-                                contains: query.filter,
-                                mode: "insensitive",
-                            },
-                        },
-                        {
-                            country: {
-                                contains: query.filter,
-                                mode: "insensitive",
-                            },
-                        },
-                    ],
+                    status: true,
                 },
                 {
                     roles: {

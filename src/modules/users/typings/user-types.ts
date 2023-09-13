@@ -77,7 +77,6 @@ export interface IuserPagination {
 export interface IuserPaginationQuery {
     limit: number;
     page: number;
-    filter?: string;
 }
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;

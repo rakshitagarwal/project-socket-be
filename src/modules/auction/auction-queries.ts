@@ -543,7 +543,7 @@ const fetchPlayerAuction = async (
     where T5.player_id = ${player_id}
     GROUP BY T5.auction_id, T5.player_id, T5.status,T5.total_bids,T5.created_at,T5.title,T5.id ,T5.bid_increment_price,T5.plays_consumed_on_bid,T5.total_bid_consumed
     order by T5.created_at desc
-    offset ${offset}
+    offset ${offset * limit}
     limit ${limit}
     `;
 

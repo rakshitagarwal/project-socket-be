@@ -157,7 +157,13 @@ const getAllusers = async (req: Request, res: Response) => {
     const response = await userService.fetchAllUsers(
         req.query as unknown as IuserPagination
     );
-    res.status(response.code).json(response);
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
 };
 
 /**

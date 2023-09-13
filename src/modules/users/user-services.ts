@@ -420,8 +420,8 @@ const fetchAllUsers = async (query: IuserPagination) => {
     const result = await userQueries.fetchAllUsers({
         page,
         limit,
-        filter: query.search,
     });
+
     return responseBuilder.okSuccess(
         MESSAGES.USERS.USER_FOUND,
         result.userDetails,
