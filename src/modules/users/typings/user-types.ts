@@ -1,5 +1,6 @@
 import { z } from "zod";
 import userSchemas from "../user-schemas";
+import { locationSchemas } from "../../location/location-schema";
 
 export interface Iuser {
     first_name: string;
@@ -131,3 +132,5 @@ export type IMultipleUsers = IupdateUser & {
     role_id: string;
     referral_code: string;
 };
+
+export type ICountry = z.infer<typeof locationSchemas.countries>;
