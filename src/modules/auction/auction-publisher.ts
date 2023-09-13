@@ -395,8 +395,9 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
             winnerInfo: payload.winnerInfo,
         });
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
-            message: MESSAGES.SOCKET.AUCTION_ENDED,
+            message: MESSAGES.SOCKET.AUCTION_WINNER,
             auction_id: payload.auction_id,
+            winnerInfo: payload.winnerInfo,
         });
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {
             auctionId: payload.auction_id,
