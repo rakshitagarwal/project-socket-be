@@ -35,6 +35,7 @@ const fetchUser = async (query: IuserQuery) => {
             mobile_no: true,
             avatar: true,
             referral_code: true,
+            status: true,
             id: true,
             roles: {
                 select: {
@@ -556,6 +557,11 @@ const getPlayerByReferral = async (player_referral_code: string) => {
     return query;
 };
 
+/**
+ * PLays refund after the auction END
+ * @param data - player details
+ * @returns
+ */
 const addLastPlaysTrx = async (data: ILastPlayTrx) => {
     const queries = await db.playerWalletTx.create({
         data: {
@@ -566,6 +572,26 @@ const addLastPlaysTrx = async (data: ILastPlayTrx) => {
         },
     });
     return queries;
+};
+
+/**
+ * @description Fetch the admin information for email
+ */
+const fetchAdminInfo = async () => {
+    const user = await db.user.findFirst({
+        where: {
+            roles: {
+                title: "Admin",
+                is_deleted: false,
+                status: true,
+            },
+        },
+        select: {
+            first_name: true,
+            email: true,
+        },
+    });
+    return user;
 };
 
 const userQueries = {
@@ -591,5 +617,6 @@ const userQueries = {
     creditTransactions,
     userPlaysBalance,
     addLastPlaysTrx,
+    fetchAdminInfo,
 };
 export default userQueries;

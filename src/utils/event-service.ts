@@ -331,7 +331,7 @@ eventService.on(
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_STATUS, {
-                            message: "bidbot not active",
+                            message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                             auction_id:
                                 existingBotData[data.player_id].auction_id,
                             player_id:
@@ -457,9 +457,8 @@ eventService.on(
                     is_bot: true,
                     is_verified: true,
                     referral_code: setBotReferralCode(),
-                    avatar: `assets/avatar/${
-                        faker.internet.userName().length
-                    }.png`,
+                    avatar: `assets/avatar/${faker.internet.userName().length
+                        }.png`,
                 };
             },
             {
@@ -543,6 +542,31 @@ eventService.on(
             template: TEMPLATE.PLAYER_AUCTION_REGISTER,
             message: payload.auctionName,
         });
+        if (
+            payload._count %
+                Math.ceil((payload.registeration_count * 10) / 100) ===
+            0
+        ) {
+            const adminInfo = await userQueries.fetchAdminInfo();
+            return await mailService({
+                user_name: `${adminInfo?.first_name}`,
+                email: [adminInfo?.email || ""],
+                subject: "Registration Player On Auction",
+                template: TEMPLATE.REGISTER_PRE_ADMIN,
+                message: `${payload.auctionName} have surged by an outstanding ${Math.ceil(payload._count*100/payload.registeration_count)}%`,
+            });
+        }
+        if (payload._count === payload.registeration_count) {
+            const adminInfo = await userQueries.fetchAdminInfo();
+           return  await mailService({
+                user_name: `${adminInfo?.first_name}`,
+                email: [adminInfo?.email || ""],
+                subject: "Registration Player On Auction",
+                template: TEMPLATE.REGISTER_PRE_ADMIN,
+                message: `${payload.auctionName} have surged by an outstanding 100%`,
+            });
+        }
+        
     }
 );
 

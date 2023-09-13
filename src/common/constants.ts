@@ -31,8 +31,12 @@ export const ENDPOINTS = {
     ASSETS: "/assets/",
     AUCTION_LISTING: "list/",
     REFERRAL: "/referral",
+    COUNTRIES: "/countries/list",
     REFERRAL_CONFIG: "config",
-    MULTIPLE: "multiple"
+    MULTIPLE: "multiple",
+    RESEND_OTP: "/resend-otp",
+    CURRENT_LOCATION: "/current/address",
+    LOCATION: "/location",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -183,6 +187,9 @@ export const MESSAGES = {
         USER_DELETED: "user deleted",
         SIGNUP: "user register successfully!",
         PLAYER_NOT_REGISTERED: "user not registered",
+        CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:
+            "Please check your email and verify your account!",
+        PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
@@ -219,14 +226,14 @@ export const MESSAGES = {
         REFERRAL_NOT_VALID: "referral code is not valid",
     },
     BIDBOT: {
-        BIDBOT_CREATE_SUCCESS: "bidbot created successfully",
-        BIDBOT_FOUND: "bidbot found successfully",
-        BIDBOT_CREATE_FAIL: "bidbot creation failed",
-        BIDBOT_NOT_FOUND: "bidbot not found or id not valid",
-        BIDBOT_UPDATE_LIMIT: "bidbot limit updated successfully",
-        BIDBOT_ACTIVE: "bidbot active",
-        BIDBOT_ALREADY_ACTIVE: "bidbot already active",
-        BIDBOT_NOT_ACTIVE: "bidbot not active",
+        BIDBOT_CREATE_SUCCESS: "BitBot created successfully",
+        BIDBOT_FOUND: "BitBot found successfully",
+        BIDBOT_CREATE_FAIL: "BitBot creation failed",
+        BIDBOT_NOT_FOUND: "BitBot not found or id not valid",
+        BIDBOT_UPDATE_LIMIT: "BitBot limit updated successfully",
+        BIDBOT_ACTIVE: "BitBot Activated",
+        BIDBOT_ALREADY_ACTIVE: "BitBot already Activated",
+        BIDBOT_NOT_ACTIVE: "BitBot Deactivated",
         BIDBOT_DATA_EMPTY: "No existing bot data found for auction ID",
         BITBOT_PLAYS_REQUIRED: "plays limit is required",
         BIDBOT_PLAYS_NEGATIVE: "plays limit should be valid i.e. more than 0",
@@ -237,6 +244,10 @@ export const MESSAGES = {
     },
     ALL: {
         MULTER_ERROR: "multer error",
+        COUNTRY: "country details ",
+        IP_ADDR_NOT_FOUND: "Cannot fetch IP address",
+        CURRENT_LOCATION: "Get Current Location",
+        LOCATION_NOT_FOUND: "Cannot get the location",
     },
     JWT: {
         JWT_EXPIRED: "jwt expired",

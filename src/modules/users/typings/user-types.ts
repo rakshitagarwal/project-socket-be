@@ -1,5 +1,6 @@
 import { z } from "zod";
 import userSchemas from "../user-schemas";
+import { locationSchemas } from "../../location/location-schema";
 
 export interface Iuser {
     first_name: string;
@@ -144,3 +145,4 @@ export interface IGetAllUsers {
     Auction_Won: number;
     Player_Participated: number;
 }
+export type ICountry = z.infer<typeof locationSchemas.countries>;

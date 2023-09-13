@@ -1,4 +1,9 @@
 import { z } from "zod";
+const OTP_TYPE = [
+    "email_verification",
+    "login_type",
+    "forget_password",
+] as const;
 const register = z
     .object({
         first_name: z
@@ -27,7 +32,8 @@ const register = z
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
-        applied_referral: z.string({ invalid_type_error: "applied referral must be string" })
+        applied_referral: z
+            .string({ invalid_type_error: "applied referral must be string" })
             .min(7)
             .optional(),
     })
@@ -47,9 +53,10 @@ const emailVerifcation = z
             .email({ message: "Invalid email address" })
             .trim()
             .toLowerCase(),
-        otp_type: z
-            .string({ invalid_type_error: "otp_type must be string" })
-            .optional(),
+        otp_type: z.enum(OTP_TYPE, {
+            required_error: "otp_type is required",
+            invalid_type_error: "otp_type must be string",
+        }),
     })
     .strict();
 
@@ -249,6 +256,21 @@ const ZDeductPlays = z.object({
         }),
 });
 
+const resendOtp = z.object({
+    email: z
+        .string({
+            required_error: "email is required",
+            invalid_type_error: "email must be string",
+        })
+        .email({ message: "Invalid email address" })
+        .trim()
+        .toLowerCase(),
+    otp_type: z.enum(OTP_TYPE, {
+        required_error: "otp_type is required",
+        invalid_type_error: "otp_type must be string",
+    }),
+});
+
 const userSchemas = {
     register,
     emailVerifcation,
@@ -263,6 +285,7 @@ const userSchemas = {
     ZPlayerBalance,
     ZPlayerId,
     ZDeductPlays,
+    resendOtp,
 };
 
 export default userSchemas;

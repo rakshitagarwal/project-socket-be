@@ -100,3 +100,9 @@ userRouter.post(
     [isAuthenticated, validateRequest.body(userSchemas.ZDeductPlays)],
     asyncHandler(userHandlers.deductPlays)
 );
+
+userRouter.post(
+    ENDPOINTS.RESEND_OTP,
+    validateRequest.body(userSchemas.resendOtp),
+    asyncHandler(userHandlers.resendOtpToUser)
+);
