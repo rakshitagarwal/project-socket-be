@@ -367,7 +367,11 @@ export const randomBid = async (auction_id: string, count: number) => {
     }
 };
 ////////////////////////////////////////////  min max auction step //////////////////////////////////////////
-
+/**
+ * Stores auction result information in Redis, emits socket events, and updates auction state if necessary.
+ * @param {IminMaxResult} payload - The payload containing auction result data.
+ * @returns {Promise<void>} A Promise that resolves when the operation is complete.
+ */
 const minMaxResultInfo = async (payload: IminMaxResult) => {
     await redisClient.set(
         `auction:result:${payload.auction_id}`,
@@ -406,6 +410,15 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
     }
 };
 
+/**
+ * Calculate the maximum bid in an auction, identify winners, and call the minMaxResultInfo function to store and broadcast the results.
+ * @param {IMinMaxAuction[]} bidHistory - The array of bid history objects.
+ * @param {string} socketId - The socket ID of the auction.
+ * @param {number} totalBid - The total number of bids.
+ * @param {string} auction_id - The ID of the auction.
+ * @param {string} player_id - The ID of the player.
+ * @returns {void}
+ */
 const maxAuction = async (
     bidHistory: IMinMaxAuction[],
     socketId: string,
@@ -457,6 +470,15 @@ const maxAuction = async (
     });
 };
 
+/**
+ * Calculate the minimum bid in an auction, identify winners, and call the minMaxResultInfo function to store and broadcast the results.
+ * @param {IMinMaxAuction[]} bidHistory - The array of bid history objects.
+ * @param {string} socketId - The socket ID of the auction.
+ * @param {number} totalBid - The total number of bids.
+ * @param {string} auction_id - The ID of the auction.
+ * @param {string} player_id - The ID of the player.
+ * @returns {void}
+ */
 const minAuction = async (
     bidHistory: IMinMaxAuction[],
     socketId: string,
@@ -508,6 +530,12 @@ const minAuction = async (
     });
 };
 
+/**
+ * Perform a minimum-maximum bid transaction in an auction, update player balances, and store bid history.
+ * @param {IMinMaxAuction} payload - The payload containing bid transaction data.
+ * @param {string} socketId - The socket ID for communication.
+ * @returns {Promise<{ status: boolean }>} A Promise that resolves to an object with a `status` property indicating the success of the transaction.
+ */
 const minMaxTransaction = async (payload: IMinMaxAuction, socketId: string) => {
     const [balanceInfo, auctionInfo] = await Promise.all([
         redisClient.get("player:plays:balance"),
@@ -551,6 +579,12 @@ const minMaxTransaction = async (payload: IMinMaxAuction, socketId: string) => {
     return { status: true };
 };
 
+/**
+ * Process a bid in a minimum-maximum auction, validate the bid, update player balances, and handle auction logic based on the category type.
+ * @param {string} socketId - The socket ID for communication.
+ * @param {IMinMaxAuction} bidData - The bid data to process.
+ * @returns {void}
+ */
 export const minMaxAuctionBid = async (
     socketId: string,
     bidData: IMinMaxAuction
@@ -641,6 +675,14 @@ export const minMaxAuctionBid = async (
     }
 };
 
+/**
+ * Retrieve and emit the minimum-maximum auction results for a specific player and auction to a socket.
+ * @param {Object} payload - The payload containing auction and player information.
+ * @param {string} payload.auction_id - The ID of the auction.
+ * @param {string} payload.player_id - The ID of the player.
+ * @param {string} payload.socketId - The socket ID for communication.
+ * @returns {void}
+ */
 export const getMinMaxAuctionResult = async (payload: {
     auction_id: string;
     player_id: string;

@@ -27,12 +27,11 @@ const cronJobAuctionLive = new CronJob(cronExpressionEveryMin, async () => {
      * Get the upcoming player auctions.
      * @type {Array<UpcomingAuctionInfo>}
      */
-    const upcomingAuction = await auctionQueries.upcomingPlayerAuction();
+    const upcomingAuction = await auctionQueries.upcomingPlayerAuction();    
     if (upcomingAuction.length) {
         upcomingAuction.forEach(async (upcomingInfo): Promise<void> => {
             const currectDate = new Date();
             if (
-                upcomingInfo.is_preRegistered &&
                 upcomingInfo.start_date &&
                 currectDate >=
                     new Date(upcomingInfo.start_date as unknown as string)
