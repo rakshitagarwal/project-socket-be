@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { locationService } from "./location-service";
-import { getClientIp } from "request-ip";
 
 /**
  * @description Get the Countries
@@ -18,8 +17,9 @@ const getCountry = async (req: Request, res: Response) => {
  * @param res - Response
  */
 const currentLocation = (req: Request, res: Response) => {
-    const ipAddr = getClientIp(req);
-    const response = locationService.currentLocation(ipAddr as string);
+    const response = locationService.currentLocation(
+        req.clientIp as unknown as string
+    );
     res.status(response.code).json(response);
 };
 
