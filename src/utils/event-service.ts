@@ -288,12 +288,10 @@ eventService.on(
         auction_id: string;
     }) => {
         const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
+            (await redisClient.get("player:plays:balance")) as unknown as string);
         const existingBotData = JSON.parse(
-            (await redisClient.get(`BidBotCount:${data.auction_id}`)) as string
-        );
-
+            (await redisClient.get(`BidBotCount:${data.auction_id}`)) as string);
+            
         if (playersBalance) {
             if (playersBalance[data.player_id]) {
                 playersBalance[data.player_id] =
@@ -314,13 +312,33 @@ eventService.on(
         }
 
         if (existingBotData) {
-            const updatedLimit = Number(
-                existingBotData?.[data.player_id]?.plays - data.plays_balance
-            );
+            if (existingBotData[data.player_id].price_limit) {
+                const bidPrices = JSON.parse((await redisClient.get(`${data.auction_id}:bidHistory`)) as string);
+                if (bidPrices && bidPrices.slice(-1).bid_price >= existingBotData[data.player_id].price_limit) {
+                    existingBotData[data.player_id].is_active = false;
+                    socket.playerSocket
+                        .to(existingBotData[data.player_id].socket_id)
+                        .emit(SOCKET_EVENT.BIDBOT_ERROR, {
+                            message: MESSAGES.BIDBOT.BIDBOT_PRICE_REACHED,
+                            auction_id: existingBotData[data.player_id].auction_id,
+                            player_id: existingBotData[data.player_id].player_id,
+                            status: false,
+                        });
+                        socket.playerSocket
+                        .to(existingBotData[data.player_id].socket_id)
+                        .emit(SOCKET_EVENT.BIDBOT_STATUS, {
+                            message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
+                            auction_id: existingBotData[data.player_id].auction_id,
+                            player_id: existingBotData[data.player_id].player_id,
+                            status: false,
+                        });
+                    return;
+                }
+            }
+            const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
             if (existingBotData[data.player_id]) {
                 existingBotData[data.player_id].plays = updatedLimit;
-                existingBotData[data.player_id].total_bot_bid =
-                    Number(existingBotData[data.player_id].total_bot_bid) + 1;
+                existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
                 if (!updatedLimit || updatedLimit < 0) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket

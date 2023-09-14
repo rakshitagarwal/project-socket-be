@@ -211,20 +211,25 @@ export const bidByBotRecieved = async (
                 message: MESSAGES.BIDBOT.BITBOT_PLAYS_REQUIRED,
                 auction_id: botData.auction_id,
                 player_id: botData.player_id,
+                status: false,
             });
             return;
         }
         if (botData.plays_limit < 1) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
-                message: MESSAGES.BIDBOT.BIDBOT_PLAYS_NEGATIVE,
+                message: MESSAGES.BIDBOT.BIDBOT_PRICE_NEGATIVE,
                 auction_id: botData.auction_id,
                 player_id: botData.player_id,
+                status: false,
             });
             return;
         }
         if ((botData?.price_limit as number) < 0.0) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
                 message: MESSAGES.BIDBOT.BIDBOT_PRICE_NEGATIVE,
+                auction_id: botData.auction_id,
+                player_id: botData.player_id,
+                status: false
             });
             return;
         }
@@ -242,6 +247,9 @@ export const bidByBotRecieved = async (
                     .to(socketId)
                     .emit(SOCKET_EVENT.BIDBOT_ERROR, {
                         message: MESSAGES.BIDBOT.BIDBOT_PRICE_REACHED,
+                        auction_id: botData.auction_id,
+                        player_id: botData.player_id,
+                        status: false,
                     });
                 return;
             }
@@ -250,6 +258,9 @@ export const bidByBotRecieved = async (
                     .to(socketId)
                     .emit(SOCKET_EVENT.BIDBOT_ERROR, {
                         message: MESSAGES.BIDBOT.BIDBOT_PRICE_GREATER,
+                        auction_id: botData.auction_id,
+                        player_id: botData.player_id,
+                        status: false,
                     });
                 return;
             }
