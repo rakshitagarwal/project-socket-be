@@ -157,6 +157,16 @@ const auctionListing = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * Auction retrieve By Id (Total)
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ */
+const getByIdTotalAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.getByIdTotalAuction(req.params.id as string);
+    res.status(response.code).json(response);
+};
+
 export const auctionHandler = {
     create,
     getById,
@@ -171,4 +181,5 @@ export const auctionHandler = {
     purchase,
     startSimulation,
     auctionListing,
+    getByIdTotalAuction
 };

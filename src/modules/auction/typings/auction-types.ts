@@ -53,3 +53,14 @@ export interface IRandomSimulationBot {
     country: string | null;
     is_bot: boolean;
 }
+
+
+export interface IAuctionTotal {
+    id: string,
+    plays_consumed_on_bid: number,
+    total_bid: number,
+    total_plays_consumed: number,
+    total_price: number,
+    plays_lost_consumed: number
+}
+

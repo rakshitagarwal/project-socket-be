@@ -13,6 +13,7 @@ import { auctionQueries } from "./auction-queries";
 import {
     IAuction,
     IAuctionListing,
+    IAuctionTotal,
     IPagination,
     IPlayerRegister,
     IPurchase,
@@ -256,7 +257,7 @@ const playerRegister = async (data: IPlayerRegister) => {
             email: player.email,
             auctionName: auction.title,
             registeration_count: auction.registeration_count,
-            _count: auction._count.PlayerAuctionRegister+1,
+            _count: auction._count.PlayerAuctionRegister + 1,
         });
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
             message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
@@ -529,6 +530,27 @@ const auctionLists = async (data: IAuctionListing) => {
     );
 };
 
+/**
+ * Auction Retrieve Total
+ * @description retrieval of one auction using its unique id
+ * @param {string} auctionId - auction ObjectID
+ * @returns - response builder with { code, success, message, data, metadata }
+ */
+const getByIdTotalAuction = async (auctionId: string) => {
+    const auction: IAuctionTotal[] = await auctionQueries.getTotalAuction(auctionId);
+    const payload = {
+        id: auction[0]?.id,
+        plays_consumed_on_bid: Number(auction[0]?.plays_consumed_on_bid),
+        total_bid: Number(auction[0]?.total_bid),
+        total_plays_consumed: Number(auction[0]?.total_plays_consumed),
+        total_price: auction[0]?.total_price,
+        plays_lost_consumed: auction[0]?.plays_lost_consumed
+    }
+    if (auction.length)
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, payload);
+    return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+};
+
 export const auctionService = {
     create,
     getById,
@@ -543,4 +565,5 @@ export const auctionService = {
     purchaseAuctionProduct,
     startSimulation,
     auctionLists,
+    getByIdTotalAuction
 };

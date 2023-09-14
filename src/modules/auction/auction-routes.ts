@@ -89,3 +89,9 @@ auctionRouter.post(
     [validateRequest.body(auctionSchemas.ZSimulation)],
     handleAsync(auctionHandler.startSimulation)
 );
+
+auctionRouter.get(
+    ENDPOINTS.AUCTION_TOTAL,
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.getByIdTotalAuction)
+);
