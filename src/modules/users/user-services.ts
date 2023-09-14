@@ -415,24 +415,24 @@ const resetPassword = async (body: IresetPassword) => {
  * @param {object} query  - query contain the page limit and search fields
  */
 const fetchAllUsers = async (query: IuserPagination) => {
-    const filter = [];
     const page = parseInt(query.page) || 0;
     const limit = parseInt(query.limit) || 10;
-    if (query.search) {
-        filter.push(
-            { first_name: { contains: query.search, mode: "insensitive" } },
-            { last_name: { contains: query.search, mode: "insensitive" } },
-            { country: { contains: query.search, mode: "insensitive" } }
-        );
-    }
-    const result = await userQueries.fetchAllUsers({ page, limit, filter });
-    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, result.user, {
-        limit,
+    const result = await userQueries.fetchAllUsers({
         page,
-        totalRecord: result.count,
-        totalPage: Math.ceil(result.count / limit),
-        search: query.search,
+        limit,
     });
+
+    return responseBuilder.okSuccess(
+        MESSAGES.USERS.USER_FOUND,
+        result.userDetails,
+        {
+            limit,
+            page,
+            totalRecord: result.count,
+            totalPage: Math.ceil(result.count / limit),
+            search: query.search,
+        }
+    );
 };
 
 /**
