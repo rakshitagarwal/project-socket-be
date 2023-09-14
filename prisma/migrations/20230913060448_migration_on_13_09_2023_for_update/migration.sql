@@ -5,7 +5,7 @@ CREATE TYPE "Currency" AS ENUM ('FIAT', 'CRYPTO');
 CREATE TYPE "currencyType" AS ENUM ('USDTERC20', 'USDTRC20', 'BIGTOKEN');
 
 -- CreateEnum
-CREATE TYPE "PlaySpend" AS ENUM ('BUY_PLAYS', 'REFUND_PLAYS', 'BID_PLAYS', 'REFERRAL_PLAYS');
+CREATE TYPE "PlaySpend" AS ENUM ('BUY_PLAYS', 'REFUND_PLAYS', 'BID_PLAYS', 'REFERRAL_PLAYS', 'LAST_PLAYS');
 
 -- CreateEnum
 CREATE TYPE "auctionState" AS ENUM ('upcoming', 'live', 'completed', 'cancelled');
@@ -38,11 +38,11 @@ CREATE TABLE "users" (
     "mobile_no" TEXT,
     "password" TEXT,
     "avatar" TEXT,
-    "referral_code" TEXT,
+    "referral_code" TEXT NOT NULL,
     "is_verified" BOOLEAN NOT NULL DEFAULT false,
     "is_bot" BOOLEAN NOT NULL DEFAULT false,
     "role_id" TEXT NOT NULL,
-    "status" BOOLEAN NOT NULL DEFAULT true,
+    "status" BOOLEAN NOT NULL DEFAULT false,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -193,8 +193,8 @@ CREATE TABLE "user_referral" (
     "id" TEXT NOT NULL,
     "player_id" TEXT NOT NULL,
     "player_referral_id" TEXT NOT NULL,
-    "status" BOOLEAN NOT NULL,
-    "is_deleted" BOOLEAN NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -206,8 +206,8 @@ CREATE TABLE "referral" (
     "id" TEXT NOT NULL,
     "reward_plays" INTEGER NOT NULL,
     "credit_plays" INTEGER NOT NULL,
-    "status" BOOLEAN NOT NULL,
-    "is_deleted" BOOLEAN NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by" TEXT NOT NULL,
@@ -218,9 +218,9 @@ CREATE TABLE "referral" (
 -- CreateTable
 CREATE TABLE "countries" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
-    "isd_code" TEXT,
+    "name" VARCHAR(100) NOT NULL,
+    "code" VARCHAR(100) NOT NULL,
+    "image" VARCHAR(100) NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "countries_pkey" PRIMARY KEY ("id")
@@ -345,6 +345,9 @@ CREATE TABLE "player_buy_now" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_referral_code_key" ON "users"("referral_code");
+
+-- CreateIndex
 CREATE INDEX "users_email_idx" ON "users"("email");
 
 -- CreateIndex
@@ -379,9 +382,6 @@ CREATE UNIQUE INDEX "countries_name_key" ON "countries"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "player_auction_register_auction_id_player_id_key" ON "player_auction_register"("auction_id", "player_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "player_auction_register_player_id_auction_id_key" ON "player_auction_register"("player_id", "auction_id");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "master_roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
