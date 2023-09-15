@@ -474,15 +474,14 @@ const addWalletTransaction = async (data: IWalletTx) => {
 
         return { currency_trx };
     });
-    
     if (createTrax.currency_trx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: data.player_id,
-            plays_balance: current_plays
+            plays_balance: current_plays,
         });
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
-            { plays: data.plays }
+            { plays: current_plays }
         );
     }
     return responseBuilder.expectationFaild(
