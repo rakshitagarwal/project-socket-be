@@ -17,6 +17,7 @@ import {
     IPlayerRegister,
     IPurchase,
     IStartAuction,
+    ITotalAuctionInfo,
 } from "./typings/auction-types";
 import { Sql } from "@prisma/client/runtime";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
@@ -1034,7 +1035,8 @@ export const getTotalAuctionById = async (
     COALESCE(subQuery.total_bid, 0) AS total_bid,
     COALESCE( subQuery.total_plays_consumed, 0 ) AS total_plays_consumed,
     COALESCE(subQuery.total_price, 0) AS total_price,
-    COALESCE( subQuery.plays_lost_consumed, 0 ) AS plays_lost_consumed
+    COALESCE( subQuery.plays_lost_consumed, 0 ) AS total_plays_lost_consumed,
+    COALESCE( subQuery.auction_register_count, 0 ) AS total_auction_register_count
 FROM (
         SELECT A.id, (
                 SELECT
@@ -1099,6 +1101,107 @@ FROM (
     return queryResult;
 };
 
+const getListTotalAuction = async (
+    offset: number,
+    limit: number
+) => {
+    const query: Sql = Prisma.sql`SELECT
+    auction1.auction_id,
+    auction1.auction_name,
+    products.title as product_name,
+    auction1.auction_category_name,
+    auction1.auction_start_date,
+    auction1.total_plays_consumed_auction,
+    auction1.total_play_consumed_refund_after_buy_now,
+    auction1.plays_consumed_on_bid * auction1.total_auction_register_count as total_play_preregister_auction
+from (
+        SELECT
+            subQuery.id as auction_id,
+            subQuery.title as auction_name,
+            subQuery.product_id,
+            subQuery.start_date as auction_start_date,
+            subQuery.auctionTitle as auction_category_name,
+            COALESCE(subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
+            COALESCE(subQuery.total_bid, 0) AS total_bid,
+            COALESCE(subQuery.total_plays_consumed_auction,0) AS total_plays_consumed_auction,
+            COALESCE(subQuery.total_price, 0) AS total_price_auction,
+            COALESCE(subQuery.total_plays_lost_consumed,0) AS total_play_consumed_refund_after_buy_now,
+            COALESCE(subQuery.auction_register_count,0) AS total_auction_register_count
+        FROM (
+                SELECT
+                    A.id,
+                    A.title,
+                    A.product_id as product_id, (
+                        SELECT
+                            title
+                        from
+                            master_auction_categories
+                    ) as auctionTitle,
+                    A.start_date, (
+                        SELECT
+                            COUNT(*)
+                        FROM
+                            player_auction_register AS pp
+                        WHERE
+                            pp.auction_id = A.id -- AND pp.payment_status = 'pending'
+                    ) AS auction_register_count,
+                    A.plays_consumed_on_bid,
+                    COUNT(*) * A.plays_consumed_on_bid AS total_plays_consumed_auction,
+                    COUNT(*) * A.plays_consumed_on_bid * 0.1 AS total_bid,
+                    SUM(P.bid_price) as total_price,
+                    CAST(
+                        ROUND( (
+                                SELECT
+                                    SUM(winner_plays)
+                                FROM (
+                                        SELECT
+                                            COUNT(*) * A.plays_consumed_on_bid AS winner_plays
+                                        FROM
+                                            player_bid_log AS P2
+                                        WHERE
+                                            P2.auction_id = A.id
+                                            AND P2.player_id IN (
+                                                SELECT
+                                                    player_id
+                                                FROM
+                                                    player_auction_register AS pp2
+                                                WHERE
+                                                    pp2.status = 'lost'
+                                                    AND pp2.auction_id = A.id
+                                                    AND pp2.payment_status = 'success'
+                                                )
+                                        GROUP BY
+                                            A.id
+                                    ) AS loser_subQuery
+                            ) / A.plays_consumed_on_bid
+                        ) AS INT
+                    ) AS total_plays_lost_consumed, (
+                        SELECT
+                            COUNT(*)
+                        FROM
+                            player_auction_register AS pp
+                        WHERE
+                            pp.status = 'lost'
+                            AND pp.payment_status = 'success'
+                            AND pp.auction_id = A.id
+                    ) AS lostCount
+                FROM
+                    player_bid_log AS P
+                    left JOIN auctions AS A ON A.id = P.auction_id
+                GROUP BY
+                    A.id,
+                    A.plays_consumed_on_bid,
+                    A.product_id
+                    offset ${Number(offset * limit)}
+                    limit ${Number(limit)}
+            ) AS subQuery
+    ) as auction1
+    LEFT JOIN products on auction1.product_id = products.id`;
+
+    const queryResult = await prisma.$queryRaw<ITotalAuctionInfo[]>(query);
+    return queryResult;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -1128,5 +1231,6 @@ export const auctionQueries = {
     getAuctionLists,
     getPlayerAuctionDetailsById,
     transferLastPlay,
-    getTotalAuctionById
+    getTotalAuctionById,
+    getListTotalAuction
 };

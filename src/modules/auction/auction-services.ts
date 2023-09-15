@@ -20,6 +20,7 @@ import {
     IRegisterPlayer,
     IStartAuction,
     IStartSimulation,
+    ITotalAuctionInfo,
 } from "./typings/auction-types";
 import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
@@ -512,7 +513,7 @@ const auctionLists = async (data: IAuctionListing) => {
     }
     if (filter.auction_id) {
         const auction = await auctionQueries.getPlayerAuctionDetailsById(
-            filter.player_id,
+            filter.player_id as string,
             filter.auction_id,
             filter.state as AUCTION_STATE
         );
@@ -544,12 +545,44 @@ const getByIdTotalAuction = async (auctionId: string) => {
         total_bid: Number(auction[0]?.total_bid),
         total_plays_consumed: Number(auction[0]?.total_plays_consumed),
         total_price: auction[0]?.total_price,
-        plays_lost_consumed: auction[0]?.plays_lost_consumed
+        plays_lost_consumed: auction[0]?.plays_lost_consumed,
+        total_auction_register_count: Number(auction[0]?.total_auction_register_count)
     }
     if (auction.length)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, payload);
     return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 };
+
+/**
+ * @description created the auction listing Total information 
+ * @param {IAuctionListing} data
+ */
+const auctionListsTotal = async (data: IAuctionListing) => {
+
+    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
+    const payload = {
+        auction_id: listAuction[0]?.auction_id,
+        auction_name: listAuction[0]?.auction_name,
+        product_name: listAuction[0]?.product_name,
+        auction_category_name: listAuction[0]?.auction_category_name,
+        auction_start_date: listAuction[0]?.auction_start_date,
+        total_plays_consumed_auction: Number(listAuction[0]?.total_plays_consumed_auction),
+        total_play_consumed_refund_after_buy_now: Number(listAuction[0]?.total_play_consumed_refund_after_buy_now),
+        total_play_preregister_auction: Number(listAuction[0]?.total_play_preregister_auction)
+    }
+
+    return responseBuilder.okSuccess(
+        [payload].length ? AUCTION_MESSAGES.FOUND : AUCTION_MESSAGES.NOT_FOUND,
+        [payload],
+        {
+            totalRecord: listAuction.length,
+            totalPage: Math.ceil(listAuction.length / data.limit) || 0,
+            page: +data.page || 0,
+            limit: +data.limit || 1,
+        }
+    );
+};
+
 
 export const auctionService = {
     create,
@@ -565,5 +598,6 @@ export const auctionService = {
     purchaseAuctionProduct,
     startSimulation,
     auctionLists,
-    getByIdTotalAuction
+    getByIdTotalAuction,
+    auctionListsTotal
 };

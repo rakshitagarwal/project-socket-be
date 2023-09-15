@@ -372,7 +372,8 @@ const ZAuctionListing = z
             })
             .uuid({
                 message: "player_id should be string",
-            }),
+            })
+            .optional(),
         auction_id: z
             .string({
                 required_error: "auction_id is required",

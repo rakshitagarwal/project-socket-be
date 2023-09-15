@@ -44,6 +44,19 @@ export interface IPlayerAuctionInfo {
     last_bidding_price: number;
 }
 
+
+export interface ITotalAuctionInfo {
+    auction_id: string,
+    auction_name: string,
+    product_name: string,
+    auction_category_name: string,
+    auction_start_date: Date | string,
+    total_plays_consumed_auction: number,
+    total_play_consumed_refund_after_buy_now: number,
+    total_play_preregister_auction: number
+}
+
+
 export interface IRandomSimulationBot {
     id: string;
     first_name: string | null;
@@ -61,6 +74,7 @@ export interface IAuctionTotal {
     total_bid: number,
     total_plays_consumed: number,
     total_price: number,
-    plays_lost_consumed: number
+    plays_lost_consumed: number,
+    total_auction_register_count: number
 }
 
