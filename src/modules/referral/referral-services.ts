@@ -41,9 +41,7 @@ const referralCheck = async (player_id: string, prisma: PrismaClient) => {
             });
         }));
         await referralQueries.updateReferral(result.player_id, prisma);
-        return true;
     }
-    return false;
 };
 
 /**
