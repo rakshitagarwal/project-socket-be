@@ -64,7 +64,7 @@ async function startSeed() {
         await prismaClient.referral.create({
             data: {
                 reward_plays: 5,
-                credit_plays: 20,
+                credit_plays: 1020,
                 status: true,
                 is_deleted: false,
                 created_at: new Date(),
