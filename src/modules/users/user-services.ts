@@ -441,7 +441,6 @@ const fetchAllUsers = async (query: IuserPagination) => {
  * @returns
  */
 const addWalletTransaction = async (data: IWalletTx) => {
-    let current_plays = 0;
     let extra_plays = 0;
     const isExists = await userQueries.fetchPlayerId(data.player_id);
     if (!isExists?.id)
@@ -453,67 +452,51 @@ const addWalletTransaction = async (data: IWalletTx) => {
             MESSAGES.USER_PLAY_BALANCE.USER_IS_NOT_PLAYER
         );
     }
-    if (data.currency === "CRYPTO") {
-        if (data.currencyType === "BIGTOKEN") {
-            extra_plays = Math.floor((data.plays * 10) / 100);
-            current_plays = data.plays + extra_plays;
-        } else {
-            current_plays = data.plays;
-        }
-    }
+
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
         const currency_trx = await userQueries.createPaymentTrx(prisma, {
             ...data,
-            plays: current_plays,
-        });
+            plays: data.plays,
+        });        
         await userQueries.addPlayBalanceTx(prisma, {
             ...data,
-            plays: current_plays,
+            plays: data.plays,
             currency_transaction_id: currency_trx.id,
         });
 
+        if (data.currency === "CRYPTO") {
+            if (data.currencyType === "BIGTOKEN") {
+                extra_plays = Math.floor((data.plays * 10) / 100);
+                await userQueries.addExtraPlays(prisma, {
+                    ...data,
+                    plays: extra_plays
+                });
+            }
+        }
         const referral_status = await referralService.referralCheck(data.player_id, prisma);
-
         return { currency_trx, referral_status };
     });
     
     if (createTrax.currency_trx.id) {
-        if(createTrax.referral_status === true){
-            const referral_plays = await referralQueries.referralConfig()
-            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
-                player_id: data.player_id,
-                plays_balance: current_plays,
-                referral_plays: Number(referral_plays?.reward_plays),
-                referral_status: createTrax.referral_status
-            });
-            return responseBuilder.okSuccess(
-                MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
-                { 
-                    plays: data.plays,
-                    extra_big_plays: extra_plays,
-                    referral_plays: Number(referral_plays?.reward_plays),
-                    referral_status: createTrax.referral_status
-                }
-            );
-        } 
-
+        const referral_config = await referralQueries.referralConfig()
+        const referral_plays = ((createTrax.referral_status === true)) ? Number(referral_config?.reward_plays) : 0;
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: data.player_id,
-            plays_balance: current_plays,
-            referral_status: createTrax.referral_status
+            plays_balance: data.plays + extra_plays + referral_plays,
+            referral_status: (createTrax.referral_status) ? createTrax.referral_status : false,
         });
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
             { 
                 plays: data.plays,
-                extra_big_plays: extra_plays,
-                referral_status: createTrax.referral_status
+                extra_big_plays: (extra_plays !== 0) ? extra_plays : 0,
+                referral_plays,
+                referral_status: (createTrax.referral_status) ? createTrax.referral_status : false,
             }
         );
     }
-    return responseBuilder.expectationFaild(
-        MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED
-    );
+
+    return responseBuilder.expectationFaild(MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED);
 };
 
 /**
