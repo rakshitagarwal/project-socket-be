@@ -537,7 +537,7 @@ const auctionLists = async (data: IAuctionListing) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getByIdTotalAuction = async (auctionId: string) => {
-    const auction: IAuctionTotal[] = await auctionQueries.getTotalAuction(auctionId);
+    const auction: IAuctionTotal[] = await auctionQueries.getTotalAuctionById(auctionId);
     const payload = {
         id: auction[0]?.id,
         plays_consumed_on_bid: Number(auction[0]?.plays_consumed_on_bid),

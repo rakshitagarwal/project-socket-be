@@ -1025,16 +1025,16 @@ export const transferLastPlay = async (
  * @param auction_id
  * @returns
  */
-export const getTotalAuction = async (
+export const getTotalAuctionById = async (
     auction_id: string
 ) => {
-    const query: Sql = Prisma.sql` SELECT
+    const query: Sql = Prisma.sql`SELECT
     subQuery.id,
-    subQuery.plays_consumed_on_bid,
-    subQuery.total_bid,
-    subQuery.total_plays_consumed,
-    subQuery.total_price,
-    subQuery.plays_lost_consumed
+    COALESCE( subQuery.plays_consumed_on_bid,0 ) AS plays_consumed_on_bid,
+    COALESCE(subQuery.total_bid, 0) AS total_bid,
+    COALESCE( subQuery.total_plays_consumed, 0 ) AS total_plays_consumed,
+    COALESCE(subQuery.total_price, 0) AS total_price,
+    COALESCE( subQuery.plays_lost_consumed, 0 ) AS plays_lost_consumed
 FROM (
         SELECT A.id, (
                 SELECT
@@ -1042,7 +1042,8 @@ FROM (
                 FROM
                     player_auction_register AS pp
                 WHERE
-                    pp.auction_id = A.id
+                    pp.auction_id = A.id 
+                    AND pp.payment_status = 'pending'
             ) AS auction_register_count,
             A.plays_consumed_on_bid,
             COUNT(*) * A.plays_consumed_on_bid AS total_plays_consumed,
@@ -1059,19 +1060,19 @@ FROM (
                                     player_bid_log AS P2
                                 WHERE
                                     P2.auction_id = A.id
-                                    AND P2.player_id NOT IN (
+                                    AND P2.player_id IN (
                                         SELECT
                                             player_id
                                         FROM
                                             player_auction_register AS pp2
                                         WHERE
                                             pp2.status = 'lost'
-                                            AND pp2.payment_status = 'success'
                                             AND pp2.auction_id = A.id
+                                            AND pp2.payment_status = 'success'
                                     )
                                 GROUP BY
                                     A.id
-                            ) AS winner_subQuery
+                            ) AS loser_subQuery
                     ) / A.plays_consumed_on_bid
                 ) AS INT
             ) AS plays_lost_consumed, (
@@ -1097,6 +1098,7 @@ FROM (
     const queryResult = await prisma.$queryRaw<IAuctionTotal[]>(query);
     return queryResult;
 };
+
 export const auctionQueries = {
     create,
     getAll,
@@ -1126,5 +1128,5 @@ export const auctionQueries = {
     getAuctionLists,
     getPlayerAuctionDetailsById,
     transferLastPlay,
-    getTotalAuction
+    getTotalAuctionById
 };
