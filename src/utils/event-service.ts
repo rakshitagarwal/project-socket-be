@@ -314,7 +314,7 @@ eventService.on(
         if (existingBotData) {
             if (existingBotData[data.player_id].price_limit) {
                 const bidPrices = JSON.parse((await redisClient.get(`${data.auction_id}:bidHistory`)) as string);
-                if (bidPrices && bidPrices.slice(-1).bid_price >= existingBotData[data.player_id].price_limit) {
+                if (bidPrices && bidPrices.slice(-1)[0].bid_price >= existingBotData[data.player_id].price_limit) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)

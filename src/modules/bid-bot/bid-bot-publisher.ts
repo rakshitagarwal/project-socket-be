@@ -241,7 +241,7 @@ export const bidByBotRecieved = async (
             );
             if (
                 bidPrices &&
-                bidPrices.slice(-1).bid_price >= botData.price_limit
+                bidPrices.slice(-1)[0].bid_price >= botData.price_limit
             ) {
                 socket.playerSocket
                     .to(socketId)
