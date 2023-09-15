@@ -285,11 +285,7 @@ export const bidByBotRecieved = async (
             is_active: true,
             plays: botData.plays_limit,
         };
-        const existingBotData = JSON.parse(
-            (await redisClient.get(
-                `BidBotCount:${botData.auction_id}`
-            )) as string
-        );
+        const existingBotData = JSON.parse((await redisClient.get(    `BidBotCount:${botData.auction_id}`)) as string );
 
         if (!existingBotData) {
             await redisClient.set(
@@ -316,6 +312,7 @@ export const bidByBotRecieved = async (
             existingBotData[botData.player_id] = {
                 ...botData,
                 is_active: true,
+                socket_id: socketId,
                 plays_limit: botData.plays_limit,
                 plays: botData.plays_limit,
                 total_bot_bid: 0,
