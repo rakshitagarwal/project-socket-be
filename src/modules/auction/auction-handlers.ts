@@ -164,7 +164,14 @@ const auctionListing = async (req: Request, res: Response) => {
  */
 const getByIdTotalAuction = async (req: Request, res: Response) => {
     const response = await auctionService.getByIdTotalAuction(req.params.id as string);
-    res.status(response.code).json(response);
+
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
 };
 
 /**
@@ -176,8 +183,15 @@ const auctionListingTotal = async (req: Request, res: Response) => {
     const response = await auctionService.auctionListsTotal(
         req.query as unknown as IAuctionListing
     );
-    res.status(response.code).json(response);
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
 };
+
 
 export const auctionHandler = {
     create,

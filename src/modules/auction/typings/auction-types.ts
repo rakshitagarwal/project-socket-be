@@ -51,7 +51,7 @@ export interface ITotalAuctionInfo {
     product_name: string,
     auction_category_name: string,
     auction_start_date: Date | string,
-    total_plays_consumed_auction: number,
+    total_plays_live_consumed_auction: number,
     total_play_consumed_refund_after_buy_now: number,
     total_play_preregister_auction: number
 }

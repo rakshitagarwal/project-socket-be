@@ -90,13 +90,14 @@ auctionRouter.post(
     handleAsync(auctionHandler.startSimulation)
 );
 
-auctionRouter.get(
-    ENDPOINTS.AUCTION_TOTAL,
-    validateRequest.params(auctionSchemas.ZAuctionId),
-    handleAsync(auctionHandler.getByIdTotalAuction)
-);
+
 auctionRouter.get(
     ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL_LIST,
     [validateRequest.query(auctionSchemas.ZAuctionListing)],
     handleAsync(auctionHandler.auctionListingTotal)
+);
+auctionRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL_LIST + "/:id",
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.getByIdTotalAuction)
 );
