@@ -494,7 +494,7 @@ const addLastPlaysTrx = async (data: ILastPlayTrx) => {
         data: {
             play_credit: data.plays,
             spend_on: data.spends_on,
-            auction_id: data.player_id,
+            auction_id: data.auction_id,
             created_by: data.player_id,
         },
     });
