@@ -482,16 +482,11 @@ const addWalletTransaction = async (data: IWalletTx) => {
 
     if (createTrax.currency_trx.id) {
         const referral_config = await referralQueries.referralConfig();
-        const referral_plays =
-            createTrax.referral_status === true
-                ? Number(referral_config?.reward_plays)
-                : 0;
+        const referral_plays = createTrax.referral_status ? Number(referral_config?.reward_plays) : 0;
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: data.player_id,
             plays_balance: data.plays + extra_plays + referral_plays,
-            referral_status: createTrax.referral_status
-                ? createTrax.referral_status
-                : false,
+            referral_status: createTrax.referral_status ? createTrax.referral_status : false,
         });
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
@@ -499,16 +494,12 @@ const addWalletTransaction = async (data: IWalletTx) => {
                 plays: data.plays,
                 extra_big_plays: extra_plays !== 0 ? extra_plays : 0,
                 referral_plays,
-                referral_status: createTrax.referral_status
-                    ? createTrax.referral_status
-                    : false,
+                referral_status: createTrax.referral_status ? createTrax.referral_status : false,
             }
         );
     }
 
-    return responseBuilder.expectationFaild(
-        MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED
-    );
+    return responseBuilder.expectationFaild(MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED);
 };
 
 /**

@@ -28,16 +28,17 @@ const getReferral = async (player_id: string) => {
  */
 const referralCheck = async (player_id: string, prisma: PrismaClient) => {
     const result = await referralQueries.getReferralPrisma(prisma, player_id);
-    if (!result?.status) return;
+    if (!result?.status) return false;
 
     const [transactionSum, referralConfig] = await Promise.all([
         userQueries.creditTransactions(player_id, prisma),
         referralQueries.referralConfigPrisma(prisma),
     ]);
-    if (!referralConfig || !transactionSum) return;
+    if (!referralConfig || !transactionSum) return false;
+    const credits = transactionSum[0];
 
     if (
-        (transactionSum[0]?.credit_sum as number) >= referralConfig.credit_plays
+        (credits?.credit_sum as number) >= referralConfig.credit_plays
     ) {
         const player_ids = [result.player_id, result.player_referral_id];
         await Promise.all(
@@ -48,14 +49,12 @@ const referralCheck = async (player_id: string, prisma: PrismaClient) => {
                     prisma
                 );
                 const balance = await userQueries.userPlaysBalance(id, prisma);
+                const userBlx = balance[0];
                 eventService.emit(
                     NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,
                     {
                         player_id: id,
-                        plays_balance:
-                            parseInt(
-                                (balance[0]?.play_balance as number).toString()
-                            ) || 0,
+                        plays_balance: parseInt((userBlx?.play_balance as number).toString()) || 0,
                     }
                 );
             })
