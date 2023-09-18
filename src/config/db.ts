@@ -30,4 +30,5 @@ export const db = {
     buyNow: prismaClient.playerBuyNow,
     userReferral: prismaClient.userReferral,
     referral: prismaClient.referral,
+    currency: prismaClient.masterCurrency,
 };

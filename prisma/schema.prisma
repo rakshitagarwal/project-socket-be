@@ -193,7 +193,7 @@ model Auctions {
   id                      String                    @id @default(uuid())
   title                   String
   description             String                    @db.Text
-  bid_increment_price     Float                     @default(0.01)
+  bid_increment_price     Float                     @default(0.20)
   plays_consumed_on_bid   Int
   opening_price           Float                     @default(1.00) @db.DoublePrecision
   new_participants_limit  Int?
@@ -390,6 +390,20 @@ model BidBot {
   User          User            @relation(fields: [player_id], references: [id])
 
   @@map("bid_bot")
+}
+
+model MasterCurrency {
+  id            String   @id @default(uuid())
+  currency_type String
+  bid_increment Float
+  big_token     Float
+  usdt          Float
+  usdc          Float
+  status        Boolean  @default(false)
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  updated_at    DateTime @default(now()) @db.Timestamptz()
+
+  @@map("master_currency")
 }
 
 model PlayerBuyNow {

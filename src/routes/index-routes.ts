@@ -12,6 +12,7 @@ import { mediaRouter } from "../modules/media/media-routes";
 import { bidBotRouter } from "../modules/bid-bot/bid-bot-routes";
 import { referralRouter } from "../modules/referral/referral-routes";
 import { locationRouter } from "../modules/location/location-routes";
+import { currencyRouter } from "../modules/currency/currency-routes";
 
 /**
  * Index Routes
@@ -32,6 +33,8 @@ v1Router.use(ENDPOINTS.TERM_CONDITION, isAuthenticated, termAndConditionRouter);
 v1Router.use(ENDPOINTS.MEDIA, isAuthenticated, mediaRouter);
 v1Router.use(ENDPOINTS.BIDBOT, isAuthenticated, bidBotRouter);
 v1Router.use(ENDPOINTS.REFERRAL, isAuthenticated, referralRouter);
+v1Router.use(ENDPOINTS.CURRENCY, currencyRouter);
+
 v1Router.use(
     ENDPOINTS.AUCTION_CATEGORY,
     [isAuthenticated],

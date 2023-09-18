@@ -37,6 +37,7 @@ export const ENDPOINTS = {
     RESEND_OTP: "/resend-otp",
     CURRENT_LOCATION: "/current/address",
     LOCATION: "/location",
+    CURRENCY: "/currency",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",

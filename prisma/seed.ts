@@ -72,6 +72,25 @@ async function startSeed() {
                 updated_by: adminData.id,
             },
         });
+        await prismaClient.masterCurrency.createMany({
+            data: [{
+                currency_type: "USD",
+                bid_increment: 0.01,
+                big_token: 0.02,
+                usdt: 0.25,
+                usdc: 0.25,
+                created_at: new Date(),
+                updated_at: new Date(),
+            }, {
+                currency_type: "INR",
+                bid_increment: 0.20,
+                big_token: 2.00,
+                usdt: 8.00,
+                usdc: 8.00,
+                created_at: new Date(),
+                updated_at: new Date(),
+            }],
+        });
         return "Db Seeding Compeleted.";
     }
     return "Db Already Seeded";
