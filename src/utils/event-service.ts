@@ -312,7 +312,7 @@ eventService.on(
         }
 
         if (existingBotData) {
-            if (existingBotData[data.player_id].price_limit) {
+            if ( existingBotData[data.player_id] && existingBotData[data.player_id]?.price_limit) {
                 const bidPrices = JSON.parse((await redisClient.get(`${data.auction_id}:bidHistory`)) as string);
                 if (bidPrices && bidPrices.slice(-1)[0].bid_price >= existingBotData[data.player_id].price_limit) {
                     existingBotData[data.player_id].is_active = false;
@@ -335,8 +335,8 @@ eventService.on(
                     return;
                 }
             }
-            const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
             if (existingBotData[data.player_id]) {
+                const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
                 existingBotData[data.player_id].plays = updatedLimit;
                 existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
                 if (!updatedLimit || updatedLimit < 0) {
