@@ -38,6 +38,7 @@ export const ENDPOINTS = {
     CURRENT_LOCATION: "/current/address",
     LOCATION: "/location",
     AUCTION_TOTAL_LIST: 'stats/list',
+    AUCTION_TOTAL: "total-auction/list"
 
 };
 export const ALLOWED_MIMETYPES = [
