@@ -551,12 +551,14 @@ const getByIdTotalAuction = async (auctionId: string) => {
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
     const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
+    const listAuctionCount: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuctionCount();
+
     return responseBuilder.okSuccess(
         listAuction.length ? AUCTION_MESSAGES.FOUND : AUCTION_MESSAGES.NOT_FOUND,
         listAuction,
         {
-            totalRecord: listAuction.length,
-            totalPage: Math.ceil(listAuction.length / data.limit) || 0,
+            totalRecord: listAuctionCount.length,
+            totalPage: Math.ceil(listAuctionCount.length / data.limit) || 0,
             page: +data.page || 0,
             limit: +data.limit || 1,
         }
