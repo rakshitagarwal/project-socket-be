@@ -12,6 +12,7 @@ import {
     IAuction,
     IAuctionListing,
     IAuctionTotal,
+    IAuctionTotalCount,
     IPagination,
     IPlayerAuctionInfo,
     IPlayerRegister,
@@ -1362,6 +1363,77 @@ from (
     return queryResult;
 };
 
+
+/**
+ * @description get the auction total listing count.
+ */
+const getTotalAuction = async () => {
+    const query: Sql = Prisma.sql`WITH AuctionCTE AS (
+        SELECT
+            COALESCE(subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
+            COALESCE(subQuery.total_plays_live_consumed_auction,0) AS total_plays_live_consumed_auction,
+            COALESCE(subQuery.total_plays_lost_consumed,0) AS total_play_consumed_refund_after_buy_now,
+            COALESCE(subQuery.auction_register_count,0) AS total_auction_register_count
+    FROM (
+        SELECT (
+                SELECT COUNT(*)
+                FROM player_auction_register AS pp
+                WHERE pp.auction_id = A.id
+            ) AS auction_register_count,
+            A.plays_consumed_on_bid,
+            COUNT(*) * A.plays_consumed_on_bid AS total_plays_live_consumed_auction,
+            CAST(
+                ROUND( (
+                        SELECT
+                            SUM(plays_consumed)
+                        FROM (
+                                SELECT
+                                    COUNT(*) * A.plays_consumed_on_bid AS plays_consumed
+                                FROM
+                                    player_bid_log AS P2
+                                WHERE
+                                    P2.auction_id = A.id
+                                    AND P2.player_id IN (
+                                        SELECT
+                                            player_id
+                                        FROM
+                                            player_auction_register AS pp2
+                                        WHERE
+                                            pp2.status = 'lost'
+                                            AND pp2.auction_id = A.id
+                                            AND pp2.payment_status = 'success'
+                                    )
+                                GROUP BY
+                                    A.id
+                            ) AS loser_subQuery
+                    ) / A.plays_consumed_on_bid
+                ) AS INT
+            ) AS total_plays_lost_consumed
+        FROM
+            player_bid_log AS P
+            LEFT JOIN auctions AS A ON A.id = P.auction_id
+        WHERE
+            A.is_deleted = FALSE
+            and A.status = true
+        GROUP BY
+            A.id
+        ) AS subQuery
+    )
+SELECT (
+        SELECT SUM(total_plays_live_consumed_auction) FROM AuctionCTE
+    ) AS total_sum_plays_live_consumed_auction, (
+        SELECT SUM(total_play_consumed_refund_after_buy_now) FROM AuctionCTE
+    ) AS total_sum_play_consumed_refund_after_buy_now, 
+    ( SELECT SUM(plays_consumed_on_bid * total_auction_register_count)
+        FROM
+            AuctionCTE id
+    ) AS total_sum_play_consumed_preregister
+FROM AuctionCTE AS auction1
+limit 1`;
+    const queryResult = await prisma.$queryRaw<IAuctionTotalCount[]>(query);
+    return queryResult;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -1395,5 +1467,6 @@ export const auctionQueries = {
     minMaxPlayerRegisters,
     getListTotalAuction,
     getInformationAuctionById,
-    getListTotalAuctionCount
+    getListTotalAuctionCount,
+    getTotalAuction
 };

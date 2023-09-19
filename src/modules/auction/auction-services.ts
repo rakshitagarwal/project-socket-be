@@ -14,6 +14,7 @@ import {
     IAuction,
     IAuctionListing,
     IAuctionTotal,
+    IAuctionTotalCount,
     IPagination,
     IPlayerRegister,
     IPurchase,
@@ -566,6 +567,19 @@ const auctionListsTotal = async (data: IAuctionListing) => {
 };
 
 
+/**
+ * @description get Total auction 
+ * @param {IAuctionTotalCount} data
+ */
+const auctionTotal = async () => {
+    const getAuctionCounts: IAuctionTotalCount[] = await auctionQueries.getTotalAuction();
+    return responseBuilder.okSuccess(
+        AUCTION_MESSAGES.NOT_FOUND,
+        getAuctionCounts,
+    );
+};
+
+
 export const auctionService = {
     create,
     getById,
@@ -581,5 +595,6 @@ export const auctionService = {
     startSimulation,
     auctionLists,
     getByIdTotalAuction,
-    auctionListsTotal
+    auctionListsTotal,
+    auctionTotal
 };
