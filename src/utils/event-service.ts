@@ -335,8 +335,8 @@ eventService.on(
                     return;
                 }
             }
-            const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
             if (existingBotData[data.player_id]) {
+                const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
                 existingBotData[data.player_id].plays = updatedLimit;
                 existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
                 if (!updatedLimit || updatedLimit < 0) {
