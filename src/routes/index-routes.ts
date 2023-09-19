@@ -33,7 +33,7 @@ v1Router.use(ENDPOINTS.TERM_CONDITION, isAuthenticated, termAndConditionRouter);
 v1Router.use(ENDPOINTS.MEDIA, isAuthenticated, mediaRouter);
 v1Router.use(ENDPOINTS.BIDBOT, isAuthenticated, bidBotRouter);
 v1Router.use(ENDPOINTS.REFERRAL, isAuthenticated, referralRouter);
-v1Router.use(ENDPOINTS.CURRENCY, currencyRouter);
+v1Router.use(ENDPOINTS.CURRENCY, isAuthenticated, currencyRouter);
 
 v1Router.use(
     ENDPOINTS.AUCTION_CATEGORY,
