@@ -3,8 +3,16 @@ import { Server } from "http";
 import env from "../config/env";
 import logger from "../config/logger";
 import socketAuthentication from "../middlewares/socket-authentication";
-import { newBiDRecieved } from "../modules/auction/auction-publisher";
-import { bidByBotRecieved, bidbotStatus, deactivateBidbot } from "../modules/bid-bot/bid-bot-publisher";
+import {
+    getMinMaxAuctionResult,
+    minMaxAuctionBid,
+    newBiDRecieved,
+} from "../modules/auction/auction-publisher";
+import {
+    bidByBotRecieved,
+    bidbotStatus,
+    deactivateBidbot,
+} from "../modules/bid-bot/bid-bot-publisher";
 export interface AppGlobal {
     playerSocket: Namespace;
 }
@@ -54,6 +62,16 @@ const socketService = async (server: Server) => {
             });
             socket.on("session:bidbot:status", (data) => {
                 bidbotStatus(data, socket.id);
+            });
+            socket.on("min:max:auction", (data) => {
+                minMaxAuctionBid(socket.id, data);
+            });
+            socket.on("min:max:player:logs", (data) => {
+                getMinMaxAuctionResult({
+                    auction_id: data.auction_id,
+                    player_id: data.player_id,
+                    socketId: socket.id,
+                });
             });
         }
     });

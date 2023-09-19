@@ -12,6 +12,7 @@ import {
     Ispend_on,
     IMultipleUsers,
     ILastPlayTrx,
+    IminAuctionBidLog,
     IGetAllUsers,
 } from "./typings/user-types";
 import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
@@ -304,6 +305,13 @@ const playerBidLog = async (data: [IPlayerBidLog]) => {
     return queryResult;
 };
 
+const minPlayerBidLogs=async(data:[IminAuctionBidLog])=>{
+    const queryResult = await db.playerBidLogs.createMany({
+        data: data,
+    });
+    return queryResult;
+}
+
 /**
  * fetch the total number of bids made by a specific player in a given auction.
  * @async
@@ -558,6 +566,7 @@ const userQueries = {
     getPlayerRoleId,
     createMultipleUsers,
     addMultiplePlayBlx,
+    minPlayerBidLogs,
     getRandomBot,
     getPlayerByReferral,
     creditTransactions,
