@@ -13,7 +13,11 @@ import { PrismaClient } from "@prisma/client";
  */
 const getReferral = async (player_id: string) => {
     const result = await referralQueries.getReferral(player_id);
-    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_FOUND, result);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.REFERRAL.REFERRAL_FOUND,
+            result
+        );
     return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_NOT_FOUND);
 };
 
@@ -24,24 +28,41 @@ const getReferral = async (player_id: string) => {
  */
 const referralCheck = async (player_id: string, prisma: PrismaClient) => {
     const result = await referralQueries.getReferralPrisma(prisma, player_id);
-    if (!result?.status) return;
+    if (!result?.status) return false;
 
-    const [transactionSum, referralConfig] = await Promise.all([ 
-        userQueries.creditTransactions(player_id, prisma), referralQueries.referralConfigPrisma(prisma) ]);
-    if (!referralConfig || !transactionSum) return;
+    const [transactionSum, referralConfig] = await Promise.all([
+        userQueries.creditTransactions(player_id, prisma),
+        referralQueries.referralConfigPrisma(prisma),
+    ]);
+    if (!referralConfig || !transactionSum) return false;
+    const credits = transactionSum[0];
 
-    if (transactionSum[0]?.credit_sum as number>= referralConfig.credit_plays) {
+    if (
+        (credits?.credit_sum as number) >= referralConfig.credit_plays
+    ) {
         const player_ids = [result.player_id, result.player_referral_id];
-        await Promise.all(player_ids.map(async (id) => {
-            await referralQueries.addPlaysByReferral(id, referralConfig.reward_plays, prisma);
-            const balance = await userQueries.userPlaysBalance(id, prisma);
-            eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
-                player_id: id,
-                plays_balance: parseInt((balance[0]?.play_balance as number).toString()) || 0,
-            });
-        }));
+        await Promise.all(
+            player_ids.map(async (id) => {
+                await referralQueries.addPlaysByReferral(
+                    id,
+                    referralConfig.reward_plays,
+                    prisma
+                );
+                const balance = await userQueries.userPlaysBalance(id, prisma);
+                const userBlx = balance[0];
+                eventService.emit(
+                    NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED,
+                    {
+                        player_id: id,
+                        plays_balance: parseInt((userBlx?.play_balance as number).toString()) || 0,
+                    }
+                );
+            })
+        );
         await referralQueries.updateReferral(result.player_id, prisma);
+        return true;
     }
+    return false;
 };
 
 /**
@@ -50,8 +71,14 @@ const referralCheck = async (player_id: string, prisma: PrismaClient) => {
  */
 const referralConfig = async () => {
     const result = await referralQueries.referralConfig();
-    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND, result);
-    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.REFERRAL.REFERRAL_CONFIG_FOUND,
+            result
+        );
+    return responseBuilder.notFoundError(
+        MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_FOUND
+    );
 };
 
 /**
@@ -61,10 +88,19 @@ const referralConfig = async () => {
  */
 const updateReferralConfig = async (data: ReferralConfig) => {
     const check = Object.keys(data);
-    if (!check.length) return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
+    if (!check.length)
+        return responseBuilder.notFoundError(
+            MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED
+        );
     const result = await referralQueries.updateReferralConfig(data);
-    if (result) return responseBuilder.okSuccess(MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED, result);
-    return responseBuilder.notFoundError(MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.REFERRAL.REFERRAL_CONFIG_UPDATED,
+            result
+        );
+    return responseBuilder.notFoundError(
+        MESSAGES.REFERRAL.REFERRAL_CONFIG_NOT_UPDATED
+    );
 };
 
 const referralService = {
