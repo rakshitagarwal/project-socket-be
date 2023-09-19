@@ -1,31 +1,53 @@
-// import { MESSAGES } from "../../common/constants";
+import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import currencyQueries from "./currency-queries";
-import { currencyUpdate } from "./typings/currency-type";
+import { ICurrencyType, currencyUpdate } from "./typings/currency-type";
 
-const getAllCurrency = async () => {
-    const result = await currencyQueries.getAllCurrency();
-    if (result) return responseBuilder.okSuccess("all currencies", result);
-    return responseBuilder.notFoundError("no currncy found");
-};
-
+/**
+ * @description getOneCurrency is used to give details of one currency.
+ * @param {string} id - id of currency to find its details.
+ * @returns {object} - the response object using responseBuilder.
+ */
 const getOneCurrency = async (id: string | undefined) => {
     const result = await currencyQueries.getOneCurrency(id as string);
-    if (result) return responseBuilder.okSuccess("one currency found", result);
-    return responseBuilder.notFoundError("no such currency found");
+    if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_FOUND, result);
+    return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
 };
 
+/**
+ * @description findOneCurrency is used to find one currency when data is available or find all currencies.
+ * @param {ICurrencyType} currency_code - currency_code to find one currency details
+ * @returns {object} - the response object using responseBuilder.
+ */
+const findOneCurrency = async (currency_code: ICurrencyType) => {
+    if (JSON.stringify(currency_code) === "{}") {
+        const result = await currencyQueries.getAllCurrency();
+        if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_ALL, result);
+        return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
+    }
+    const result = await currencyQueries.findOneCurrency(currency_code);
+    if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_FOUND, result);
+    return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
+};
+
+/**
+ * @description updateCurrency is used to update details of one currency
+ * @param {string} id - id of currency to find its details.
+ * @param {currencyUpdate} change - the changes which will be updated in currency.
+ * @returns {object} - the response object using responseBuilder.
+ */
 const updateCurrency = async (id: string, change: currencyUpdate) => {
     if (id) {
         const result = await currencyQueries.updateCurrency(id, change);
-        return responseBuilder.okSuccess("currency config updated successfully", result);
+        if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_UPDATED, result);
+        return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
     }
-    return responseBuilder.notFoundError("no such currency found");
+    return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
 };
 
 const currencyService = {
-    getAllCurrency,
     getOneCurrency,
+    findOneCurrency,
     updateCurrency,
 };
 

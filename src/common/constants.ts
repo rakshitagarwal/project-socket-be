@@ -226,6 +226,12 @@ export const MESSAGES = {
         REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
         REFERRAL_NOT_VALID: "referral code is not valid",
     },
+    CURRENCY:{
+        CURRENCY_FOUND: "Currency found",
+        CURRENCY_NOT_FOUND: "Currency not found",
+        CURRENCY_ALL: "All currencies",
+        CURRENCY_UPDATED: "Updated currency config"
+    },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "Bidbot created successfully",
         BIDBOT_FOUND: "Bidbot found successfully",
