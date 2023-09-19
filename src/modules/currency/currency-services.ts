@@ -16,9 +16,8 @@ const getOneCurrency = async (id: string | undefined) => {
 };
 
 /**
- * @description getActiveCurrency is used to give details of one currency whose status is true.
- * @param {string} id - id of currency to find its details.
- * @returns {object} - the response object using responseBuilder.
+ * @description getActiveCurrency is used to give details of a currency whose status is true.
+ * @returns {object} - it returns bid increment price for a currency whose status is true or by default 0.20
  */
 const getActiveCurrency = async () => {
     const result = await currencyQueries.getActiveCurrency();
@@ -50,7 +49,6 @@ const findOneCurrency = async (currency_code: ICurrencyType) => {
  */
 const updateCurrency = async (id: string, change: currencyUpdate) => {
     const auctionData = await auctionQueries.getAllAuctions();
-    console.log(auctionData, "auctionData");
     let validate = false;
     auctionData.map((auction) => {
         if (auction.state === "upcoming" || auction.state === "live") {
