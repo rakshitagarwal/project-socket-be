@@ -32,6 +32,7 @@ export type IStartAuction = z.infer<typeof auctionSchemas.ZStartAuction>;
 export type IStartSimulation = z.infer<typeof auctionSchemas.ZSimulation>;
 
 export type IAuctionListing = z.infer<typeof auctionSchemas.ZAuctionListing>;
+
 export interface IPlayerAuctionInfo {
     id: string;
     auction_id: string;
@@ -44,6 +45,20 @@ export interface IPlayerAuctionInfo {
     last_bidding_price: number;
 }
 
+
+export interface ITotalAuctionInfo {
+    auction_id: string,
+    auction_name: string,
+    product_name: string,
+    auction_category_name: string,
+    auction_start_date: Date | string,
+    total_plays_live_consumed_auction: number,
+    total_play_consumed_refund_after_buy_now: number,
+    total_play_preregister_auction: number,
+    registeration_count: number
+}
+
+
 export interface IRandomSimulationBot {
     id: string;
     first_name: string | null;
@@ -53,3 +68,16 @@ export interface IRandomSimulationBot {
     country: string | null;
     is_bot: boolean;
 }
+
+
+export interface IAuctionTotal {
+    id: string,
+    plays_consumed_on_bid: number,
+    total_bid: number,
+    total_plays_consumed: number,
+    total_price: number,
+    plays_lost_consumed: number,
+    total_auction_register_count: number,
+    registeration_count: number
+}
+
