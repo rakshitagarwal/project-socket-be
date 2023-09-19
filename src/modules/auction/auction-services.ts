@@ -256,7 +256,7 @@ const playerRegister = async (data: IPlayerRegister) => {
             email: player.email,
             auctionName: auction.title,
             registeration_count: auction.registeration_count,
-            _count: auction._count.PlayerAuctionRegister+1,
+            _count: auction._count.PlayerAuctionRegister + 1,
         });
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
             message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,

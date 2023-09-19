@@ -185,7 +185,6 @@ const fetchPlayerId = async (id: string) => {
  * @param {IWalletTx} data
  * @returns
  */
-
 const addPlayBalanceTx = async (
     prisma: PrismaClient,
     data: IWalletTx & { currency_transaction_id: string }
@@ -201,6 +200,26 @@ const addPlayBalanceTx = async (
             id: true,
             play_credit: true,
             play_debit: true,
+        },
+    });
+    return query;
+};
+
+/**
+ * @description Add extra plays for using bigtoken in the wallet
+ * @param {PrismaClient} prisma
+ * @param {IWalletTx} data
+ * @returns
+ */
+const addExtraPlays = async (
+    prisma: PrismaClient,
+    data: IWalletTx
+) => {    
+    const query = await prisma.playerWalletTransaction.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: PlaySpend.EXTRA_BIGPLAYS,
+            created_by: data.player_id
         },
     });
     return query;
@@ -494,7 +513,7 @@ const addLastPlaysTrx = async (data: ILastPlayTrx) => {
         data: {
             play_credit: data.plays,
             spend_on: data.spends_on,
-            auction_id: data.player_id,
+            auction_id: data.auction_id,
             created_by: data.player_id,
         },
     });
@@ -545,5 +564,6 @@ const userQueries = {
     userPlaysBalance,
     addLastPlaysTrx,
     fetchAdminInfo,
+    addExtraPlays,
 };
 export default userQueries;
