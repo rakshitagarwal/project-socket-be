@@ -6,7 +6,17 @@ import { ICurrencyType, currencyUpdate } from "./typings/currency-type";
  * @returns {queryResult} - the result of execution of query.
  */
 const getAllCurrency = async () => {
-    const queryResult = await db.currency.findMany();
+    const queryResult = await db.currency.findMany({
+        select: {
+            id: true,
+            currency_type: true,
+            bid_increment: true,
+            status: true,
+            big_token: true,
+            usdt: true,
+            usdc: true,
+        },
+    });
     return queryResult;
 };
 
@@ -26,8 +36,6 @@ const getOneCurrency = async (id: string) => {
             big_token: true,
             usdt: true,
             usdc: true,
-            created_at: true,
-            updated_at: true,
         },
     });
     return queryResult;
@@ -49,8 +57,6 @@ const findOneCurrency = async (code: ICurrencyType) => {
             big_token: true,
             usdt: true,
             usdc: true,
-            created_at: true,
-            updated_at: true,
         },
     });
     return queryResult;
