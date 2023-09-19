@@ -157,6 +157,42 @@ const auctionListing = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * Auction retrieve By Id (Total)
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ */
+const getByIdTotalAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.getByIdTotalAuction(req.params.id as string);
+
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
+};
+
+/**
+ * Listing of the auction with registered Total
+ * @param {Request} req - Request
+ * @param {Response} res - Response
+ */
+const auctionListingTotal = async (req: Request, res: Response) => {
+    const response = await auctionService.auctionListsTotal(
+        req.query as unknown as IAuctionListing
+    );
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
+};
+
+
 export const auctionHandler = {
     create,
     getById,
@@ -171,4 +207,6 @@ export const auctionHandler = {
     purchase,
     startSimulation,
     auctionListing,
+    getByIdTotalAuction,
+    auctionListingTotal
 };

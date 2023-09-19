@@ -13,6 +13,7 @@ import {
     IMultipleUsers,
     ILastPlayTrx,
     IminAuctionBidLog,
+    IGetAllUsers,
 } from "./typings/user-types";
 import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
 
@@ -35,7 +36,7 @@ const fetchUser = async (query: IuserQuery) => {
             mobile_no: true,
             avatar: true,
             referral_code: true,
-            status:true,
+            status: true,
             id: true,
             roles: {
                 select: {
@@ -67,13 +68,76 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
  * @returns
  */
 const fetchAllUsers = async (query: IuserPaginationQuery) => {
-    const user = await db.user.findMany({
+    const user: Sql = Prisma.sql`
+    SELECT
+        u.id,
+        u.email,
+        u.first_name,
+        u.last_name,
+        u.country,
+        u.avatar,
+        u.mobile_no,
+        COALESCE(T3.Player_in_Wallet, 0) AS Plays_In_Wallet,
+        COALESCE(T1.Auction_Won, 0) AS Auction_Won,
+        COALESCE(T2.Player_Participated, 0) AS Player_Participated
+    FROM
+        users AS u
+    LEFT JOIN (
+        SELECT
+            par.player_id,
+            COUNT(*) AS Auction_Won
+        FROM
+            player_auction_register par
+        WHERE
+            par.status = 'won'
+        GROUP BY
+            par.player_id
+        ) AS T1
+    ON
+    u.id = T1.player_id
+    LEFT JOIN (
+        SELECT
+            par.player_id,
+            COUNT(*) AS Player_Participated
+        FROM
+            player_auction_register par
+        GROUP BY
+            par.player_id
+        ) AS T2
+    ON
+        u.id = T2.player_id
+    LEFT JOIN (
+        SELECT
+            pwt.created_by,
+            (COALESCE(SUM(pwt.play_credit), 0) - COALESCE(SUM(pwt.play_debit), 0)) as Player_in_Wallet
+        FROM
+            player_wallet_transaction pwt
+        GROUP BY
+            pwt.created_by
+        ) AS T3
+    ON
+        u.id = T3.created_by
+    INNER JOIN
+        master_roles AS mr
+    ON
+        u.role_id=mr.id
+    WHERE
+        u.status=TRUE AND u.is_deleted=FALSE
+    ORDER BY
+        u.updated_at DESC
+    offset ${query.page * query.limit}
+    limit ${query.limit}
+    `;
+
+    const userDetails = await prisma.$queryRaw<IGetAllUsers[]>(user);
+
+    const count = await db.user.count({
         where: {
             AND: [
                 {
                     is_deleted: false,
+                    status: true,
                 },
-                { OR: query.filter },
                 {
                     roles: {
                         title: "Player",
@@ -81,35 +145,8 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                 },
             ],
         },
-        take: query.limit,
-        skip: query.page * query.limit,
-        orderBy: {
-            updated_at: "desc",
-        },
-        select: {
-            email: true,
-            id: true,
-            last_name: true,
-            first_name: true,
-            country: true,
-            avatar: true,
-            mobile_no: true,
-            roles: {
-                select: {
-                    title: true,
-                },
-            },
-        },
     });
-    const count = await db.user.count({
-        where: {
-            is_deleted: false,
-            roles: {
-                title: "Player",
-            },
-        },
-    });
-    return { user, count };
+    return { userDetails, count };
 };
 
 /**
@@ -149,7 +186,6 @@ const fetchPlayerId = async (id: string) => {
  * @param {IWalletTx} data
  * @returns
  */
-
 const addPlayBalanceTx = async (
     prisma: PrismaClient,
     data: IWalletTx & { currency_transaction_id: string }
@@ -165,6 +201,26 @@ const addPlayBalanceTx = async (
             id: true,
             play_credit: true,
             play_debit: true,
+        },
+    });
+    return query;
+};
+
+/**
+ * @description Add extra plays for using bigtoken in the wallet
+ * @param {PrismaClient} prisma
+ * @param {IWalletTx} data
+ * @returns
+ */
+const addExtraPlays = async (
+    prisma: PrismaClient,
+    data: IWalletTx
+) => {    
+    const query = await prisma.playerWalletTransaction.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: PlaySpend.EXTRA_BIGPLAYS,
+            created_by: data.player_id
         },
     });
     return query;
@@ -455,12 +511,17 @@ const getPlayerByReferral = async (player_referral_code: string) => {
     return query;
 };
 
+/**
+ * PLays refund after the auction END
+ * @param data - player details
+ * @returns
+ */
 const addLastPlaysTrx = async (data: ILastPlayTrx) => {
     const queries = await db.playerWalletTx.create({
         data: {
             play_credit: data.plays,
             spend_on: data.spends_on,
-            auction_id: data.player_id,
+            auction_id: data.auction_id,
             created_by: data.player_id,
         },
     });
@@ -468,25 +529,24 @@ const addLastPlaysTrx = async (data: ILastPlayTrx) => {
 };
 
 /**
- * @description Fetch the admin information for email 
+ * @description Fetch the admin information for email
  */
 const fetchAdminInfo = async () => {
     const user = await db.user.findFirst({
-        where:{
-            roles:{
-                title:"Admin",
-                is_deleted:false,
-                status:true
-            }
+        where: {
+            roles: {
+                title: "Admin",
+                is_deleted: false,
+                status: true,
+            },
         },
-        select:{
-            first_name:true,
-            email:true,
-        }
-    })
+        select: {
+            first_name: true,
+            email: true,
+        },
+    });
     return user;
-}
-
+};
 
 const userQueries = {
     fetchUser,
@@ -512,6 +572,7 @@ const userQueries = {
     creditTransactions,
     userPlaysBalance,
     addLastPlaysTrx,
-    fetchAdminInfo
+    fetchAdminInfo,
+    addExtraPlays,
 };
 export default userQueries;

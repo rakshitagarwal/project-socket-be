@@ -13,12 +13,14 @@ import { auctionQueries } from "./auction-queries";
 import {
     IAuction,
     IAuctionListing,
+    IAuctionTotal,
     IPagination,
     IPlayerRegister,
     IPurchase,
     IRegisterPlayer,
     IStartAuction,
     IStartSimulation,
+    ITotalAuctionInfo,
 } from "./typings/auction-types";
 import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
@@ -256,7 +258,7 @@ const playerRegister = async (data: IPlayerRegister) => {
             email: player.email,
             auctionName: auction.title,
             registeration_count: auction.registeration_count,
-            _count: auction._count.PlayerAuctionRegister+1,
+            _count: auction._count.PlayerAuctionRegister + 1,
         });
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_REGISTER_COUNT, {
             message: MESSAGES.SOCKET.TOTAL_AUCTION_REGISTERED,
@@ -529,6 +531,41 @@ const auctionLists = async (data: IAuctionListing) => {
     );
 };
 
+/**
+ * Auction Retrieve Total
+ * @description retrieval of one auction using its unique id
+ * @param {string} auctionId - auction ObjectID
+ * @returns - response builder with { code, success, message, data, metadata }
+ */
+const getByIdTotalAuction = async (auctionId: string) => {
+
+    const auction: IAuctionTotal[] = await auctionQueries.getInformationAuctionById(auctionId);
+    if (auction.length)
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auction);
+    return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+};
+
+/**
+ * @description created the auction listing Total information 
+ * @param {IAuctionListing} data
+ */
+const auctionListsTotal = async (data: IAuctionListing) => {
+    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
+    const listAuctionCount: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuctionCount();
+
+    return responseBuilder.okSuccess(
+        listAuction.length ? AUCTION_MESSAGES.FOUND : AUCTION_MESSAGES.NOT_FOUND,
+        listAuction,
+        {
+            totalRecord: listAuctionCount.length,
+            totalPage: Math.ceil(listAuctionCount.length / data.limit) || 0,
+            page: +data.page || 0,
+            limit: +data.limit || 1,
+        }
+    );
+};
+
+
 export const auctionService = {
     create,
     getById,
@@ -543,4 +580,6 @@ export const auctionService = {
     purchaseAuctionProduct,
     startSimulation,
     auctionLists,
+    getByIdTotalAuction,
+    auctionListsTotal
 };

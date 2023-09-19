@@ -94,33 +94,37 @@ const ZAuctionAdd = z
     })
     .strict();
 
-const ZAuctionId = z.object({
-    id: z
-        .string({
-            required_error: "id is required!",
-            invalid_type_error: "id should be string!",
-        })
-        .uuid({
-            message: "Auction Id should be UUID!",
-        }),
-});
-
-const ZDeleteId = z.object({
-    ids: z
-        .array(
-            z.string({
+const ZAuctionId = z
+    .object({
+        id: z
+            .string({
                 required_error: "id is required!",
                 invalid_type_error: "id should be string!",
+            })
+            .uuid({
+                message: "Auction Id should be UUID!",
             }),
-            {
-                required_error: "ids is required!",
-                invalid_type_error: "ids should be array of string!",
-            }
-        )
-        .min(1, {
-            message: "minimum one Ids is required!",
-        }),
-});
+    })
+    .strict();
+
+const ZDeleteId = z
+    .object({
+        ids: z
+            .array(
+                z.string({
+                    required_error: "id is required!",
+                    invalid_type_error: "id should be string!",
+                }),
+                {
+                    required_error: "ids is required!",
+                    invalid_type_error: "ids should be array of string!",
+                }
+            )
+            .min(1, {
+                message: "minimum one Ids is required!",
+            }),
+    })
+    .strict();
 
 const Zpagination = z
     .object({
@@ -217,38 +221,42 @@ const ZPlayerRegister = z
     })
     .strict();
 
-const IPlayerAuction = z.object({
-    player_id: z
-        .string({
-            required_error: "player_id is required!",
-            invalid_type_error: "player_id should be string!",
-        })
-        .uuid({
-            message: "player_id should be UUID",
+const IPlayerAuction = z
+    .object({
+        player_id: z
+            .string({
+                required_error: "player_id is required!",
+                invalid_type_error: "player_id should be string!",
+            })
+            .uuid({
+                message: "player_id should be UUID",
+            }),
+        auction_id: z
+            .string({
+                required_error: "auction_id is required!",
+                invalid_type_error: "auction_id should be string!",
+            })
+            .uuid({
+                message: "auction_id should be UUID",
+            }),
+    })
+    .strict();
+const ZStartAuction = z
+    .object({
+        auction_id: z
+            .string({
+                required_error: "auction_id is required!",
+                invalid_type_error: "auction_id should be string!",
+            })
+            .uuid({
+                message: "auction_id should be UUID",
+            }),
+        start_date: z.coerce.date({
+            required_error: "start_date is required!",
+            invalid_type_error: "start_date should be  date!",
         }),
-    auction_id: z
-        .string({
-            required_error: "auction_id is required!",
-            invalid_type_error: "auction_id should be string!",
-        })
-        .uuid({
-            message: "auction_id should be UUID",
-        }),
-});
-const ZStartAuction = z.object({
-    auction_id: z
-        .string({
-            required_error: "auction_id is required!",
-            invalid_type_error: "auction_id should be string!",
-        })
-        .uuid({
-            message: "auction_id should be UUID",
-        }),
-    start_date: z.coerce.date({
-        required_error: "start_date is required!",
-        invalid_type_error: "start_date should be  date!",
-    }),
-});
+    })
+    .strict();
 
 const ZPlayerWinner = z
     .object({
@@ -423,6 +431,29 @@ const ZMinMaxAuction = z
         }),
     })
     .strict();
+const ZAuctionTotalListing = z
+    .object({
+        page: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "page must be number" })
+            )
+            .default(0),
+        limit: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "limit must be number" })
+            )
+            .default(10),
+        search: z
+            .string({
+                invalid_type_error: "search should be type of string",
+                required_error: "search should be error",
+            })
+            .optional(),
+    })
+    .strict();
+
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
@@ -437,4 +468,5 @@ export const auctionSchemas = {
     ZPlayerAuction,
     ZAuctionListing,
     ZMinMaxAuction,
+    ZAuctionTotalListing
 };

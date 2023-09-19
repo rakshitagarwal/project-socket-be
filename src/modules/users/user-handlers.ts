@@ -157,7 +157,13 @@ const getAllusers = async (req: Request, res: Response) => {
     const response = await userService.fetchAllUsers(
         req.query as unknown as IuserPagination
     );
-    res.status(response.code).json(response);
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
 };
 
 /**
@@ -205,11 +211,10 @@ const deductPlays = async (req: Request, res: Response) => {
  * @param {import('express').Response} res - The Express response object.
  * @returns {Promise<void>} - A Promise that resolves with the response JSON.
  */
-const resendOtpToUser=async(req: Request, res: Response) => {
+const resendOtpToUser = async (req: Request, res: Response) => {
     const response = await userService.resendOtpToUser(req.body);
     res.status(response.code).json(response);
-
-}
+};
 
 const userHandlers = {
     register,
@@ -228,7 +233,7 @@ const userHandlers = {
     addPlaysInWallet,
     getPlayBalance,
     deductPlays,
-    resendOtpToUser
+    resendOtpToUser,
 };
 
 export default userHandlers;
