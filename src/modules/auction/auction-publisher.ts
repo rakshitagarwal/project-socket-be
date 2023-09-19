@@ -392,6 +392,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid", {
         message: "recent player bid",
         data: payload.playerInfo.reverse(),
+        winnerInfo: payload.winnerInfo || {},
     });
     if (payload.winnerInfo && payload.bidHistory.length >= payload.totalBid) {
         eventService.emit(NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END, {
