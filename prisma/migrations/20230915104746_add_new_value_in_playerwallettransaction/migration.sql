@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "PlaySpend" ADD VALUE 'EXTRA_BIGPLAYS';

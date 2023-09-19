@@ -175,7 +175,7 @@ export const MESSAGES = {
     USERS: {
         CHECK_MAIL: "please check your email",
         USER_LOGIN: "user login successfully",
-        USER_LOGOUT: "user logout successfully",
+        USER_LOGOUT: "Logged out successfully",
         USER_NOT_FOUND: "Account not found. Please sign-up to login.",
         USER_EXIST: "user already exists",
         INVALID_CREDENTIAL: "invalid credentials",
@@ -242,7 +242,7 @@ export const MESSAGES = {
         BIDBOT_PLAYS_LIMIT: "Bidbot plays limit reached",
         BITBOT_PLAYS_REQUIRED: "plays limit is required",
         BIDBOT_PLAYS_NEGATIVE: "plays limit should be valid i.e. more than 0",
-        BIDBOT_PRICE_NEGATIVE: "price limit can't be negative",
+        BIDBOT_PRICE_NEGATIVE: "price limit can't be negative or less than 1",
         BIDBOT_PRICE_REACHED: "auction price already crossed price limit",
         BIDBOT_PRICE_GREATER: "bid price should be less than product price",
         BIDBOT_WALLET_INSUFFICIENT: "wallet balance insufficient",
