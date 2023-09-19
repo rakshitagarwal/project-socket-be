@@ -29,6 +29,7 @@ import eventService from "../../utils/event-service";
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import { AppGlobal } from "../../utils/socket-service";
 import { Ispend_on } from "../users/typings/user-types";
+import currencyService from "../currency/currency-services";
 const socket = global as unknown as AppGlobal;
 
 /**
@@ -38,7 +39,12 @@ const socket = global as unknown as AppGlobal;
  * @param {string} userId - user ObjectID
  * @returns - response builder with { code, success, message, data, metadata }
  */
-const create = async (auction: IAuction, userId: string) => {
+const create = async (
+    auction: IAuction & {
+        bid_increment_price: number;
+    },
+    userId: string
+) => {
     const [isAuctionCategoryFound, isProductFound] = await Promise.all([
         auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
         productQueries.getById(auction.product_id),
@@ -49,6 +55,8 @@ const create = async (auction: IAuction, userId: string) => {
         );
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    const currencyConfig = await currencyService.getActiveCurrency();
+    if (currencyConfig) auction.bid_increment_price = currencyConfig as number;
     await auctionQueries.create(auction, userId);
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
@@ -111,6 +119,7 @@ const getAll = async (query: IPagination) => {
 const update = async (
     auction: IAuction & {
         status: boolean;
+        bid_increment_price: number;
     },
     auctionId: string,
     userId: string
@@ -145,6 +154,8 @@ const update = async (
             AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
         );
     }
+    const currencyConfig = await currencyService.getActiveCurrency();
+    if (currencyConfig) auction.bid_increment_price = currencyConfig as number;
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {

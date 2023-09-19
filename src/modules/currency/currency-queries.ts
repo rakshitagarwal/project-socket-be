@@ -20,6 +20,22 @@ const getAllCurrency = async () => {
     return queryResult;
 };
 
+const getActiveCurrency = async () => {
+    const queryResult = await db.currency.findFirst({
+        where: { status: true },
+        select: {
+            id: true,
+            currency_type: true,
+            bid_increment: true,
+            status: true,
+            big_token: true,
+            usdt: true,
+            usdc: true,
+        },
+    });
+    return queryResult;
+};
+
 /**
  * @description getOneCurrency is used to find one currency based on its id.
  * @param {string} id - id of currency to find its details.
@@ -81,6 +97,7 @@ const updateCurrency = async (id: string, change: currencyUpdate) => {
 
 const currencyQueries = {
     getAllCurrency,
+    getActiveCurrency,
     getOneCurrency,
     findOneCurrency,
     updateCurrency,

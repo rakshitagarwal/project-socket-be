@@ -1,5 +1,6 @@
 import { MESSAGES } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
+import { auctionQueries } from "../auction/auction-queries";
 import currencyQueries from "./currency-queries";
 import { ICurrencyType, currencyUpdate } from "./typings/currency-type";
 
@@ -12,6 +13,17 @@ const getOneCurrency = async (id: string | undefined) => {
     const result = await currencyQueries.getOneCurrency(id as string);
     if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_FOUND, result);
     return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
+};
+
+/**
+ * @description getActiveCurrency is used to give details of one currency whose status is true.
+ * @param {string} id - id of currency to find its details.
+ * @returns {object} - the response object using responseBuilder.
+ */
+const getActiveCurrency = async () => {
+    const result = await currencyQueries.getActiveCurrency();
+    if (result) return result.bid_increment;
+    return 0.20;
 };
 
 /**
@@ -37,16 +49,27 @@ const findOneCurrency = async (currency_code: ICurrencyType) => {
  * @returns {object} - the response object using responseBuilder.
  */
 const updateCurrency = async (id: string, change: currencyUpdate) => {
-    if (id) {
+    const auctionData = await auctionQueries.getAllAuctions();
+    console.log(auctionData, "auctionData");
+    let validate = false;
+    auctionData.map((auction) => {
+        if (auction.state === "upcoming" || auction.state === "live") {
+            validate = false;
+        } else {
+            validate = true;
+        }
+    });
+    if (id && validate) {
         const result = await currencyQueries.updateCurrency(id, change);
         if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_UPDATED, result);
-        return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
+        return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_NOT_UPDATED);
     }
-    return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
+    return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_UPDATE_FAILED);
 };
 
 const currencyService = {
     getOneCurrency,
+    getActiveCurrency,
     findOneCurrency,
     updateCurrency,
 };

@@ -232,7 +232,9 @@ export const MESSAGES = {
         CURRENCY_FOUND: "Currency found",
         CURRENCY_NOT_FOUND: "Currency not found",
         CURRENCY_ALL: "All currencies",
-        CURRENCY_UPDATED: "Updated currency config"
+        CURRENCY_UPDATED: "Updated currency config",
+        CURRENCY_NOT_UPDATED: "Updated currency config",
+        CURRENCY_UPDATE_FAILED: "can't update currency while its used in auction which is either live or upcoming",
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "Bidbot created successfully",
