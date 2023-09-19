@@ -180,7 +180,6 @@ const getByIdTotalAuction = async (req: Request, res: Response) => {
  * @param {Response} res - Response
  */
 const auctionListingTotal = async (req: Request, res: Response) => {
-
     const response = await auctionService.auctionListsTotal(
         req.query as unknown as IAuctionListing
     );

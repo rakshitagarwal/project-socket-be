@@ -1139,6 +1139,7 @@ const getListTotalAuction = async (
     products.title as product_name,
     auction1.auction_category_name,
     auction1.auction_start_date,
+    auction1.registeration_count,
     auction1.total_plays_live_consumed_auction,
     auction1.total_play_consumed_refund_after_buy_now,
     auction1.plays_consumed_on_bid * auction1.total_auction_register_count as total_play_consumed_preregister
@@ -1148,6 +1149,7 @@ from (
             subQuery.title as auction_name,
             subQuery.product_id,
             subQuery.start_date as auction_start_date,
+            subQuery.registerationCount as registeration_count,
             subQuery.auctionTitle as auction_category_name,
             COALESCE(
                 subQuery.plays_consumed_on_bid,
@@ -1169,6 +1171,7 @@ from (
                 SELECT
                     A.id,
                     A.title,
+                    A.registeration_count as registerationCount,
                     A.product_id as product_id,
                     mac.title as auctionTitle,
                     A.start_date, (
@@ -1243,6 +1246,7 @@ export const getInformationAuctionById = async (
     products.title as product_name,
     auction1.auction_category_name,
     auction1.auction_start_date,
+    auction1.registeration_count,
     auction1.total_plays_consumed_auction,
     auction1.total_play_consumed_refund_after_buy_now,
     auction1.plays_consumed_on_bid * auction1.total_auction_register_count as total_play_preregister_auction
@@ -1253,6 +1257,7 @@ from (
             subQuery.product_id,
             subQuery.start_date as auction_start_date,
             subQuery.auctionTitle as auction_category_name,
+            subQuery.registerationCount as registeration_count,
             COALESCE( subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
             COALESCE(subQuery.total_bid,0) AS total_bid,
             COALESCE( subQuery.total_plays_consumed_auction,0) AS total_plays_consumed_auction,
@@ -1263,6 +1268,7 @@ from (
                 SELECT
                     A.id,
                     A.title,
+                    A.registeration_count as registerationCount,
                     A.product_id as product_id, (
                         SELECT
                             title

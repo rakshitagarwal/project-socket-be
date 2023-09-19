@@ -54,7 +54,8 @@ export interface ITotalAuctionInfo {
     auction_start_date: Date | string,
     total_plays_live_consumed_auction: number,
     total_play_consumed_refund_after_buy_now: number,
-    total_play_preregister_auction: number
+    total_play_preregister_auction: number,
+    registeration_count: number
 }
 
 
@@ -76,6 +77,7 @@ export interface IAuctionTotal {
     total_plays_consumed: number,
     total_price: number,
     plays_lost_consumed: number,
-    total_auction_register_count: number
+    total_auction_register_count: number,
+    registeration_count: number
 }
 

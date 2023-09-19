@@ -538,7 +538,8 @@ const auctionLists = async (data: IAuctionListing) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getByIdTotalAuction = async (auctionId: string) => {
-    const auction: IAuctionTotal[] = await auctionQueries.getTotalAuctionById(auctionId);
+
+    const auction: IAuctionTotal[] = await auctionQueries.getInformationAuctionById(auctionId);
     if (auction.length)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auction);
     return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
