@@ -513,7 +513,7 @@ const auctionLists = async (data: IAuctionListing) => {
     }
     if (filter.auction_id) {
         const auction = await auctionQueries.getPlayerAuctionDetailsById(
-            filter.player_id as string,
+            filter.player_id,
             filter.auction_id,
             filter.state as AUCTION_STATE
         );

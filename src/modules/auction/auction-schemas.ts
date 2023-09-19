@@ -372,8 +372,7 @@ const ZAuctionListing = z
             })
             .uuid({
                 message: "player_id should be string",
-            })
-            .optional(),
+            }),
         auction_id: z
             .string({
                 required_error: "auction_id is required",
@@ -392,6 +391,29 @@ const ZAuctionListing = z
     })
     .strict();
 
+const ZAuctionTotalListing = z
+    .object({
+        page: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "page must be number" })
+            )
+            .default(0),
+        limit: z
+            .preprocess(
+                (val) => parseInt(val as string),
+                z.number({ invalid_type_error: "limit must be number" })
+            )
+            .default(10),
+        search: z
+            .string({
+                invalid_type_error: "search should be type of string",
+                required_error: "search should be error",
+            })
+            .optional(),
+    })
+    .strict();
+
 export const auctionSchemas = {
     ZAuctionAdd,
     ZAuctionId,
@@ -405,4 +427,5 @@ export const auctionSchemas = {
     ZSimulation,
     ZPlayerAuction,
     ZAuctionListing,
+    ZAuctionTotalListing
 };

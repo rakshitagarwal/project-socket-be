@@ -37,7 +37,7 @@ export const ENDPOINTS = {
     RESEND_OTP: "/resend-otp",
     CURRENT_LOCATION: "/current/address",
     LOCATION: "/location",
-    AUCTION_TOTAL_LIST: 'list/auction-total',
+    AUCTION_TOTAL_LIST: 'stats/list',
 
 };
 export const ALLOWED_MIMETYPES = [
