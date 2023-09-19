@@ -38,6 +38,7 @@ export const ENDPOINTS = {
     CURRENT_LOCATION: "/current/address",
     LOCATION: "/location",
     AUCTION_TOTAL_LIST: 'stats/list',
+    AUCTION_TOTAL: "total-auction/list"
 
 };
 export const ALLOWED_MIMETYPES = [
@@ -168,6 +169,7 @@ export const MESSAGES = {
         CONTINUE_BID_NOT_ALLOWED: "Continue bid not allowed",
         INSUFFICIENT_PLAYS_BALANCED: "Insufficient plays balance",
         BUY_NOW: "Buy now",
+        AUCTION_NOT_LIVE:"Auction not live",
     },
     OTP: {
         INVALID_OTP: "Invalid otp",
@@ -315,6 +317,7 @@ export const SOCKET_EVENT = {
 };
 
 export const NODE_EVENT_SERVICE = {
+    MIN_MAX_AUCTION_END:"min:max:auction:end",
     USER_MAIL: "send:user:mail",
     AUCTION_STATE_UPDATE: "auction:state:update",
     AUCTION_REMINDER_MAIL: "auction:reminder:mail",
@@ -331,6 +334,7 @@ export const NODE_EVENT_SERVICE = {
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
+    REGISTER_NEW_PLAYER:"register:new:player"
 };
 
 export const AUCTION_STATE = [
@@ -339,6 +343,21 @@ export const AUCTION_STATE = [
     "completed",
     "cancelled",
 ] as const;
+
+export const AUCTION_CATEGORY = [
+    {
+        title: "THE LAST PLAY",
+        code: "TLP",
+    },
+    {
+        title: "Lowest Unique Bid",
+        code: "MIN",
+    },
+    {
+        title: "Highest Unique Bid",
+        code: "MAX",
+    },
+];
 
 export const dateFormateForMail = (start_date: string) => {
     const startDateISOString = new Date(start_date).toISOString();
@@ -356,3 +375,4 @@ export const dateFormateForMail = (start_date: string) => {
 };
 
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;
+

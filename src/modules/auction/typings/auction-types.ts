@@ -81,3 +81,9 @@ export interface IAuctionTotal {
     registeration_count: number
 }
 
+export interface IAuctionTotalCount {
+    total_sum_plays_live_consumed_auction: number,
+    total_sum_play_consumed_refund_after_buy_now: number,
+    total_sum_play_consumed_preregister: number
+}
+

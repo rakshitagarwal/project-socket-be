@@ -193,6 +193,24 @@ const auctionListingTotal = async (req: Request, res: Response) => {
 };
 
 
+
+/**
+ * Total auction
+ * @param {Request} _req - Request
+ * @param {Response} res - Response
+ */
+const auctionTotal = async (_req: Request, res: Response) => {
+    const response = await auctionService.auctionTotal();
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
+};
+
+
 export const auctionHandler = {
     create,
     getById,
@@ -208,5 +226,6 @@ export const auctionHandler = {
     startSimulation,
     auctionListing,
     getByIdTotalAuction,
-    auctionListingTotal
+    auctionListingTotal,
+    auctionTotal
 };
