@@ -46,6 +46,8 @@ const create = async (auction: IAuction, userId: string) => {
             registeration_fees: auction.pre_register_fees,
             terms_and_conditions: auction.terms_condition,
             created_by: userId,
+            total_bids: auction.total_bids||0,
+            decimal_count: auction.decimal_count||0
         },
         select: {
             id: true,
@@ -305,7 +307,15 @@ const upcomingPlayerAuction = async () => {
             start_date: true,
             bid_increment_price: true,
             plays_consumed_on_bid: true,
+            total_bids:true,
+            decimal_count: true,
             opening_price: true,
+            auctionCategory: {
+                select: {
+                    code: true,
+                    title: true,
+                },
+            },
             products: {
                 select: {
                     price: true,
@@ -1021,6 +1031,24 @@ export const transferLastPlay = async (
     return queryResult;
 };
 
+const checkPlayerExistAuction = async (
+    auction_id: string,
+    player_id: string
+) => {
+    const queryResult = await db.playerAuctionRegsiter.findFirst({
+        where: { auction_id, player_id },
+        select: {
+            id: true,
+            player_id: true,
+        },
+    });
+    return queryResult;
+};
+
+const minMaxPlayerRegisters= async(data:{auction_id:string,player_id:string})=>{
+    const queryResult= await db.playerAuctionRegsiter.create({data:{...data,status:"live"}})
+    return queryResult
+}
 
 /**
  * @description get the auction total listing.
@@ -1363,6 +1391,8 @@ export const auctionQueries = {
     getAuctionLists,
     getPlayerAuctionDetailsById,
     transferLastPlay,
+    checkPlayerExistAuction,
+    minMaxPlayerRegisters,
     getListTotalAuction,
     getInformationAuctionById,
     getListTotalAuctionCount
