@@ -31,9 +31,12 @@ const prisma = new PrismaClient();
  * @param {string} userId = UUID regarding the created_by
  * @returns {Promise<{id: string}>}
  */
-const create = async (auction: IAuction & {
-    bid_increment_price: number;
-}, userId: string) => {
+const create = async (
+    auction: IAuction & {
+        bid_increment_price: number;
+    },
+    userId: string
+) => {
     const query = await db.auction.create({
         data: {
             title: auction.title,
@@ -115,15 +118,27 @@ const getMultipleActiveById = async (id: string[]) => {
     return query;
 };
 
-const getAllAuctions = async() => {
+const getAllAuctions = async () => {
     const queryResult = await db.auction.findMany({
-        where:{
+        where: {
             is_deleted: false,
             status: true,
-        }
+            AND: [
+                {
+                    OR: [
+                        {
+                            state: "live",
+                        },
+                        {
+                            state: "upcoming",
+                        },
+                    ],
+                },
+            ],
+        },
     });
     return queryResult;
-}
+};
 
 /**
  * Auction Retrieve
@@ -1036,17 +1051,13 @@ export const transferLastPlay = async (
     return queryResult;
 };
 
-
 /**
  * @description get the auction total listing.
  * @param {number} offset
  * @param {number} limit
  */
 
-const getListTotalAuction = async (
-    offset: number,
-    limit: number
-) => {
+const getListTotalAuction = async (offset: number, limit: number) => {
     const query: Sql = Prisma.sql`SELECT
     auction1.auction_id,
     auction1.auction_name,
@@ -1137,14 +1148,13 @@ from (
                     A.product_id,
                     mac.title
                     offset ${+(offset * limit)}
-                    limit ${+(limit)}
+                    limit ${+limit}
             ) AS subQuery
     ) as auction1
     LEFT JOIN products on auction1.product_id = products.id`;
     const queryResult = await prisma.$queryRaw<ITotalAuctionInfo[]>(query);
     return queryResult;
 };
-
 
 /**
  * @description get the auction total listing count.
@@ -1251,9 +1261,7 @@ from (
  * @param auction_id
  * @returns
  */
-export const getInformationAuctionById = async (
-    auction_id: string
-) => {
+export const getInformationAuctionById = async (auction_id: string) => {
     const query: Sql = Prisma.sql`SELECT
     auction1.auction_id,
     auction1.auction_name,
@@ -1381,5 +1389,5 @@ export const auctionQueries = {
     transferLastPlay,
     getListTotalAuction,
     getInformationAuctionById,
-    getListTotalAuctionCount
+    getListTotalAuctionCount,
 };

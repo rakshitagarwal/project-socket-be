@@ -49,20 +49,12 @@ const findOneCurrency = async (currency_code: ICurrencyType) => {
  */
 const updateCurrency = async (id: string, change: currencyUpdate) => {
     const auctionData = await auctionQueries.getAllAuctions();
-    let validate = false;
-    auctionData.map((auction) => {
-        if (auction.state === "upcoming" || auction.state === "live") {
-            validate = false;
-        } else {
-            validate = true;
-        }
-    });
-    if (id && validate) {
-        const result = await currencyQueries.updateCurrency(id, change);
-        if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_UPDATED, result);
-        return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_NOT_UPDATED);
-    }
-    return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_UPDATE_FAILED);
+    if(auctionData.length > 0) {
+        return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_UPDATE_FAILED);
+    } 
+    const result = await currencyQueries.updateCurrency(id, change);
+    if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_UPDATED, result);
+    return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_NOT_UPDATED);    
 };
 
 const currencyService = {
