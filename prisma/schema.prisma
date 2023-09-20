@@ -327,9 +327,9 @@ model PlayerBidLogs {
   bid_price             Float
   bid_number            Int?
   remaining_seconds     Int?
-  is_unique             Boolean?              @default(false) @db.Boolean
-  is_lowest             Boolean?              @default(false) @db.Boolean
-  is_highest            Boolean?              @default(false) @db.Boolean
+  is_unique             Boolean?              @db.Boolean @default(false) 
+  is_lowest             Boolean?              @db.Boolean @default(false) 
+  is_highest            Boolean?              @db.Boolean @default(false) 
   player_id             String
   player_name           String
   profile_image         String
