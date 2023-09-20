@@ -13,11 +13,13 @@ currencyRouter.get(
     handleAsync(currencyHandler.findOneCurrency)
 );
 
+
 currencyRouter.get(
     ENDPOINTS.ID,
     validateRequest.params(currencySchema.uuidSchema),
     handleAsync(currencyHandler.getOneCurrency)
 );
+
 
 currencyRouter.patch(
     ENDPOINTS.ID,
