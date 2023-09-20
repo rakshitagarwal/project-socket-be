@@ -87,6 +87,7 @@ export const AUCTION_MESSAGES = {
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
     NOT_ACTIVE: "auction not active",
+    PRE_REGISTER_ERROR: "This is open auction, cannot be registered",
     PLAYER_COUNT_NOT_REACHED: "player registeration count not reached",
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",

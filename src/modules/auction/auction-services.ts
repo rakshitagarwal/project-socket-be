@@ -226,6 +226,9 @@ const playerRegister = async (data: IPlayerRegister) => {
         return responseBuilder.notFoundError(
             MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
         );
+        if(!auction.is_preRegistered){
+            return responseBuilder.badRequestError(AUCTION_MESSAGES.PRE_REGISTER_ERROR);
+        }
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
     if (!playerRegisered.id)
         return responseBuilder.expectationFaild(
