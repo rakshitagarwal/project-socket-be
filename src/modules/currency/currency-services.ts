@@ -26,7 +26,7 @@ const getOneCurrency = async (id: string | undefined) => {
 const getActiveCurrency = async () => {
     const result = await currencyQueries.getActiveCurrency();
     if (result) return result.bid_increment;
-    return 0.2;
+    return MESSAGES.CURRENCY.CURRENCY_DEFAULT_VALUE;
 };
 
 /**
@@ -36,7 +36,6 @@ const getActiveCurrency = async () => {
  */
 const findOneCurrency = async (currency_code: ICurrencyType) => {
     if (!Object.keys(currency_code).length) {
-    // if (JSON.stringify(currency_code) === "{}") {
         const result = await currencyQueries.getAllCurrency();
         if (result)
             return responseBuilder.okSuccess(
