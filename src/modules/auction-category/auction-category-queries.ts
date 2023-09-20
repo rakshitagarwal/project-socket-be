@@ -35,6 +35,7 @@ const IsExistsActive = async (id: string) => {
         select: {
             id: true,
             title: true,
+            code: true,
             status: true,
             is_deleted: true,
         },

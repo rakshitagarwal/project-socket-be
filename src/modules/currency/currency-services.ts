@@ -35,7 +35,8 @@ const getActiveCurrency = async () => {
  * @returns {object} - the response object using responseBuilder.
  */
 const findOneCurrency = async (currency_code: ICurrencyType) => {
-    if (JSON.stringify(currency_code) === "{}") {
+    if (!Object.keys(currency_code).length) {
+    // if (JSON.stringify(currency_code) === "{}") {
         const result = await currencyQueries.getAllCurrency();
         if (result)
             return responseBuilder.okSuccess(

@@ -9,10 +9,18 @@ const uuidSchema = z
 const requestBodySchema = z
     .object({
         status: z.boolean().optional(),
-        bid_increment: z.number(),
-        big_token: z.number(),
-        usdt: z.number(),
-        usdc: z.number(),
+        bid_increment: z.number({
+            invalid_type_error: "bid_increment should be number",
+        }),
+        big_token: z.number({
+            invalid_type_error: "big_token should be number",
+        }),
+        usdt: z.number({
+            invalid_type_error: "usdt should be number",
+        }),
+        usdc: z.number({
+            invalid_type_error: "usdc should be number",
+        }),
     })
     .strict();
 

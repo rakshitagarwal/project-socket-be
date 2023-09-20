@@ -42,7 +42,7 @@ const socket = global as unknown as AppGlobal;
  */
 const create = async (
     auction: IAuction & {
-        bid_increment_price: number;
+        bid_increment_price?: number;
     },
     userId: string
 ) => {
@@ -56,8 +56,10 @@ const create = async (
         );
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-    const currencyConfig = await currencyService.getActiveCurrency();
-    if (currencyConfig) auction.bid_increment_price = currencyConfig as number;
+    if (isAuctionCategoryFound.code === "TLP"){
+        const currencyConfig = await currencyService.getActiveCurrency();
+        auction.bid_increment_price = currencyConfig as number;
+    }
     await auctionQueries.create(auction, userId);
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
@@ -120,7 +122,7 @@ const getAll = async (query: IPagination) => {
 const update = async (
     auction: IAuction & {
         status: boolean;
-        bid_increment_price: number;
+        bid_increment_price?: number;
     },
     auctionId: string,
     userId: string
@@ -155,8 +157,10 @@ const update = async (
             AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
         );
     }
-    const currencyConfig = await currencyService.getActiveCurrency();
-    if (currencyConfig) auction.bid_increment_price = currencyConfig as number;
+    if (isAuctionCategoryFound.code === "TLP"){
+        const currencyConfig = await currencyService.getActiveCurrency();
+        auction.bid_increment_price = currencyConfig as number;
+    }
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {

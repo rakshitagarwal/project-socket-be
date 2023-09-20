@@ -34,7 +34,7 @@ const prisma = new PrismaClient();
  */
 const create = async (
     auction: IAuction & {
-        bid_increment_price: number;
+        bid_increment_price?: number;
     },
     userId: string
 ) => {
@@ -43,7 +43,7 @@ const create = async (
             title: auction.title,
             description: auction.description as string,
             plays_consumed_on_bid: auction.play_consumed,
-            bid_increment_price: auction.bid_increment_price,
+            bid_increment_price: auction?.bid_increment_price,
             product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,
@@ -210,7 +210,7 @@ const getAll = async (query: IPagination) => {
 const update = async (
     auction: IAuction & {
         status: boolean;
-        bid_increment_price: number;
+        bid_increment_price?: number;
     },
     auctionId: string,
     userId: string
@@ -223,7 +223,7 @@ const update = async (
             title: auction.title,
             description: auction.description,
             plays_consumed_on_bid: auction.play_consumed,
-            bid_increment_price: auction.bid_increment_price,
+            bid_increment_price: auction?.bid_increment_price,
             product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,
