@@ -88,6 +88,7 @@ async function startSeed() {
                 big_token: 2.00,
                 usdt: 8.00,
                 usdc: 8.00,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date(),
             }],

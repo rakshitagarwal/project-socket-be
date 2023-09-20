@@ -192,14 +192,14 @@ model Auctions {
   id                      String                    @id @default(uuid())
   title                   String
   description             String                    @db.Text
-  bid_increment_price     Float?                    @default(0.01)
+  bid_increment_price     Float?                    @default(0.20)
   decimal_count           Int?                      @db.Integer
   total_bids              Int?                      @db.Integer
   plays_consumed_on_bid   Int
   opening_price           Float                     @default(1.00) @db.DoublePrecision
   new_participants_limit  Int?
   start_date              DateTime?                 @db.Timestamptz()
-  is_preRegistered        Boolean                   @default(true)
+  is_preRegistered        Boolean                   @default(false)
   registeration_count     Int?
   registeration_fees      Int?
   terms_and_conditions    String?                   @db.Text

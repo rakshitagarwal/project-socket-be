@@ -32,23 +32,17 @@ const prisma = new PrismaClient();
  * @param {string} userId = UUID regarding the created_by
  * @returns {Promise<{id: string}>}
  */
-const create = async (
-    auction: IAuction & {
-        bid_increment_price?: number;
-    },
-    userId: string
-) => {
+const create = async (auction: IAuction, userId: string) => {
     const query = await db.auction.create({
         data: {
             title: auction.title,
             description: auction.description as string,
             plays_consumed_on_bid: auction.play_consumed,
-            bid_increment_price: auction?.bid_increment_price,
             product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,
             start_date: auction.start_date,
-            is_preRegistered: auction.is_pregistered,
+            is_preRegistered: auction?.is_pregistered || false,
             registeration_count: auction.pre_register_count,
             registeration_fees: auction.pre_register_fees,
             terms_and_conditions: auction.terms_condition,
@@ -210,7 +204,6 @@ const getAll = async (query: IPagination) => {
 const update = async (
     auction: IAuction & {
         status: boolean;
-        bid_increment_price?: number;
     },
     auctionId: string,
     userId: string
@@ -223,7 +216,6 @@ const update = async (
             title: auction.title,
             description: auction.description,
             plays_consumed_on_bid: auction.play_consumed,
-            bid_increment_price: auction?.bid_increment_price,
             product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,

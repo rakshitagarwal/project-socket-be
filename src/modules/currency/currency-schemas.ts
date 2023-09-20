@@ -8,7 +8,6 @@ const uuidSchema = z
 
 const requestBodySchema = z
     .object({
-        status: z.boolean().optional(),
         bid_increment: z.number({
             invalid_type_error: "bid_increment should be number",
         }),
