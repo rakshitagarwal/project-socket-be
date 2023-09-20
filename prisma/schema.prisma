@@ -155,7 +155,7 @@ model Products {
 
   auctions      Auctions[]
   productMedias ProductMedia[]
-
+  PlayerBuyNow  PlayerBuyNow[]
   @@index([title, landing_image])
   @@map("products")
 }
@@ -192,13 +192,9 @@ model Auctions {
   id                      String                    @id @default(uuid())
   title                   String
   description             String                    @db.Text
-<<<<<<< HEAD
-  bid_increment_price     Float                     @default(0.20)
-=======
   bid_increment_price     Float?                    @default(0.01)
   decimal_count           Int?                      @db.Integer
   total_bids              Int?                      @db.Integer
->>>>>>> development
   plays_consumed_on_bid   Int
   opening_price           Float                     @default(1.00) @db.DoublePrecision
   new_participants_limit  Int?
@@ -223,6 +219,7 @@ model Auctions {
   PlayerBidLogs           PlayerBidLogs[]
   PlayerAuctionRefund     PlayerAuctionRefund[]
   BidBot                  BidBot[]
+  PlayerBuyNow            PlayerBuyNow[]
 
   @@index([title])
   @@map("auctions")
@@ -280,6 +277,7 @@ model CurrencyTransaction {
   created_by               String
   User                     User                      @relation(fields: [created_by], references: [id])
   PlayerWalletTransaction  PlayerWalletTransaction[]
+  PlayerBuyNow             PlayerBuyNow[]
 
   @@map("currency_transaction")
 }
@@ -329,9 +327,9 @@ model PlayerBidLogs {
   bid_price             Float
   bid_number            Int?
   remaining_seconds     Int?
-  is_unique             Boolean?               @db.Boolean @default(false)
-  is_lowest             Boolean?               @db.Boolean @default(false)
-  is_highest            Boolean?               @db.Boolean @default(false)
+  is_unique             Boolean?              @default(false) @db.Boolean
+  is_lowest             Boolean?              @default(false) @db.Boolean
+  is_highest            Boolean?              @default(false) @db.Boolean
   player_id             String
   player_name           String
   profile_image         String
@@ -376,7 +374,6 @@ model BidBot {
   @@map("bid_bot")
 }
 
-<<<<<<< HEAD
 model MasterCurrency {
   id            String   @id @default(uuid())
   currency_type String
@@ -401,14 +398,11 @@ model PlayerBuyNow {
   created_at          DateTime            @default(now()) @db.Timestamptz()
   Auction             Auctions            @relation(fields: [auction_id], references: [id])
   Product             Products            @relation(fields: [product_id], references: [id])
-  AuctionPlayerResult AuctionResult       @relation(fields: [player_result_id], references: [id])
   CurrencyTransaction CurrencyTransaction @relation(fields: [currency_payment_id], references: [id])
 
   @@map("player_buy_now")
 }
 
-=======
->>>>>>> development
 enum Currency {
   FIAT
   CRYPTO
