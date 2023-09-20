@@ -16,11 +16,11 @@ const requestBodySchema = z
     })
     .strict();
 
-const findCurrency = z.object({
-    currency_code: z.string().length(3).optional(),
-})
-.strict();
-
+const findCurrency = z
+    .object({
+        currency_code: z.string().length(3).optional(),
+    })
+    .strict();
 
 const currencySchema = { uuidSchema, requestBodySchema, findCurrency };
 export default currencySchema;

@@ -20,7 +20,9 @@ const getOneCurrency = async (req: Request, res: Response) => {
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const findOneCurrency = async (req: Request, res: Response) => {
-    const response = await currencyService.findOneCurrency(req.query as unknown as ICurrencyType);
+    const response = await currencyService.findOneCurrency(
+        req.query as unknown as ICurrencyType
+    );
     res.status(response.code).json(response);
 };
 
@@ -31,7 +33,10 @@ const findOneCurrency = async (req: Request, res: Response) => {
  * @returns {object} response gets data from services and is sent to api call with code and json.
  */
 const updateCurrency = async (req: Request, res: Response) => {
-    const response = await currencyService.updateCurrency(req.params.id as unknown as string, req.body as unknown as currencyUpdate);
+    const response = await currencyService.updateCurrency(
+        req.params.id as unknown as string,
+        req.body as unknown as currencyUpdate
+    );
     res.status(response.code).json(response);
 };
 

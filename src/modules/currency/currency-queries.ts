@@ -20,6 +20,10 @@ const getAllCurrency = async () => {
     return queryResult;
 };
 
+/**
+ * @description getActiveCurrency is used to get one currency whose status is true
+ * @returns {queryResult} - the result of execution of query.
+ */
 const getActiveCurrency = async () => {
     const queryResult = await db.currency.findFirst({
         where: { status: true },

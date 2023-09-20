@@ -7,5 +7,5 @@ export interface currencyUpdate {
 }
 
 export interface ICurrencyType {
-    currency_code: string
+    currency_code: string;
 }

@@ -11,7 +11,11 @@ import { ICurrencyType, currencyUpdate } from "./typings/currency-type";
  */
 const getOneCurrency = async (id: string | undefined) => {
     const result = await currencyQueries.getOneCurrency(id as string);
-    if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_FOUND, result);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.CURRENCY.CURRENCY_FOUND,
+            result
+        );
     return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
 };
 
@@ -22,7 +26,7 @@ const getOneCurrency = async (id: string | undefined) => {
 const getActiveCurrency = async () => {
     const result = await currencyQueries.getActiveCurrency();
     if (result) return result.bid_increment;
-    return 0.20;
+    return 0.2;
 };
 
 /**
@@ -33,11 +37,21 @@ const getActiveCurrency = async () => {
 const findOneCurrency = async (currency_code: ICurrencyType) => {
     if (JSON.stringify(currency_code) === "{}") {
         const result = await currencyQueries.getAllCurrency();
-        if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_ALL, result);
-        return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
+        if (result)
+            return responseBuilder.okSuccess(
+                MESSAGES.CURRENCY.CURRENCY_ALL,
+                result
+            );
+        return responseBuilder.notFoundError(
+            MESSAGES.CURRENCY.CURRENCY_NOT_FOUND
+        );
     }
     const result = await currencyQueries.findOneCurrency(currency_code);
-    if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_FOUND, result);
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.CURRENCY.CURRENCY_FOUND,
+            result
+        );
     return responseBuilder.notFoundError(MESSAGES.CURRENCY.CURRENCY_NOT_FOUND);
 };
 
@@ -49,12 +63,20 @@ const findOneCurrency = async (currency_code: ICurrencyType) => {
  */
 const updateCurrency = async (id: string, change: currencyUpdate) => {
     const auctionData = await auctionQueries.getAllAuctions();
-    if(auctionData.length > 0) {
-        return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_UPDATE_FAILED);
-    } 
+    if (auctionData.length > 0) {
+        return responseBuilder.badRequestError(
+            MESSAGES.CURRENCY.CURRENCY_UPDATE_FAILED
+        );
+    }
     const result = await currencyQueries.updateCurrency(id, change);
-    if (result) return responseBuilder.okSuccess(MESSAGES.CURRENCY.CURRENCY_UPDATED, result);
-    return responseBuilder.badRequestError(MESSAGES.CURRENCY.CURRENCY_NOT_UPDATED);    
+    if (result)
+        return responseBuilder.okSuccess(
+            MESSAGES.CURRENCY.CURRENCY_UPDATED,
+            result
+        );
+    return responseBuilder.badRequestError(
+        MESSAGES.CURRENCY.CURRENCY_NOT_UPDATED
+    );
 };
 
 const currencyService = {
