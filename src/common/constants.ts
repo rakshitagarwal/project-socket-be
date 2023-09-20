@@ -37,6 +37,7 @@ export const ENDPOINTS = {
     RESEND_OTP: "/resend-otp",
     CURRENT_LOCATION: "/current/address",
     LOCATION: "/location",
+    CURRENCY: "/currency",
     AUCTION_TOTAL_LIST: 'stats/list',
     AUCTION_TOTAL: "total-auction/list"
 
@@ -86,6 +87,7 @@ export const AUCTION_MESSAGES = {
     UPDATE: "auction updated!",
     REMOVE: "auction deleted!",
     NOT_ACTIVE: "auction not active",
+    PRE_REGISTER_ERROR: "This is open auction, cannot be registered",
     PLAYER_COUNT_NOT_REACHED: "player registeration count not reached",
     AUCTION_ALREADY_STARTED:
         "auction is live,so you can't update the auction detials!",
@@ -228,6 +230,15 @@ export const MESSAGES = {
         REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
         REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
         REFERRAL_NOT_VALID: "referral code is not valid",
+    },
+    CURRENCY:{
+        CURRENCY_FOUND: "Currency found",
+        CURRENCY_NOT_FOUND: "Currency not found",
+        CURRENCY_ALL: "All currencies",
+        CURRENCY_UPDATED: "Updated currency config",
+        CURRENCY_NOT_UPDATED: "Updated currency config",
+        CURRENCY_UPDATE_FAILED: "can't update currency while its used in auction which is either live or upcoming",
+        CURRENCY_DEFAULT_VALUE: 0.20,
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "Bidbot created successfully",

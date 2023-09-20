@@ -28,4 +28,5 @@ export const db = {
     userBidBot: prismaClient.bidBot,
     userReferral: prismaClient.userReferral,
     referral: prismaClient.referral,
+    currency: prismaClient.masterCurrency,
 };
