@@ -647,11 +647,29 @@ export const minMaxAuctionBid = async (
             return;
         }
     }
+    let isPlayerRegister = false;
+    if(isAuctionLive.is_preRegistered){
+        const isPre_register = await redisClient.get(`auction:pre-register:${bidData.auction_id}`);
+            if (!isPre_register) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                player_id: bidData.player_id,
+                auction_id:bidData.auction_id
+            });
+            return;
+        }
+        const preRegisterData = JSON.parse(isPre_register);
+        if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
+                socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED
+            });
+            return;
+        }
+    }
     const playerExist = await auctionQueries.checkPlayerExistAuction(
         bidData.auction_id,
         bidData.player_id
     );
-    let isPlayerRegister = false;
     if (!playerExist) {
         const isUser = await userQueries.fetchPlayerId(bidData.player_id);
         if (!isUser) {
@@ -722,19 +740,6 @@ export const getMinMaxAuctionResult = async (payload: {
                 message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
             });
         return;
-    }
-    if(isAuctionLive.is_preRegistered){
-        const isPre_register = await redisClient.get(
-            `auction:pre-register:${payload.auction_id}`
-        );
-        if (!isPre_register) {
-            socket.playerSocket.to(payload.socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
-                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-                player_id: payload.player_id,
-                auction_id:payload.auction_id
-            });
-            return;
-        }
     }
     const auctionResult = JSON.parse(
         (await redisClient.get(
