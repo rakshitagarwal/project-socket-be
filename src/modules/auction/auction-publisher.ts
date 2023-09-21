@@ -272,7 +272,8 @@ export const newBiDRecieved = async (
     if (!isPre_register) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-            data: bidPayload.player_id,
+            player_id: bidPayload.player_id,
+            auction_id: bidPayload.auction_id
         });
         return;
     }
@@ -407,11 +408,9 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
     });
     socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
         message: "player bid logs",
-            data: {
-                player_id: payload.player_id,
-                auction_id: payload.auction_id,
-                data: payload.playerInfo.reverse().slice(0,30),
-            },
+        player_id: payload.player_id,
+        auction_id: payload.auction_id,
+        data: payload.playerInfo.reverse().slice(0,30),
     });
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid",{
         message:"bid add successfully",
@@ -724,6 +723,19 @@ export const getMinMaxAuctionResult = async (payload: {
             });
         return;
     }
+    if(isAuctionLive.is_preRegistered){
+        const isPre_register = await redisClient.get(
+            `auction:pre-register:${payload.auction_id}`
+        );
+        if (!isPre_register) {
+            socket.playerSocket.to(payload.socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                player_id: payload.player_id,
+                auction_id:payload.auction_id
+            });
+            return;
+        }
+    }
     const auctionResult = JSON.parse(
         (await redisClient.get(
             `auction:result:${payload.auction_id}`
@@ -745,11 +757,9 @@ export const getMinMaxAuctionResult = async (payload: {
     );
     socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
         message: "player bid logs",
-        data: {
-            player_id: payload.player_id,
-            auction_id: payload.auction_id,
-            data: playerData.reverse().slice(0,30),
-        },
+        player_id: payload.player_id,
+        auction_id: payload.auction_id,
+        data: playerData.reverse().slice(0,30),
     });
     return;
 };
