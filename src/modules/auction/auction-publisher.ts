@@ -800,6 +800,16 @@ export const minMaxBidResult=async(payload: {
                 ),
             },
         });
+    }else{
+        socket.playerSocket.to(payload.socketId).emit("min:max:bid:percentage", {
+            message: "total bids",
+            data: {
+                total_bids:+isAuctionLive.total_bids,
+                num_of_bids: 0,
+                auction_id: payload.auction_id,
+                bid_percentage: 0
+            },
+        });
     }
    
 }
