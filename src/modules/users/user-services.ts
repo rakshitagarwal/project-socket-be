@@ -412,7 +412,7 @@ const resetPassword = async (body: IresetPassword) => {
         isUser?.password as string
     );
     if (!isPassword) {
-        return responseBuilder.badRequestError(MESSAGES.USERS.WORNG_PASSWORD);
+        return responseBuilder.badRequestError(MESSAGES.USERS.WRONG_PASSWORD);
     }
     const password = hashPassword(body.newPassword);
     await userQueries.updateUser({ id: isUser.id }, { password });
