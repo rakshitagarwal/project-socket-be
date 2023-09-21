@@ -384,6 +384,10 @@ export const randomBid = async (auction_id: string, count: number) => {
  * @param {IminMaxResult} payload - The payload containing auction result data.
  * @returns {Promise<void>} A Promise that resolves when the operation is complete.
  */
+
+/**
+ * slice is used for latest 30 data
+ */
 const minMaxResultInfo = async (payload: IminMaxResult) => {
     await redisClient.set(
         `auction:result:${payload.auction_id}`,
@@ -406,7 +410,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
             data: {
                 player_id: payload.player_id,
                 auction_id: payload.auction_id,
-                data: payload.playerInfo.reverse().splice(30),
+                data: payload.playerInfo.reverse().slice(0,30),
             },
     });
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid",{
@@ -637,7 +641,7 @@ export const minMaxAuctionBid = async (
     }
     const decimalPlayes = bidData.bid_price.toString().split(".")?.[1];
     if (bidData.bid_price.toString().includes(".") && decimalPlayes) {
-        if (decimalPlayes.toString().length > isAuctionLive.decimal_count) {
+        if (decimalPlayes.toString()?.length > isAuctionLive.decimal_count) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: `Decimal value must be ${isAuctionLive.decimal_count}`,
             });
@@ -744,7 +748,7 @@ export const getMinMaxAuctionResult = async (payload: {
         data: {
             player_id: payload.player_id,
             auction_id: payload.auction_id,
-            data: playerData,
+            data: playerData.reverse().slice(0,30),
         },
     });
     return;
@@ -765,15 +769,18 @@ export const minMaxBidResult=async(payload: {
         return;
     }
     const auctionHistory = JSON.parse(await redisClient.get(`${payload.auction_id}:bidHistory`) as string)
-    socket.playerSocket.to(payload.socketId).emit("min:max:bid:percentage", {
-        message: "total bids",
-        data: {
-            total_bids:+isAuctionLive.total_bids,
-            num_of_bids: auctionHistory.length||0,
-            auction_id: payload.auction_id,
-            bid_percentage: Math.floor(
-                (auctionHistory.length* 100) / +isAuctionLive.total_bids
-            ),
-        },
-    });
+    if(auctionHistory){
+        socket.playerSocket.to(payload.socketId).emit("min:max:bid:percentage", {
+            message: "total bids",
+            data: {
+                total_bids:+isAuctionLive.total_bids,
+                num_of_bids: auctionHistory.length||0,
+                auction_id: payload.auction_id,
+                bid_percentage: Math.floor(
+                    (auctionHistory.length* 100) / +isAuctionLive.total_bids
+                ),
+            },
+        });
+    }
+   
 }
