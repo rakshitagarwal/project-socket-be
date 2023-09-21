@@ -17,6 +17,7 @@ import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import userQueries from "../users/user-queries";
 import logger from "../../config/logger";
 import { auctionQueries } from "./auction-queries";
+import { auctionService } from "./auction-services";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
@@ -256,6 +257,15 @@ export const newBiDRecieved = async (
         });
         return;
     }
+
+    const auctionExist = JSON.parse(await redisClient.get(`auction:live:${bidPayload.auction_id}`) as string);
+    if (!auctionExist?.is_preRegistered){
+        const playerExist = await auctionQueries.checkPlayerExistAuction(bidPayload.auction_id, bidPayload.player_id);
+        if (!playerExist) {
+            await auctionService.playerOpenAuctionRegister({ auction_id: bidPayload.auction_id, player_id: bidPayload.player_id });
+        }
+    }
+
     const isPre_register = await redisClient.get(
         `auction:pre-register:${bidData.auction_id}`
     );
