@@ -76,6 +76,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         u.last_name,
         u.country,
         u.avatar,
+        u.status,
         u.mobile_no,
         COALESCE(T3.Player_in_Wallet, 0) AS Plays_In_Wallet,
         COALESCE(T1.Auction_Won, 0) AS Auction_Won,
@@ -215,7 +216,7 @@ const addPlayBalanceTx = async (
 const addExtraPlays = async (
     prisma: PrismaClient,
     data: IWalletTx
-) => {    
+) => {
     const query = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
@@ -305,7 +306,7 @@ const playerBidLog = async (data: [IPlayerBidLog]) => {
     return queryResult;
 };
 
-const minPlayerBidLogs=async(data:[IminAuctionBidLog])=>{
+const minPlayerBidLogs = async (data: [IminAuctionBidLog]) => {
     const queryResult = await db.playerBidLogs.createMany({
         data: data,
     });
