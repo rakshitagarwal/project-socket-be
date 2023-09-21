@@ -391,11 +391,19 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
             ),
         },
     });
-    socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid", {
-        message: "recent player bid",
-        data: payload.playerInfo.reverse(),
-        winnerInfo: payload.winnerInfo || {},
+    socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
+        message: "player bid logs",
+            data: {
+                player_id: payload.player_id,
+                auction_id: payload.auction_id,
+                data: payload.playerInfo.reverse().splice(30),
+            },
     });
+    socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid",{
+        message:"bid successfully received",
+        player_id: payload.player_id,
+        auction_id: payload.auction_id,
+    })
     if (payload.winnerInfo && payload.bidHistory.length >= payload.totalBid) {
         eventService.emit(NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END, {
             auction_id: payload.auction_id,
