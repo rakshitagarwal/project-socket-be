@@ -280,6 +280,27 @@ const playerRegister = async (data: IPlayerRegister) => {
 };
 
 /**
+ * @description - register player in open auction
+ * @param {{auction_id: string, player_id: string}} data - auction and player data
+ * @returns
+ */
+const playerOpenAuctionRegister = async (data: {auction_id: string, player_id: string}) => {
+    const playerRegisered = await auctionQueries.playerOpenAuctionRegister(data);
+    if (!playerRegisered) return;
+    const newRedisObject: { [id: string]: IRegisterPlayer } = {};
+    const getRegisteredPlayer = await redisClient.get(`auction:pre-register:${data.auction_id}`);
+    if (!getRegisteredPlayer) {
+        newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
+        await redisClient.set(`auction:pre-register:${data.auction_id}`,JSON.stringify(newRedisObject));
+    } else {
+        const registeredObj = JSON.parse(getRegisteredPlayer);
+        registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
+        await redisClient.set(`auction:pre-register:${data.auction_id}`,JSON.stringify(registeredObj));
+    }
+    return;
+};
+
+/**
  * @param {string} player_id - The ID of the player for whom auctions are to be retrieved.
  * @param {IPagination} query - Pagination information to limit and offset the results.
  * @property {number} query.limit - The maximum number of auctions to retrieve (default is 10 if not provided).
@@ -591,6 +612,7 @@ export const auctionService = {
     remove,
     getBidLogs,
     playerRegister,
+    playerOpenAuctionRegister,
     startAuction,
     getAllMyAuction,
     playerAuctionDetails,
