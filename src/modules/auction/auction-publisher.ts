@@ -396,7 +396,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
             data: {
                 player_id: payload.player_id,
                 auction_id: payload.auction_id,
-                data: payload.playerInfo.reverse().splice(30),
+                data: payload.playerInfo.reverse().slice(0,30),
             },
     });
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid",{
