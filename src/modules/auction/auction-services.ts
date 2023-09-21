@@ -226,9 +226,9 @@ const playerRegister = async (data: IPlayerRegister) => {
         return responseBuilder.notFoundError(
             MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
         );
-        if(!auction.is_preRegistered){
-            return responseBuilder.badRequestError(AUCTION_MESSAGES.PRE_REGISTER_ERROR);
-        }
+    if (!auction.is_preRegistered) {
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.PRE_REGISTER_ERROR);
+    }
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
     if (!playerRegisered.id)
         return responseBuilder.expectationFaild(
@@ -571,13 +571,12 @@ const auctionListsTotal = async (data: IAuctionListing) => {
 
 
 /**
- * @description get Total auction 
- * @param {IAuctionTotalCount} data
+ * @description get Total auction global stats 
  */
 const auctionTotal = async () => {
     const getAuctionCounts: IAuctionTotalCount[] = await auctionQueries.getTotalAuction();
     return responseBuilder.okSuccess(
-        AUCTION_MESSAGES.NOT_FOUND,
+        AUCTION_MESSAGES.FOUND,
         getAuctionCounts,
     );
 };

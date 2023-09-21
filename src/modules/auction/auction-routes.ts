@@ -103,6 +103,5 @@ auctionRouter.get(
 );
 auctionRouter.get(
     ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL,
-    // [validateRequest.query(auctionSchemas.ZAuctionTotalListing)],
     handleAsync(auctionHandler.auctionTotal)
 );
