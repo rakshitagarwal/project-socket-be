@@ -569,7 +569,6 @@ const auctionListsTotal = async (data: IAuctionListing) => {
     );
 };
 
-
 /**
  * @description get Total auction global stats 
  */
