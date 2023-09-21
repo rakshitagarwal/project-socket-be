@@ -164,6 +164,7 @@ export const MESSAGES = {
         AUCTION_COUNT_DOWN: "Auction count down",
         AUCTION_RECENT_BID: "Auction recent bid",
         RECENT_BIDS: "Recents bids history",
+        ACTIVE_PLAYERS: "Active players' avatars",
         AUCTION_ENDED: "Auction ended",
         CURRENT_PLAYS: "Current plays",
         AUCTION_NOT_FOUND: "Auction not found",
@@ -325,6 +326,7 @@ export const SOCKET_EVENT = {
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
     AUCTION_START_DATE: "auction:start:date",
+    AUCTION_AVATARS: "auction:avatars"
 };
 
 export const NODE_EVENT_SERVICE = {
