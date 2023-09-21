@@ -374,6 +374,10 @@ export const randomBid = async (auction_id: string, count: number) => {
  * @param {IminMaxResult} payload - The payload containing auction result data.
  * @returns {Promise<void>} A Promise that resolves when the operation is complete.
  */
+
+/**
+ * slice is used for latest 30 data
+ */
 const minMaxResultInfo = async (payload: IminMaxResult) => {
     await redisClient.set(
         `auction:result:${payload.auction_id}`,
@@ -734,7 +738,7 @@ export const getMinMaxAuctionResult = async (payload: {
         data: {
             player_id: payload.player_id,
             auction_id: payload.auction_id,
-            data: playerData,
+            data: playerData.reverse().slice(0,30),
         },
     });
     return;
