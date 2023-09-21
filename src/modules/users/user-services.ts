@@ -60,7 +60,7 @@ const register = async (body: Iuser) => {
             );
         applied_id = result.id;
     }
-    if (isUser && !isUser.status) {
+    if (isUser && !isUser.is_verified) {
         const passcode = Math.round(Math.random() * 10000)
             .toString()
             .padStart(4, "0");
@@ -134,13 +134,10 @@ const register = async (body: Iuser) => {
  */
 
 const otpVerifcation = async (body: IotpVerification) => {
-    console.log("hhhhhhhhhhhhhhhhh");
 
     const isUser = await userQueries.fetchUser({ email: body.email });
-    console.log(isUser);
 
     if (!isUser) {
-        console.log("gggggggg");
 
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
@@ -165,7 +162,7 @@ const otpVerifcation = async (body: IotpVerification) => {
             subject: "Welcome to Big Deal : Signup Details",
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
-        await userQueries.updateUser({ id: isUser.id }, { status: true });
+        await userQueries.updateUser({ id: isUser.id }, { is_verified: true });
     }
     await Promise.all([
         otpQuery.deleteOtp({ user_id: isUser.id, otp_type: body.otp_type }),
@@ -227,9 +224,14 @@ const playerLogin = async (body: IplayerLogin) => {
     }
     if (!isUser.status) {
         return responseBuilder.unauthorizedError(
-            MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
+            MESSAGES.USERS.USER_TEMPORARY_BLOCK
         );
     }
+    // if (!isUser.is_verified) {
+    //     return responseBuilder.unauthorizedError(
+    //         MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
+    //     );
+    // }
     await prismaTransaction(async (prisma: PrismaClient) => {
         const passcode = Math.round(Math.random() * 10000)
             .toString()
@@ -641,6 +643,23 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
     });
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL);
 };
+/**
+ * @description login player with verification
+ * @param body user's request object
+ */
+
+const userBlockStatus = async (id: string, payload: IupdateUser) => {
+    const isUser = await userQueries.fetchUser({ id: id });
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+    }
+    const user = await userQueries.updateUser({ id: id }, payload);
+    if (!user.status) {
+        await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
+    }
+    return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
+};
+
 
 const userService = {
     register,
@@ -660,6 +679,7 @@ const userService = {
     getPlayerWalletBalance,
     debitPlaysForPlayer,
     resendOtpToUser,
+    userBlockStatus
     // bidPlaysDebit,
 };
 

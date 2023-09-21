@@ -39,7 +39,8 @@ export const ENDPOINTS = {
     LOCATION: "/location",
     CURRENCY: "/currency",
     AUCTION_TOTAL_LIST: 'stats/list',
-    AUCTION_TOTAL: "total-auction/list"
+    AUCTION_TOTAL: "total-auction/list",
+    USER_BLOCK: "block/"
 
 };
 export const ALLOWED_MIMETYPES = [
@@ -171,7 +172,7 @@ export const MESSAGES = {
         CONTINUE_BID_NOT_ALLOWED: "Continue bid not allowed",
         INSUFFICIENT_PLAYS_BALANCED: "Insufficient plays balance",
         BUY_NOW: "Buy now",
-        AUCTION_NOT_LIVE:"Auction not live",
+        AUCTION_NOT_LIVE: "Auction not live",
     },
     OTP: {
         INVALID_OTP: "Invalid otp",
@@ -196,6 +197,7 @@ export const MESSAGES = {
         CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:
             "Please check your email and verify your account!",
         PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
+        USER_TEMPORARY_BLOCK: "this user is temporary blocked",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
@@ -231,7 +233,7 @@ export const MESSAGES = {
         REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
         REFERRAL_NOT_VALID: "referral code is not valid",
     },
-    CURRENCY:{
+    CURRENCY: {
         CURRENCY_FOUND: "Currency found",
         CURRENCY_NOT_FOUND: "Currency not found",
         CURRENCY_ALL: "All currencies",
@@ -328,7 +330,7 @@ export const SOCKET_EVENT = {
 };
 
 export const NODE_EVENT_SERVICE = {
-    MIN_MAX_AUCTION_END:"min:max:auction:end",
+    MIN_MAX_AUCTION_END: "min:max:auction:end",
     USER_MAIL: "send:user:mail",
     AUCTION_STATE_UPDATE: "auction:state:update",
     AUCTION_REMINDER_MAIL: "auction:reminder:mail",
@@ -345,7 +347,7 @@ export const NODE_EVENT_SERVICE = {
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
-    REGISTER_NEW_PLAYER:"register:new:player"
+    REGISTER_NEW_PLAYER: "register:new:player"
 };
 
 export const AUCTION_STATE = [
