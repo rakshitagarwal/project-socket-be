@@ -70,13 +70,13 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
 const fetchAllUsers = async (query: IuserPaginationQuery) => {
     const user: Sql = Prisma.sql`
     SELECT
+        u.status,
         u.id,
         u.email,
         u.first_name,
         u.last_name,
         u.country,
         u.avatar,
-        u.status,
         u.mobile_no,
         COALESCE(T3.Player_in_Wallet, 0) AS Plays_In_Wallet,
         COALESCE(T1.Auction_Won, 0) AS Auction_Won,

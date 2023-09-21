@@ -134,8 +134,14 @@ const register = async (body: Iuser) => {
  */
 
 const otpVerifcation = async (body: IotpVerification) => {
+    console.log("hhhhhhhhhhhhhhhhh");
+
     const isUser = await userQueries.fetchUser({ email: body.email });
+    console.log(isUser);
+
     if (!isUser) {
+        console.log("gggggggg");
+
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
     if (!isUser.status && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
