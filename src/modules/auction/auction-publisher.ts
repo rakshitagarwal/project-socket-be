@@ -258,7 +258,7 @@ export const newBiDRecieved = async (
         return;
     }
 
-    const auctionExist = await auctionQueries.getAuctionById(bidPayload.auction_id);
+    const auctionExist = JSON.parse(await redisClient.get(`auction:live:${bidPayload.auction_id}`) as string);
     if (!auctionExist?.is_preRegistered){
         const playerExist = await auctionQueries.checkPlayerExistAuction(bidPayload.auction_id, bidPayload.player_id);
         if (!playerExist) {
