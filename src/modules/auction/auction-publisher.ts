@@ -400,7 +400,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
             },
     });
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid",{
-        message:"bid successfully received",
+        message:"bid add successfully",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
     })
@@ -739,3 +739,31 @@ export const getMinMaxAuctionResult = async (payload: {
     });
     return;
 };
+
+export const minMaxBidResult=async(payload: {
+    auction_id: string;
+    player_id: string;
+    socketId: string}
+    )=>{
+    const isAuctionLive = JSON.parse((await redisClient.get(`auction:live:${payload.auction_id}`)) as string);
+    if (!isAuctionLive) {
+        socket.playerSocket
+            .to(payload.socketId)
+            .emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+            });
+        return;
+    }
+    const auctionHistory = JSON.parse(await redisClient.get(`${payload.auction_id}:bidHistory`) as string)
+    socket.playerSocket.to(payload.socketId).emit("min:max:bid:percentage", {
+        message: "total bids",
+        data: {
+            total_bids:+isAuctionLive.total_bids,
+            num_of_bids: auctionHistory.length||0,
+            auction_id: payload.auction_id,
+            bid_percentage: Math.floor(
+                (auctionHistory.length* 100) / +isAuctionLive.total_bids
+            ),
+        },
+    });
+}
