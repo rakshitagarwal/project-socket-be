@@ -78,7 +78,7 @@ const socketService = async (server: Server) => {
                 minMaxBidResult({
                     auction_id: data.auction_id,
                     player_id: data.player_id,
-                    socketId: socket.id,
+                    socketId: socket.id
                 })
             })
         }
