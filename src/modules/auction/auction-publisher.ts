@@ -627,7 +627,7 @@ export const minMaxAuctionBid = async (
     }
     const decimalPlayes = bidData.bid_price.toString().split(".")?.[1];
     if (bidData.bid_price.toString().includes(".") && decimalPlayes) {
-        if (decimalPlayes.toString().length > isAuctionLive.decimal_count) {
+        if (decimalPlayes.toString()?.length > isAuctionLive.decimal_count) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: `Decimal value must be ${isAuctionLive.decimal_count}`,
             });
@@ -755,15 +755,18 @@ export const minMaxBidResult=async(payload: {
         return;
     }
     const auctionHistory = JSON.parse(await redisClient.get(`${payload.auction_id}:bidHistory`) as string)
-    socket.playerSocket.to(payload.socketId).emit("min:max:bid:percentage", {
-        message: "total bids",
-        data: {
-            total_bids:+isAuctionLive.total_bids,
-            num_of_bids: auctionHistory.length||0,
-            auction_id: payload.auction_id,
-            bid_percentage: Math.floor(
-                (auctionHistory.length* 100) / +isAuctionLive.total_bids
-            ),
-        },
-    });
+    if(auctionHistory){
+        socket.playerSocket.to(payload.socketId).emit("min:max:bid:percentage", {
+            message: "total bids",
+            data: {
+                total_bids:+isAuctionLive.total_bids,
+                num_of_bids: auctionHistory.length||0,
+                auction_id: payload.auction_id,
+                bid_percentage: Math.floor(
+                    (auctionHistory.length* 100) / +isAuctionLive.total_bids
+                ),
+            },
+        });
+    }
+   
 }
