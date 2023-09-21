@@ -45,6 +45,10 @@ export interface IPlayerAuctionInfo {
     last_bidding_price: number;
 }
 
+export interface Bid {
+    player_id: string;
+    profile_image: string;
+}
 
 export interface ITotalAuctionInfo {
     auction_id: string,

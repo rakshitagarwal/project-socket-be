@@ -18,6 +18,7 @@ import userQueries from "../users/user-queries";
 import logger from "../../config/logger";
 import { auctionQueries } from "./auction-queries";
 import { auctionService } from "./auction-services";
+import { Bid } from "./typings/auction-types";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
@@ -99,14 +100,18 @@ const recentBid = async (auctionId: string) => {
     const bidHistory = JSON.parse(
         (await redisClient.get(`${auctionId}:bidHistory`)) as unknown as string
     );
-    const avatarUnique = new Map();
-    bidHistory.forEach((bid: { player_id: string }) => {
-        if (!avatarUnique.has(bid.player_id)) {
-            avatarUnique.set(bid.player_id, bid);
-        }
+
+    const avatarUnique: Bid[] = [];
+    const bids = bidHistory.filter((bid: Bid, index: number, self: Bid[]) => {
+        return self.findIndex((item) => item.player_id === bid.player_id) === index;
+
     });
-    
-    const activeAvatars = Array.from(avatarUnique.values());
+    bids.forEach((element: Bid) => {
+        avatarUnique.push({
+            player_id: element.player_id,
+            profile_image: element.profile_image
+        })
+    });
     
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RECENT_BID, {
         message: MESSAGES.SOCKET.AUCTION_RECENT_BID,
@@ -120,7 +125,7 @@ const recentBid = async (auctionId: string) => {
     });
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_AVATARS, {
         message: MESSAGES.SOCKET.ACTIVE_PLAYERS,
-        data: activeAvatars,
+        data: avatarUnique,
         auctionId,
     });
 };
