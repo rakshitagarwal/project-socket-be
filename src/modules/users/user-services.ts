@@ -643,11 +643,11 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
     });
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL);
 };
+
 /**
- * @description login player with verification
+ * @description  player blocked  
  * @param body user's request object
  */
-
 const userBlockStatus = async (id: string, payload: IupdateUser) => {
     const isUser = await userQueries.fetchUser({ id: id });
     if (!isUser) {
