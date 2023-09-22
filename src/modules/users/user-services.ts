@@ -60,7 +60,7 @@ const register = async (body: Iuser) => {
             );
         applied_id = result.id;
     }
-    if (isUser && !isUser.is_verified) {
+    if (isUser && !isUser.status) {
         const passcode = Math.round(Math.random() * 10000)
             .toString()
             .padStart(4, "0");
