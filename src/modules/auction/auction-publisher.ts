@@ -101,17 +101,19 @@ const recentBid = async (auctionId: string) => {
         (await redisClient.get(`${auctionId}:bidHistory`)) as unknown as string
     );
 
-    const avatarUnique: Bid[] = [];
-    const bids = bidHistory.filter((bid: Bid, index: number, self: Bid[]) => {
-        return self.findIndex((item) => item.player_id === bid.player_id) === index;
-
-    });
-    bids.forEach((element: Bid) => {
-        avatarUnique.push({
-            player_id: element.player_id,
-            profile_image: element.profile_image
-        })
-    });
+    const avatarUnique: Bid[] = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
+        const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
+      
+        if (foundIndex === -1) {
+          uniqueBids.push({
+            player_name: bid.player_name,
+            player_id: bid.player_id,
+            profile_image: bid.profile_image,
+          });
+        }
+      
+        return uniqueBids;
+      }, []);      
     
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RECENT_BID, {
         message: MESSAGES.SOCKET.AUCTION_RECENT_BID,

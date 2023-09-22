@@ -46,6 +46,7 @@ export interface IPlayerAuctionInfo {
 }
 
 export interface Bid {
+    player_name: string;
     player_id: string;
     profile_image: string;
 }
