@@ -36,6 +36,7 @@ const fetchUser = async (query: IuserQuery) => {
             mobile_no: true,
             avatar: true,
             referral_code: true,
+            is_verified: true,
             status: true,
             id: true,
             roles: {
@@ -70,6 +71,7 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
 const fetchAllUsers = async (query: IuserPaginationQuery) => {
     const user: Sql = Prisma.sql`
     SELECT
+        u.status,
         u.id,
         u.email,
         u.first_name,
@@ -122,7 +124,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     ON
         u.role_id=mr.id
     WHERE
-        u.status=TRUE AND u.is_deleted=FALSE
+        mr.title='Player' and u.is_deleted=FALSE
     ORDER BY
         u.updated_at DESC
     offset ${query.page * query.limit}
@@ -136,7 +138,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
             AND: [
                 {
                     is_deleted: false,
-                    status: true,
+                    // status: true,
                 },
                 {
                     roles: {
@@ -215,7 +217,7 @@ const addPlayBalanceTx = async (
 const addExtraPlays = async (
     prisma: PrismaClient,
     data: IWalletTx
-) => {    
+) => {
     const query = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
@@ -305,7 +307,7 @@ const playerBidLog = async (data: [IPlayerBidLog]) => {
     return queryResult;
 };
 
-const minPlayerBidLogs=async(data:[IminAuctionBidLog])=>{
+const minPlayerBidLogs = async (data: [IminAuctionBidLog]) => {
     const queryResult = await db.playerBidLogs.createMany({
         data: data,
     });
