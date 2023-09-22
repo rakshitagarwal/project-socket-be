@@ -48,7 +48,7 @@ const register = async (body: Iuser) => {
         return responseBuilder.notFoundError(MESSAGES.ROLE.ROlE_NOT_EXIST);
     }
     const isUser = await userQueries.fetchUser({ email: payload.email });
-    if (isUser && isUser.status) {
+    if (isUser && isUser.is_verified) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
     let applied_id: string;
@@ -60,7 +60,7 @@ const register = async (body: Iuser) => {
             );
         applied_id = result.id;
     }
-    if (isUser && !isUser.status) {
+    if (isUser && !isUser.is_verified) {
         const passcode = Math.round(Math.random() * 10000)
             .toString()
             .padStart(4, "0");
@@ -86,7 +86,7 @@ const register = async (body: Iuser) => {
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
-            data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
+            data: { ...payload, role_id: isRole.id, avatar: randomAvatar, status: true },
         });
 
         if (applied_referral)
@@ -134,11 +134,14 @@ const register = async (body: Iuser) => {
  */
 
 const otpVerifcation = async (body: IotpVerification) => {
+
     const isUser = await userQueries.fetchUser({ email: body.email });
+
     if (!isUser) {
+
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    if (!isUser.status && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
+    if (!isUser.is_verified && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
         return responseBuilder.unauthorizedError(
             MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
         );
@@ -159,7 +162,7 @@ const otpVerifcation = async (body: IotpVerification) => {
             subject: "Welcome to Big Deal : Signup Details",
             template: TEMPLATE.EMAIL_VERIFICATION,
         });
-        await userQueries.updateUser({ id: isUser.id }, { status: true });
+        await userQueries.updateUser({ id: isUser.id }, { is_verified: true });
     }
     await Promise.all([
         otpQuery.deleteOtp({ user_id: isUser.id, otp_type: body.otp_type }),
@@ -219,9 +222,14 @@ const playerLogin = async (body: IplayerLogin) => {
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    if (!isUser.status) {
+    if (!isUser.is_verified) {
         return responseBuilder.unauthorizedError(
             MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
+        );
+    }
+    if (!isUser.status) {
+        return responseBuilder.unauthorizedError(
+            MESSAGES.USERS.USER_TEMPORARY_BLOCK
         );
     }
     await prismaTransaction(async (prisma: PrismaClient) => {
@@ -404,7 +412,7 @@ const resetPassword = async (body: IresetPassword) => {
         isUser?.password as string
     );
     if (!isPassword) {
-        return responseBuilder.badRequestError(MESSAGES.USERS.WORNG_PASSWORD);
+        return responseBuilder.badRequestError(MESSAGES.USERS.WRONG_PASSWORD);
     }
     const password = hashPassword(body.newPassword);
     await userQueries.updateUser({ id: isUser.id }, { password });
@@ -636,6 +644,23 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
     return responseBuilder.okSuccess(MESSAGES.USERS.CHECK_MAIL);
 };
 
+/**
+ * @description  player blocked  
+ * @param body user's request object
+ */
+const userBlockStatus = async (id: string, payload: IupdateUser) => {
+    const isUser = await userQueries.fetchUser({ id: id });
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+    }
+    const user = await userQueries.updateUser({ id: id }, payload);
+    if (!user.status) {
+        await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
+    }
+    return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
+};
+
+
 const userService = {
     register,
     otpVerifcation,
@@ -654,6 +679,7 @@ const userService = {
     getPlayerWalletBalance,
     debitPlaysForPlayer,
     resendOtpToUser,
+    userBlockStatus
     // bidPlaysDebit,
 };
 
