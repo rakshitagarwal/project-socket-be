@@ -216,6 +216,18 @@ const resendOtpToUser = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+
+/**
+ * @description handles patch request for  player block 
+ * @param req { Request } admin or player's request object
+ * @param res { Response } admin or player's request's response object
+ */
+
+const userBlockStatus = async (req: Request, res: Response) => {
+    const response = await userService.userBlockStatus(req.params.id as string, req.body);
+    res.status(response.code).json(response);
+};
+
 const userHandlers = {
     register,
     otpVerification,
@@ -234,6 +246,7 @@ const userHandlers = {
     getPlayBalance,
     deductPlays,
     resendOtpToUser,
+    userBlockStatus
 };
 
 export default userHandlers;
