@@ -429,9 +429,9 @@ const playerAuctionRegistered = async (data: IPlayerRegister) => {
  * @param {{auction_id: string, player_id: string}} data
  * @returns
  */
-const playerOpenAuctionRegister = async (data: {auction_id: string, player_id: string}) => {
+const playerOpenAuctionRegister = async (data: { auction_id: string, player_id: string }) => {
     const query = await db.playerAuctionRegsiter.create({
-        data: {...data,status: "live"}
+        data: { ...data, status: "live" }
     });
     return query;
 };
@@ -1341,8 +1341,7 @@ export const getInformationAuctionById = async (auction_id: string) => {
         auction1.total_plays_live_consumed_auction + auction1.plays_consumed_on_bid * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
     ) as total_profit_plays, ( (
             auction1.total_plays_live_consumed_auction + auction1.plays_consumed_on_bid * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * 2
-    ) as total_profit_currency
+        ) * 2 ) as total_profit_currency
 from (
         SELECT
             subQuery.id as auction_id,
