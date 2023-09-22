@@ -97,6 +97,7 @@ const getAll = async (query: IPagination) => {
             totalPage: Math.ceil(auctions.queryCount / +query.limit),
             search: query.search,
             state: query.state,
+            orderBy: query.orderBy
         }
     );
 };

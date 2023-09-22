@@ -121,6 +121,17 @@ const getById = async (id: string) => {
  * @description -  get all product on product and total Count
  */
 const getAllProduct = async (query: IPaginationQuery) => {
+    let orderBy = {};
+    if (!query.orderBy) orderBy = { updated_at: "desc" };
+    if (query.orderBy === "title") orderBy = { title: "asc" };
+    if (query.orderBy === "category") {
+        orderBy = {
+            productCategories: {
+                title: "asc",
+            },
+        };
+    }
+
     const totalCount = await db.product.count({
         where: {
             AND: [
@@ -188,7 +199,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
                 },
             },
         },
-        orderBy: { updated_at: "desc" },
+        orderBy: orderBy,
         skip: query.limit * query.page,
         take: query.limit,
     });

@@ -88,8 +88,9 @@ const get = async ({ id }: Iid, query: IPagination) => {
         }
         return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result);
     }
-    const limit = parseInt(query.limit) || 10;
+    const limit = parseInt(query.limit) || 20;
     const page = parseInt(query.page) || 0;
+    const orderBy = query.orderBy;
     const filter = [];
     if (query.search) {
         filter.push({ title: { contains: query.search, mode: "insensitive" } });
@@ -98,6 +99,7 @@ const get = async ({ id }: Iid, query: IPagination) => {
         limit,
         filter,
         page,
+        orderBy
     });
     return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
         limit,
@@ -105,6 +107,7 @@ const get = async ({ id }: Iid, query: IPagination) => {
         totalRecord: totalCount,
         totalPages: Math.ceil(totalCount / limit),
         search: query.search || "",
+        orderBy: query.orderBy
     });
 };
 
