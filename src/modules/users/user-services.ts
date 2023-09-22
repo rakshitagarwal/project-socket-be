@@ -48,7 +48,7 @@ const register = async (body: Iuser) => {
         return responseBuilder.notFoundError(MESSAGES.ROLE.ROlE_NOT_EXIST);
     }
     const isUser = await userQueries.fetchUser({ email: payload.email });
-    if (isUser && isUser.status) {
+    if (isUser && isUser.is_verified) {
         return responseBuilder.conflictError(MESSAGES.USERS.USER_EXIST);
     }
     let applied_id: string;
@@ -60,7 +60,7 @@ const register = async (body: Iuser) => {
             );
         applied_id = result.id;
     }
-    if (isUser && !isUser.status) {
+    if (isUser && !isUser.is_verified) {
         const passcode = Math.round(Math.random() * 10000)
             .toString()
             .padStart(4, "0");
