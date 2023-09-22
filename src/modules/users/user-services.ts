@@ -147,7 +147,7 @@ const otpVerifcation = async (body: IotpVerification) => {
         );
     }
     const isOtp = await otpQuery.findUserOtp({
-        otp: Number(body.otp),
+        otp: body.otp,
         user_id: isUser.id,
         otp_type: body.otp_type,
     });

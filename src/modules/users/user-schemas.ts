@@ -41,8 +41,8 @@ const register = z
 
 const emailVerifcation = z
     .object({
-        otp: z.string({
-            invalid_type_error: "otp must be string",
+        otp: z.number({
+            invalid_type_error: "otp must be number",
             required_error: "otp is required",
         }),
         email: z

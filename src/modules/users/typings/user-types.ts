@@ -41,7 +41,7 @@ export interface IupdateUser {
 }
 
 export interface IotpVerification {
-    otp: string;
+    otp: number;
     email: string;
     otp_type: string;
     ip_address: string;
@@ -100,7 +100,7 @@ export interface IPlayerBidLog {
     profile_image: string;
 }
 
-export interface IminAuctionBidLog{
+export interface IminAuctionBidLog {
     is_unique: boolean;
     is_lowest?: boolean;
     is_highest?: boolean;
