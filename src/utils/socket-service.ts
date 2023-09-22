@@ -6,6 +6,7 @@ import socketAuthentication from "../middlewares/socket-authentication";
 import {
     getMinMaxAuctionResult,
     minMaxAuctionBid,
+    minMaxBidResult,
     newBiDRecieved,
 } from "../modules/auction/auction-publisher";
 import {
@@ -73,6 +74,13 @@ const socketService = async (server: Server) => {
                     socketId: socket.id,
                 });
             });
+            socket.on("percentage:min:max",(data)=>{
+                minMaxBidResult({
+                    auction_id: data.auction_id,
+                    player_id: data.player_id,
+                    socketId: socket.id
+                })
+            })
         }
     });
     return socketService;

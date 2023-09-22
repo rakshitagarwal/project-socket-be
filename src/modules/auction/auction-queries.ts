@@ -97,6 +97,23 @@ const getActiveAuctioById = async (id: string) => {
 };
 
 /**
+ * Get Auction By Id
+ * @param {string} id - auction id
+ * @returns {Promise<IAuction>}
+ */
+const getAuctionById = async (id: string) => {
+    const query = await db.auction.findFirst({
+        where: {
+            id,
+            is_deleted: false,
+            status: true,
+        },
+    });
+
+    return query;
+};
+
+/**
  * Get multiple auctions
  * @param {[string]} id - multiple auction ID
  * @returns {[Promise<IAuction>]}
@@ -403,6 +420,18 @@ const getUpcomingAuctionById = async (id: string) => {
 const playerAuctionRegistered = async (data: IPlayerRegister) => {
     const query = await db.playerAuctionRegsiter.create({
         data: data,
+    });
+    return query;
+};
+
+/**
+ * @description registered the player in open auction.
+ * @param {{auction_id: string, player_id: string}} data
+ * @returns
+ */
+const playerOpenAuctionRegister = async (data: {auction_id: string, player_id: string}) => {
+    const query = await db.playerAuctionRegsiter.create({
+        data: {...data,status: "live"}
     });
     return query;
 };
@@ -1484,6 +1513,7 @@ export const auctionQueries = {
     getAll,
     getAllAuctions,
     getActiveAuctioById,
+    getAuctionById,
     update,
     remove,
     getMultipleActiveById,
@@ -1493,6 +1523,7 @@ export const auctionQueries = {
     totalCountRegisterAuctionByAuctionId,
     getUpcomingAuctionById,
     playerAuctionRegistered,
+    playerOpenAuctionRegister,
     checkIfPlayerExists,
     playerRegistrationAuction,
     auctionRegistrationCount,
