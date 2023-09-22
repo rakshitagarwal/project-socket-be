@@ -86,7 +86,7 @@ const register = async (body: Iuser) => {
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
-            data: { ...payload, role_id: isRole.id, avatar: randomAvatar },
+            data: { ...payload, role_id: isRole.id, avatar: randomAvatar, status: true },
         });
 
         if (applied_referral)
@@ -141,7 +141,7 @@ const otpVerifcation = async (body: IotpVerification) => {
 
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    if (!isUser.status && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
+    if (!isUser.is_verified && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
         return responseBuilder.unauthorizedError(
             MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
         );
@@ -222,16 +222,16 @@ const playerLogin = async (body: IplayerLogin) => {
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
+    if (!isUser.is_verified) {
+        return responseBuilder.unauthorizedError(
+            MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
+        );
+    }
     if (!isUser.status) {
         return responseBuilder.unauthorizedError(
             MESSAGES.USERS.USER_TEMPORARY_BLOCK
         );
     }
-    // if (!isUser.is_verified) {
-    //     return responseBuilder.unauthorizedError(
-    //         MESSAGES.USERS.PLEASE_VERIFY_YOUR_EMAIL
-    //     );
-    // }
     await prismaTransaction(async (prisma: PrismaClient) => {
         const passcode = Math.round(Math.random() * 10000)
             .toString()

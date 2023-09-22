@@ -40,7 +40,7 @@ export const ENDPOINTS = {
     CURRENCY: "/currency",
     AUCTION_TOTAL_LIST: 'stats/list',
     AUCTION_TOTAL: "total-auction/list",
-    USER_BLOCK: "block/"
+    USER_BLOCK: "block/:id"
 
 };
 export const ALLOWED_MIMETYPES = [

@@ -108,7 +108,7 @@ userRouter.post(
 );
 
 userRouter.patch(
-    ENDPOINTS.BASE + ENDPOINTS.USER_BLOCK + ":id",
-    // [validateRequest.body(userSchemas.emailVerifcation)],
+    ENDPOINTS.BASE + ENDPOINTS.USER_BLOCK,
+    [isAuthenticated, validateRequest.params(userSchemas.ZPlayerId)],
     asyncHandler(userHandlers.userBlockStatus)
 );
