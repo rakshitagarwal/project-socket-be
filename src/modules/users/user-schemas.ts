@@ -271,6 +271,13 @@ const resendOtp = z.object({
     }),
 });
 
+const updateUserBlock = z
+    .object({
+        status: z
+            .boolean({ invalid_type_error: "status must be string" })
+            .optional()
+    })
+    .strict();
 const userSchemas = {
     register,
     emailVerifcation,
@@ -286,6 +293,7 @@ const userSchemas = {
     ZPlayerId,
     ZDeductPlays,
     resendOtp,
+    updateUserBlock
 };
 
 export default userSchemas;

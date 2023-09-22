@@ -109,6 +109,6 @@ userRouter.post(
 
 userRouter.patch(
     ENDPOINTS.BASE + ENDPOINTS.USER_BLOCK,
-    [isAuthenticated, validateRequest.params(userSchemas.ZPlayerId)],
+    [isAuthenticated, validateRequest.params(userSchemas.ZPlayerId), validateRequest.body(userSchemas.updateUserBlock)],
     asyncHandler(userHandlers.userBlockStatus)
 );
