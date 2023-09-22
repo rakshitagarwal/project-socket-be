@@ -137,7 +137,7 @@ export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
-    PLAYER_REGISTERATION: "auction_player_registration.html",
+    PLAYER_REGISTERATION: "auction_player_registeration.html",
     PLAYER_AUCTION_REGISTER: "player_auction_register.html",
     REGISTER_PRE_ADMIN: "registration_per_admin.html",
 };
