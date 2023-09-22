@@ -41,7 +41,7 @@ export interface IupdateUser {
 }
 
 export interface IotpVerification {
-    otp: number;
+    otp: string;
     email: string;
     otp_type: string;
     ip_address: string;
