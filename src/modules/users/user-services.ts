@@ -425,9 +425,11 @@ const resetPassword = async (body: IresetPassword) => {
 const fetchAllUsers = async (query: IuserPagination) => {
     const page = parseInt(query.page) || 0;
     const limit = parseInt(query.limit) || 10;
+    const orderBy = query.orderBy; 
     const result = await userQueries.fetchAllUsers({
         page,
         limit,
+        orderBy
     });
 
     return responseBuilder.okSuccess(

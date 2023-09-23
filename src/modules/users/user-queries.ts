@@ -68,7 +68,9 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
  * @param query - this query contains search user information and limit of the user
  * @returns
  */
-const fetchAllUsers = async (query: IuserPaginationQuery) => {
+const fetchAllUsers = async (query: IuserPaginationQuery,) => {
+    const order=`${query.orderBy}`||"updated_at"
+    console.log(order)
     const user: Sql = Prisma.sql`
     SELECT
         u.status,
@@ -124,13 +126,14 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     ON
         u.role_id=mr.id
     WHERE
-        mr.title='Player' and u.is_deleted=FALSE
-    ORDER BY
-        u.updated_at DESC
+    mr.title='Player' and u.is_deleted=FALSE
+    order by u.${order} desc
     offset ${query.page * query.limit}
     limit ${query.limit}
     `;
 
+    console.log(user);
+    
     const userDetails = await prisma.$queryRaw<IGetAllUsers[]>(user);
 
     const count = await db.user.count({
