@@ -1366,7 +1366,7 @@ from (
                                                 WHERE
                                                     pp2.status = 'lost'
                                                     AND pp2.auction_id = A.id
-                                                    AND pp2.payment_status = 'pending'
+                                                    AND pp2.payment_status = 'success'
                                             )
                                         GROUP BY
                                             A.id
