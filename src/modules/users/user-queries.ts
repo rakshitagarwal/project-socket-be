@@ -124,10 +124,12 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     ON
         u.role_id=mr.id
     WHERE
-    mr.title='Player' and u.is_deleted=FALSE
-    ORDER BY ${Prisma.raw(query?.orderBy as string)}   ${Prisma.raw(query?.form as string)}
-    offset ${Prisma.raw(query.page * query.limit as unknown as string)}
-    limit ${Prisma.raw(query.limit as unknown as string)}
+        mr.title='Player' 
+        AND u.is_deleted=FALSE 
+        ${query?.search ? Prisma.raw(`AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`) : Prisma.raw('')}
+    ORDER BY ${Prisma.raw(query?.orderBy as string)} ${Prisma.raw(query?.form as string)}
+    OFFSET ${Prisma.raw(query.page * query.limit as unknown as string)}
+    LIMIT ${Prisma.raw(query.limit as unknown as string)}
     `;
         
     const userDetails = await prisma.$queryRaw<IGetAllUsers[]>(user);
@@ -144,6 +146,22 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                         title: "Player",
                     },
                 },
+                ...(query?.search ? [
+                    {
+                        OR: [
+                            {
+                                first_name: {
+                                    contains: query?.search,
+                                },
+                            },
+                            {
+                                email: {
+                                    contains: query?.search,
+                                },
+                            },
+                        ],
+                    },
+                ] : []),
             ],
         },
     });

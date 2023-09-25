@@ -7,6 +7,7 @@ export type IAuction = z.infer<typeof auctionSchemas.ZAuctionAdd> & {
 
 export type IPagination = z.infer<typeof auctionSchemas.Zpagination> & {
     filter: object[];
+    form?: string;
 };
 
 export enum auction_state {

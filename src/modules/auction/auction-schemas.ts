@@ -151,6 +151,7 @@ const Zpagination = z
             .regex(/^[a-zA-Z0-9._-]+$/)
             .optional(),
         orderBy: z.enum(["title", "category", "start_date"]).optional(),
+        form: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
 

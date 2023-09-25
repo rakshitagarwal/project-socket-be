@@ -161,13 +161,13 @@ const getAllAuctions = async () => {
  */
 const getAll = async (query: IPagination) => {
     let orderBy = {};
-    if (!query.orderBy) orderBy = { created_at: "desc" }; 
-    if (query.orderBy === "title") orderBy = { title: "asc" }; 
-    if (query.orderBy === "start_date") orderBy = { start_date: "desc" };
+    if (!query.orderBy) orderBy = { created_at: `${query.form}` }; 
+    if (query.orderBy === "title") orderBy = { title: `${query.form}` }; 
+    if (query.orderBy === "start_date") orderBy = { start_date: `${query.form}` };
     if (query.orderBy === "category") {
         orderBy = {
             auctionCategory: {
-                title: "asc",
+                title: `${query.form}`,
             },
         };
     }

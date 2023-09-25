@@ -427,12 +427,14 @@ const fetchAllUsers = async (query: IuserPagination) => {
     const limit = parseInt(query.limit) || 10;
     const orderBy = query.orderBy;
     const form = query.form;
+    const search = query.search;
     
     const result = await userQueries.fetchAllUsers({
         page,
         limit,
         orderBy,
-        form
+        form,
+        search,
     });
 
     return responseBuilder.okSuccess(

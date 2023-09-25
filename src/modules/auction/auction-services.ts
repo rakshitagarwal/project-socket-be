@@ -74,6 +74,8 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
+    const form = query.form || "asc";
+    query.form = form;
     const filter = [];
     if (query.search) {
         filter?.push({
@@ -85,7 +87,7 @@ const getAll = async (query: IPagination) => {
             state: query.state,
         });
     }
-    query = { ...query, filter: filter };
+    query = { ...query, filter: filter };    
     const auctions = await auctionQueries.getAll(query);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,

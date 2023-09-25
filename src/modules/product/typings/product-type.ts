@@ -16,13 +16,15 @@ export interface IPagination {
     limit: string;
     search?: string;
     orderBy?: string;
+    form?: string;
 }
 
 export interface IPaginationQuery {
     page: number;
     limit: number;
     orderBy?: string;
-    filter: Array<object>
+    form?: string;
+    filter: Array<object>;
 }
 export interface Ids {
     ids: Array<string>

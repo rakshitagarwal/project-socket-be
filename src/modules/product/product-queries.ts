@@ -120,14 +120,14 @@ const getById = async (id: string) => {
  * @param {IPaginationQuery} query   Pagination in  product
  * @description -  get all product on product and total Count
  */
-const getAllProduct = async (query: IPaginationQuery) => {
+const getAllProduct = async (query: IPaginationQuery) => {    
     let orderBy = {};
-    if (!query.orderBy) orderBy = { updated_at: "desc" };
-    if (query.orderBy === "title") orderBy = { title: "asc" };
+    if (!query.orderBy) orderBy = { updated_at: `${query.form}` };
+    if (query.orderBy === "title") orderBy = { title: `${query.form}` };
     if (query.orderBy === "category") {
         orderBy = {
             productCategories: {
-                title: "asc",
+                title: `${query.form}`,
             },
         };
     }

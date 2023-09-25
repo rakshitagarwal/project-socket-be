@@ -91,6 +91,7 @@ const get = async ({ id }: Iid, query: IPagination) => {
     const limit = parseInt(query.limit) || 20;
     const page = parseInt(query.page) || 0;
     const orderBy = query.orderBy;
+    const form = query.form || "asc";
     const filter = [];
     if (query.search) {
         filter.push({ title: { contains: query.search, mode: "insensitive" } });
@@ -99,6 +100,7 @@ const get = async ({ id }: Iid, query: IPagination) => {
         limit,
         filter,
         page,
+        form,
         orderBy
     });
     return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
