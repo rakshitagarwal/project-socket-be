@@ -106,8 +106,8 @@ const updateUser = z
         last_name: z
             .string({ invalid_type_error: "last_name must be string" })
             .optional(),
-        mobile_no: z
-            .string({ invalid_type_error: "mobile_no must be string" })
+        avatar: z
+            .string()
             .optional(),
     })
     .strict();
@@ -176,8 +176,8 @@ const pagination = z
             .string()
             .regex(/^[a-zA-Z0-9._-]+$/)
             .optional(),
-        orderBy: z.enum(["first_name", "email", "country", "plays_in_wallet", "auction_won", "player_participated"]).optional(),
-        form: z.enum(["asc", "desc"]).default("asc").optional(),
+        _sort: z.enum(["first_name", "email", "country", "plays_in_wallet", "auction_won", "player_participated"]).optional(),
+        _order: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
 

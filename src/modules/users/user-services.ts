@@ -425,15 +425,15 @@ const resetPassword = async (body: IresetPassword) => {
 const fetchAllUsers = async (query: IuserPagination) => {
     const page = parseInt(query.page) || 0;
     const limit = parseInt(query.limit) || 10;
-    const orderBy = query.orderBy;
-    const form = query.form;
+    const _sort = query._sort;
+    const _order = query._order;
     const search = query.search;
     
     const result = await userQueries.fetchAllUsers({
         page,
         limit,
-        orderBy,
-        form,
+        _sort,
+        _order,
         search,
     });
 
@@ -446,7 +446,8 @@ const fetchAllUsers = async (query: IuserPagination) => {
             totalRecord: result.count,
             totalPage: Math.ceil(result.count / limit),
             search: query.search,
-            form: query.form
+            sort: query._sort,
+            order: query._order,
         }
     );
 };

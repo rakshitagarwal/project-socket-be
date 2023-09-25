@@ -73,14 +73,14 @@ export interface IuserPagination {
     limit: string;
     page: string;
     search?: string;
-    orderBy?: string;
-    form?: string;
+    _sort?: string;
+    _order?: string;
 }
 export interface IuserPaginationQuery {
     limit: number;
     page: number;
-    orderBy?: string;
-    form?: string,
+    _sort?: string;
+    _order?: string,
     search?: string;
 }
 

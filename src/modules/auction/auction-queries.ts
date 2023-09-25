@@ -161,16 +161,10 @@ const getAllAuctions = async () => {
  */
 const getAll = async (query: IPagination) => {
     let orderBy = {};
-    if (!query.orderBy) orderBy = { created_at: `${query.form}` }; 
-    if (query.orderBy === "title") orderBy = { title: `${query.form}` }; 
-    if (query.orderBy === "start_date") orderBy = { start_date: `${query.form}` };
-    if (query.orderBy === "category") {
-        orderBy = {
-            auctionCategory: {
-                title: `${query.form}`,
-            },
-        };
-    }
+    if (!query._sort) orderBy = { created_at: `${query._order}` }; 
+    if (query._sort === "category") {
+        orderBy = { auctionCategory: { title: `${query._order}` } };
+    } else orderBy = { [`${query._sort}`]: `${query._order}` }; 
     
     const queryCount = await db.auction.count({
         where: {

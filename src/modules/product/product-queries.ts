@@ -122,12 +122,12 @@ const getById = async (id: string) => {
  */
 const getAllProduct = async (query: IPaginationQuery) => {    
     let orderBy = {};
-    if (!query.orderBy) orderBy = { updated_at: `${query.form}` };
-    if (query.orderBy === "title") orderBy = { title: `${query.form}` };
-    if (query.orderBy === "category") {
+    if (!query._sort) orderBy = { updated_at: `${query._order}` };
+    if (query._sort === "title") orderBy = { title: `${query._order}` };
+    if (query._sort === "category") {
         orderBy = {
             productCategories: {
-                title: `${query.form}`,
+                title: `${query._order}`,
             },
         };
     }

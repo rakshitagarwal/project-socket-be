@@ -62,8 +62,8 @@ const schema = (() => {
                 .string()
                 .regex(/^[a-zA-Z0-9._-]+$/)
                 .optional(),
-            orderBy: z.enum(["title", "category"]).optional(),
-            form: z.enum(["asc", "desc"]).default("asc").optional(),
+            _sort: z.enum(["title", "category"]).optional(),
+            _order: z.enum(["asc", "desc"]).default("asc").optional(),
         })
         .strict();
     return {

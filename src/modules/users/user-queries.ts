@@ -127,7 +127,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         mr.title='Player' 
         AND u.is_deleted=FALSE 
         ${query?.search ? Prisma.raw(`AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`) : Prisma.raw('')}
-    ORDER BY ${Prisma.raw(query?.orderBy as string)} ${Prisma.raw(query?.form as string)}
+    ORDER BY ${Prisma.raw(query?._sort as string)} ${Prisma.raw(query?._order as string)}
     OFFSET ${Prisma.raw(query.page * query.limit as unknown as string)}
     LIMIT ${Prisma.raw(query.limit as unknown as string)}
     `;

@@ -74,8 +74,7 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
-    const form = query.form || "asc";
-    query.form = form;
+    query._order = query._order || "asc";
     const filter = [];
     if (query.search) {
         filter?.push({
@@ -99,7 +98,8 @@ const getAll = async (query: IPagination) => {
             totalPage: Math.ceil(auctions.queryCount / +query.limit),
             search: query.search,
             state: query.state,
-            orderBy: query.orderBy
+            sort: query._sort,
+            order: query._order,
         }
     );
 };
