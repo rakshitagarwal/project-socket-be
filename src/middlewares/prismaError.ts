@@ -50,6 +50,7 @@ export const prismaErrorHandler = (
         );
         res.status(response.code).json(response);
     } else {
+
         // Handle other types of errors or fallback to a generic error response
         const response = responseBuilder.internalserverError("", {}, err);
         logger.error(
