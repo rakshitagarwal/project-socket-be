@@ -210,6 +210,19 @@ const auctionTotal = async (_req: Request, res: Response) => {
     );
 };
 
+/**
+ * Get all auctions for a grid with pagination.
+ * @param {import("express").Request} req - The Express.js request object.
+ * @param {import("express").Response} res - The Express.js response object.
+ * @returns {Promise<void>} A Promise that resolves when the response is sent.
+ */
+const getAllAuctionforGrid= async(req: Request, res: Response)=>{
+    const response = await auctionService.getAllAuctionforGrid(
+        req.query as unknown as IPagination
+    );
+    res.status(response.code).json(response);
+}
+
 
 export const auctionHandler = {
     create,
@@ -227,5 +240,6 @@ export const auctionHandler = {
     auctionListing,
     getByIdTotalAuction,
     auctionListingTotal,
-    auctionTotal
+    auctionTotal,
+    getAllAuctionforGrid
 };
