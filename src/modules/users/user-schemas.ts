@@ -176,7 +176,8 @@ const pagination = z
             .string()
             .regex(/^[a-zA-Z0-9._-]+$/)
             .optional(),
-        orderBy: z.enum(["name", "email", "country", "plays", "auctions", "won"]).optional(),
+        orderBy: z.enum(["first_name", "email", "country", "plays_in_wallet", "auction_won", "player_participated"]).optional(),
+        form: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
 

@@ -74,11 +74,13 @@ export interface IuserPagination {
     page: string;
     search?: string;
     orderBy?: string;
+    form?: string;
 }
 export interface IuserPaginationQuery {
     limit: number;
     page: number;
     orderBy?: string;
+    form?: string,
 }
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
