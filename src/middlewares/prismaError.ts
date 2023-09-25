@@ -15,7 +15,8 @@ import { codes } from "../common/prisma.code";
  * @param {import('express').NextFunction} next - The next middleware function.
  */
 export const prismaErrorHandler = (
-    err: Error,
+    err: Prisma.PrismaClientKnownRequestError | Prisma.PrismaClientInitializationError | Prisma.PrismaClientRustPanicError
+        | Prisma.PrismaClientUnknownRequestError | Prisma.PrismaClientValidationError,
     req: Request,
     res: Response,
     _next: NextFunction
@@ -24,11 +25,8 @@ export const prismaErrorHandler = (
         const response = responseBuilder
             .error(500)
             .message(err.message)
-            .data({
-                prisma_code: codes[err.code],
-                message: err.message
-            })
-            .metaData({ ...err })
+            .data()
+            .metaData({ name: err.name, code: err.code, prisma_code: codes[err.code], message: err.message })
             .build();
 
         logger.error(
@@ -36,21 +34,27 @@ export const prismaErrorHandler = (
         );
         res.status(response.code).json(response);
     }
-    // TODO: Try, if condition doesnt work, then call next with error:- next(err)
-    const response = responseBuilder.internalserverError("", {}, err);
+    else if (err instanceof Prisma.PrismaClientInitializationError ||
+        err instanceof Prisma.PrismaClientRustPanicError ||
+        err instanceof Prisma.PrismaClientUnknownRequestError ||
+        err instanceof Prisma.PrismaClientValidationError) {
+        const response = responseBuilder
+            .error(500) // You can change the status code as needed
+            .message(err.message)
+            .data()
+            .metaData({ name: err.name, message: err.message }) // Customize the metadata as needed
+            .build();
 
-    logger.error(
-        `${process.env.NODE_ENV} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
-    );
-    res.status(response.code).json(response);
+        logger.error(
+            `${env.NODE_ENV} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        );
+        res.status(response.code).json(response);
+    } else {
+        // Handle other types of errors or fallback to a generic error response
+        const response = responseBuilder.internalserverError("", {}, err);
+        logger.error(
+            `${process.env.NODE_ENV} - UnknownError - An unknown error occurred - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        );
+        res.status(response.code).json(response);
+    }
 };
-
-
-// Prisma Error Middleware
-// app.use(function (error: Error, _req: Request, res: Response, next: NextFunction) {
-//     if (error) {
-//         const response = responseBuilder.error(500).message(`${codes[error.code]}`).metaData({ error: error.stack }).build();
-//         return res.status(response.code).json(response);
-//     }
-//     return next(error);
-// });
