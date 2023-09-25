@@ -627,7 +627,7 @@ const getAllAuctionforGrid = async (query: IPagination) => {
     const filter = [];
     if (query.search) {
         filter?.push({
-            title: { contains: query.search, mode: "insensitive" },
+            title: { contains: query.search },
         });
     }
     filter?.push({

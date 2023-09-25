@@ -166,7 +166,7 @@ const getAll = async (query: IPagination) => {
                 {
                     is_deleted: false,
                 },
-                { OR: query.filter },
+                { AND: query.filter },
             ],
         },
     });
@@ -176,7 +176,7 @@ const getAll = async (query: IPagination) => {
                 {
                     is_deleted: false,
                 },
-                { OR: query.filter },
+                { AND: query.filter },
             ],
         },
         include: {

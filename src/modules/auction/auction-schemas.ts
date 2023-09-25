@@ -148,7 +148,7 @@ const Zpagination = z
             .default(10),
         search: z
             .string()
-            .regex(/^[a-zA-Z0-9._-]+$/)
+            .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
             .optional(),
     })
     .strict();
