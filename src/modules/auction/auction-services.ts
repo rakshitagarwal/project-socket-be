@@ -573,7 +573,7 @@ const getByIdTotalAuction = async (auctionId: string) => {
 
 /**
  * @description Create total information for an auction listing.
- * @param {IAuctionListing} data - The data to create the auction listing information.
+ * @param {IAuctionListing} data - The data to create the auction listing information. 
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
     const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
