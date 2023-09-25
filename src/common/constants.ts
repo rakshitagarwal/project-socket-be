@@ -165,7 +165,8 @@ export const MESSAGES = {
         AUCTION_CLOSED: "Auction Ended",
         AUCTION_COUNT_DOWN: "Auction timer countdown",
         AUCTION_RECENT_BID: "Auction recent bid",
-        RECENT_BIDS: "Recent bids history",
+        RECENT_BIDS: "Recents bids history",
+        ACTIVE_PLAYERS: "Active players' avatars",
         AUCTION_ENDED: "Auction ended",
         CURRENT_PLAYS: "Current plays",
         AUCTION_NOT_FOUND: "Auction not found",
@@ -329,7 +330,8 @@ export const SOCKET_EVENT = {
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
     AUCTION_START_DATE: "auction:start:date",
     MIN_MAX_BID_PERCENTAGE:"min:max:bid:percentage",
-    AUCTION_MIN_MAX_PERCENTAGE:"auction:min:max:percentage"
+    AUCTION_MIN_MAX_PERCENTAGE:"auction:min:max:percentage",
+    AUCTION_AVATARS: "auction:avatars",
 };
 
 export const NODE_EVENT_SERVICE = {
