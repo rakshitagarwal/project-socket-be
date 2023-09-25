@@ -41,7 +41,7 @@ export const ENDPOINTS = {
     AUCTION_TOTAL_LIST: 'stats/list',
     AUCTION_TOTAL: "total-auction/list",
     USER_BLOCK: "block/:id",
-    GRID_LIVE_UPCOMING:"/upcoming-live/list"
+    GRID_LIVE_UPCOMING:"/grid/list"
 
 };
 export const ALLOWED_MIMETYPES = [

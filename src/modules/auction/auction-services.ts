@@ -623,6 +623,12 @@ const auctionTotal = async () => {
     );
 };
 
+/**
+ * Get all auctions for a grid with pagination.
+ * @param {IPagination} query - The pagination and filtering parameters.
+ * @returns {Promise<Object>} A Promise that resolves to an object containing the results and pagination info.
+ * @throws {Error} Throws an error if the query is invalid or the database operation fails.
+ */
 const getAllAuctionforGrid = async (query: IPagination) => {
     const filter = [];
     if (query.search) {

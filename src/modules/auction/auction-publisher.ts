@@ -158,6 +158,7 @@ const bidTransaction = async (payload: {
         countdowns[`${payload.auctionId}`] = 0;
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.AUCTION_ENDED,
+            auction_id:payload.auctionId
         });
         return { status: false };
     }
@@ -224,6 +225,7 @@ const auctionBidderHistory = async (
     }
     socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
         message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
+        auction_id:bidderPayload.auction_id
     });
     return;
 };
@@ -254,6 +256,7 @@ export const newBiDRecieved = async (
     if (!isAuction) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
+            auction_id:bidData.auction_id
         });
         return;
     }
@@ -291,6 +294,7 @@ export const newBiDRecieved = async (
     if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+            auction_id:bidData.auction_id
         });
         return;
     }
@@ -336,6 +340,7 @@ export const newBiDRecieved = async (
     if (iscontinue[iscontinue.length - 1].player_id === bidData.player_id) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.CONTINUE_BID_NOT_ALLOWED,
+            auction_id:bidData.auction_id
         });
         return;
     }
@@ -639,12 +644,14 @@ export const minMaxAuctionBid = async (
     if (!isAuctionLive) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+            auction_id:bidData.auction_id
         });
         return;
     }
     if (bidData.bid_price <= isAuctionLive.opening_price) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: `your price must be greater than ${isAuctionLive.opening_price}`,
+            auction_id:bidData.auction_id
         });
         return;
     }
@@ -653,6 +660,7 @@ export const minMaxAuctionBid = async (
         if (decimalPlayes.toString()?.length > isAuctionLive.decimal_count) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: `Decimal value must be ${isAuctionLive.decimal_count}`,
+                auction_id:bidData.auction_id
             });
             return;
         }
@@ -674,6 +682,7 @@ export const minMaxAuctionBid = async (
         if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                auction_id:bidData.auction_id
             });
             return;
         }
@@ -689,6 +698,7 @@ export const minMaxAuctionBid = async (
                     .to(socketId)
                     .emit(SOCKET_EVENT.AUCTION_ERROR, {
                         message: MESSAGES.USERS.USER_NOT_FOUND,
+                        auction_id:bidData.auction_id
                     });
                 return;
             }
@@ -700,6 +710,7 @@ export const minMaxAuctionBid = async (
     if (!isBalance?.status) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
+            auction_id:bidData.auction_id
         });
         return;
     }
@@ -753,6 +764,7 @@ export const getMinMaxAuctionResult = async (payload: {
             .to(payload.socketId)
             .emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+                auction_id:payload.auction_id
             });
         return;
     }
@@ -797,6 +809,7 @@ export const minMaxBidResult = async (payload: {
             .to(payload.socketId)
             .emit(SOCKET_EVENT.AUCTION_ERROR, {
                 message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+                auction_id:payload.auction_id
             });
         return;
     }
