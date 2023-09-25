@@ -39,7 +39,8 @@ export const ENDPOINTS = {
     LOCATION: "/location",
     CURRENCY: "/currency",
     AUCTION_TOTAL_LIST: 'stats/list',
-    AUCTION_TOTAL: "total-auction/list"
+    AUCTION_TOTAL: "total-auction/list",
+    USER_BLOCK: "block/:id"
 
 };
 export const ALLOWED_MIMETYPES = [
@@ -116,9 +117,9 @@ export const productMessage = {
     GET: {
         REQUESTED: "get product requested!",
         ALL: "get all product !",
-        NOT_FOUND: "product id not found!",
+        NOT_FOUND: "product Id not found!",
         SOME_NOT_FOUND: "some product, or product media or media id not found!",
-        PRODUCT_MEDIA_NOT_FOUND: "Product Medias not found!",
+        PRODUCT_MEDIA_NOT_FOUND: "Product Media not found!",
         PRODUCT_MEDIA_IDS: "product media ids not exists!",
     },
     UPDATE: {
@@ -127,8 +128,8 @@ export const productMessage = {
             " Prisma has failed due to a conflict between two or more transactions",
     },
     DELETE: {
-        SUCCESS: "product remove success",
-        FAIL: "product remove failed",
+        SUCCESS: "product removal success",
+        FAIL: "product removal failed",
     },
 };
 
@@ -151,7 +152,7 @@ export const MESSAGES = {
     TRANSACTION_CRYPTO: {
         NOT_CREATED: "transaction not created!",
         CREATED_SUCCESS: "transaction created successfully!",
-        GET_NOW_EXPIRED: "product purchase time is expired!",
+        GET_NOW_EXPIRED: "product purchase time has expired!",
         AUCTION_NOT_COMPELETED: "auction is not completed!",
         ALREADY_PURCHASE_PRODUCT: "You have already purchased the product",
     },
@@ -160,8 +161,8 @@ export const MESSAGES = {
         AUCTION_LIVE: "Auction live",
         AUCTION_BUY_NOW: "Auction buy now",
         AUCTION_WINNER: "Auction winner",
-        AUCTION_CLOSED: "Auction closed",
-        AUCTION_COUNT_DOWN: "Auction count down",
+        AUCTION_CLOSED: "Auction Ended",
+        AUCTION_COUNT_DOWN: "Auction timer countdown",
         AUCTION_RECENT_BID: "Auction recent bid",
         RECENT_BIDS: "Recents bids history",
         ACTIVE_PLAYERS: "Active players' avatars",
@@ -169,17 +170,17 @@ export const MESSAGES = {
         CURRENT_PLAYS: "Current plays",
         AUCTION_NOT_FOUND: "Auction not found",
         USER_NOT_REGISTERED: "User not registered",
-        CONTINUE_BID_NOT_ALLOWED: "Continue bid not allowed",
-        INSUFFICIENT_PLAYS_BALANCED: "Insufficient plays balance",
+        CONTINUE_BID_NOT_ALLOWED: "Continued bid is not allowed",
+        INSUFFICIENT_PLAYS_BALANCED: "Insufficient PLAY balance",
         BUY_NOW: "Buy now",
-        AUCTION_NOT_LIVE:"Auction not live",
+        AUCTION_NOT_LIVE: "Auction not live",
     },
     OTP: {
         INVALID_OTP: "Invalid otp",
     },
     USERS: {
         CHECK_MAIL: "please check your email",
-        USER_LOGIN: "user login successfully",
+        USER_LOGIN: "login successful!",
         USER_LOGOUT: "Logged out successfully",
         USER_NOT_FOUND: "Account not found. Please sign-up to login.",
         USER_EXIST: "user already exists",
@@ -189,14 +190,15 @@ export const MESSAGES = {
         VERIFICATION_ERROR: "Please verify your email",
         USER_FOUND: "user found successfully",
         PASSWORD_UPDATED: "password updated",
-        WORNG_PASSWORD: "Invalid old password",
-        UPDATE_USER: "user update successfully",
+        WRONG_PASSWORD: "Invalid old password",
+        UPDATE_USER: "user updated successfully",
         USER_DELETED: "user deleted",
-        SIGNUP: "user register successfully!",
-        PLAYER_NOT_REGISTERED: "user not registered",
+        SIGNUP: "Registered successfully!",
+        PLAYER_NOT_REGISTERED: "You are not registered",
         CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:
             "Please check your email and verify your account!",
         PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
+        USER_TEMPORARY_BLOCK: "Your account is temporarily blocked. Please contact customer service.",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
@@ -213,32 +215,32 @@ export const MESSAGES = {
         MEDIA_DELETE_FAIL: "media delete failed",
         MEDIA_CREATE_SUCCESS: "media created successfully",
         MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
-        MEDIA_SINGLE_INVALID: "media file more than 1",
+        MEDIA_SINGLE_INVALID: "Please select only one media file",
         MEDIA_FILES_INVALID: "media files invalid",
         MEDIA_NOT_ALLOWED:
-            "images less than 5 or contain media which are not allowed",
-        MEDIA_MIN_ID: "atleast one media id should be provided",
+            "Please select minimum 5 supported media files",
+        MEDIA_MIN_ID: "at least one media id should be provided",
         MEDIA_NOT_FOUND: "media id not found or not valid",
         MEDIA_IDS_NOT_FOUND: "some media ids were not found",
         AUCTION_IMAGE_NOT_FOUND: "auction image not found!",
         AUCTION_VIDEO_NOT_FOUND: "auction video not found!",
     },
     REFERRAL: {
-        REFERRAL_FOUND: "Referral found successfully",
-        REFERRAL_NOT_FOUND: "Referral not found",
+        REFERRAL_FOUND: "Referral code found successfully",
+        REFERRAL_NOT_FOUND: "Referral code not found",
         REFERRAL_CONFIG_FOUND: "Referral config found successfully",
         REFERRAL_CONFIG_NOT_FOUND: "Referral config not found",
         REFERRAL_CONFIG_UPDATED: "Referral config updated successfully",
         REFERRAL_CONFIG_NOT_UPDATED: "Referral config not updated",
-        REFERRAL_NOT_VALID: "referral code is not valid",
+        REFERRAL_NOT_VALID: "referral code is invalid",
     },
-    CURRENCY:{
+    CURRENCY: {
         CURRENCY_FOUND: "Currency found",
         CURRENCY_NOT_FOUND: "Currency not found",
         CURRENCY_ALL: "All currencies",
         CURRENCY_UPDATED: "Updated currency config",
         CURRENCY_NOT_UPDATED: "Updated currency config",
-        CURRENCY_UPDATE_FAILED: "can't update currency while its used in auction which is either live or upcoming",
+        CURRENCY_UPDATE_FAILED: "You cannot update currency when an auction is LIVE or UPCOMING",
         CURRENCY_DEFAULT_VALUE: 0.20,
     },
     BIDBOT: {
@@ -330,7 +332,7 @@ export const SOCKET_EVENT = {
 };
 
 export const NODE_EVENT_SERVICE = {
-    MIN_MAX_AUCTION_END:"min:max:auction:end",
+    MIN_MAX_AUCTION_END: "min:max:auction:end",
     USER_MAIL: "send:user:mail",
     AUCTION_STATE_UPDATE: "auction:state:update",
     AUCTION_REMINDER_MAIL: "auction:reminder:mail",
@@ -347,7 +349,7 @@ export const NODE_EVENT_SERVICE = {
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
-    REGISTER_NEW_PLAYER:"register:new:player"
+    REGISTER_NEW_PLAYER: "register:new:player"
 };
 
 export const AUCTION_STATE = [
