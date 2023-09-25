@@ -39,10 +39,10 @@ export const prismaErrorHandler = (
         err instanceof Prisma.PrismaClientUnknownRequestError ||
         err instanceof Prisma.PrismaClientValidationError) {
         const response = responseBuilder
-            .error(500) // You can change the status code as needed
+            .error(500)
             .message(err.message)
             .data()
-            .metaData({ name: err.name, message: err.message }) // Customize the metadata as needed
+            .metaData({ name: err.name, message: err.message })
             .build();
 
         logger.error(
@@ -51,7 +51,6 @@ export const prismaErrorHandler = (
         res.status(response.code).json(response);
     } else {
 
-        // Handle other types of errors or fallback to a generic error response
         const response = responseBuilder.internalserverError("", {}, err);
         logger.error(
             `${process.env.NODE_ENV} - UnknownError - An unknown error occurred - ${req.originalUrl} - ${req.method} - ${req.ip}`
