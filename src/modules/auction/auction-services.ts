@@ -284,7 +284,7 @@ const playerRegister = async (data: IPlayerRegister) => {
  * @param {{auction_id: string, player_id: string}} data - auction and player data
  * @returns
  */
-const playerOpenAuctionRegister = async (data: {auction_id: string, player_id: string}) => {
+const playerOpenAuctionRegister = async (data: { auction_id: string, player_id: string }) => {
     const player = await userQueries.fetchPlayerId(data.player_id);
     if (!player) return;
     const playerRegisered = await auctionQueries.playerOpenAuctionRegister(data);
@@ -293,11 +293,11 @@ const playerOpenAuctionRegister = async (data: {auction_id: string, player_id: s
     const getRegisteredPlayer = await redisClient.get(`auction:pre-register:${data.auction_id}`);
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(`auction:pre-register:${data.auction_id}`,JSON.stringify(newRedisObject));
+        await redisClient.set(`auction:pre-register:${data.auction_id}`, JSON.stringify(newRedisObject));
     } else {
         const registeredObj = JSON.parse(getRegisteredPlayer);
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(`auction:pre-register:${data.auction_id}`,JSON.stringify(registeredObj));
+        await redisClient.set(`auction:pre-register:${data.auction_id}`, JSON.stringify(registeredObj));
     }
 };
 
@@ -572,8 +572,8 @@ const getByIdTotalAuction = async (auctionId: string) => {
 };
 
 /**
- * @description created the auction listing Total information 
- * @param {IAuctionListing} data
+ * @description Create total information for an auction listing.
+ * @param {IAuctionListing} data - The data to create the auction listing information.
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
     const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
@@ -592,7 +592,7 @@ const auctionListsTotal = async (data: IAuctionListing) => {
 };
 
 /**
- * @description get Total auction global stats 
+ *  @description Get global statistics for total auctions.
  */
 const auctionTotal = async () => {
     const getAuctionCounts: IAuctionTotalCount[] = await auctionQueries.getTotalAuction();
