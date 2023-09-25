@@ -371,6 +371,7 @@ export const bidbotStatus = async (
     } else {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
+            auction_id:botData.auction_id
         });
         return;
     }
