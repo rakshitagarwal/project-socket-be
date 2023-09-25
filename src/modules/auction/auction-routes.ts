@@ -105,3 +105,9 @@ auctionRouter.get(
     ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL,
     handleAsync(auctionHandler.auctionTotal)
 );
+
+auctionRouter.get(
+    ENDPOINTS.GRID_LIVE_UPCOMING,
+    [validateRequest.query(auctionSchemas.Zpagination)],
+    handleAsync(auctionHandler.getAllAuctionforGrid)
+);
