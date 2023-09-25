@@ -45,6 +45,11 @@ export interface IPlayerAuctionInfo {
     last_bidding_price: number;
 }
 
+export interface Bid {
+    player_name: string;
+    player_id: string;
+    profile_image: string;
+}
 
 export interface ITotalAuctionInfo {
     auction_id: string,
@@ -78,12 +83,15 @@ export interface IAuctionTotal {
     total_price: number,
     plays_lost_consumed: number,
     total_auction_register_count: number,
-    registeration_count: number
+    registeration_count: number;
+    totalAuctionProfit: number
 }
 
 export interface IAuctionTotalCount {
     total_sum_plays_live_consumed_auction: number,
     total_sum_play_consumed_refund_after_buy_now: number,
-    total_sum_play_consumed_preregister: number
+    total_sum_play_consumed_preregister: number,
+    total_profitable_plays: number,
+    total_profitable_currency: number
 }
 

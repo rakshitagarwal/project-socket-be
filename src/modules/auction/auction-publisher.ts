@@ -18,6 +18,7 @@ import userQueries from "../users/user-queries";
 import logger from "../../config/logger";
 import { auctionQueries } from "./auction-queries";
 import { auctionService } from "./auction-services";
+import { Bid } from "./typings/auction-types";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
@@ -90,6 +91,28 @@ export const auctionStart = (auctionId: string) => {
     timerRunEverySecond();
 };
 
+const activeAvatars = async (bidHistory: Bid[], auctionId: string) =>{
+    const avatarUnique: Bid[] = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
+        const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
+      
+        if (foundIndex === -1) {
+          uniqueBids.push({
+              player_name: bid.player_name,
+              player_id: bid.player_id,
+              profile_image: bid.profile_image
+          });
+        }
+      
+        return uniqueBids;
+      }, []); 
+
+    socket.playerSocket.emit(SOCKET_EVENT.AUCTION_AVATARS, {
+        message: MESSAGES.SOCKET.ACTIVE_PLAYERS,
+        data: avatarUnique,
+        auction_id: auctionId,
+    });
+}
+
 /**
  * fetch  and emits recent bid history for a given auction ID.
  * @param {string} auctionId - The ID of the auction to get recent bid history for.
@@ -98,7 +121,8 @@ export const auctionStart = (auctionId: string) => {
 const recentBid = async (auctionId: string) => {
     const bidHistory = JSON.parse(
         (await redisClient.get(`${auctionId}:bidHistory`)) as unknown as string
-    );
+    );   
+
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RECENT_BID, {
         message: MESSAGES.SOCKET.AUCTION_RECENT_BID,
         data: bidHistory[bidHistory.length - 1],
@@ -109,6 +133,8 @@ const recentBid = async (auctionId: string) => {
         data: bidHistory.slice(-30).reverse(),
         auctionId,
     });
+
+    await activeAvatars(bidHistory, auctionId);
 };
 
 /**
@@ -720,6 +746,9 @@ export const minMaxAuctionBid = async (
     const auctionHistory = JSON.parse(
         (await redisClient.get(`${bidData.auction_id}:bidHistory`)) as string
     );
+
+    await activeAvatars(auctionHistory, bidData.auction_id);
+
     const cotegory_type = isAuctionLive.auctionCategory.code;
     if (cotegory_type === "MIN") {
         minAuction(
