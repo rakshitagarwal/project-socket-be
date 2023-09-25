@@ -210,6 +210,14 @@ const auctionTotal = async (_req: Request, res: Response) => {
     );
 };
 
+const getAllAuctionforGrid= async(req: Request, res: Response)=>{
+    const response = await auctionService.getAllAuctionforGrid(
+        req.query as unknown as IPagination
+    );
+    res.status(response.code).json(response);
+
+}
+
 
 export const auctionHandler = {
     create,
@@ -227,5 +235,6 @@ export const auctionHandler = {
     auctionListing,
     getByIdTotalAuction,
     auctionListingTotal,
-    auctionTotal
+    auctionTotal,
+    getAllAuctionforGrid
 };

@@ -404,7 +404,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         `auction:result:${payload.auction_id}`,
         JSON.stringify(payload.finalData)
     );
-    socket.playerSocket.emit("auction:min:max:percentage", {
+    socket.playerSocket.emit(SOCKET_EVENT.AUCTION_MIN_MAX_PERCENTAGE, {
         message: "total bids",
         data: {
             total_bids: payload.totalBid,
@@ -806,7 +806,7 @@ export const minMaxBidResult = async (payload: {
     if (auctionHistory) {
         socket.playerSocket
             .to(payload.socketId)
-            .emit("min:max:bid:percentage", {
+            .emit(SOCKET_EVENT.MIN_MAX_BID_PERCENTAGE, {
                 message: "total bids",
                 data: {
                     total_bids: +isAuctionLive.total_bids,
@@ -821,7 +821,7 @@ export const minMaxBidResult = async (payload: {
     } else {
         socket.playerSocket
             .to(payload.socketId)
-            .emit("min:max:bid:percentage", {
+            .emit(SOCKET_EVENT.MIN_MAX_BID_PERCENTAGE, {
                 message: "total bids",
                 data: {
                     total_bids: +isAuctionLive.total_bids,

@@ -40,7 +40,8 @@ export const ENDPOINTS = {
     CURRENCY: "/currency",
     AUCTION_TOTAL_LIST: 'stats/list',
     AUCTION_TOTAL: "total-auction/list",
-    USER_BLOCK: "block/:id"
+    USER_BLOCK: "block/:id",
+    GRID_LIVE_UPCOMING:"/upcoming-live/list"
 
 };
 export const ALLOWED_MIMETYPES = [
@@ -327,6 +328,8 @@ export const SOCKET_EVENT = {
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
     AUCTION_START_DATE: "auction:start:date",
+    MIN_MAX_BID_PERCENTAGE:"min:max:bid:percentage",
+    AUCTION_MIN_MAX_PERCENTAGE:"auction:min:max:percentage"
 };
 
 export const NODE_EVENT_SERVICE = {

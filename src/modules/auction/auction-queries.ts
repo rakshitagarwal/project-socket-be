@@ -1516,5 +1516,5 @@ export const auctionQueries = {
     getListTotalAuction,
     getInformationAuctionById,
     getListTotalAuctionCount,
-    getTotalAuction
+    getTotalAuction,
 };
