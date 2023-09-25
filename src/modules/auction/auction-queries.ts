@@ -1190,8 +1190,6 @@ from (
                     A.plays_consumed_on_bid,
                     A.product_id,
                     mac.title
-                offset
-                limit 
             ) AS subQuery
     ) as auction1
     LEFT JOIN products on auction1.product_id = products.id`;

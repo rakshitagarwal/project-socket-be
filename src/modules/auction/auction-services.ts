@@ -576,7 +576,7 @@ const getByIdTotalAuction = async (auctionId: string) => {
  * @param {IAuctionListing} data - The data to create the auction listing information. 
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
-    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
+    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page || 0, data.limit || 10);
     const listAuctionCount: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuctionCount();
 
     return responseBuilder.okSuccess(
@@ -586,7 +586,7 @@ const auctionListsTotal = async (data: IAuctionListing) => {
             totalRecord: listAuctionCount.length,
             totalPage: Math.ceil(listAuctionCount.length / data.limit) || 0,
             page: +data.page || 0,
-            limit: +data.limit || 1,
+            limit: +data.limit || 10,
         }
     );
 };
