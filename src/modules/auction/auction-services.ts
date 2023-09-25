@@ -605,7 +605,7 @@ const auctionListsTotal = async (data: IAuctionListing) => {
 };
 
 /**
- *  @description Get global statistics for total auctions.
+ *  @description Get global statistics for total auctions.!
  */
 const auctionTotal = async () => {
     const getAuctionCounts: IAuctionTotalCount[] =
