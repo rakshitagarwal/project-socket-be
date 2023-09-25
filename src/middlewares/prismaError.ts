@@ -3,6 +3,8 @@ import { responseBuilder } from "../common/responses";
 import logger from "../config/logger";
 import { Prisma } from "@prisma/client";
 import env from "../config/env";
+import { codes } from "../common/prisma.code";
+
 
 /**
  * Error handler middleware.
@@ -22,7 +24,10 @@ export const prismaErrorHandler = (
         const response = responseBuilder
             .error(500)
             .message(err.message)
-            .data({})
+            .data({
+                prisma_code: codes[err.code],
+                message: err.message
+            })
             .metaData({ ...err })
             .build();
 
@@ -39,3 +44,13 @@ export const prismaErrorHandler = (
     );
     res.status(response.code).json(response);
 };
+
+
+// Prisma Error Middleware
+// app.use(function (error: Error, _req: Request, res: Response, next: NextFunction) {
+//     if (error) {
+//         const response = responseBuilder.error(500).message(`${codes[error.code]}`).metaData({ error: error.stack }).build();
+//         return res.status(response.code).json(response);
+//     }
+//     return next(error);
+// });
