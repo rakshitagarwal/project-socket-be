@@ -124,7 +124,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     ON
         u.role_id=mr.id
     WHERE
-        mr.title='Player' and u.is_deleted=FALSEs
+        mr.title='Player' and u.is_deleted=FALSE
     ORDER BY
         u.updated_at DESC
     offset ${query.page * query.limit}
