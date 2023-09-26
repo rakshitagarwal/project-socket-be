@@ -172,6 +172,24 @@ export const bidByBotRecieved = async (
 ) => {
     const auctionData = await auctionQueries.getActiveAuctioById(botData.auction_id);
     if (auctionData?.state === "live") {
+        const isPre_register = await redisClient.get(`auction:pre-register:${botData.auction_id}`);
+        if (!isPre_register) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                player_id: botData.player_id,
+                auction_id: botData.auction_id,
+            });
+            return;
+        }
+        const preRegisterData = JSON.parse(isPre_register);
+        if (!preRegisterData[`${botData.auction_id + botData.player_id}`]) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                auction_id:botData.auction_id
+            });
+            return;
+        }
+
         if (!botData.plays_limit) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
                 message: MESSAGES.BIDBOT.BITBOT_PLAYS_REQUIRED,
