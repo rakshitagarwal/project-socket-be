@@ -302,10 +302,7 @@ const playerOpenAuctionRegister = async (data: {
     );
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(
-            `auction:pre-register:${data.auction_id}`,
-            JSON.stringify(newRedisObject)
-        );
+        await redisClient.set(`auction:pre-register:${data.auction_id}`, JSON.stringify(newRedisObject));
     } else {
         const registeredObj = JSON.parse(getRegisteredPlayer);
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
@@ -587,15 +584,14 @@ const getByIdTotalAuction = async (auctionId: string) => {
 };
 
 /**
- * @description created the auction listing Total information
- * @param {IAuctionListing} data
+ * @description Create total information for an auction listing.
+ * @param {IAuctionListing} data - The data to create the auction listing information. 
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
-    const listAuction: ITotalAuctionInfo[] =
-        await auctionQueries.getListTotalAuction(data.page, data.limit);
-    const listAuctionCount: ITotalAuctionInfo[] =
-        await auctionQueries.getListTotalAuctionCount();
-
+    const limit = data.limit || 10
+    const offset = data.page || 0
+    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(offset, limit);
+    const listAuctionCount: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuctionCount();
     return responseBuilder.okSuccess(
         listAuction.length
             ? AUCTION_MESSAGES.FOUND
@@ -603,23 +599,22 @@ const auctionListsTotal = async (data: IAuctionListing) => {
         listAuction,
         {
             totalRecord: listAuctionCount.length,
-            totalPage: Math.ceil(listAuctionCount.length / data.limit) || 0,
-            page: +data.page || 0,
-            limit: +data.limit || 1,
+            totalPage: Math.ceil(listAuctionCount.length / limit) || 0,
+            page: offset,
+            limit: limit
         }
     );
 };
 
 /**
- * @description get Total auction
- * @param {IAuctionTotalCount} data
+ *  @description Get global statistics for total auctions.!
  */
 const auctionTotal = async () => {
     const getAuctionCounts: IAuctionTotalCount[] =
         await auctionQueries.getTotalAuction();
     return responseBuilder.okSuccess(
-        AUCTION_MESSAGES.NOT_FOUND,
-        getAuctionCounts
+        AUCTION_MESSAGES.FOUND,
+        getAuctionCounts,
     );
 };
 
@@ -637,8 +632,8 @@ const getAllAuctionforGrid = async (query: IPagination) => {
         });
     }
     filter?.push({
-        state:{
-            in:["live","upcoming"]
+        state: {
+            in: ["live", "upcoming"]
         }
     });
     query = { ...query, filter: filter };
