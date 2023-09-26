@@ -74,6 +74,7 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
+    query._sort = query._sort || "category";
     query._order = query._order || "asc";
     const filter = [];
     if (query.search) {

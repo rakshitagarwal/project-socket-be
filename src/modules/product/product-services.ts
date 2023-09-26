@@ -90,7 +90,7 @@ const get = async ({ id }: Iid, query: IPagination) => {
     }
     const limit = parseInt(query.limit) || 20;
     const page = parseInt(query.page) || 0;
-    const _sort = query._sort;
+    const _sort = query._sort || "category";
     const _order = query._order || "asc";
     const filter = [];
     if (query.search) {
