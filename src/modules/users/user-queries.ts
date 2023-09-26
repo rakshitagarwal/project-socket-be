@@ -146,22 +146,9 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                         title: "Player",
                     },
                 },
-                ...(query?.search ? [
-                    {
-                        OR: [
-                            {
-                                first_name: {
-                                    contains: query?.search,
-                                },
-                            },
-                            {
-                                email: {
-                                    contains: query?.search,
-                                },
-                            },
-                        ],
-                    },
-                ] : []),
+                {
+                    OR: query.filter,
+                },
             ],
         },
     });

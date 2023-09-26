@@ -134,7 +134,7 @@ const getAllProduct = async (query: IPaginationQuery) => {
             AND: [
                 { is_deleted: false },
                 {
-                    OR: query.filter,
+                    AND: query.filter,
                 },
             ],
         },

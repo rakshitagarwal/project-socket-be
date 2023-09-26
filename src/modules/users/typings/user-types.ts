@@ -82,6 +82,7 @@ export interface IuserPaginationQuery {
     _sort?: string;
     _order?: string,
     search?: string;
+    filter: Array<object>;
 }
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
