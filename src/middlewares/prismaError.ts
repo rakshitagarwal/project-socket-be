@@ -5,7 +5,6 @@ import { Prisma } from "@prisma/client";
 import env from "../config/env";
 import { codes } from "../common/prisma.code";
 
-
 /**
  * Error handler middleware.
  *
@@ -14,47 +13,36 @@ import { codes } from "../common/prisma.code";
  * @param {import('express').Response} res - The response object.
  * @param {import('express').NextFunction} next - The next middleware function.
  */
+type PrismaError =
+    | Prisma.PrismaClientKnownRequestError
+    | Prisma.PrismaClientInitializationError
+    | Prisma.PrismaClientRustPanicError
+    | Prisma.PrismaClientUnknownRequestError
+    | Prisma.PrismaClientValidationError;
+
 export const prismaErrorHandler = (
-    err: Prisma.PrismaClientKnownRequestError | Prisma.PrismaClientInitializationError | Prisma.PrismaClientRustPanicError
-        | Prisma.PrismaClientUnknownRequestError | Prisma.PrismaClientValidationError,
+    err: PrismaError,
     req: Request,
     res: Response,
     _next: NextFunction
 ) => {
+    let response;
+
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        const response = responseBuilder
+        response = responseBuilder
             .error(500)
             .message(err.message)
             .data()
             .metaData({ name: err.name, code: err.code, prisma_code: codes[err.code], message: err.message })
             .build();
-
-        logger.error(
-            `${env.NODE_ENV} - ${err.code} - ${err.clientVersion} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack}`
-        );
-        res.status(response.code).json(response);
-    }
-    else if (err instanceof Prisma.PrismaClientInitializationError ||
-        err instanceof Prisma.PrismaClientRustPanicError ||
-        err instanceof Prisma.PrismaClientUnknownRequestError ||
-        err instanceof Prisma.PrismaClientValidationError) {
-        const response = responseBuilder
+    } else {
+        response = responseBuilder
             .error(500)
             .message(err.message)
             .data()
             .metaData({ name: err.name, message: err.message })
             .build();
-
-        logger.error(
-            `${env.NODE_ENV} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
-        );
-        res.status(response.code).json(response);
-    } else {
-
-        const response = responseBuilder.internalserverError("", {}, err);
-        logger.error(
-            `${process.env.NODE_ENV} - UnknownError - An unknown error occurred - ${req.originalUrl} - ${req.method} - ${req.ip}`
-        );
-        res.status(response.code).json(response);
     }
+    logger.error(`${env.NODE_ENV}  - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack || 'N/A'}`);
+    res.status(response.code).json(response);
 };
