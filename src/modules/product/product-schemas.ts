@@ -56,12 +56,14 @@ const schema = (() => {
                     (val) => parseInt(z.string().parse(val), 10),
                     z.number({ invalid_type_error: "limit must be number" })
                 )
-                .default(10)
+                .default(20)
                 .optional(),
             search: z
                 .string()
                 .regex(/^[a-zA-Z0-9._-]+$/)
                 .optional(),
+            _sort: z.enum(["title", "category"]).optional(),
+            _order: z.enum(["asc", "desc"]).default("asc").optional(),
         })
         .strict();
     return {

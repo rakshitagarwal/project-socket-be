@@ -424,21 +424,38 @@ const resetPassword = async (body: IresetPassword) => {
  */
 const fetchAllUsers = async (query: IuserPagination) => {
     const page = parseInt(query.page) || 0;
-    const limit = parseInt(query.limit) || 10;
-    const result = await userQueries.fetchAllUsers({
+    const limit = parseInt(query.limit) || 20;
+    const _sort = query._sort || "country";
+    const _order = query._order || "asc";
+    const search = query.search;
+    const filter = [];
+    if (query?.search) {
+        filter.push( { first_name: { contains: query?.search , mode: "insensitive" } });
+        filter.push( { email: { contains: query?.search , mode: "insensitive" } });
+    }
+    const { userDetails , count } = await userQueries.fetchAllUsers({
         page,
         limit,
+        _sort,
+        _order,
+        search,
+        filter,
     });
 
+    console.log(userDetails, "userDetails");
+    console.log(count, "count");
+    
     return responseBuilder.okSuccess(
         MESSAGES.USERS.USER_FOUND,
-        result.userDetails,
+        userDetails,
         {
             limit,
             page,
-            totalRecord: result.count,
-            totalPage: Math.ceil(result.count / limit),
+            totalRecord: count,
+            totalPage: Math.ceil(count / limit),
             search: query.search,
+            sort: query._sort,
+            order: query._order,
         }
     );
 };
