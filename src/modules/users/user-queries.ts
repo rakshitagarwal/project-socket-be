@@ -68,7 +68,7 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
  * @param query - this query contains search user information and limit of the user
  * @returns
  */
-const fetchAllUsers = async (query: IuserPaginationQuery) => {
+const fetchAllUsers = async (query: IuserPaginationQuery) => {    
     const user: Sql = Prisma.sql`
     SELECT
         u.status,
@@ -124,15 +124,16 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     ON
         u.role_id=mr.id
     WHERE
-        mr.title='Player' and u.is_deleted=FALSE
-    ORDER BY
-        u.updated_at DESC
-    offset ${query.page * query.limit}
-    limit ${query.limit}
+        mr.title='Player' 
+        AND u.is_deleted=FALSE 
+        ${query?.search ? Prisma.raw(`AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`) : Prisma.raw('')}
+    ORDER BY ${Prisma.raw(query?._sort as string)} ${Prisma.raw(query?._order as string)}
+    OFFSET ${Prisma.raw(query.page * query.limit as unknown as string)}
+    LIMIT ${Prisma.raw(query.limit as unknown as string)}
     `;
-
+        
     const userDetails = await prisma.$queryRaw<IGetAllUsers[]>(user);
-
+        
     const count = await db.user.count({
         where: {
             AND: [
@@ -144,6 +145,9 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
                     roles: {
                         title: "Player",
                     },
+                },
+                {
+                    OR: query.filter,
                 },
             ],
         },

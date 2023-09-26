@@ -145,11 +145,13 @@ const Zpagination = z
                 (val) => parseInt(val as string),
                 z.number({ invalid_type_error: "limit must be number" })
             )
-            .default(10),
+            .default(20),
         search: z
             .string()
-            .regex(/^[a-zA-Z0-9._-]+$/)
+            .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
             .optional(),
+        _sort: z.enum(["title", "category", "start_date"]).optional(),
+        _order: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
 

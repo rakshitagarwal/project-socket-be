@@ -74,6 +74,8 @@ const getById = async (auctionId: string) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getAll = async (query: IPagination) => {
+    query._sort = query._sort || "category";
+    query._order = query._order || "asc";
     const filter = [];
     if (query.search) {
         filter?.push({
@@ -85,7 +87,7 @@ const getAll = async (query: IPagination) => {
             state: query.state,
         });
     }
-    query = { ...query, filter: filter };
+    query = { ...query, filter: filter };    
     const auctions = await auctionQueries.getAll(query);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
@@ -97,6 +99,8 @@ const getAll = async (query: IPagination) => {
             totalPage: Math.ceil(auctions.queryCount / +query.limit),
             search: query.search,
             state: query.state,
+            sort: query._sort,
+            order: query._order,
         }
     );
 };
@@ -226,9 +230,11 @@ const playerRegister = async (data: IPlayerRegister) => {
         return responseBuilder.notFoundError(
             MESSAGES.PLAYER_WALLET_TRAX.PLAYER_TRAX_NOT_FOUND
         );
-        if(!auction.is_preRegistered){
-            return responseBuilder.badRequestError(AUCTION_MESSAGES.PRE_REGISTER_ERROR);
-        }
+    if (!auction.is_preRegistered) {
+        return responseBuilder.badRequestError(
+            AUCTION_MESSAGES.PRE_REGISTER_ERROR
+        );
+    }
     const playerRegisered = await auctionQueries.playerAuctionRegistered(data);
     if (!playerRegisered.id)
         return responseBuilder.expectationFaild(
@@ -284,20 +290,30 @@ const playerRegister = async (data: IPlayerRegister) => {
  * @param {{auction_id: string, player_id: string}} data - auction and player data
  * @returns
  */
-const playerOpenAuctionRegister = async (data: {auction_id: string, player_id: string}) => {
+const playerOpenAuctionRegister = async (data: {
+    auction_id: string;
+    player_id: string;
+}) => {
     const player = await userQueries.fetchPlayerId(data.player_id);
     if (!player) return;
-    const playerRegisered = await auctionQueries.playerOpenAuctionRegister(data);
+    const playerRegisered = await auctionQueries.playerOpenAuctionRegister(
+        data
+    );
     if (!playerRegisered) return;
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
-    const getRegisteredPlayer = await redisClient.get(`auction:pre-register:${data.auction_id}`);
+    const getRegisteredPlayer = await redisClient.get(
+        `auction:pre-register:${data.auction_id}`
+    );
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(`auction:pre-register:${data.auction_id}`,JSON.stringify(newRedisObject));
+        await redisClient.set(`auction:pre-register:${data.auction_id}`, JSON.stringify(newRedisObject));
     } else {
         const registeredObj = JSON.parse(getRegisteredPlayer);
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(`auction:pre-register:${data.auction_id}`,JSON.stringify(registeredObj));
+        await redisClient.set(
+            `auction:pre-register:${data.auction_id}`,
+            JSON.stringify(registeredObj)
+        );
     }
 };
 
@@ -564,46 +580,81 @@ const auctionLists = async (data: IAuctionListing) => {
  * @returns - response builder with { code, success, message, data, metadata }
  */
 const getByIdTotalAuction = async (auctionId: string) => {
-
-    const auction: IAuctionTotal[] = await auctionQueries.getInformationAuctionById(auctionId);
+    const auction: IAuctionTotal[] =
+        await auctionQueries.getInformationAuctionById(auctionId);
     if (auction.length)
         return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, auction);
     return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
 };
 
 /**
- * @description created the auction listing Total information 
- * @param {IAuctionListing} data
+ * @description Create total information for an auction listing.
+ * @param {IAuctionListing} data - The data to create the auction listing information. 
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
-    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(data.page, data.limit);
+    const limit = data.limit || 10
+    const offset = data.page || 0
+    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(offset, limit);
     const listAuctionCount: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuctionCount();
-
     return responseBuilder.okSuccess(
-        listAuction.length ? AUCTION_MESSAGES.FOUND : AUCTION_MESSAGES.NOT_FOUND,
+        listAuction.length
+            ? AUCTION_MESSAGES.FOUND
+            : AUCTION_MESSAGES.NOT_FOUND,
         listAuction,
         {
             totalRecord: listAuctionCount.length,
-            totalPage: Math.ceil(listAuctionCount.length / data.limit) || 0,
-            page: +data.page || 0,
-            limit: +data.limit || 1,
+            totalPage: Math.ceil(listAuctionCount.length / limit) || 0,
+            page: offset,
+            limit: limit
         }
     );
 };
 
-
 /**
- * @description get Total auction 
- * @param {IAuctionTotalCount} data
+ *  @description Get global statistics for total auctions.!
  */
 const auctionTotal = async () => {
-    const getAuctionCounts: IAuctionTotalCount[] = await auctionQueries.getTotalAuction();
+    const getAuctionCounts: IAuctionTotalCount[] =
+        await auctionQueries.getTotalAuction();
     return responseBuilder.okSuccess(
-        AUCTION_MESSAGES.NOT_FOUND,
+        AUCTION_MESSAGES.FOUND,
         getAuctionCounts,
     );
 };
 
+/**
+ * Get all auctions for a grid with pagination.
+ * @param {IPagination} query - The pagination and filtering parameters.
+ * @returns {Promise<Object>} A Promise that resolves to an object containing the results and pagination info.
+ * @throws {Error} Throws an error if the query is invalid or the database operation fails.
+ */
+const getAllAuctionforGrid = async (query: IPagination) => {
+    const filter = [];
+    if (query.search) {
+        filter?.push({
+            title: { contains: query.search },
+        });
+    }
+    filter?.push({
+        state: {
+            in: ["live", "upcoming"]
+        }
+    });
+    query = { ...query, filter: filter };
+    const auctions = await auctionQueries.getAll(query);
+    return responseBuilder.okSuccess(
+        AUCTION_MESSAGES.FOUND,
+        auctions.queryResult,
+        {
+            limit: +query.limit,
+            page: +query.page,
+            totalRecord: auctions.queryCount,
+            totalPage: Math.ceil(auctions.queryCount / +query.limit),
+            search: query.search,
+            state: query.state,
+        }
+    );
+};
 
 export const auctionService = {
     create,
@@ -622,5 +673,6 @@ export const auctionService = {
     auctionLists,
     getByIdTotalAuction,
     auctionListsTotal,
-    auctionTotal
+    auctionTotal,
+    getAllAuctionforGrid,
 };
