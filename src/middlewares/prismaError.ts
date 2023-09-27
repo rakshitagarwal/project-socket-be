@@ -27,6 +27,7 @@ export const prismaErrorHandler = (
     res: Response,
     _next: NextFunction
 ) => {
+
     const metaData: IerrorHandle = {
         name: err.name,
         message: err.message,
