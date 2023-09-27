@@ -27,7 +27,7 @@ import productQueries from "../product/product-queries";
 import userQueries from "../users/user-queries";
 import redisClient from "../../config/redis";
 import eventService from "../../utils/event-service";
-import { AUCTION_STATE } from "../../utils/typing/utils-types";
+// import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import { AppGlobal } from "../../utils/socket-service";
 import { Ispend_on } from "../users/typings/user-types";
 const socket = global as unknown as AppGlobal;
@@ -553,14 +553,14 @@ const auctionLists = async (data: IAuctionListing) => {
     if (data.state) {
         filter = { ...filter, state: data.state };
     }
-    if (filter.auction_id) {
-        const auction = await auctionQueries.getPlayerAuctionDetailsById(
-            filter.player_id,
-            filter.auction_id,
-            filter.state as AUCTION_STATE
-        );
-        return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
-    }
+    // if (filter.auction_id) {
+    //     const auction = await auctionQueries.getPlayerAuctionDetailsById(
+    //         filter.player_id,
+    //         filter.auction_id,
+    //         filter.state as AUCTION_STATE
+    //     );
+    //     return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
+    // }
     const auctions = await auctionQueries.getAuctionLists(filter);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
