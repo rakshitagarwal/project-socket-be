@@ -1147,7 +1147,7 @@ const getListTotalAuctionCount = async () => {
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as priority
+    END as currency_code
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1248,7 +1248,7 @@ const getListTotalAuction = async (offset: number, limit: number) => {
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as priority
+    END as currnecy_code
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1349,7 +1349,7 @@ export const getInformationAuctionById = async (auction_id: string) => {
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as priority
+    END as currnecy_code
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1512,7 +1512,7 @@ SELECT (
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as priority
+    END as currnecy_code
 FROM AuctionCTE AS auction1
 limit 1;`;
     const queryResult = await prisma.$queryRaw<IAuctionTotalCount[]>(query);
