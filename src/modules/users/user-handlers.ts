@@ -153,7 +153,7 @@ const resetPassword = async (req: Request, res: Response) => {
  * @param res { Response }
  */
 
-const getAllusers = async (req: Request, res: Response) => {
+const getAllusers = async (req: Request, res: Response) => {    
     const response = await userService.fetchAllUsers(
         req.query as unknown as IuserPagination
     );

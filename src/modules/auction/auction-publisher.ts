@@ -313,6 +313,7 @@ export const newBiDRecieved = async (
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
             player_id: bidPayload.player_id,
             auction_id: bidPayload.auction_id,
+            status: false,
         });
         return;
     }
@@ -320,7 +321,9 @@ export const newBiDRecieved = async (
     if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-            auction_id:bidData.auction_id
+            player_id: bidPayload.player_id,
+            auction_id:bidData.auction_id,
+            status: false,
         });
         return;
     }
@@ -444,6 +447,8 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
             auction_id: payload.auction_id,
             bid_percentage: Math.floor(
                 (payload.bidHistory.length * 100) / payload.totalBid
+            )>100?100:Math.floor(
+                (payload.bidHistory.length * 100) / payload.totalBid
             ),
         },
     });
@@ -459,12 +464,12 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         auction_id: payload.auction_id,
     });
     if (payload.winnerInfo && payload.bidHistory.length >= payload.totalBid) {
-        eventService.emit(NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END, {
+        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
+            message: MESSAGES.SOCKET.AUCTION_WINNER,
             auction_id: payload.auction_id,
             winnerInfo: payload.winnerInfo,
         });
-        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
-            message: MESSAGES.SOCKET.AUCTION_WINNER,
+        eventService.emit(NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END, {
             auction_id: payload.auction_id,
             winnerInfo: payload.winnerInfo,
         });
@@ -854,10 +859,16 @@ export const minMaxBidResult = async (payload: {
                     total_bids: +isAuctionLive.total_bids,
                     num_of_bids: auctionHistory.length || 0,
                     auction_id: payload.auction_id,
-                    bid_percentage: Math.floor(
-                        (auctionHistory.length * 100) /
-                            +isAuctionLive.total_bids
-                    ),
+                    bid_percentage:
+                        Math.floor(
+                            (auctionHistory.length * 100) /
+                                +isAuctionLive.total_bids
+                        ) > 100
+                            ? 100
+                            : Math.floor(
+                                  (auctionHistory.length * 100) /
+                                      +isAuctionLive.total_bids
+                              ),
                 },
             });
     } else {

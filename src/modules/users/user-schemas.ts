@@ -109,6 +109,7 @@ const updateUser = z
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
+        avatar: z.string().optional(),
     })
     .strict();
 
@@ -176,6 +177,17 @@ const pagination = z
             .string()
             .regex(/^[a-zA-Z0-9._-]+$/)
             .optional(),
+        _sort: z
+            .enum([
+                "first_name",
+                "email",
+                "country",
+                "plays_in_wallet",
+                "auction_won",
+                "player_participated",
+            ])
+            .optional(),
+        _order: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
 
@@ -275,7 +287,7 @@ const updateUserBlock = z
     .object({
         status: z
             .boolean({ invalid_type_error: "status must be string" })
-            .optional()
+            .optional(),
     })
     .strict();
 const userSchemas = {
@@ -293,7 +305,7 @@ const userSchemas = {
     ZPlayerId,
     ZDeductPlays,
     resendOtp,
-    updateUserBlock
+    updateUserBlock,
 };
 
 export default userSchemas;
