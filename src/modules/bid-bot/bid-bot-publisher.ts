@@ -178,6 +178,7 @@ export const bidByBotRecieved = async (
                 message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
                 player_id: botData.player_id,
                 auction_id: botData.auction_id,
+                status: false,
             });
             return;
         }
@@ -185,7 +186,9 @@ export const bidByBotRecieved = async (
         if (!preRegisterData[`${botData.auction_id + botData.player_id}`]) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_ERROR, {
                 message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-                auction_id:botData.auction_id
+                player_id: botData.player_id,
+                auction_id:botData.auction_id,
+                status: false,
             });
             return;
         }
