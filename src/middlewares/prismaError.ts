@@ -4,6 +4,7 @@ import logger from "../config/logger";
 import { Prisma } from "@prisma/client";
 import env from "../config/env";
 import { codes } from "../common/prisma.code";
+import { IerrorHandle } from "./typings/middleware-types";
 
 /**
  * Error handler middleware.
@@ -26,23 +27,27 @@ export const prismaErrorHandler = (
     res: Response,
     _next: NextFunction
 ) => {
-    let response;
+    const metaData: IerrorHandle = {
+        name: err.name,
+        message: err.message,
+    };
 
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        response = responseBuilder
-            .error(500)
-            .message(err.message)
-            .data()
-            .metaData({ name: err.name, code: err.code, prisma_code: codes[err.code], message: err.message })
-            .build();
-    } else {
-        response = responseBuilder
-            .error(500)
-            .message(err.message)
-            .data()
-            .metaData({ name: err.name, message: err.message })
-            .build();
+        metaData.code = err.code;
+        metaData.prisma_code = codes[err.code];
     }
+    else {
+        metaData.code = err.name;
+        metaData.prisma_code = err.message;
+    }
+
+    const response = responseBuilder
+        .error(500)
+        .message(err.message)
+        .data()
+        .metaData(metaData)
+        .build();
+
     logger.error(`${env.NODE_ENV}  - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack || 'N/A'}`);
     res.status(response.code).json(response);
 };
