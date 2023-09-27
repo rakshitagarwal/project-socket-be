@@ -441,9 +441,6 @@ const fetchAllUsers = async (query: IuserPagination) => {
         search,
         filter,
     });
-
-    console.log(userDetails, "userDetails");
-    console.log(count, "count");
     
     return responseBuilder.okSuccess(
         MESSAGES.USERS.USER_FOUND,
