@@ -430,10 +430,10 @@ const fetchAllUsers = async (query: IuserPagination) => {
     const search = query.search;
     const filter = [];
     if (query?.search) {
-        filter.push( { first_name: { contains: query?.search , mode: "insensitive" } });
-        filter.push( { email: { contains: query?.search , mode: "insensitive" } });
+        filter.push({ first_name: { contains: query?.search, mode: "insensitive" } });
+        filter.push({ email: { contains: query?.search, mode: "insensitive" } });
     }
-    const { userDetails , count } = await userQueries.fetchAllUsers({
+    const { userDetails, count } = await userQueries.fetchAllUsers({
         page,
         limit,
         _sort,
@@ -441,7 +441,7 @@ const fetchAllUsers = async (query: IuserPagination) => {
         search,
         filter,
     });
-    
+
     return responseBuilder.okSuccess(
         MESSAGES.USERS.USER_FOUND,
         userDetails,

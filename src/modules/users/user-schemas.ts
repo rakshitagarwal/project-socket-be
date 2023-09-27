@@ -175,7 +175,7 @@ const pagination = z
             .optional(),
         search: z
             .string()
-            .regex(/^[a-zA-Z0-9._-]+$/)
+            .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
             .optional(),
         _sort: z
             .enum([
