@@ -1120,9 +1120,9 @@ const minMaxPlayerRegisters = async (data: {
     return queryResult;
 };
 
-
 //  Define the currency value 
 const currencyValue = 2;
+
 /**
  * @description Get a list of total auction count.
  */
