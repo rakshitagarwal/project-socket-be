@@ -48,7 +48,7 @@ const create = async (auction: IAuction, userId: string) => {
             terms_and_conditions: auction.terms_condition,
             created_by: userId,
             total_bids: auction.total_bids || 0,
-            decimal_count: auction.decimal_count || 0
+            decimal_count: auction.decimal_count || 0,
         },
         select: {
             id: true,
@@ -160,7 +160,7 @@ const getAllAuctions = async () => {
  * @returns - all auction entities
  */
 const getAll = async (query: IPagination) => {
-    let orderBy = {}
+    let orderBy = {};
     if (query._sort === "category") {
         orderBy = { auctionCategory: { title: query._order } };
     } else if (query._sort) orderBy = { [`${query._sort}`]: query._order };
@@ -432,9 +432,12 @@ const playerAuctionRegistered = async (data: IPlayerRegister) => {
  * @param {{auction_id: string, player_id: string}} data
  * @returns
  */
-const playerOpenAuctionRegister = async (data: { auction_id: string, player_id: string }) => {
+const playerOpenAuctionRegister = async (data: {
+    auction_id: string;
+    player_id: string;
+}) => {
     const query = await db.playerAuctionRegsiter.create({
-        data: { ...data, status: "live" }
+        data: { ...data, status: "live" },
     });
     return query;
 };
@@ -911,6 +914,10 @@ const getAuctionWinnerInfo = async (auction_id: string) => {
  * @param {number} limit
  */
 const getAuctionLists = async (data: IAuctionListing) => {
+    const filter: { id?: string } = {};
+    if (data.auction_id) {
+        filter.id = data.auction_id;
+    }
     const queryCount = await db.auction.count({
         where: {
             AND: [
@@ -932,6 +939,7 @@ const getAuctionLists = async (data: IAuctionListing) => {
                 {
                     state: data.state && data.state,
                 },
+                filter
             ],
         },
         include: {
@@ -1102,10 +1110,15 @@ const checkPlayerExistAuction = async (
     return queryResult;
 };
 
-const minMaxPlayerRegisters = async (data: { auction_id: string, player_id: string }) => {
-    const queryResult = await db.playerAuctionRegsiter.create({ data: { ...data, status: "live" } })
-    return queryResult
-}
+const minMaxPlayerRegisters = async (data: {
+    auction_id: string;
+    player_id: string;
+}) => {
+    const queryResult = await db.playerAuctionRegsiter.create({
+        data: { ...data, status: "live" },
+    });
+    return queryResult;
+};
 
 
 //  Define the currency value 
@@ -1303,15 +1316,14 @@ from (
                     A.plays_consumed_on_bid,
                     A.product_id,
                     mac.title
-                offset ${+ (offset * limit)}
-                limit ${+(limit)}
+                offset ${+(offset * limit)}
+                limit ${+limit}
             ) AS subQuery
     ) as auction1
     LEFT JOIN products on auction1.product_id = products.id`;
     const queryResult = await prisma.$queryRaw<ITotalAuctionInfo[]>(query);
     return queryResult;
 };
-
 
 /**
  *@description Get auction information by ID including auction details, product name, and profit calculations.
@@ -1414,7 +1426,7 @@ from (
 };
 
 /**
- * @description Get the total auction statistics including plays consumed, 
+ * @description Get the total auction statistics including plays consumed,
  * registration fees,and profit calculations.
  */
 
