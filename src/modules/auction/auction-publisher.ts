@@ -313,6 +313,7 @@ export const newBiDRecieved = async (
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
             player_id: bidPayload.player_id,
             auction_id: bidPayload.auction_id,
+            status: false,
         });
         return;
     }
@@ -320,7 +321,9 @@ export const newBiDRecieved = async (
     if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-            auction_id:bidData.auction_id
+            player_id: bidPayload.player_id,
+            auction_id:bidData.auction_id,
+            status: false,
         });
         return;
     }
