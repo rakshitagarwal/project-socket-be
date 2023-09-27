@@ -1027,12 +1027,14 @@ const getPlayerAuctionDetailsById = async (
     return query;
 };
 
+
 /**
  *
  * @param auction_id
  * @param player_id
  * @returns
  */
+
 
 export const transferLastPlay = async (
     auction_id: string,
@@ -1105,6 +1107,9 @@ const minMaxPlayerRegisters = async (data: { auction_id: string, player_id: stri
     return queryResult
 }
 
+
+//  Define the currency value 
+const currencyValue = 2;
 /**
  * @description Get a list of total auction count.
  */
@@ -1124,8 +1129,12 @@ const getListTotalAuctionCount = async () => {
         auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
     ) as total_profit_plays, ( (
             auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * 2
-    ) as total_profit_currency
+        ) * ${currencyValue}
+    ) as total_profit_currency,
+    CASE
+        WHEN ${currencyValue} = 2 THEN 'INR'
+        ELSE 'USD'
+    END as priority
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1221,8 +1230,12 @@ const getListTotalAuction = async (offset: number, limit: number) => {
         auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
     ) as total_profit_plays, ( (
             auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * 2
-    ) as total_profit_currency
+        ) * ${currencyValue}
+    ) as total_profit_currency,
+    CASE
+        WHEN ${currencyValue} = 2 THEN 'INR'
+        ELSE 'USD'
+    END as priority
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1319,8 +1332,12 @@ export const getInformationAuctionById = async (auction_id: string) => {
         auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
     ) as total_profit_plays, ( (
             auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * 2
-    ) as total_profit_currency
+        ) * ${currencyValue}
+    ) as total_profit_currency,
+    CASE
+        WHEN ${currencyValue} = 2 THEN 'INR'
+        ELSE 'USD'
+    END as priority
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1400,7 +1417,9 @@ from (
  * @description Get the total auction statistics including plays consumed, 
  * registration fees,and profit calculations.
  */
+
 const getTotalAuction = async () => {
+
     const query: Sql = Prisma.sql`WITH AuctionCTE AS (
         SELECT
             COALESCE(subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
@@ -1476,8 +1495,12 @@ SELECT (
     ) as total_profit_plays, ((
             SUM(total_plays_live_consumed_auction) + 
             SUM(registeration_fees * total_auction_register_count) - 
-            SUM(total_play_consumed_refund_after_buy_now)) * 2
-    ) as total_profit_currency
+            SUM(total_play_consumed_refund_after_buy_now)) * ${currencyValue}
+    ) as total_profit_currency,
+    CASE
+        WHEN ${currencyValue} = 2 THEN 'INR'
+        ELSE 'USD'
+    END as priority
 FROM AuctionCTE AS auction1
 limit 1;`;
     const queryResult = await prisma.$queryRaw<IAuctionTotalCount[]>(query);
