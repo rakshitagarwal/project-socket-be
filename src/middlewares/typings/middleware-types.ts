@@ -25,3 +25,12 @@ export interface IminMaxResult {
     playerInfo: IMinMaxAuction[];
     winnerInfo: IMinMaxAuction | undefined;
 }
+
+export interface IerrorHandle {
+    name: string,
+    message: string,
+    prisma_code?: string
+    code?: string,
+
+}
+
