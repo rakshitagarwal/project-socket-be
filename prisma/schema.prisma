@@ -421,6 +421,7 @@ enum PlaySpend {
   REFERRAL_PLAYS
   LAST_PLAYS
   EXTRA_BIGPLAYS
+  TRANSFER_PLAYS
 }
 
 enum auctionState {

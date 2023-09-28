@@ -364,6 +364,42 @@ const createPaymentTrx = async (prisma: PrismaClient, data: IWalletTx) => {
     return queries;
 };
 
+/**
+ * @description creditTransferTrx is used to credit plays of one user/player
+ * @param {{id: string, plays: number}} data - it contains the player id and number of plays
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
+const creditTransferTrx = async (prisma: PrismaClient, data: {id: string, plays: number}) => { 
+    console.log(data,"data");
+       
+    const queryResult = await prisma.playerWalletTransaction.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: "TRANSFER_PLAYS",
+            created_by: data.id as string,
+        },
+    });
+    return queryResult;
+};
+
+/**
+ * @description debitTransferTrx is used to debit plays of one user/player
+ * @param {{id: string, plays: number}} data - it contains the player id and number of plays
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns {queryResult} - the result of execution of query.
+ */
+const debitTransferTrx = async (prisma: PrismaClient, data: {id: string, plays: number}) => {
+    const queryResult = await prisma.playerWalletTransaction.create({
+        data: {
+            play_debit: data.plays,
+            spend_on: "TRANSFER_PLAYS",
+            created_by: data.id,
+        },
+    });
+    return queryResult;
+};
+
 const playerPlaysBalance = async (
     player_id: string
 ): Promise<PlayerBidLogGroup[]> => {
@@ -568,6 +604,8 @@ const userQueries = {
     addPlayRefundBalanceTx,
     createTrx,
     createPaymentTrx,
+    creditTransferTrx,
+    debitTransferTrx,
     playerPlaysBalance,
     getPlayerRoleId,
     createMultipleUsers,

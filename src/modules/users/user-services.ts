@@ -12,6 +12,7 @@ import {
     IuserPagination,
     IWalletTx,
     IDeductPlx,
+    // ITransferPlx,
 } from "./typings/user-types";
 import userQueries from "./user-queries";
 import bcrypt from "bcrypt";
@@ -458,6 +459,58 @@ const fetchAllUsers = async (query: IuserPagination) => {
 };
 
 /**
+ * @description check if user exists by taking its email address
+ * @param {{email: string}} data
+ * @returns
+ */
+const verifyUserDetails = async (data: { email: string }) => {
+    const isExists = await userQueries.fetchUser({ email : data.email});
+    if(isExists?.email){
+        return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
+            email: isExists.email, 
+            name: isExists.last_name? isExists.first_name +" "+ isExists.last_name : isExists.first_name,
+            referral: isExists.referral_code
+        })
+    }
+    return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOTFOUND);
+}
+
+/**
+ * @description transfer plays to user based on email and plays amount
+ * @param {ITransferPlx} data
+ * @returns
+ */
+const transferPlays = async (data: {id: string, email: string, plays: number}) => {
+    const isExists = await userQueries.fetchUser({ email: data.email });
+    if (!isExists?.id) return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOTFOUND);
+
+    const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
+        const credit_trx = await userQueries.creditTransferTrx(prisma, {
+            id: isExists.id,
+            plays: data.plays,
+        });
+        const debit_trx = await userQueries.debitTransferTrx(prisma, {
+            id: data.id,
+            plays: data.plays,
+        });
+        return { credit_trx, debit_trx };
+    });
+
+    if (createTrax.credit_trx.id && createTrax.debit_trx.id) {
+        return responseBuilder.okSuccess(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS,
+            {
+                email: isExists.email,
+                username: isExists.last_name? isExists.first_name +" "+ isExists.last_name : isExists.first_name,
+                referral: isExists.referral_code,
+                plays: data.plays,
+            }
+        );
+    }
+
+    return responseBuilder.expectationFaild(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_FAIL);
+};
+
+/**
  * @description add the wallet transaction for the buy plays
  * @param {IWalletTx} data
  * @returns
@@ -693,7 +746,9 @@ const userService = {
     getPlayerWalletBalance,
     debitPlaysForPlayer,
     resendOtpToUser,
-    userBlockStatus
+    userBlockStatus,
+    verifyUserDetails,
+    transferPlays,
     // bidPlaysDebit,
 };
 

@@ -87,6 +87,8 @@ export interface IuserPaginationQuery {
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
 export type IDeductPlx = z.infer<typeof userSchemas.ZDeductPlays>;
+export type ITransferPlx = z.infer<typeof userSchemas.ZTransferPlays>;
+
 export interface ILastPlayTrx {
     auction_id: string;
     player_id: string;
