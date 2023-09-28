@@ -258,7 +258,7 @@ const createTrx = async (
         data: {
             play_debit: plays,
             created_by: player_id,
-            spend_on: "BUY_PLAYS",
+            spend_on: "AUCTION_REGISTER_PLAYS",
         },
     });
     return query;
@@ -370,14 +370,13 @@ const createPaymentTrx = async (prisma: PrismaClient, data: IWalletTx) => {
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns {queryResult} - the result of execution of query.
  */
-const creditTransferTrx = async (prisma: PrismaClient, data: {id: string, plays: number}) => { 
-    console.log(data,"data");
-       
+const creditTransferTrx = async (prisma: PrismaClient, data: {id: string, plays: number, transfer: string}) => {        
     const queryResult = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
-            spend_on: "TRANSFER_PLAYS",
+            spend_on: "RECEIVED_PLAYS",
             created_by: data.id as string,
+            transferred_from: data.transfer
         },
     });
     return queryResult;
@@ -389,12 +388,13 @@ const creditTransferTrx = async (prisma: PrismaClient, data: {id: string, plays:
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns {queryResult} - the result of execution of query.
  */
-const debitTransferTrx = async (prisma: PrismaClient, data: {id: string, plays: number}) => {
+const debitTransferTrx = async (prisma: PrismaClient, data: {id: string, plays: number, transfer: string}) => {
     const queryResult = await prisma.playerWalletTransaction.create({
         data: {
             play_debit: data.plays,
             spend_on: "TRANSFER_PLAYS",
             created_by: data.id,
+            transferred_to: data.transfer
         },
     });
     return queryResult;

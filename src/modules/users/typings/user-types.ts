@@ -80,7 +80,7 @@ export interface IuserPaginationQuery {
     limit: number;
     page: number;
     _sort?: string;
-    _order?: string,
+    _order?: string;
     search?: string;
     filter: Array<object>;
 }
@@ -140,7 +140,12 @@ export enum Ispend_on {
     BUY_PLAYS = "BUY_PLAYS",
     REFUND_PLAYS = "REFUND_PLAYS",
     BID_PLAYS = "BID_PLAYS",
-    LAST_PLAYS = "LAST_PLAYS",
+    REFERRAL_PLAYS = "REFERRAL_PLAYS",
+    AUCTION_REGISTER_PLAYS = "AUCTION_REGISTER_PLAYS",
+    EXTRA_BIGPLAYS = "EXTRA_BIGPLAYS",
+    JOINING_BONUS = "JOINING_BONUS",
+    TRANSFER_PLAYS = "TRANSFER_PLAYS",
+    RECEIVED_PLAYS = "RECEIVED_PLAYS",
 }
 
 export type IMultipleUsers = IupdateUser & {

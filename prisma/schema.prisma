@@ -39,21 +39,23 @@ model User {
   roles         MasterRole @relation(fields: [role_id], references: [id])
   countries     Countries? @relation(fields: [country], references: [name])
 
-  userPersistent          UserPersistent[]
-  TermsAndCondition       TermsAndCondition[]
-  medias                  Media[]
-  products                Products[]
-  auctions                Auctions[]
-  user_otp                UserOTP[]
-  CurrencyTransaction     CurrencyTransaction[]
-  PlayerWalletTransaction PlayerWalletTransaction[]
-  PlayerAuctionRegister   PlayerAuctionRegister[]
-  PlayerBidLogs           PlayerBidLogs[]
-  PlayerAuctionRefund     PlayerAuctionRefund[]
-  BidBot                  BidBot[]
-  referredByPlayer        UserReferral[]            @relation("Player")
-  referredToPlayer        UserReferral[]            @relation("PlayerReferral")
-  Referral                Referral[]
+  userPersistent            UserPersistent[]
+  TermsAndCondition         TermsAndCondition[]
+  medias                    Media[]
+  products                  Products[]
+  auctions                  Auctions[]
+  user_otp                  UserOTP[]
+  CurrencyTransaction       CurrencyTransaction[]
+  PlayerAuctionRegister     PlayerAuctionRegister[]
+  PlayerBidLogs             PlayerBidLogs[]
+  PlayerAuctionRefund       PlayerAuctionRefund[]
+  BidBot                    BidBot[]
+  referredByPlayer          UserReferral[]            @relation("Player")
+  referredToPlayer          UserReferral[]            @relation("PlayerReferral")
+  Referral                  Referral[]
+  PlayerWalletTransaction   PlayerWalletTransaction[] @relation("User")
+  PlayerWalletToTransaction PlayerWalletTransaction[] @relation("PlaysTransferToUser")
+  PlaysTransferFromUser     PlayerWalletTransaction[] @relation("PlaysTransferFromUser")
 
   @@unique([email])
   @@index([email])
@@ -156,6 +158,7 @@ model Products {
   auctions      Auctions[]
   productMedias ProductMedia[]
   PlayerBuyNow  PlayerBuyNow[]
+
   @@index([title, landing_image])
   @@map("products")
 }
@@ -287,6 +290,8 @@ model PlayerWalletTransaction {
   play_debit              Int?
   play_credit             Int?
   spend_on                PlaySpend
+  transferred_to          String?
+  transferred_from        String?
   status                  Boolean   @default(true)
   is_deleted              Boolean   @default(false)
   created_at              DateTime  @default(now()) @db.Timestamptz()
@@ -295,10 +300,13 @@ model PlayerWalletTransaction {
   created_by              String
   auction_id              String?
 
-  PlayerAuctionRefund    PlayerAuctionRefund?    @relation(fields: [plays_refund_id], references: [id])
-  Auctions               Auctions?               @relation(fields: [auction_id], references: [id])
-  User                   User                    @relation(fields: [created_by], references: [id])
-  CurrencyTransaction    CurrencyTransaction?    @relation(fields: [currency_transaction_id], references: [id])
+  PlayerAuctionRefund   PlayerAuctionRefund? @relation(fields: [plays_refund_id], references: [id])
+  Auctions              Auctions?            @relation(fields: [auction_id], references: [id])
+  CurrencyTransaction   CurrencyTransaction? @relation(fields: [currency_transaction_id], references: [id])
+  User                  User                 @relation("User", fields: [created_by], references: [id])
+  PlaysTransferToUser   User?                @relation("PlaysTransferToUser", fields: [transferred_to], references: [id])
+  PlaysTransferFromUser User?                @relation("PlaysTransferFromUser", fields: [transferred_from], references: [id])
+
   PlayerAuctionRegisters PlayerAuctionRegister[]
 
   @@map("player_wallet_transaction")
@@ -327,9 +335,9 @@ model PlayerBidLogs {
   bid_price             Float
   bid_number            Int?
   remaining_seconds     Int?
-  is_unique             Boolean?              @db.Boolean @default(false) 
-  is_lowest             Boolean?              @db.Boolean @default(false) 
-  is_highest            Boolean?              @db.Boolean @default(false) 
+  is_unique             Boolean?              @default(false) @db.Boolean
+  is_lowest             Boolean?              @default(false) @db.Boolean
+  is_highest            Boolean?              @default(false) @db.Boolean
   player_id             String
   player_name           String
   profile_image         String
@@ -415,13 +423,16 @@ enum currencyType {
 }
 
 enum PlaySpend {
+  LAST_PLAYS
   BUY_PLAYS
   REFUND_PLAYS
   BID_PLAYS
   REFERRAL_PLAYS
-  LAST_PLAYS
+  AUCTION_REGISTER_PLAYS
   EXTRA_BIGPLAYS
+  JOINING_BONUS
   TRANSFER_PLAYS
+  RECEIVED_PLAYS
 }
 
 enum auctionState {

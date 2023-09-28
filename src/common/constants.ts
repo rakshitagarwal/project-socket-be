@@ -368,7 +368,7 @@ export const AUCTION_STATE = [
 
 export const AUCTION_CATEGORY = [
     {
-        title: "THE LAST PLAY",
+        title: "The Last Play",
         code: "TLP",
     },
     {
