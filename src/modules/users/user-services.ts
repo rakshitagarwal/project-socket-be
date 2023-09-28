@@ -102,7 +102,7 @@ const register = async (body: Iuser) => {
             data: {
                 created_by: user.id,
                 play_credit: 1000,
-                spend_on: "BUY_PLAYS",
+                spend_on: "JOINING_BONUS",
             },
         });
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
@@ -134,11 +134,8 @@ const register = async (body: Iuser) => {
  */
 
 const otpVerifcation = async (body: IotpVerification) => {
-
     const isUser = await userQueries.fetchUser({ email: body.email });
-
     if (!isUser) {
-
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
     if (!isUser.is_verified && body.otp_type !== OTP_TYPE.EMAIL_VERIFICATION) {
@@ -156,12 +153,6 @@ const otpVerifcation = async (body: IotpVerification) => {
     }
     const tokenInfo = generateAccessToken({ id: isUser.id });
     if (body.otp_type === OTP_TYPE.EMAIL_VERIFICATION) {
-        eventService.emit(NODE_EVENT_SERVICE.USER_MAIL, {
-            email: [isUser.email],
-            user_name: `${isUser.first_name}`,
-            subject: "Welcome to Big Deal : Signup Details",
-            template: TEMPLATE.EMAIL_VERIFICATION,
-        });
         await userQueries.updateUser({ id: isUser.id }, { is_verified: true });
     }
     await Promise.all([
