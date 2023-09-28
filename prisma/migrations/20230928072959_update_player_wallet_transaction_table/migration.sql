@@ -1,12 +1,7 @@
-/*
-  Warnings:
 
-  - The values [LAST_PLAYS] on the enum `PlaySpend` will be removed. If these variants are still used in the database, this will fail.
-
-*/
 -- AlterEnum
 BEGIN;
-CREATE TYPE "PlaySpend_new" AS ENUM ('BUY_PLAYS', 'REFUND_PLAYS', 'BID_PLAYS', 'REFERRAL_PLAYS', 'AUCTION_REGISTER_PLAYS', 'EXTRA_BIGPLAYS', 'JOINING_BONUS', 'TRANSFER_PLAYS', 'RECEIVED_PLAYS');
+CREATE TYPE "PlaySpend_new" AS ENUM ('LAST_PLAYS','BUY_PLAYS', 'REFUND_PLAYS', 'BID_PLAYS', 'REFERRAL_PLAYS', 'AUCTION_REGISTER_PLAYS', 'EXTRA_BIGPLAYS', 'JOINING_BONUS', 'TRANSFER_PLAYS', 'RECEIVED_PLAYS');
 ALTER TABLE "player_wallet_transaction" ALTER COLUMN "spend_on" TYPE "PlaySpend_new" USING ("spend_on"::text::"PlaySpend_new");
 ALTER TYPE "PlaySpend" RENAME TO "PlaySpend_old";
 ALTER TYPE "PlaySpend_new" RENAME TO "PlaySpend";

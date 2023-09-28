@@ -423,6 +423,7 @@ enum currencyType {
 }
 
 enum PlaySpend {
+  LAST_PLAYS
   BUY_PLAYS
   REFUND_PLAYS
   BID_PLAYS
