@@ -258,7 +258,7 @@ const createTrx = async (
         data: {
             play_debit: plays,
             created_by: player_id,
-            spend_on: "BUY_PLAYS",
+            spend_on: "AUCTION_REGISTER_PLAYS",
         },
     });
     return query;

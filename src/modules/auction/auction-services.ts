@@ -504,7 +504,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             auction_id: data.auction_id,
             player_id: data.player_id,
             plays: totalPlays,
-            spends_on: Ispend_on.LAST_PLAYS,
+            spends_on: Ispend_on.AUCTION_REGISTER_PLAYS,
         };
         await userQueries.addLastPlaysTrx(lastPlaysAdd);
     }
