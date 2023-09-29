@@ -587,6 +587,14 @@ const fetchAdminInfo = async () => {
     return user;
 };
 
+/**
+ * Fetches player transactions based on the provided query parameters.
+ * @param {Object} queryData - The query parameters for filtering player transactions.
+ * @param {string} queryData.player_id - The unique identifier for the player.
+ * @param {number} queryData.limit - The maximum number of transactions to retrieve.
+ * @param {number} queryData.offset - The offset for pagination, indicating the starting position of transactions.
+ * @returns 
+ */
 const fetchPlayerTransactions = async (queryData: {
     player_id: string;
     limit: number;

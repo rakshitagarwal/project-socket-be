@@ -252,7 +252,7 @@ export const MESSAGES = {
         CURRENCY_NOT_UPDATED: "Updated currency config",
         CURRENCY_UPDATE_FAILED:
             "You cannot update currency when an auction is LIVE or UPCOMING",
-        CURRENCY_DEFAULT_VALUE: 0.2,
+        CURRENCY_DEFAULT_VALUE: 0.20,
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "Bidbot created successfully",

@@ -743,6 +743,15 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
 };
 
+/**
+ * Retrieves transaction history for a specific player based on the provided player ID and pagination data.
+ * @param {string} player_id - The unique identifier for the player.
+ * @param {Object} paginationData - The pagination data object containing limit and page information.
+ * @param {number} paginationData.limit - The maximum number of transactions to retrieve per page.
+ * @param {number} paginationData.page - The page number indicating the set of transactions to retrieve.
+ * @returns {Promise<Object>} An object containing transaction history data for the player.
+ * @throws {NotFoundError} If the specified player is not found.
+ */
 const playerTransactionHistory = async (
     player_id: string,
     paginationData: IplayerTransactionHistory
@@ -764,6 +773,11 @@ const playerTransactionHistory = async (
     );
 };
 
+/**
+ * Retrieves player images from the userImages source and constructs a successful response.
+ * @returns {Object} A success response object containing player avatar images.
+ *
+ */
 const playerImages = () => {
     const images = userImages;
     return responseBuilder.okSuccess(MESSAGES.USERS.AVATAR, images);

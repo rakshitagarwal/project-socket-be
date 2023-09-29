@@ -155,7 +155,7 @@ const resetPassword = async (req: Request, res: Response) => {
 
 const getAllusers = async (req: Request, res: Response) => {    
     const response = await userService.fetchAllUsers(
-        req.query as unknown as  unknown as IuserPagination
+        req.query as unknown as IuserPagination
     );
     res.status(response.code).json(
         JSON.parse(
@@ -265,6 +265,14 @@ const playerTransactionHistory = async (req: Request, res: Response) => {
     );
 };
 
+/**
+ * Controller function to handle the retrieval of player images.
+ * @param {Object} _req - Express Request object (not used in this function).
+ * @param {Object} res - Express Response object to send the HTTP response.
+ * @returns {void}
+ * @throws {Error} If there is an error during the image retrieval process.
+ *
+ */
 
 const getPlayerImages=async (_req: Request, res: Response) => {
     const response = await userService.playerImages();
