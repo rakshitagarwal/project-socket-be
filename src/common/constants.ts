@@ -192,7 +192,7 @@ export const MESSAGES = {
         VERIFICATION_ERROR: "Please Verify Your Email",
         USER_FOUND: "User Found Successfully",
         EMAIL_NOT_FOUND: "User Email Not Found",
-        INSUFFICIENT_BALANCE: "Your plays balance is insufficient for transfer",
+        INSUFFICIENT_BALANCE: "Your Plays Balance Is Insufficient For Transfer",
         ID_NOT_FOUND: "User Id Not Found",
         PASSWORD_UPDATED: "Password Updated",
         WRONG_PASSWORD: "Invalid Old Password",
