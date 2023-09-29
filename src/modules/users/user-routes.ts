@@ -104,6 +104,18 @@ userRouter.post(
     asyncHandler(userHandlers.deductPlays)
 );
 
+userRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.TRANSFER_PLAYS,
+    [isAuthenticated, validateRequest.body(userSchemas.ZPlayerEmail)],
+    asyncHandler(userHandlers.verifyUserDetails)
+);
+
+userRouter.post(
+    ENDPOINTS.BASE + ENDPOINTS.TRANSFER_PLAYS,
+    [isAuthenticated, validateRequest.body(userSchemas.ZTransferPlays)],
+    asyncHandler(userHandlers.transferPlays)
+);
+
 userRouter.post(
     ENDPOINTS.RESEND_OTP,
     validateRequest.body(userSchemas.resendOtp),

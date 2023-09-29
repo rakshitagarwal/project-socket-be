@@ -206,6 +206,26 @@ const deductPlays = async (req: Request, res: Response) => {
 };
 
 /**
+ * @description transferPlays is to transfer plays from one user to other user
+ * @param {Request} req
+ * @param {Response} res
+ */
+const transferPlays = async (req: Request, res: Response) => {
+    const response = await userService.transferPlays(req.body);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description verifyUserDetails is to verify if user exists
+ * @param {Request} req
+ * @param {Response} res
+ */
+const verifyUserDetails = async (req: Request, res: Response) => {
+    const response = await userService.verifyUserDetails(req.body);
+    res.status(response.code).json(response);
+};
+
+/**
  * Resends an OTP (One-Time Password) to a user.
  * @param {import('express').Request} req - The Express request object.
  * @param {import('express').Response} res - The Express response object.
@@ -268,6 +288,8 @@ const userHandlers = {
     addPlaysInWallet,
     getPlayBalance,
     deductPlays,
+    verifyUserDetails,
+    transferPlays,
     resendOtpToUser,
     userBlockStatus,
     playerTransactionHistory,

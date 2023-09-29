@@ -14,6 +14,7 @@ import {
     ILastPlayTrx,
     IminAuctionBidLog,
     IGetAllUsers,
+    ITransfer,
 } from "./typings/user-types";
 import { PlaySpend, Prisma, PrismaClient } from "@prisma/client";
 
@@ -369,6 +370,33 @@ const createPaymentTrx = async (prisma: PrismaClient, data: IWalletTx) => {
     return queries;
 };
 
+/**
+ * @description transferPlays is used to credit and debit plays for transfer
+ * @param {ITransfer} data - it contains the player id, id of other player and number of plays
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns { creditTrx, debitTrx } - the result of execution of credit and debit plays query.
+ */
+const transferPlays = async (prisma: PrismaClient, data: ITransfer) => {        
+    const creditTrx = await prisma.playerWalletTransaction.create({
+        data: {
+            play_credit: data.plays,
+            spend_on: "RECEIVED_PLAYS",
+            created_by: data.transfer as string,
+            transferred_from: data.id,
+        },
+    });
+
+    const debitTrx = await prisma.playerWalletTransaction.create({
+        data: {
+            play_debit: data.plays,
+            spend_on: "TRANSFER_PLAYS",
+            created_by: data.id,
+            transferred_to: data.transfer,
+        },
+    });
+    return { creditTrx, debitTrx };
+};
+
 const playerPlaysBalance = async (
     player_id: string
 ): Promise<PlayerBidLogGroup[]> => {
@@ -629,6 +657,7 @@ const userQueries = {
     addPlayRefundBalanceTx,
     createTrx,
     createPaymentTrx,
+    transferPlays,
     playerPlaysBalance,
     getPlayerRoleId,
     createMultipleUsers,

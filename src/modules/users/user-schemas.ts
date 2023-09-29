@@ -254,6 +254,17 @@ const ZPlayerId = z.object({
         }),
 });
 
+const ZPlayerEmail = z.object({
+    email: z
+        .string({
+            required_error: "email is required",
+            invalid_type_error: "email must be string",
+        })
+        .email({ message: "Invalid email address" })
+        .trim()
+        .toLowerCase()
+});
+
 const ZDeductPlays = z.object({
     plays: z.number({
         required_error: "plays is required!",
@@ -266,6 +277,30 @@ const ZDeductPlays = z.object({
         })
         .uuid({
             message: "ZPlayerId not in a proper format!",
+        }),
+});
+
+const ZTransferPlays = z.object({
+    id: z
+        .string({
+            invalid_type_error: "id must be string!",
+            required_error: "id is required!",
+        })
+        .uuid({
+            message: "id not in a proper format!",
+        }),
+    email: z
+        .string({
+            required_error: "email is required",
+            invalid_type_error: "email must be string",
+        })
+        .email({ message: "Invalid email address" })
+        .trim()
+        .toLowerCase(),
+    plays: z
+        .number({
+            required_error: "plays is required!",
+            invalid_type_error: "plays type should be number!",
         }),
 });
 
@@ -315,7 +350,9 @@ const userSchemas = {
     pagination,
     ZPlayerBalance,
     ZPlayerId,
+    ZPlayerEmail,
     ZDeductPlays,
+    ZTransferPlays,
     resendOtp,
     updateUserBlock,
     transactionHistoryPagination
