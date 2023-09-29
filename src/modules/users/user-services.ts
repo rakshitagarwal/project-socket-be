@@ -488,6 +488,8 @@ const transferPlays = async (data: ITransferPlx) => {
     });
 
     if (createTrax.creditTrx.id && createTrax.debitTrx.id) {
+        console.log(transferToUser.id);
+        
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: transferToUser.id,
             plays_balance: data.plays,
