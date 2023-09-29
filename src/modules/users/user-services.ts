@@ -12,6 +12,7 @@ import {
     IuserPagination,
     IWalletTx,
     IDeductPlx,
+    ITransferPlx,
 } from "./typings/user-types";
 import userQueries from "./user-queries";
 import bcrypt from "bcrypt";
@@ -449,6 +450,68 @@ const fetchAllUsers = async (query: IuserPagination) => {
 };
 
 /**
+ * @description check if user exists by taking its email address
+ * @param {{email: string}} data
+ * @returns
+ */
+const verifyUserDetails = async (data: { email: string }) => {
+    const isExists = await userQueries.fetchUser({ email : data.email});
+    if(isExists?.email){
+        return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
+            email: isExists.email, 
+            name: isExists.last_name? isExists.first_name +" "+ isExists.last_name : isExists.first_name,
+            referral: isExists.referral_code
+        })
+    }
+    return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
+}
+
+/**
+ * @description transfer plays to user based on email and plays amount
+ * @param {ITransferPlx} data
+ * @returns
+ */
+const transferPlays = async (data: ITransferPlx) => {
+    const transferToUser = await userQueries.fetchUser({ email: data.email });
+    if (!transferToUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
+
+    const transferFromUser = await userQueries.fetchUser({ id: data.id });
+    if (!transferFromUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
+
+    const wallet = (await userQueries.playerPlaysBalance(transferFromUser.id)) as unknown as [{ play_balance: number }];
+    if ((wallet[0]?.play_balance as number) < data.plays || !wallet.length) {
+        return responseBuilder.badRequestError(MESSAGES.USERS.INSUFFICIENT_BALANCE);
+    }
+
+    const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
+        const transfer = await userQueries.transferPlays(prisma, {
+            id: transferFromUser.id,
+            plays: data.plays,
+            transfer: transferToUser.id,
+        });
+        return transfer;
+    });
+
+    if (createTrax.creditTrx.id && createTrax.debitTrx.id) {        
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_TRANSFER, {
+            from: transferFromUser.id,
+            to: transferToUser.id,
+            plays_balance: data.plays,
+        });
+
+        return responseBuilder.okSuccess(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS, {
+                email: transferToUser.email,
+                username: transferToUser.last_name? transferToUser.first_name +" "+ transferToUser.last_name : transferToUser.first_name,
+                referral: transferToUser.referral_code,
+                plays: data.plays,
+            }
+        );
+    }
+
+    return responseBuilder.expectationFaild(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_FAIL);
+};
+
+/**
  * @description add the wallet transaction for the buy plays
  * @param {IWalletTx} data
  * @returns
@@ -684,7 +747,9 @@ const userService = {
     getPlayerWalletBalance,
     debitPlaysForPlayer,
     resendOtpToUser,
-    userBlockStatus
+    userBlockStatus,
+    verifyUserDetails,
+    transferPlays,
     // bidPlaysDebit,
 };
 
