@@ -478,9 +478,14 @@ const transferPlays = async (data: ITransferPlx) => {
     const transferFromUser = await userQueries.fetchUser({ id: data.id });
     if (!transferFromUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
 
+    const wallet = (await userQueries.playerPlaysBalance(transferFromUser.id)) as unknown as [{ play_balance: number }];
+    if ((wallet[0]?.play_balance as number) < data.plays || !wallet.length) {
+        return responseBuilder.badRequestError(MESSAGES.USERS.INSUFFICIENT_BALANCE);
+    }
+
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
         const transfer = await userQueries.transferPlays(prisma, {
-            id: data.id,
+            id: transferFromUser.id,
             plays: data.plays,
             transfer: transferToUser.id,
         });
@@ -488,12 +493,9 @@ const transferPlays = async (data: ITransferPlx) => {
     });
 
     if (createTrax.creditTrx.id && createTrax.debitTrx.id) {        
-        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
-            player_id: transferToUser.id,
-            plays_balance: data.plays,
-        });
-        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
-            player_id: data.id,
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_TRANSFER, {
+            from: transferFromUser.id,
+            to: transferToUser.id,
             plays_balance: data.plays,
         });
 

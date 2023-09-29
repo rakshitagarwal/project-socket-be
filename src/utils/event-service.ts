@@ -395,6 +395,27 @@ eventService.on(
 );
 
 /**
+ * Registers a callback function for the 'PLAYER_PLAYS_BALANCE_TRANSFER' event.
+ * @param {Object} data - The data object containing information about the players and plays amount transfer.
+ * @param {string} data.from - The ID of the player from whom transfer of plays is debited.
+ * @param {string} data.to - The ID of the player to whom transfer of plays is credited.
+ * @param {number} data.plays_balance - The amount of plays balance transfered to the other player.
+ * @returns {void}
+ */
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_TRANSFER,
+    async (data: { from: string; to: string; plays_balance: number }) => {
+        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+            if (playersBalance[data.from] && playersBalance[data.to]) {
+                playersBalance[data.from] = +playersBalance[data.from] - data.plays_balance;
+                playersBalance[data.to] = +playersBalance[data.to] + data.plays_balance;
+                await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
+                return;
+            }
+    }
+);
+
+/**
  * @param details - array of object with play_credit, created_by
  * @description - implementing the multiple updates in the redis client of players play balances
  */
