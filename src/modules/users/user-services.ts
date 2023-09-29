@@ -488,6 +488,15 @@ const transferPlays = async (data: ITransferPlx) => {
     });
 
     if (createTrax.creditTrx.id && createTrax.debitTrx.id) {
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
+            player_id: transferToUser.id,
+            plays_balance: data.plays,
+        });
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
+            player_id: data.id,
+            plays_balance: data.plays,
+        });
+
         return responseBuilder.okSuccess(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS, {
                 email: transferToUser.email,
                 username: transferToUser.last_name? transferToUser.first_name +" "+ transferToUser.last_name : transferToUser.first_name,
