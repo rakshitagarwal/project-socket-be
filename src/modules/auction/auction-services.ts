@@ -396,7 +396,6 @@ const playerAuctionDetails = async (data: {
         ...bidInfoDetails,
         winnerInfo: winnerInfoDetails || {},
         buy_now_price,
-        auction_category: auction.auctionCategory,
         totalBid: PlayerBidLogs.length,
     });
 };

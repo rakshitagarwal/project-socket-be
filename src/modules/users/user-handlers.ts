@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userService from "./user-services";
-import { IuserPagination } from "./typings/user-types";
+import { IplayerTransactionHistory, IuserPagination } from "./typings/user-types";
 /**
  * @description handles admin  or player registration
  * @param req { Request } - admin  or player's request object
@@ -248,6 +248,37 @@ const userBlockStatus = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * @description handles get request for  player transaction history 
+ * @param req { Request } admin or player's request object
+ * @param res { Response } admin or player's request's response object
+ */
+
+const playerTransactionHistory = async (req: Request, res: Response) => {
+    const response = await userService.playerTransactionHistory(req.params.id as string ,req.query as unknown as IplayerTransactionHistory );
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? value.toString() : value
+            )
+        )
+    );
+};
+
+/**
+ * Controller function to handle the retrieval of player images.
+ * @param {Object} _req - Express Request object (not used in this function).
+ * @param {Object} res - Express Response object to send the HTTP response.
+ * @returns {void}
+ * @throws {Error} If there is an error during the image retrieval process.
+ *
+ */
+
+const getPlayerImages=async (_req: Request, res: Response) => {
+    const response = await userService.playerImages();
+    res.status(response.code).json(response);
+};
+
 const userHandlers = {
     register,
     otpVerification,
@@ -268,7 +299,9 @@ const userHandlers = {
     verifyUserDetails,
     transferPlays,
     resendOtpToUser,
-    userBlockStatus
+    userBlockStatus,
+    playerTransactionHistory,
+    getPlayerImages
 };
 
 export default userHandlers;

@@ -69,7 +69,7 @@ const updateUser = async (query: IuserQuery, payload: IupdateUser) => {
  * @param query - this query contains search user information and limit of the user
  * @returns
  */
-const fetchAllUsers = async (query: IuserPaginationQuery) => {    
+const fetchAllUsers = async (query: IuserPaginationQuery) => {
     const user: Sql = Prisma.sql`
     SELECT
         u.status,
@@ -127,14 +127,22 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     WHERE
         mr.title='Player' 
         AND u.is_deleted=FALSE 
-        ${query?.search ? Prisma.raw(`AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`) : Prisma.raw('')}
-    ORDER BY ${Prisma.raw(query?._sort as string)} ${Prisma.raw(query?._order as string)}
-    OFFSET ${Prisma.raw(query.page * query.limit as unknown as string)}
+        ${
+            query?.search
+                ? Prisma.raw(
+                      `AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`
+                  )
+                : Prisma.raw("")
+        }
+    ORDER BY ${Prisma.raw(query?._sort as string)} ${Prisma.raw(
+        query?._order as string
+    )}
+    OFFSET ${Prisma.raw((query.page * query.limit) as unknown as string)}
     LIMIT ${Prisma.raw(query.limit as unknown as string)}
     `;
-        
+
     const userDetails = await prisma.$queryRaw<IGetAllUsers[]>(user);
-        
+
     const count = await db.user.count({
         where: {
             AND: [
@@ -219,15 +227,12 @@ const addPlayBalanceTx = async (
  * @param {IWalletTx} data
  * @returns
  */
-const addExtraPlays = async (
-    prisma: PrismaClient,
-    data: IWalletTx
-) => {
+const addExtraPlays = async (prisma: PrismaClient, data: IWalletTx) => {
     const query = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
             spend_on: PlaySpend.EXTRA_BIGPLAYS,
-            created_by: data.player_id
+            created_by: data.player_id,
         },
     });
     return query;
@@ -317,7 +322,7 @@ const minPlayerBidLogs = async (data: [IminAuctionBidLog]) => {
         data: data,
     });
     return queryResult;
-}
+};
 
 /**
  * fetch the total number of bids made by a specific player in a given auction.
@@ -582,6 +587,70 @@ const fetchAdminInfo = async () => {
     return user;
 };
 
+/**
+ * Fetches player transactions based on the provided query parameters.
+ * @param {Object} queryData - The query parameters for filtering player transactions.
+ * @param {string} queryData.player_id - The unique identifier for the player.
+ * @param {number} queryData.limit - The maximum number of transactions to retrieve.
+ * @param {number} queryData.offset - The offset for pagination, indicating the starting position of transactions.
+ * @returns 
+ */
+const fetchPlayerTransactions = async (queryData: {
+    player_id: string;
+    limit: number;
+    offset: number;
+}) => {
+    const query: Sql = Prisma.sql`
+    SELECT 
+    T1.auction_id, 
+    T1.spend_on,
+    T1.created_by,
+    T1.play_credit,
+    SUM(T1.play_debit) AS play_debit,
+    T1.transferred_from,
+    T1.transferred_to,
+    T1.plays_refund_id,
+    T1.currency_transaction_id,
+    auctions.title as auction_name,
+	users.first_name as user_name,
+	T2.first_name as to_user,
+	T3.first_name as from_user,
+    DATE(T1.created_at) as created_at
+FROM 
+    player_wallet_transaction as T1
+LEFT JOIN 
+    auctions ON T1.auction_id = auctions.id
+LEFT JOIN 
+    users on T1.created_by=users.id
+LEFT JOIN 
+	users as T2 on T1.transferred_to=T2.id
+LEFT JOIN 
+	users as T3 on T1.transferred_from=T3.id
+WHERE 
+    T1.created_by = ${queryData.player_id}
+GROUP BY 
+    T1.auction_id, 
+    T1.spend_on, 
+    T1.created_by, 
+    T1.play_credit, 
+    T1.play_debit, 
+    T1.transferred_from, 
+    T1.transferred_to, 
+    T1.plays_refund_id, 
+    T1.currency_transaction_id, 
+    auctions.title,
+	users.first_name,
+	T2.first_name,
+	T3.first_name,
+    DATE(T1.created_at)
+    order by created_at desc
+    limit ${queryData.limit}
+    OFFSET ${Prisma.raw((queryData.offset * queryData.limit) as unknown as string)}
+    `;
+    const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
+    return queryResult;
+};
+
 const userQueries = {
     fetchUser,
     updateUser,
@@ -609,5 +678,6 @@ const userQueries = {
     addLastPlaysTrx,
     fetchAdminInfo,
     addExtraPlays,
+    fetchPlayerTransactions,
 };
 export default userQueries;

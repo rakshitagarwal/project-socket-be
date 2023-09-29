@@ -782,6 +782,14 @@ const getplayerRegistrationAuctionDetails = async (
                     plays_consumed_on_bid: true,
                     description: true,
                     product_id: true,
+                    auctionCategory: {
+                        select:{
+                            id: true,
+                            title: true,
+                            code: true,
+                            status: true
+                        }
+                    },
                     products: {
                         select: {
                             medias: true,

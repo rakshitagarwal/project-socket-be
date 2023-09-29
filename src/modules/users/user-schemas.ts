@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { userImages } from "../../common/constants";
 const OTP_TYPE = [
     "email_verification",
     "login_type",
@@ -109,7 +110,7 @@ const updateUser = z
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
-        avatar: z.string().optional(),
+        avatar: z.enum([...userImages]).optional(),
     })
     .strict();
 
@@ -325,6 +326,17 @@ const updateUserBlock = z
             .optional(),
     })
     .strict();
+
+const transactionHistoryPagination = z
+    .object({
+        page: z
+            .string({ invalid_type_error: "page must be string" })
+            .optional().default("0"),
+        limit: z
+            .string({ invalid_type_error: "limit must be string" })
+            .optional().default("10")
+    })
+    .strict();
 const userSchemas = {
     register,
     emailVerifcation,
@@ -343,6 +355,7 @@ const userSchemas = {
     ZTransferPlays,
     resendOtp,
     updateUserBlock,
+    transactionHistoryPagination
 };
 
 export default userSchemas;
