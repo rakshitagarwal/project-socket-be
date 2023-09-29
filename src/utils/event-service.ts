@@ -257,19 +257,19 @@ eventService.on(
             );
         } else {
             if (playersBalance[data.player_id]) {
-                playersBalance[data.player_id] =
-                    +playersBalance[data.player_id] + +data.plays_balance;
-                redisClient.set(
+                playersBalance[data.player_id] = 
+                        +playersBalance[data.player_id] + data.plays_balance;
+                await redisClient.set(
                     "player:plays:balance",
                     JSON.stringify(playersBalance)
                 );
-            } else {
-                playersBalance[data.player_id] = data.plays_balance;
-                redisClient.set(
-                    "player:plays:balance",
-                    JSON.stringify(playersBalance)
-                );
+                return;
             }
+            playersBalance[data.player_id] = data.plays_balance;
+            await redisClient.set(
+                "player:plays:balance",
+                JSON.stringify(playersBalance)
+            );
         }
     }
 );
@@ -290,10 +290,12 @@ eventService.on(
         auction_id: string;
     }) => {
         const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string);
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
         const existingBotData = JSON.parse(
-            (await redisClient.get(`BidBotCount:${data.auction_id}`)) as string);
-            
+            (await redisClient.get(`BidBotCount:${data.auction_id}`)) as string
+        );
+
         if (playersBalance) {
             if (playersBalance[data.player_id]) {
                 playersBalance[data.player_id] =
@@ -314,33 +316,52 @@ eventService.on(
         }
 
         if (existingBotData) {
-            if ( existingBotData[data.player_id] && existingBotData[data.player_id]?.price_limit) {
-                const bidPrices = JSON.parse((await redisClient.get(`${data.auction_id}:bidHistory`)) as string);
-                if (bidPrices && bidPrices.slice(-1)[0].bid_price >= existingBotData[data.player_id].price_limit) {
+            if (
+                existingBotData[data.player_id] &&
+                existingBotData[data.player_id]?.price_limit
+            ) {
+                const bidPrices = JSON.parse(
+                    (await redisClient.get(
+                        `${data.auction_id}:bidHistory`
+                    )) as string
+                );
+                if (
+                    bidPrices &&
+                    bidPrices.slice(-1)[0].bid_price >=
+                        existingBotData[data.player_id].price_limit
+                ) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_ERROR, {
                             message: MESSAGES.BIDBOT.BIDBOT_PRICE_REACHED,
-                            auction_id: existingBotData[data.player_id].auction_id,
-                            player_id: existingBotData[data.player_id].player_id,
+                            auction_id:
+                                existingBotData[data.player_id].auction_id,
+                            player_id:
+                                existingBotData[data.player_id].player_id,
                             status: false,
                         });
-                        socket.playerSocket
+                    socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
                         .emit(SOCKET_EVENT.BIDBOT_STATUS, {
                             message: MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
-                            auction_id: existingBotData[data.player_id].auction_id,
-                            player_id: existingBotData[data.player_id].player_id,
+                            auction_id:
+                                existingBotData[data.player_id].auction_id,
+                            player_id:
+                                existingBotData[data.player_id].player_id,
                             status: false,
                         });
                     return;
                 }
             }
             if (existingBotData[data.player_id]) {
-                const updatedLimit = Number(existingBotData?.[data.player_id]?.plays - data.plays_balance);
+                const updatedLimit = Number(
+                    existingBotData?.[data.player_id]?.plays -
+                        data.plays_balance
+                );
                 existingBotData[data.player_id].plays = updatedLimit;
-                existingBotData[data.player_id].total_bot_bid = Number(existingBotData[data.player_id].total_bot_bid) + 1;
+                existingBotData[data.player_id].total_bot_bid =
+                    Number(existingBotData[data.player_id].total_bot_bid) + 1;
                 if (!updatedLimit || updatedLimit < 0) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket
@@ -370,6 +391,27 @@ eventService.on(
                 );
             }
         }
+    }
+);
+
+/**
+ * Registers a callback function for the 'PLAYER_PLAYS_BALANCE_TRANSFER' event.
+ * @param {Object} data - The data object containing information about the players and plays amount transfer.
+ * @param {string} data.from - The ID of the player from whom transfer of plays is debited.
+ * @param {string} data.to - The ID of the player to whom transfer of plays is credited.
+ * @param {number} data.plays_balance - The amount of plays balance transfered to the other player.
+ * @returns {void}
+ */
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_TRANSFER,
+    async (data: { from: string; to: string; plays_balance: number }) => {
+        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+            if (playersBalance[data.from] && playersBalance[data.to]) {
+                playersBalance[data.from] = +playersBalance[data.from] - data.plays_balance;
+                playersBalance[data.to] = +playersBalance[data.to] + data.plays_balance;
+                await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
+                return;
+            }
     }
 );
 
@@ -614,17 +656,24 @@ eventService.on(
     NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END,
     async (data: { auction_id: string; winnerInfo: IMinMaxAuction }) => {
         await redisClient.del(`auction:live:${data.auction_id}`);
-        const auctionResult = JSON.parse((await redisClient.get(`auction:result:${data.auction_id}`)) as string);
+        const auctionResult = JSON.parse(
+            (await redisClient.get(
+                `auction:result:${data.auction_id}`
+            )) as string
+        );
         if (auctionResult) {
             const [bidLogs, userInfo] = await Promise.all([
                 userQueries.minPlayerBidLogs(auctionResult),
-                auctionQueries.updatePlayerRegistrationAuctionResultStatus(data.auction_id,data.winnerInfo.player_id),
+                auctionQueries.updatePlayerRegistrationAuctionResultStatus(
+                    data.auction_id,
+                    data.winnerInfo.player_id
+                ),
             ]);
             if (bidLogs && userInfo) {
                 await Promise.all([
-                redisClient.del(`${data.auction_id}:bidHistory`),
-                redisClient.del(`auction:result:${data.auction_id}`)
-            ])
+                    redisClient.del(`${data.auction_id}:bidHistory`),
+                    redisClient.del(`auction:result:${data.auction_id}`),
+                ]);
             }
         }
     }
