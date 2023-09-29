@@ -96,6 +96,12 @@ export interface ILastPlayTrx {
     spends_on: Ispend_on;
 }
 
+export interface ITransfer {
+    id: string;
+    plays: number;
+    transfer: string;
+}
+
 export interface IPlayerBidLog {
     player_id: string;
     auction_id: string;

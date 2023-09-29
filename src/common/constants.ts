@@ -191,7 +191,7 @@ export const MESSAGES = {
         USER_VERIFIED: "User Verified",
         VERIFICATION_ERROR: "Please Verify Your Email",
         USER_FOUND: "User Found Successfully",
-        USER_NOTFOUND: "User Not Found",
+        EMAIL_NOT_FOUND: "User  Email Not Found",
         PASSWORD_UPDATED: "Password Updated",
         WRONG_PASSWORD: "Invalid Old Password",
         UPDATE_USER: "Profile Details Updated Successfully",

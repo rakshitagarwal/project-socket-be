@@ -463,7 +463,7 @@ const verifyUserDetails = async (data: { email: string }) => {
             referral: isExists.referral_code
         })
     }
-    return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOTFOUND);
+    return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
 }
 
 /**
@@ -472,29 +472,26 @@ const verifyUserDetails = async (data: { email: string }) => {
  * @returns
  */
 const transferPlays = async (data: ITransferPlx) => {
-    const isExists = await userQueries.fetchUser({ email: data.email });
-    if (!isExists?.id) return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOTFOUND);
+    const transferToUser = await userQueries.fetchUser({ email: data.email });
+    if (!transferToUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
+    
+    const transferFromUser = await userQueries.fetchUser({ id: data.id });
+    if (!transferFromUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
-        const credit_trx = await userQueries.creditTransferTrx(prisma, {
-            id: isExists.id,
-            plays: data.plays,
-            transfer: data.id,
-        });
-        const debit_trx = await userQueries.debitTransferTrx(prisma, {
+        const transfer = await userQueries.transferPlays(prisma, {
             id: data.id,
             plays: data.plays,
-            transfer: isExists.id,
+            transfer: transferToUser.id,
         });
-        return { credit_trx, debit_trx };
+        return transfer;
     });
 
-    if (createTrax.credit_trx.id && createTrax.debit_trx.id) {
-        return responseBuilder.okSuccess(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS,
-            {
-                email: isExists.email,
-                username: isExists.last_name? isExists.first_name +" "+ isExists.last_name : isExists.first_name,
-                referral: isExists.referral_code,
+    if (createTrax.creditTrx.id && createTrax.debitTrx.id) {
+        return responseBuilder.okSuccess(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS, {
+                email: transferToUser.email,
+                username: transferToUser.last_name? transferToUser.first_name +" "+ transferToUser.last_name : transferToUser.first_name,
+                referral: transferToUser.referral_code,
                 plays: data.plays,
             }
         );
