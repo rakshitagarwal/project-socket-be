@@ -349,6 +349,7 @@ export const NODE_EVENT_SERVICE = {
     UPDATE_PLAYER_REGISTER_STATUS: "auction:player:register:status",
     COUNTDOWN: "auction:countdown",
     DELETE_PRODUCT_MEDIA_IMAGES: "product:media:delete",
+    PLAYER_PLAYS_BALANCE_TRANSFER: "player:balance:transfer",
     PLAYER_PLAYS_BALANCE_CREDITED: "auction:player:balance:credit",
     PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",
     START_SIMULATION_LIVE_AUCTION: "start:simulation:auction",
