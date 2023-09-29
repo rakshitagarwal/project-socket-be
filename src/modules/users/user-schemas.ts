@@ -290,6 +290,17 @@ const updateUserBlock = z
             .optional(),
     })
     .strict();
+
+const transactionHistoryPagination = z
+    .object({
+        page: z
+            .string({ invalid_type_error: "page must be string" })
+            .optional().default("0"),
+        limit: z
+            .string({ invalid_type_error: "limit must be string" })
+            .optional().default("10")
+    })
+    .strict();
 const userSchemas = {
     register,
     emailVerifcation,
@@ -306,6 +317,7 @@ const userSchemas = {
     ZDeductPlays,
     resendOtp,
     updateUserBlock,
+    transactionHistoryPagination
 };
 
 export default userSchemas;

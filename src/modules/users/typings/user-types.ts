@@ -167,3 +167,4 @@ export interface IGetAllUsers {
     Player_Participated: number;
 }
 export type ICountry = z.infer<typeof locationSchemas.countries>;
+export type IplayerTransactionHistory = z.infer<typeof userSchemas.transactionHistoryPagination>;

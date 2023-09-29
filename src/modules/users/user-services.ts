@@ -12,6 +12,7 @@ import {
     IuserPagination,
     IWalletTx,
     IDeductPlx,
+    IplayerTransactionHistory,
 } from "./typings/user-types";
 import userQueries from "./user-queries";
 import bcrypt from "bcrypt";
@@ -86,7 +87,12 @@ const register = async (body: Iuser) => {
     const randomAvatar = `assets/avatar/${randomNum}.png`;
     await prismaTransaction(async (prisma: PrismaClient) => {
         const user = await prisma.user.create({
-            data: { ...payload, role_id: isRole.id, avatar: randomAvatar, status: true },
+            data: {
+                ...payload,
+                role_id: isRole.id,
+                avatar: randomAvatar,
+                status: true,
+            },
         });
 
         if (applied_referral)
@@ -421,8 +427,12 @@ const fetchAllUsers = async (query: IuserPagination) => {
     const search = query.search;
     const filter = [];
     if (query?.search) {
-        filter.push({ first_name: { contains: query?.search, mode: "insensitive" } });
-        filter.push({ email: { contains: query?.search, mode: "insensitive" } });
+        filter.push({
+            first_name: { contains: query?.search, mode: "insensitive" },
+        });
+        filter.push({
+            email: { contains: query?.search, mode: "insensitive" },
+        });
     }
     const { userDetails, count } = await userQueries.fetchAllUsers({
         page,
@@ -433,19 +443,15 @@ const fetchAllUsers = async (query: IuserPagination) => {
         filter,
     });
 
-    return responseBuilder.okSuccess(
-        MESSAGES.USERS.USER_FOUND,
-        userDetails,
-        {
-            limit,
-            page,
-            totalRecord: count,
-            totalPage: Math.ceil(count / limit),
-            search: query.search,
-            sort: query._sort,
-            order: query._order,
-        }
-    );
+    return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, userDetails, {
+        limit,
+        page,
+        totalRecord: count,
+        totalPage: Math.ceil(count / limit),
+        search: query.search,
+        sort: query._sort,
+        order: query._order,
+    });
 };
 
 /**
@@ -495,11 +501,15 @@ const addWalletTransaction = async (data: IWalletTx) => {
 
     if (createTrax.currency_trx.id) {
         const referral_config = await referralQueries.referralConfig();
-        const referral_plays = createTrax.referral_status ? Number(referral_config?.reward_plays) : 0;
+        const referral_plays = createTrax.referral_status
+            ? Number(referral_config?.reward_plays)
+            : 0;
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_CREDITED, {
             player_id: data.player_id,
             plays_balance: data.plays + extra_plays + referral_plays,
-            referral_status: createTrax.referral_status ? createTrax.referral_status : false,
+            referral_status: createTrax.referral_status
+                ? createTrax.referral_status
+                : false,
         });
         return responseBuilder.okSuccess(
             MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_CREDITED,
@@ -507,12 +517,16 @@ const addWalletTransaction = async (data: IWalletTx) => {
                 plays: data.plays,
                 extra_big_plays: extra_plays !== 0 ? extra_plays : 0,
                 referral_plays,
-                referral_status: createTrax.referral_status ? createTrax.referral_status : false,
+                referral_status: createTrax.referral_status
+                    ? createTrax.referral_status
+                    : false,
             }
         );
     }
 
-    return responseBuilder.expectationFaild(MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED);
+    return responseBuilder.expectationFaild(
+        MESSAGES.USER_PLAY_BALANCE.PLAY_BALANCE_NOT_CREDITED
+    );
 };
 
 /**
@@ -650,7 +664,7 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
 };
 
 /**
- * @description  player blocked  
+ * @description  player blocked
  * @param body user's request object
  */
 const userBlockStatus = async (id: string, payload: IupdateUser) => {
@@ -665,6 +679,26 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
 };
 
+const playerTransactionHistory = async (
+    player_id: string,
+    paginationData: IplayerTransactionHistory
+) => {
+    const isUser = await userQueries.fetchUser({ id: player_id });
+    if (!isUser) {
+        return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
+    }
+    const limit = +paginationData.limit || 10;
+    const offset = +paginationData.page || 0;
+    const playerTransactions = await userQueries.fetchPlayerTransactions({
+        player_id,
+        limit,
+        offset,
+    });
+    return responseBuilder.okSuccess(
+        MESSAGES.TRANSACTION_HISTORY.FIND,
+        playerTransactions
+    );
+};
 
 const userService = {
     register,
@@ -684,7 +718,8 @@ const userService = {
     getPlayerWalletBalance,
     debitPlaysForPlayer,
     resendOtpToUser,
-    userBlockStatus
+    userBlockStatus,
+    playerTransactionHistory,
     // bidPlaysDebit,
 };
 

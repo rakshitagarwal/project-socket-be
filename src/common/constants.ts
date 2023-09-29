@@ -41,7 +41,8 @@ export const ENDPOINTS = {
     AUCTION_TOTAL_LIST: 'stats/list',
     AUCTION_TOTAL: "total-auction/list",
     USER_BLOCK: "block/:id",
-    GRID_LIVE_UPCOMING:"/grid/list"
+    GRID_LIVE_UPCOMING:"/grid/list",
+    PLAYER_TRANSACTION:"/player-transaction/:id"
 
 };
 export const ALLOWED_MIMETYPES = [
@@ -150,6 +151,9 @@ export const OTP_TYPE = {
 };
 
 export const MESSAGES = {
+    TRANSACTION_HISTORY:{
+        FIND:"transactions history",
+    },
     TRANSACTION_CRYPTO: {
         NOT_CREATED: "transaction not created!",
         CREATED_SUCCESS: "transaction created successfully!",
