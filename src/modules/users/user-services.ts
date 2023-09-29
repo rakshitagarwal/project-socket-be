@@ -25,6 +25,7 @@ import {
     MESSAGES,
     OTP_TYPE,
     NODE_EVENT_SERVICE,
+    userImages,
 } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
@@ -700,6 +701,11 @@ const playerTransactionHistory = async (
     );
 };
 
+const playerImages = () => {
+    const images = userImages;
+    return responseBuilder.okSuccess(MESSAGES.USERS.AVATAR, images);
+};
+
 const userService = {
     register,
     otpVerifcation,
@@ -720,6 +726,7 @@ const userService = {
     resendOtpToUser,
     userBlockStatus,
     playerTransactionHistory,
+    playerImages,
     // bidPlaysDebit,
 };
 

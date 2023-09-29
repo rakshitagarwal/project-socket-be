@@ -8,6 +8,9 @@ import isAuthenticated from "../../middlewares/authentication";
 
 export const userRouter: Router = Router();
 
+
+userRouter.get(ENDPOINTS.PLAYER_IMAGE,[isAuthenticated],userHandlers.getPlayerImages)
+
 userRouter.post(
     ENDPOINTS.REGISTER,
     [validateRequest.body(userSchemas.register)],
@@ -126,3 +129,4 @@ userRouter.get(
     ],
     asyncHandler(userHandlers.playerTransactionHistory)
 );
+

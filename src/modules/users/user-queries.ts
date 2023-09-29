@@ -578,7 +578,8 @@ const fetchPlayerTransactions = async (queryData: {
     auctions.title as auction_name,
 	users.first_name as user_name,
 	T2.first_name as to_user,
-	T3.first_name as from_user
+	T3.first_name as from_user,
+    DATE(T1.created_at) as created_at
 FROM 
     player_wallet_transaction as T1
 LEFT JOIN 
@@ -604,9 +605,12 @@ GROUP BY
     auctions.title,
 	users.first_name,
 	T2.first_name,
-	T3.first_name
+	T3.first_name,
+    DATE(T1.created_at)
+    order by created_at desc
     limit ${queryData.limit}
-    OFFSET ${Prisma.raw((queryData.offset * queryData.limit) as unknown as string)}    `;
+    OFFSET ${Prisma.raw((queryData.offset * queryData.limit) as unknown as string)}
+    `;
     const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
     return queryResult;
 };

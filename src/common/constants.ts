@@ -38,12 +38,12 @@ export const ENDPOINTS = {
     CURRENT_LOCATION: "/current/address",
     LOCATION: "/location",
     CURRENCY: "/currency",
-    AUCTION_TOTAL_LIST: 'stats/list',
+    AUCTION_TOTAL_LIST: "stats/list",
     AUCTION_TOTAL: "total-auction/list",
     USER_BLOCK: "block/:id",
-    GRID_LIVE_UPCOMING:"/grid/list",
-    PLAYER_TRANSACTION:"/player-transaction/:id"
-
+    GRID_LIVE_UPCOMING: "/grid/list",
+    PLAYER_TRANSACTION: "/player-transaction/:id",
+    PLAYER_IMAGE:"/avatar",
 };
 export const ALLOWED_MIMETYPES = [
     "image/png",
@@ -151,8 +151,8 @@ export const OTP_TYPE = {
 };
 
 export const MESSAGES = {
-    TRANSACTION_HISTORY:{
-        FIND:"transactions history",
+    TRANSACTION_HISTORY: {
+        FIND: "transactions history",
     },
     TRANSACTION_CRYPTO: {
         NOT_CREATED: "transaction not created!",
@@ -203,7 +203,9 @@ export const MESSAGES = {
         CHECK_YOUR_EMAIL_VERIFY_ACCOUNT:
             "Please Check Your Email And Verify Your Account!",
         PLEASE_VERIFY_YOUR_EMAIL: "Please verify your account!",
-        USER_TEMPORARY_BLOCK: "Your Account Is Temporarily Blocked. Please Contact Customer Service.",
+        USER_TEMPORARY_BLOCK:
+            "Your Account Is Temporarily Blocked. Please Contact Customer Service.",
+        AVATAR:"User Avatar's",
     },
     ROLE: {
         ROLE_EXIST: "admin already exists",
@@ -222,8 +224,7 @@ export const MESSAGES = {
         MEDIA_STATUS_CHANGE_SUCCESS: "media status changed successfully",
         MEDIA_SINGLE_INVALID: "Please select only one media file",
         MEDIA_FILES_INVALID: "media files invalid",
-        MEDIA_NOT_ALLOWED:
-            "Please select minimum 5 supported media files",
+        MEDIA_NOT_ALLOWED: "Please select minimum 5 supported media files",
         MEDIA_MIN_ID: "at least one media id should be provided",
         MEDIA_NOT_FOUND: "media id not found or not valid",
         MEDIA_IDS_NOT_FOUND: "some media ids were not found",
@@ -245,8 +246,9 @@ export const MESSAGES = {
         CURRENCY_ALL: "All currencies",
         CURRENCY_UPDATED: "Updated currency config",
         CURRENCY_NOT_UPDATED: "Updated currency config",
-        CURRENCY_UPDATE_FAILED: "You cannot update currency when an auction is LIVE or UPCOMING",
-        CURRENCY_DEFAULT_VALUE: 0.20,
+        CURRENCY_UPDATE_FAILED:
+            "You cannot update currency when an auction is LIVE or UPCOMING",
+        CURRENCY_DEFAULT_VALUE: 0.2,
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "Bidbot created successfully",
@@ -333,8 +335,8 @@ export const SOCKET_EVENT = {
     BIDBOT_STATUS: "bidbot:status",
     BIDBOT_SESSION_STATUS: "session:bidbot:status",
     AUCTION_START_DATE: "auction:start:date",
-    MIN_MAX_BID_PERCENTAGE:"min:max:bid:percentage",
-    AUCTION_MIN_MAX_PERCENTAGE:"auction:min:max:percentage",
+    MIN_MAX_BID_PERCENTAGE: "min:max:bid:percentage",
+    AUCTION_MIN_MAX_PERCENTAGE: "auction:min:max:percentage",
     AUCTION_AVATARS: "auction:avatars",
 };
 
@@ -356,7 +358,7 @@ export const NODE_EVENT_SERVICE = {
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
-    REGISTER_NEW_PLAYER: "register:new:player"
+    REGISTER_NEW_PLAYER: "register:new:player",
 };
 
 export const AUCTION_STATE = [
@@ -396,5 +398,23 @@ export const dateFormateForMail = (start_date: string) => {
     return { hours, minutes, seconds };
 };
 
-export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;
+export const userImages = [
+    "assets/avatar/1.png",
+    "assets/avatar/2.png",
+    "assets/avatar/3.png",
+    "assets/avatar/4.png",
+    "assets/avatar/5.png",
+    "assets/avatar/6.png",
+    "assets/avatar/7.png",
+    "assets/avatar/8.png",
+    "assets/avatar/9.png",
+    "assets/avatar/10.png",
+    "assets/avatar/11.png",
+    "assets/avatar/12.png",
+    "assets/avatar/13.png",
+    "assets/avatar/14.png",
+    "assets/avatar/15.png",
+    "assets/avatar/16.png"
+] as const;
 
+export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;

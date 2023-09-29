@@ -245,6 +245,12 @@ const playerTransactionHistory = async (req: Request, res: Response) => {
     );
 };
 
+
+const getPlayerImages=async (_req: Request, res: Response) => {
+    const response = await userService.playerImages();
+    res.status(response.code).json(response);
+};
+
 const userHandlers = {
     register,
     otpVerification,
@@ -264,7 +270,8 @@ const userHandlers = {
     deductPlays,
     resendOtpToUser,
     userBlockStatus,
-    playerTransactionHistory
+    playerTransactionHistory,
+    getPlayerImages
 };
 
 export default userHandlers;
