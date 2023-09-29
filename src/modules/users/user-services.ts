@@ -474,9 +474,9 @@ const verifyUserDetails = async (data: { email: string }) => {
 const transferPlays = async (data: ITransferPlx) => {
     const transferToUser = await userQueries.fetchUser({ email: data.email });
     if (!transferToUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
-    
+
     const transferFromUser = await userQueries.fetchUser({ id: data.id });
-    if (!transferFromUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
+    if (!transferFromUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
         const transfer = await userQueries.transferPlays(prisma, {
