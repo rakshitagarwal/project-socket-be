@@ -462,16 +462,18 @@ const fetchAllUsers = async (query: IuserPagination) => {
  * @returns
  */
 const verifyUserDetails = async (data: { email: string }) => {
-    const isExists = await userQueries.fetchUser({ email : data.email});
-    if(isExists?.email){
+    const isExists = await userQueries.fetchUser({ email: data.email });
+    if (isExists?.email) {
         return responseBuilder.okSuccess(MESSAGES.USERS.USER_FOUND, {
-            email: isExists.email, 
-            name: isExists.last_name? isExists.first_name +" "+ isExists.last_name : isExists.first_name,
-            referral: isExists.referral_code
-        })
+            email: isExists.email,
+            name: isExists.last_name
+                ? isExists.first_name + " " + isExists.last_name
+                : isExists.first_name,
+            referral: isExists.referral_code,
+        });
     }
     return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
-}
+};
 
 /**
  * @description transfer plays to user based on email and plays amount
@@ -480,14 +482,20 @@ const verifyUserDetails = async (data: { email: string }) => {
  */
 const transferPlays = async (data: ITransferPlx) => {
     const transferToUser = await userQueries.fetchUser({ email: data.email });
-    if (!transferToUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
+    if (!transferToUser?.id)
+        return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
 
     const transferFromUser = await userQueries.fetchUser({ id: data.id });
-    if (!transferFromUser?.id) return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
+    if (!transferFromUser?.id)
+        return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
 
-    const wallet = (await userQueries.playerPlaysBalance(transferFromUser.id)) as unknown as [{ play_balance: number }];
+    const wallet = (await userQueries.playerPlaysBalance(
+        transferFromUser.id
+    )) as unknown as [{ play_balance: number }];
     if ((wallet[0]?.play_balance as number) < data.plays || !wallet.length) {
-        return responseBuilder.badRequestError(MESSAGES.USERS.INSUFFICIENT_BALANCE);
+        return responseBuilder.badRequestError(
+            MESSAGES.USERS.INSUFFICIENT_BALANCE
+        );
     }
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
@@ -499,23 +507,29 @@ const transferPlays = async (data: ITransferPlx) => {
         return transfer;
     });
 
-    if (createTrax.creditTrx.id && createTrax.debitTrx.id) {        
+    if (createTrax.creditTrx.id && createTrax.debitTrx.id) {
         eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_TRANSFER, {
             from: transferFromUser.id,
             to: transferToUser.id,
             plays_balance: data.plays,
         });
 
-        return responseBuilder.okSuccess(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS, {
+        return responseBuilder.okSuccess(
+            MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_SUCCESS,
+            {
                 email: transferToUser.email,
-                username: transferToUser.last_name? transferToUser.first_name +" "+ transferToUser.last_name : transferToUser.first_name,
+                username: transferToUser.last_name
+                    ? transferToUser.first_name + " " + transferToUser.last_name
+                    : transferToUser.first_name,
                 referral: transferToUser.referral_code,
                 plays: data.plays,
             }
         );
     }
 
-    return responseBuilder.expectationFaild(MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_FAIL);
+    return responseBuilder.expectationFaild(
+        MESSAGES.PLAYER_WALLET_TRAX.TRANSFER_FAIL
+    );
 };
 
 /**
@@ -767,9 +781,17 @@ const playerTransactionHistory = async (
         limit,
         offset,
     });
+    console.log(playerTransactions);
+    
     return responseBuilder.okSuccess(
         MESSAGES.TRANSACTION_HISTORY.FIND,
-        playerTransactions
+        playerTransactions.queryResult,
+        {
+            limit: limit,
+            page: offset,
+            totalRecord: playerTransactions.totalRecord,
+            totalPage: Math.ceil(playerTransactions.totalRecord / limit),
+        }
     );
 };
 
