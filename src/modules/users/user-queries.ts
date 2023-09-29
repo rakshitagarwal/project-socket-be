@@ -376,7 +376,7 @@ const createPaymentTrx = async (prisma: PrismaClient, data: IWalletTx) => {
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns { creditTrx, debitTrx } - the result of execution of credit and debit plays query.
  */
-const transferPlays = async (prisma: PrismaClient, data: ITransfer) => {        
+const transferPlays = async (prisma: PrismaClient, data: ITransfer) => {
     const creditTrx = await prisma.playerWalletTransaction.create({
         data: {
             play_credit: data.plays,
@@ -593,7 +593,7 @@ const fetchAdminInfo = async () => {
  * @param {string} queryData.player_id - The unique identifier for the player.
  * @param {number} queryData.limit - The maximum number of transactions to retrieve.
  * @param {number} queryData.offset - The offset for pagination, indicating the starting position of transactions.
- * @returns 
+ * @returns
  */
 const fetchPlayerTransactions = async (queryData: {
     player_id: string;
@@ -645,10 +645,33 @@ GROUP BY
     DATE(T1.created_at)
     order by created_at desc
     limit ${queryData.limit}
-    OFFSET ${Prisma.raw((queryData.offset * queryData.limit) as unknown as string)}
+    OFFSET ${Prisma.raw(
+        (queryData.offset * queryData.limit) as unknown as string
+    )}`;
+
+    const countQuery = Prisma.sql`
+    SELECT 
+    count(*) as count
+    FROM 
+        player_wallet_transaction as T1
+    WHERE 
+         T1.created_by = ${queryData.player_id}
+    GROUP BY 
+    T1.auction_id, 
+    T1.spend_on, 
+    T1.created_by, 
+    T1.play_credit, 
+    T1.play_debit, 
+    T1.transferred_from, 
+    T1.transferred_to, 
+    T1.plays_refund_id, 
+    T1.currency_transaction_id, 
+    DATE(T1.created_at)
     `;
     const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
-    return queryResult;
+    const totalRecord = await prisma.$queryRaw<{ count: string }[]>(countQuery);
+    console.log(totalRecord);
+    return { queryResult, totalRecord: totalRecord.length };
 };
 
 const userQueries = {
