@@ -162,7 +162,7 @@ const bidTransaction = async (payload: {
         auctionInfo,
         "------------------------"
     );
-    if (!balanceInfo && !auctionInfo) {
+    if (!balanceInfo && !auctionInfo || auctionInfo===null) {
         return { status: false };
     }
     const isBalance = JSON.parse(balanceInfo || ("" as string));
