@@ -1433,17 +1433,16 @@ const getTotalAuction = async () => {
             COALESCE(subQuery.registeration_fees,0) AS registeration_fees,
             COALESCE(subQuery.total_plays_live_consumed_auction,0) AS total_plays_live_consumed_auction,
             COALESCE(subQuery.total_plays_lost_consumed,0) AS total_play_consumed_refund_after_buy_now,
-            subQuery.auction_register_count AS total_auction_register_count
+            COALESCE(subQuery.auction_register_count,0) AS total_auction_register_count
         FROM (
                 SELECT (
-                    COALESCE(
                         SELECT
                             COUNT(*)
                         FROM
                             player_auction_register AS pp
                         WHERE
                             pp.auction_id = A.id
-                    ),0) AS auction_register_count,
+                    ) AS auction_register_count,
                     A.plays_consumed_on_bid,
                     A.registeration_fees,
                     COUNT(*) * A.plays_consumed_on_bid AS total_plays_live_consumed_auction,
@@ -1484,23 +1483,26 @@ const getTotalAuction = async () => {
                     A.id
             ) AS subQuery
     )
-SELECT 
-    COALESCE((SELECT SUM(total_plays_live_consumed_auction)
-            FROM AuctionCTE ),0) AS total_sum_plays_live_consumed_auction, 
-    COALESCE((SELECT SUM(total_play_consumed_refund_after_buy_now)
-        FROM AuctionCTE),0) AS total_sum_play_consumed_refund_after_buy_now, 
-    COALESCE((SELECT SUM(registeration_fees * total_auction_register_count) 
-        FROM AuctionCTE id),0) AS total_sum_play_consumed_preregister, 
-    COALESCE((
-        SUM(total_plays_live_consumed_auction) + 
-        SUM(registeration_fees * total_auction_register_count) - 
-        SUM(total_play_consumed_refund_after_buy_now)),0) as total_profit_plays, 
-    COALESCE(((
+SELECT COALESCE( (
+            SELECT SUM( total_plays_live_consumed_auction)
+            FROM AuctionCTE),0) AS total_sum_plays_live_consumed_auction,
+    COALESCE( ( 
+        SELECT SUM( total_play_consumed_refund_after_buy_now)
+            FROM AuctionCTE),0) AS total_sum_play_consumed_refund_after_buy_now,
+    COALESCE( (
+            SELECT SUM( registeration_fees * total_auction_register_count)
+            FROM AuctionCTE id ),0) AS total_sum_play_consumed_preregister,
+    COALESCE( (
             SUM(total_plays_live_consumed_auction) + 
             SUM(registeration_fees * total_auction_register_count) - 
-            SUM(total_play_consumed_refund_after_buy_now)) * ${currencyValue}),0) as total_profit_currency,
+            SUM(total_play_consumed_refund_after_buy_now)),0) as total_profit_plays,
+    COALESCE( ( (
+                SUM(total_plays_live_consumed_auction) + 
+                SUM(registeration_fees * total_auction_register_count) - 
+                SUM(total_play_consumed_refund_after_buy_now)
+            ) * ${currencyValue}),0) as total_profit_currency,
     CASE
-        WHEN ${currencyValue} = 2 THEN 'INR'
+        WHEN ${currencyValue}= 2 THEN 'INR'
         ELSE 'USD'
     END as currency_code
 FROM AuctionCTE AS auction1
