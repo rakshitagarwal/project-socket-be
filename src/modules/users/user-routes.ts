@@ -9,7 +9,7 @@ import isAuthenticated from "../../middlewares/authentication";
 export const userRouter: Router = Router();
 
 
-userRouter.get(ENDPOINTS.PLAYER_IMAGE,[isAuthenticated],userHandlers.getPlayerImages)
+userRouter.get(ENDPOINTS.PLAYER_IMAGE, [isAuthenticated], userHandlers.getPlayerImages)
 
 userRouter.post(
     ENDPOINTS.REGISTER,
@@ -137,7 +137,7 @@ userRouter.get(
     [
         isAuthenticated,
         validateRequest.params(userSchemas.ZPlayerId),
-        validateRequest.query(userSchemas.transactionHistoryPagination),
+        // validateRequest.query(userSchemas.transactionHistoryPagination),
     ],
     asyncHandler(userHandlers.playerTransactionHistory)
 );

@@ -266,7 +266,7 @@ const ZPlayerEmail = z.object({
 
 const ZDeductPlays = z.object({
     plays: z.number({
-        required_error: "plays is required!",
+        required_error: "plays ispend_ons required!",
         invalid_type_error: "plays type should be number!",
     }),
     player_id: z
@@ -333,7 +333,11 @@ const transactionHistoryPagination = z
             .optional().default("0"),
         limit: z
             .string({ invalid_type_error: "limit must be string" })
-            .optional().default("10")
+            .optional().default("10"),
+        search: z
+            .string()
+            // .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
+            .optional(),
     })
     .strict();
 const userSchemas = {
