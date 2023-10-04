@@ -137,7 +137,7 @@ userRouter.get(
     [
         isAuthenticated,
         validateRequest.params(userSchemas.ZPlayerId),
-        // validateRequest.query(userSchemas.transactionHistoryPagination),
+        validateRequest.query(userSchemas.transactionHistoryPagination),
     ],
     asyncHandler(userHandlers.playerTransactionHistory)
 );

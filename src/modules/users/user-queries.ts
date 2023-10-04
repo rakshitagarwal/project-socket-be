@@ -598,8 +598,10 @@ const fetchPlayerTransactions = async (queryData: {
     player_id: string;
     limit: number;
     offset: number;
-    search: string;
+    spend_on: PlaySpend | undefined
+
 }) => {
+
     const query: Sql = Prisma.sql`
     SELECT 
     T1.auction_id, 
@@ -627,10 +629,10 @@ LEFT JOIN
 LEFT JOIN 
 	users as T3 on T1.transferred_from=T3.id
 WHERE 
-    T1.created_by = ${Prisma.raw(queryData?.player_id as string)}
-    ${queryData?.search
+    T1.created_by = ${queryData.player_id}  
+    ${queryData?.spend_on
             ? Prisma.raw(
-                `OR (T1.spend_on ILIKE '%${queryData.search}%')`
+                `AND (T1.spend_on = '${queryData.spend_on}')`
             )
             : Prisma.raw("")
         }
@@ -650,12 +652,10 @@ GROUP BY
 	T3.first_name,
     DATE(T1.created_at)
     order by created_at desc
-    limit ${Prisma.raw(queryData.limit as unknown as string)}
+    limit ${queryData.limit}
     OFFSET ${Prisma.raw(
             (queryData.offset * queryData.limit) as unknown as string
         )}`;
-    console.log(query);
-
 
     const countQuery = Prisma.sql`
     SELECT 
@@ -663,7 +663,13 @@ GROUP BY
     FROM 
         player_wallet_transaction as T1
     WHERE 
-         T1.created_by = ${Prisma.raw(queryData?.player_id as string)}
+         T1.created_by = ${queryData.player_id}
+         ${queryData?.spend_on
+            ? Prisma.raw(
+                `AND (T1.spend_on = '${queryData.spend_on}')`
+            )
+            : Prisma.raw("")
+        }
     GROUP BY 
     T1.auction_id, 
     T1.spend_on, 
@@ -677,7 +683,6 @@ GROUP BY
     DATE(T1.created_at)
     `;
     const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
-    console.log(queryResult);
     const totalRecord = await prisma.$queryRaw<{ count: string }[]>(countQuery);
     return { queryResult, totalRecord: totalRecord.length };
 };

@@ -770,31 +770,19 @@ const playerTransactionHistory = async (
     player_id: string,
     paginationData: IplayerTransactionHistory
 ) => {
-    console.log(paginationData.search);
 
     const isUser = await userQueries.fetchUser({ id: player_id });
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
-    let search = '';
-    if (paginationData.search) {
-        search += paginationData.search
-        // filter.push(paginationData.search)
-        // filter.push({ title: { contains: paginationData.search, mode: "insensitive" } });
-
-    }
-    console.log(search);
-
     const limit = +paginationData.limit || 10;
     const offset = +paginationData.page || 0;
     const playerTransactions = await userQueries.fetchPlayerTransactions({
         player_id,
         limit,
         offset,
-        search
+        spend_on: paginationData.spend_on
     });
-    // paginationData.search
-    console.log(playerTransactions);
 
     return responseBuilder.okSuccess(
         MESSAGES.TRANSACTION_HISTORY.FIND,

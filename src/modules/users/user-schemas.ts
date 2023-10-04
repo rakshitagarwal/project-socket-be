@@ -334,9 +334,16 @@ const transactionHistoryPagination = z
         limit: z
             .string({ invalid_type_error: "limit must be string" })
             .optional().default("10"),
-        search: z
-            .string()
-            // .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
+        spend_on: z
+            .enum(["BUY_PLAYS",
+                "REFUND_PLAYS",
+                "BID_PLAYS",
+                "REFERRAL_PLAYS",
+                "AUCTION_REGISTER_PLAYS",
+                "EXTRA_BIGPLAYS",
+                "JOINING_BONUS",
+                "TRANSFER_PLAYS",
+                "RECEIVED_PLAYS"])
             .optional(),
     })
     .strict();
