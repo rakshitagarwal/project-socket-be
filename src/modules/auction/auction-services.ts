@@ -561,14 +561,20 @@ const auctionLists = async (data: IAuctionListing) => {
     //     );
     //     return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
     // }
+    
     const auctions = await auctionQueries.getAuctionLists(filter);
+    let index=filter.page
+    if(filter.auction_id){
+        index=auctions.queryCount.findIndex(val=>val.id===filter.auction_id)
+    }
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
         {
             ...filter,
-            totalRecord: auctions.queryCount,
-            totalPage: Math.ceil(auctions.queryCount / filter.limit),
+            page:index,
+            totalRecord: auctions.queryCount.length,
+            totalPage: Math.ceil(auctions.queryCount.length / filter.limit),
         }
     );
 };
