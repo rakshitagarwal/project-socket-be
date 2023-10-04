@@ -1424,7 +1424,6 @@ from (
  * @description Get the total auction statistics including plays consumed,
  * registration fees,and profit calculations.
  */
-
 const getTotalAuction = async () => {
 
     const query: Sql = Prisma.sql`WITH AuctionCTE AS (
