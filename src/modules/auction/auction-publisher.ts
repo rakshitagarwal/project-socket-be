@@ -98,7 +98,7 @@ export const auctionStart = (auctionId: string) => {
  */
 const activeAvatars = async (bidHistory: Bid[], auctionId: string) => {
     let avatarUnique: Bid[];
-    if(!bidHistory?.length || !bidHistory || bidHistory===null) {
+    if(!bidHistory?.length  || bidHistory===null) {
         avatarUnique = [];
     } else {
         avatarUnique = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
