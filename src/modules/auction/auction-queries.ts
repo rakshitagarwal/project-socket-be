@@ -926,7 +926,7 @@ const getAuctionLists = async (data: IAuctionListing) => {
     if (data.auction_id) {
         filter.id = data.auction_id;
     }
-    const queryCount = await db.auction.count({
+    const queryCount = await db.auction.findMany({
         where: {
             AND: [
                 {
@@ -936,7 +936,11 @@ const getAuctionLists = async (data: IAuctionListing) => {
                     state: data.state && data.state,
                 },
             ],
+          
         },
+        select:{
+            id: true
+        }
     });
     const queryResult = await db.auction.findMany({
         where: {
