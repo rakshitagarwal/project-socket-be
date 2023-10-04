@@ -98,22 +98,21 @@ export const auctionStart = (auctionId: string) => {
  */
 const activeAvatars = async (bidHistory: Bid[], auctionId: string) => {
     let avatarUnique: Bid[];
-    if(!bidHistory.length) avatarUnique = [];
-    
-    avatarUnique = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
-        const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
-        
-        if (foundIndex === -1) {
-            uniqueBids.push({
-                player_name: bid.player_name,
-                player_id: bid.player_id,
-                profile_image: bid.profile_image
-            });
-        }
-        
-        return uniqueBids;
-    }, []); 
-
+    if(!bidHistory.length) {
+        avatarUnique = [];
+    } else {
+        avatarUnique = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
+            const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
+            if (foundIndex === -1) {
+                uniqueBids.push({
+                    player_name: bid.player_name,
+                    player_id: bid.player_id,
+                    profile_image: bid.profile_image
+                });
+            }
+            return uniqueBids;
+        }, []);
+    }
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_AVATARS, {
         message: MESSAGES.SOCKET.ACTIVE_PLAYERS,
         data: avatarUnique,
