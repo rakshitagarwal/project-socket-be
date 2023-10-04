@@ -601,7 +601,6 @@ const fetchPlayerTransactions = async (queryData: {
     spend_on: PlaySpend | undefined
 
 }) => {
-
     const query: Sql = Prisma.sql`
     SELECT 
     T1.auction_id, 
