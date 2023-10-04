@@ -91,6 +91,11 @@ export const auctionStart = (auctionId: string) => {
     timerRunEverySecond();
 };
 
+/**
+ * @description find avatars of active or recent bidders from auction bid history.
+ * @param {Bid[]} bidHistory - the bidhistory is passed to find unique bidders and their avatars
+ * @param {string} auctionId - The ID of the auction which is concerned when state is live
+ */
 const activeAvatars = async (bidHistory: Bid[], auctionId: string) =>{
     const avatarUnique: Bid[] = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
         const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
@@ -850,6 +855,9 @@ export const minMaxBidResult = async (payload: {
     const auctionHistory = JSON.parse(
         (await redisClient.get(`${payload.auction_id}:bidHistory`)) as string
     );
+
+    await activeAvatars(auctionHistory, payload.auction_id);
+
     if (auctionHistory) {
         socket.playerSocket
             .to(payload.socketId)
