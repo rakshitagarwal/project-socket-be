@@ -489,9 +489,11 @@ const transferPlays = async (data: ITransferPlx) => {
     if (!transferFromUser?.id)
         return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
 
-    const wallet = (await userQueries.playerPlaysBalance(
-        transferFromUser.id
-    )) as unknown as [{ play_balance: number }];
+    if(transferFromUser?.id === transferToUser?.id)
+        return responseBuilder.badRequestError(MESSAGES.USERS.INVALID_TRANSFER);
+    
+    const wallet = (await userQueries.playerPlaysBalance(transferFromUser.id)) as unknown as [{ play_balance: number }];
+  
     if ((wallet[0]?.play_balance as number) < data.plays || !wallet.length) {
         return responseBuilder.badRequestError(
             MESSAGES.USERS.INSUFFICIENT_BALANCE
