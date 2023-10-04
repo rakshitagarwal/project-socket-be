@@ -91,21 +91,28 @@ export const auctionStart = (auctionId: string) => {
     timerRunEverySecond();
 };
 
-const activeAvatars = async (bidHistory: Bid[], auctionId: string) =>{
-    const avatarUnique: Bid[] = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
-        const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
-      
-        if (foundIndex === -1) {
-          uniqueBids.push({
-              player_name: bid.player_name,
-              player_id: bid.player_id,
-              profile_image: bid.profile_image
-          });
-        }
-      
-        return uniqueBids;
-      }, []); 
-
+/**
+ * @description find avatars of active or recent bidders from auction bid history.
+ * @param {Bid[]} bidHistory - the bidhistory is passed to find unique bidders and their avatars
+ * @param {string} auctionId - The ID of the auction which is concerned when state is live
+ */
+const activeAvatars = async (bidHistory: Bid[], auctionId: string) => {
+    let avatarUnique: Bid[];
+    if(!bidHistory.length) {
+        avatarUnique = [];
+    } else {
+        avatarUnique = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
+            const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
+            if (foundIndex === -1) {
+                uniqueBids.push({
+                    player_name: bid.player_name,
+                    player_id: bid.player_id,
+                    profile_image: bid.profile_image
+                });
+            }
+            return uniqueBids;
+        }, []);
+    }
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_AVATARS, {
         message: MESSAGES.SOCKET.ACTIVE_PLAYERS,
         data: avatarUnique,
@@ -162,7 +169,7 @@ const bidTransaction = async (payload: {
         auctionInfo,
         "------------------------"
     );
-    if (!balanceInfo && !auctionInfo) {
+    if (!balanceInfo && !auctionInfo || auctionInfo===null) {
         return { status: false };
     }
     const isBalance = JSON.parse(balanceInfo || ("" as string));
@@ -850,6 +857,9 @@ export const minMaxBidResult = async (payload: {
     const auctionHistory = JSON.parse(
         (await redisClient.get(`${payload.auction_id}:bidHistory`)) as string
     );
+
+    await activeAvatars(auctionHistory, payload.auction_id);
+
     if (auctionHistory) {
         socket.playerSocket
             .to(payload.socketId)
