@@ -783,7 +783,7 @@ const getplayerRegistrationAuctionDetails = async (
                     description: true,
                     product_id: true,
                     auctionCategory: {
-                        select:{
+                        select: {
                             id: true,
                             title: true,
                             code: true,
@@ -926,7 +926,7 @@ const getAuctionLists = async (data: IAuctionListing) => {
     if (data.auction_id) {
         filter.id = data.auction_id;
     }
-    const queryCount = await db.auction.count({
+    const queryCount = await db.auction.findMany({
         where: {
             AND: [
                 {
@@ -936,7 +936,11 @@ const getAuctionLists = async (data: IAuctionListing) => {
                     state: data.state && data.state,
                 },
             ],
+          
         },
+        select:{
+            id: true
+        }
     });
     const queryResult = await db.auction.findMany({
         where: {
@@ -1141,17 +1145,13 @@ const getListTotalAuctionCount = async () => {
     products.title as product_name,
     auction1.auction_category_name,
     auction1.auction_start_date,
-    auction1.registeration_count,
-    auction1.total_plays_live_consumed_auction, ( (
-            auction1.total_play_consumed_refund_after_buy_now
-        )
-    ) as total_play_consumed_refund_after_buy_now,
-    auction1.registerationFees * auction1.total_auction_register_count as total_play_consumed_preregister, (
-        auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-    ) as total_profit_plays, ( (
-            auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * ${currencyValue}
-    ) as total_profit_currency,
+    auction1.registeration_count as registeration_count,
+    COALESCE(auction1.total_plays_live_consumed_auction,0) as total_plays_live_consumed_auction, 
+    COALESCE((auction1.total_play_consumed_refund_after_buy_now),0) as total_play_consumed_refund_after_buy_now,
+    COALESCE(auction1.registerationFees * auction1.total_auction_register_count,0) as total_play_consumed_preregister, 
+    COALESCE((auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now),0) as total_profit_plays, 
+    COALESCE(((auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
+        ) * ${currencyValue}),0) as total_profit_currency,
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
@@ -1173,10 +1173,10 @@ from (
                 SELECT
                     A.id,
                     A.title,
-                    A.registeration_count as registerationCount,
+                    COALESCE(A.registeration_count,0) as registerationCount,
                     A.product_id as product_id,
                     mac.title as auctionTitle,
-                    A.registeration_fees as registerationFees,
+                    COALESCE(A.registeration_fees,0) as registerationFees,
                     A.start_date, (
                         SELECT
                             COUNT(*)
@@ -1242,21 +1242,17 @@ const getListTotalAuction = async (offset: number, limit: number) => {
     products.title as product_name,
     auction1.auction_category_name,
     auction1.auction_start_date,
-    auction1.registeration_count,
-    auction1.total_plays_live_consumed_auction, ( (
-            auction1.total_play_consumed_refund_after_buy_now
-        )
-    ) as total_play_consumed_refund_after_buy_now,
-    auction1.registerationFees * auction1.total_auction_register_count as total_play_consumed_preregister, (
-        auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-    ) as total_profit_plays, ( (
-            auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * ${currencyValue}
-    ) as total_profit_currency,
+    COALESCE(auction1.registeration_count,0) as registeration_count,
+    COALESCE(auction1.total_plays_live_consumed_auction,0) as total_plays_live_consumed_auction, 
+    COALESCE((auction1.total_play_consumed_refund_after_buy_now),0) as total_play_consumed_refund_after_buy_now,
+    COALESCE(auction1.registerationFees * auction1.total_auction_register_count,0) as total_play_consumed_preregister, 
+    COALESCE((auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now),0) as total_profit_plays, 
+    COALESCE(((auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
+        ) * ${currencyValue}),0) as total_profit_currency,
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as currnecy_code
+    END as currency_code
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1274,16 +1270,16 @@ from (
                 SELECT
                     A.id,
                     A.title,
-                    A.registeration_count as registerationCount,
+                    COALESCE(A.registeration_count,0) as registerationCount,
                     A.product_id as product_id,
                     mac.title as auctionTitle,
-                    A.registeration_fees as registerationFees,
+                    COALESCE(A.registeration_fees,0) as registerationFees,
                     A.start_date, (
                         SELECT
                             COUNT(*)
                         FROM
                             player_auction_register AS pp
-                        WHERE
+                        WHERE 
                             pp.auction_id = A.id
                     ) AS auction_register_count,
                     A.plays_consumed_on_bid,
@@ -1344,20 +1340,16 @@ export const getInformationAuctionById = async (auction_id: string) => {
     products.title as product_name,
     auction1.auction_category_name,
     auction1.auction_start_date,
-    auction1.total_plays_live_consumed_auction, ( (
-            auction1.total_play_consumed_refund_after_buy_now
-        )
-    ) as total_play_consumed_refund_after_buy_now,
-    auction1.registerationFees * auction1.total_auction_register_count as total_play_consumed_preregister, (
-        auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-    ) as total_profit_plays, ( (
-            auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
-        ) * ${currencyValue}
-    ) as total_profit_currency,
+    COALESCE(auction1.total_plays_live_consumed_auction,0) as total_plays_live_consumed_auction, 
+    COALESCE(auction1.total_play_consumed_refund_after_buy_now,0) as total_play_consumed_refund_after_buy_now,
+    COALESCE((auction1.registerationFees * auction1.total_auction_register_count),0) as total_play_consumed_preregister, 
+    COALESCE((auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now),0) as total_profit_plays, 
+    COALESCE(((auction1.total_plays_live_consumed_auction + auction1.registerationFees * auction1.total_auction_register_count - auction1.total_play_consumed_refund_after_buy_now
+        ) * ${currencyValue}),0) as total_profit_currency,
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as currnecy_code
+    END as currency_code
 from (
         SELECT
             subQuery.id as auction_id,
@@ -1366,25 +1358,24 @@ from (
             subQuery.start_date as auction_start_date,
             subQuery.auctionTitle as auction_category_name,
             subQuery.registerationFees as registerationFees,
-            COALESCE( subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
+            COALESCE(subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
             COALESCE(subQuery.total_plays_live_consumed_auction,0) AS total_plays_live_consumed_auction,
             COALESCE(subQuery.total_plays_lost_consumed,0) AS total_play_consumed_refund_after_buy_now,
-            COALESCE(subQuery.auction_register_count,0) AS total_auction_register_count
+            subQuery.auction_register_count AS total_auction_register_count
         FROM (
                 SELECT
                     A.id,
                     A.title,
                     A.product_id as product_id,
                     mac.title as auctionTitle,
-                    A.registeration_fees as registerationFees,
-                    A.start_date, (
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            player_auction_register AS pp
+                    COALESCE(A.registeration_fees,0) as registerationFees,
+                    A.start_date, 
+                    COALESCE((
+                        SELECT COUNT(*)
+                        FROM player_auction_register AS pp
                         WHERE
                             pp.auction_id = A.id
-                    ) AS auction_register_count,
+                    ),0) AS auction_register_count,
                     A.plays_consumed_on_bid,
                     COUNT(*) * A.plays_consumed_on_bid AS total_plays_live_consumed_auction,
                     CAST(
@@ -1437,7 +1428,6 @@ from (
  * @description Get the total auction statistics including plays consumed,
  * registration fees,and profit calculations.
  */
-
 const getTotalAuction = async () => {
 
     const query: Sql = Prisma.sql`WITH AuctionCTE AS (
@@ -1496,31 +1486,28 @@ const getTotalAuction = async () => {
                     A.id
             ) AS subQuery
     )
-SELECT (
-        SELECT
-            SUM(total_plays_live_consumed_auction)
-        FROM AuctionCTE
-    ) AS total_sum_plays_live_consumed_auction, (
-        SELECT
-            SUM(total_play_consumed_refund_after_buy_now)
-        FROM AuctionCTE
-    ) AS total_sum_play_consumed_refund_after_buy_now, (
-        SELECT
-            SUM(registeration_fees * total_auction_register_count)
-        FROM AuctionCTE id
-    ) AS total_sum_play_consumed_preregister, (
-        SUM(total_plays_live_consumed_auction) + 
-        SUM(registeration_fees * total_auction_register_count) - 
-        SUM(total_play_consumed_refund_after_buy_now)
-    ) as total_profit_plays, ((
+SELECT COALESCE( (
+            SELECT SUM( total_plays_live_consumed_auction)
+            FROM AuctionCTE),0) AS total_sum_plays_live_consumed_auction,
+    COALESCE( ( 
+        SELECT SUM( total_play_consumed_refund_after_buy_now)
+            FROM AuctionCTE),0) AS total_sum_play_consumed_refund_after_buy_now,
+    COALESCE( (
+            SELECT SUM( registeration_fees * total_auction_register_count)
+            FROM AuctionCTE id ),0) AS total_sum_play_consumed_preregister,
+    COALESCE( (
             SUM(total_plays_live_consumed_auction) + 
             SUM(registeration_fees * total_auction_register_count) - 
-            SUM(total_play_consumed_refund_after_buy_now)) * ${currencyValue}
-    ) as total_profit_currency,
+            SUM(total_play_consumed_refund_after_buy_now)),0) as total_profit_plays,
+    COALESCE( ( (
+                SUM(total_plays_live_consumed_auction) + 
+                SUM(registeration_fees * total_auction_register_count) - 
+                SUM(total_play_consumed_refund_after_buy_now)
+            ) * ${currencyValue}),0) as total_profit_currency,
     CASE
-        WHEN ${currencyValue} = 2 THEN 'INR'
+        WHEN ${currencyValue}= 2 THEN 'INR'
         ELSE 'USD'
-    END as currnecy_code
+    END as currency_code
 FROM AuctionCTE AS auction1
 limit 1;`;
     const queryResult = await prisma.$queryRaw<IAuctionTotalCount[]>(query);
