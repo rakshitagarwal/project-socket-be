@@ -472,7 +472,7 @@ const verifyUserDetails = async (data: { email: string }) => {
             referral: isExists.referral_code,
         });
     }
-    return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
+    return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_BLOCKED_INVALID);
 };
 
 /**
@@ -481,10 +481,10 @@ const verifyUserDetails = async (data: { email: string }) => {
  * @returns
  */
 const transferPlays = async (data: ITransferPlx) => {
-    const transferToUser = await userQueries.fetchUser({ email: data.email });
-    if (!transferToUser?.id)
-        return responseBuilder.notFoundError(MESSAGES.USERS.EMAIL_NOT_FOUND);
-
+    const transferToUser = await userQueries.fetchUser({ email: data.email }); 
+    if (!transferToUser?.id || !transferToUser.status)
+        return responseBuilder.badRequestError(MESSAGES.USERS.EMAIL_BLOCKED_INVALID);
+    
     const transferFromUser = await userQueries.fetchUser({ id: data.id });
     if (!transferFromUser?.id)
         return responseBuilder.notFoundError(MESSAGES.USERS.ID_NOT_FOUND);
