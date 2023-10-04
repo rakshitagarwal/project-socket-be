@@ -770,6 +770,7 @@ const playerTransactionHistory = async (
     player_id: string,
     paginationData: IplayerTransactionHistory
 ) => {
+
     const isUser = await userQueries.fetchUser({ id: player_id });
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
@@ -780,9 +781,9 @@ const playerTransactionHistory = async (
         player_id,
         limit,
         offset,
+        spend_on: paginationData.spend_on
     });
-    console.log(playerTransactions);
-    
+
     return responseBuilder.okSuccess(
         MESSAGES.TRANSACTION_HISTORY.FIND,
         playerTransactions.queryResult,

@@ -266,7 +266,7 @@ const ZPlayerEmail = z.object({
 
 const ZDeductPlays = z.object({
     plays: z.number({
-        required_error: "plays is required!",
+        required_error: "plays ispend_ons required!",
         invalid_type_error: "plays type should be number!",
     }),
     player_id: z
@@ -333,7 +333,18 @@ const transactionHistoryPagination = z
             .optional().default("0"),
         limit: z
             .string({ invalid_type_error: "limit must be string" })
-            .optional().default("10")
+            .optional().default("10"),
+        spend_on: z
+            .enum(["BUY_PLAYS",
+                "REFUND_PLAYS",
+                "BID_PLAYS",
+                "REFERRAL_PLAYS",
+                "AUCTION_REGISTER_PLAYS",
+                "EXTRA_BIGPLAYS",
+                "JOINING_BONUS",
+                "TRANSFER_PLAYS",
+                "RECEIVED_PLAYS"])
+            .optional(),
     })
     .strict();
 const userSchemas = {
