@@ -607,80 +607,108 @@ const fetchPlayerTransactions = async (queryData: {
     T1.spend_on,
     T1.created_by,
     T1.play_credit,
-    SUM(T1.play_debit) AS play_debit,
+    case when spend_on='BID_PLAYS' then sum(T1.play_debit)
+		else T1.play_debit
+	end 
+		as play_debit,
     T1.transferred_from,
     T1.transferred_to,
     T1.plays_refund_id,
     T1.currency_transaction_id,
     auctions.title as auction_name,
-	users.first_name as user_name,
-	T2.first_name as to_user,
-	T3.first_name as from_user,
-    DATE(T1.created_at) as created_at
+    users.first_name as user_name,
+    T2.first_name as to_user,
+    T3.first_name as from_user,
+    MAX(T1.created_at) as created_at
 FROM 
     player_wallet_transaction as T1
 LEFT JOIN 
     auctions ON T1.auction_id = auctions.id
 LEFT JOIN 
-    users on T1.created_by=users.id
+    users ON T1.created_by = users.id
 LEFT JOIN 
-	users as T2 on T1.transferred_to=T2.id
+    users AS T2 ON T1.transferred_to = T2.id
 LEFT JOIN 
-	users as T3 on T1.transferred_from=T3.id
+    users AS T3 ON T1.transferred_from = T3.id
 WHERE 
     T1.created_by = ${queryData.player_id}  
     ${queryData?.spend_on
-            ? Prisma.raw(
-                `AND (T1.spend_on = '${queryData.spend_on}')`
-            )
-            : Prisma.raw("")
-        }
+        ? Prisma.raw(
+            `AND (T1.spend_on = '${queryData.spend_on}')`
+        )
+        : Prisma.raw("")
+    }
 GROUP BY 
+    T1.play_debit,
     T1.auction_id, 
     T1.spend_on, 
     T1.created_by, 
     T1.play_credit, 
-    T1.play_debit, 
     T1.transferred_from, 
     T1.transferred_to, 
     T1.plays_refund_id, 
     T1.currency_transaction_id, 
     auctions.title,
-	users.first_name,
-	T2.first_name,
-	T3.first_name,
-    DATE(T1.created_at)
-    order by created_at desc
-    limit ${queryData.limit}
-    OFFSET ${Prisma.raw(
-            (queryData.offset * queryData.limit) as unknown as string
-        )}`;
+    users.first_name,
+    T2.first_name,
+    T3.first_name
+    ORDER BY created_at DESC
+LIMIT ${queryData.limit}
+OFFSET ${(queryData.offset * queryData.limit)}
+`;
 
     const countQuery = Prisma.sql`
     SELECT 
-    count(*) as count
-    FROM 
-        player_wallet_transaction as T1
-    WHERE 
-         T1.created_by = ${queryData.player_id}
-         ${queryData?.spend_on
-            ? Prisma.raw(
-                `AND (T1.spend_on = '${queryData.spend_on}')`
-            )
-            : Prisma.raw("")
-        }
-    GROUP BY 
+    T1.auction_id, 
+    T1.spend_on,
+    T1.created_by,
+    T1.play_credit,
+    case when spend_on='BID_PLAYS' then sum(T1.play_debit)
+		else T1.play_debit
+	end 
+		as play_debit,
+    T1.transferred_from,
+    T1.transferred_to,
+    T1.plays_refund_id,
+    T1.currency_transaction_id,
+    auctions.title as auction_name,
+    users.first_name as user_name,
+    T2.first_name as to_user,
+    T3.first_name as from_user,
+    MAX(T1.created_at) as created_at
+FROM 
+    player_wallet_transaction as T1
+LEFT JOIN 
+    auctions ON T1.auction_id = auctions.id
+LEFT JOIN 
+    users ON T1.created_by = users.id
+LEFT JOIN 
+    users AS T2 ON T1.transferred_to = T2.id
+LEFT JOIN 
+    users AS T3 ON T1.transferred_from = T3.id
+WHERE 
+    T1.created_by = ${queryData.player_id}  
+    ${queryData?.spend_on
+        ? Prisma.raw(
+            `AND (T1.spend_on = '${queryData.spend_on}')`
+        )
+        : Prisma.raw("")
+    }
+GROUP BY 
+    T1.play_debit,
     T1.auction_id, 
     T1.spend_on, 
     T1.created_by, 
     T1.play_credit, 
-    T1.play_debit, 
     T1.transferred_from, 
     T1.transferred_to, 
     T1.plays_refund_id, 
     T1.currency_transaction_id, 
-    DATE(T1.created_at)
-    `;
+    auctions.title,
+    users.first_name,
+    T2.first_name,
+    T3.first_name
+    ORDER BY created_at DESC`;
     const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
     const totalRecord = await prisma.$queryRaw<{ count: string }[]>(countQuery);
     return { queryResult, totalRecord: totalRecord.length };

@@ -87,7 +87,7 @@ const getAll = async (query: IPagination) => {
             state: query.state,
         });
     }
-    query = { ...query, filter: filter };    
+    query = { ...query, filter: filter };
     const auctions = await auctionQueries.getAll(query);
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
@@ -306,7 +306,10 @@ const playerOpenAuctionRegister = async (data: {
     );
     if (!getRegisteredPlayer) {
         newRedisObject[`${data.auction_id + data.player_id}`] = playerRegisered;
-        await redisClient.set(`auction:pre-register:${data.auction_id}`, JSON.stringify(newRedisObject));
+        await redisClient.set(
+            `auction:pre-register:${data.auction_id}`,
+            JSON.stringify(newRedisObject)
+        );
     } else {
         const registeredObj = JSON.parse(getRegisteredPlayer);
         registeredObj[`${data.auction_id + data.player_id}`] = playerRegisered;
@@ -376,8 +379,13 @@ const playerAuctionDetails = async (data: {
     }
     const buy_now_price =
         playerAuctionDetail.status === "won"
-            ? playerAuctionDetail.PlayerBidLogs[0]?.bid_price
-            : playerAuctionDetail.Auctions.products.price; /*-
+            ? playerAuctionDetail.Auctions?.auctionCategory.code !== "TLP"? playerAuctionDetail.PlayerBidLogs.find(
+                (val) =>
+                    (val.is_highest && val.is_unique) ||
+                    (val.is_lowest && val.is_unique)
+            )?.bid_price : playerAuctionDetail.PlayerBidLogs[0]?.bid_price
+            : playerAuctionDetail.Auctions.products.price;
+             /*-
               playerAuctionDetail.Auctions.plays_consumed_on_bid *
                   playerAuctionDetail?.PlayerBidLogs.length *
                   ONE_PLAY_VALUE_IN_DOLLAR;*/
@@ -385,7 +393,15 @@ const playerAuctionDetails = async (data: {
     let winnerInfoDetails;
     if (winnerInfo?.status === "won") {
         const { PlayerBidLogs, ...winnerInfoData } = winnerInfo;
-        const buy_now_price = PlayerBidLogs[0]?.bid_price;
+        let buy_now_price = PlayerBidLogs[0]?.bid_price;
+
+        if (bidInfoDetails.Auctions?.auctionCategory.code !== "TLP") {
+            buy_now_price = PlayerBidLogs.find(
+                (val) =>
+                    (val.is_highest && val.is_unique) ||
+                    (val.is_lowest && val.is_unique)
+            )?.bid_price;
+        }
         winnerInfoDetails = {
             buy_now_price,
             totalBid: PlayerBidLogs.length,
@@ -561,18 +577,20 @@ const auctionLists = async (data: IAuctionListing) => {
     //     );
     //     return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, [auction], {});
     // }
-    
+
     const auctions = await auctionQueries.getAuctionLists(filter);
-    let index=filter.page
-    if(filter.auction_id){
-        index=auctions.queryCount.findIndex(val=>val.id===filter.auction_id)
+    let index = filter.page;
+    if (filter.auction_id) {
+        index = auctions.queryCount.findIndex(
+            (val) => val.id === filter.auction_id
+        );
     }
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         auctions.queryResult,
         {
             ...filter,
-            page:index,
+            page: index,
             totalRecord: auctions.queryCount.length,
             totalPage: Math.ceil(auctions.queryCount.length / filter.limit),
         }
@@ -595,13 +613,15 @@ const getByIdTotalAuction = async (auctionId: string) => {
 
 /**
  * @description Create total information for an auction listing.
- * @param {IAuctionListing} data - The data to create the auction listing information. 
+ * @param {IAuctionListing} data - The data to create the auction listing information.
  */
 const auctionListsTotal = async (data: IAuctionListing) => {
-    const limit = data.limit || 10
-    const offset = data.page || 0
-    const listAuction: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuction(offset, limit);
-    const listAuctionCount: ITotalAuctionInfo[] = await auctionQueries.getListTotalAuctionCount();
+    const limit = data.limit || 10;
+    const offset = data.page || 0;
+    const listAuction: ITotalAuctionInfo[] =
+        await auctionQueries.getListTotalAuction(offset, limit);
+    const listAuctionCount: ITotalAuctionInfo[] =
+        await auctionQueries.getListTotalAuctionCount();
     return responseBuilder.okSuccess(
         listAuction.length
             ? AUCTION_MESSAGES.FOUND
@@ -611,7 +631,7 @@ const auctionListsTotal = async (data: IAuctionListing) => {
             totalRecord: listAuctionCount.length,
             totalPage: Math.ceil(listAuctionCount.length / limit) || 0,
             page: offset,
-            limit: limit
+            limit: limit,
         }
     );
 };
@@ -622,10 +642,7 @@ const auctionListsTotal = async (data: IAuctionListing) => {
 const auctionTotal = async () => {
     const getAuctionCounts: IAuctionTotalCount[] =
         await auctionQueries.getTotalAuction();
-    return responseBuilder.okSuccess(
-        AUCTION_MESSAGES.FOUND,
-        getAuctionCounts,
-    );
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, getAuctionCounts);
 };
 
 /**
@@ -643,8 +660,8 @@ const getAllAuctionforGrid = async (query: IPagination) => {
     }
     filter?.push({
         state: {
-            in: ["live", "upcoming"]
-        }
+            in: ["live", "upcoming"],
+        },
     });
     query = { ...query, filter: filter };
     const auctions = await auctionQueries.getAll(query);
