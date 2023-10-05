@@ -794,6 +794,7 @@ const getplayerRegistrationAuctionDetails = async (
                         select: {
                             medias: true,
                             price: true,
+                            description: true,
                             landing_image: true,
                         },
                     },
