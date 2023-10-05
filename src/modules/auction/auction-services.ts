@@ -240,6 +240,10 @@ const playerRegister = async (data: IPlayerRegister) => {
         return responseBuilder.expectationFaild(
             MESSAGES.PLAYER_AUCTION_REGISTEREATION.PLAYER_NOT_REGISTERED
         );
+    await userQueries.playerWalletTxcn(
+        data.auction_id,
+        data.player_wallet_transaction_id
+    );
     const newRedisObject: { [id: string]: IRegisterPlayer } = {};
     const getRegisteredPlayer = await redisClient.get(
         `auction:pre-register:${data.auction_id}`
@@ -379,13 +383,15 @@ const playerAuctionDetails = async (data: {
     }
     const buy_now_price =
         playerAuctionDetail.status === "won"
-            ? playerAuctionDetail.Auctions?.auctionCategory.code !== "TLP"? playerAuctionDetail.PlayerBidLogs.find(
-                (val) =>
-                    (val.is_highest && val.is_unique) ||
-                    (val.is_lowest && val.is_unique)
-            )?.bid_price : playerAuctionDetail.PlayerBidLogs[0]?.bid_price
+            ? playerAuctionDetail.Auctions?.auctionCategory.code !== "TLP"
+                ? playerAuctionDetail.PlayerBidLogs.find(
+                      (val) =>
+                          (val.is_highest && val.is_unique) ||
+                          (val.is_lowest && val.is_unique)
+                  )?.bid_price
+                : playerAuctionDetail.PlayerBidLogs[0]?.bid_price
             : playerAuctionDetail.Auctions.products.price;
-             /*-
+    /*-
               playerAuctionDetail.Auctions.plays_consumed_on_bid *
                   playerAuctionDetail?.PlayerBidLogs.length *
                   ONE_PLAY_VALUE_IN_DOLLAR;*/

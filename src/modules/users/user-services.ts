@@ -483,19 +483,16 @@ const verifyUserDetails = async (data: { email: string }) => {
 
 /**
  * @description transfer plays to user based on email and plays amount
- * @param {ITransferPlx} data
- * @returns
+ * @param {ITransferPlx} data it contains email, userId, amount of plays
+ * @returns response object based on responseBuilder methods
  */
 const transferPlays = async (data: ITransferPlx) => {
+    if ((data.plays).toString().includes('.')) 
+        return responseBuilder.badRequestError(MESSAGES.USERS.INVALID_PLAYS);
+    
     const transferToUser = await userQueries.fetchUser({ email: data.email });
-    if (
-        !transferToUser?.id ||
-        !transferToUser?.status ||
-        transferToUser === null
-    )
-        return responseBuilder.badRequestError(
-            MESSAGES.USERS.EMAIL_BLOCKED_INVALID
-        );
+    if (!transferToUser?.id || !transferToUser?.status || transferToUser === null)
+        return responseBuilder.badRequestError(MESSAGES.USERS.EMAIL_BLOCKED_INVALID);
 
     const transferFromUser = await userQueries.fetchUser({ id: data.id });
     if (!transferFromUser?.id)
@@ -508,12 +505,9 @@ const transferPlays = async (data: ITransferPlx) => {
         transferFromUser.id
     )) as unknown as [{ play_balance: number }];
 
-    if ((wallet[0]?.play_balance as number) < data.plays || !wallet.length) {
-        return responseBuilder.badRequestError(
-            MESSAGES.USERS.INSUFFICIENT_BALANCE
-        );
-    }
-
+    if ((wallet[0]?.play_balance as number) < data.plays || !wallet.length) 
+        return responseBuilder.badRequestError(MESSAGES.USERS.INSUFFICIENT_BALANCE);
+    
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
         const transfer = await userQueries.transferPlays(prisma, {
             id: transferFromUser.id,
