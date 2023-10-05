@@ -300,7 +300,8 @@ const ZTransferPlays = z.object({
         .number({
             required_error: "plays is required!",
             invalid_type_error: "plays type should be number!",
-        }),
+        })
+        .min(1),
 });
 
 const resendOtp = z.object({
