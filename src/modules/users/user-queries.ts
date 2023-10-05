@@ -127,15 +127,16 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
     WHERE
         mr.title='Player' 
         AND u.is_deleted=FALSE 
-        ${query?.search
-            ? Prisma.raw(
-                `AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`
-            )
-            : Prisma.raw("")
+        ${
+            query?.search
+                ? Prisma.raw(
+                      `AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`
+                  )
+                : Prisma.raw("")
         }
     ORDER BY ${Prisma.raw(query?._sort as string)} ${Prisma.raw(
-            query?._order as string
-        )}
+        query?._order as string
+    )}
     OFFSET ${Prisma.raw((query.page * query.limit) as unknown as string)}
     LIMIT ${Prisma.raw(query.limit as unknown as string)}
     `;
@@ -598,8 +599,7 @@ const fetchPlayerTransactions = async (queryData: {
     player_id: string;
     limit: number;
     offset: number;
-    spend_on: PlaySpend | undefined
-
+    spend_on: PlaySpend | undefined;
 }) => {
     const query: Sql = Prisma.sql`
     SELECT 
@@ -607,10 +607,7 @@ const fetchPlayerTransactions = async (queryData: {
     T1.spend_on,
     T1.created_by,
     T1.play_credit,
-    case when spend_on='BID_PLAYS' then sum(T1.play_debit)
-		else T1.play_debit
-	end 
-		as play_debit,
+    sum(T1.play_debit) as play_debit,
     T1.transferred_from,
     T1.transferred_to,
     T1.plays_refund_id,
@@ -632,11 +629,10 @@ LEFT JOIN
     users AS T3 ON T1.transferred_from = T3.id
 WHERE 
     T1.created_by = ${queryData.player_id}  
-    ${queryData?.spend_on
-        ? Prisma.raw(
-            `AND (T1.spend_on = '${queryData.spend_on}')`
-        )
-        : Prisma.raw("")
+    ${
+        queryData?.spend_on
+            ? Prisma.raw(`AND (T1.spend_on = '${queryData.spend_on}')`)
+            : Prisma.raw("")
     }
 GROUP BY 
     T1.play_debit,
@@ -651,10 +647,11 @@ GROUP BY
     auctions.title,
     users.first_name,
     T2.first_name,
-    T3.first_name
+    T3.first_name,
+    DATE(T1.created_at)
     ORDER BY created_at DESC
 LIMIT ${queryData.limit}
-OFFSET ${(queryData.offset * queryData.limit)}
+OFFSET ${queryData.offset * queryData.limit}
 `;
 
     const countQuery = Prisma.sql`
@@ -663,10 +660,7 @@ OFFSET ${(queryData.offset * queryData.limit)}
     T1.spend_on,
     T1.created_by,
     T1.play_credit,
-    case when spend_on='BID_PLAYS' then sum(T1.play_debit)
-		else T1.play_debit
-	end 
-		as play_debit,
+	sum(T1.play_debit) as play_debit,
     T1.transferred_from,
     T1.transferred_to,
     T1.plays_refund_id,
@@ -688,11 +682,10 @@ LEFT JOIN
     users AS T3 ON T1.transferred_from = T3.id
 WHERE 
     T1.created_by = ${queryData.player_id}  
-    ${queryData?.spend_on
-        ? Prisma.raw(
-            `AND (T1.spend_on = '${queryData.spend_on}')`
-        )
-        : Prisma.raw("")
+    ${
+        queryData?.spend_on
+            ? Prisma.raw(`AND (T1.spend_on = '${queryData.spend_on}')`)
+            : Prisma.raw("")
     }
 GROUP BY 
     T1.play_debit,
@@ -707,11 +700,26 @@ GROUP BY
     auctions.title,
     users.first_name,
     T2.first_name,
-    T3.first_name
+    T3.first_name,
+    DATE(T1.created_at)
     ORDER BY created_at DESC`;
     const queryResult = await prisma.$queryRaw<PlayerBidLogGroup[]>(query);
     const totalRecord = await prisma.$queryRaw<{ count: string }[]>(countQuery);
     return { queryResult, totalRecord: totalRecord.length };
+};
+
+/**
+ * @description - Update the player wallet auction id when player join 
+ * @param auction_id - 
+ * @param wallettranxId -
+ * @returns 
+ */
+const playerWalletTxcn = async (auction_id: string, wallettranxId: string) => {
+    const queryResult = await db.playerWalletTx.update({
+        data: { auction_id },
+        where: { id: wallettranxId },
+    });
+    return queryResult;
 };
 
 const userQueries = {
@@ -742,5 +750,6 @@ const userQueries = {
     fetchAdminInfo,
     addExtraPlays,
     fetchPlayerTransactions,
+    playerWalletTxcn
 };
 export default userQueries;
