@@ -488,7 +488,7 @@ const verifyUserDetails = async (data: { email: string }) => {
  */
 const transferPlays = async (data: ITransferPlx) => {
     const transferToUser = await userQueries.fetchUser({ email: data.email }); 
-    if (!transferToUser?.id || !transferToUser.status)
+    if (!transferToUser?.id || !transferToUser?.status || transferToUser === null)
         return responseBuilder.badRequestError(MESSAGES.USERS.EMAIL_BLOCKED_INVALID);
     
     const transferFromUser = await userQueries.fetchUser({ id: data.id });
