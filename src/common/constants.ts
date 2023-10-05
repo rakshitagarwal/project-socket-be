@@ -195,6 +195,7 @@ export const MESSAGES = {
         USER_VERIFIED: "User Verified",
         VERIFICATION_ERROR: "Please Verify Your Email",
         USER_FOUND: "User Found Successfully",
+        INVALID_PLAYS: "PLAYS Cannot Be In Decimal",
         EMAIL_BLOCKED_INVALID: "Cannot Transfer PLAYS As Player Doesn't Exist Or Is Blocked",
         INVALID_TRANSFER: "You Are Not Allowed To Transfer PLAYS to Your Own Account",
         INSUFFICIENT_BALANCE: "Your Plays Balance Is Insufficient For Transfer",

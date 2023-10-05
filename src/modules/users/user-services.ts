@@ -483,10 +483,13 @@ const verifyUserDetails = async (data: { email: string }) => {
 
 /**
  * @description transfer plays to user based on email and plays amount
- * @param {ITransferPlx} data
- * @returns
+ * @param {ITransferPlx} data it contains email, userId, amount of plays
+ * @returns response object based on responseBuilder methods
  */
 const transferPlays = async (data: ITransferPlx) => {
+    if ((data.plays).toString().includes('.')) 
+        return responseBuilder.badRequestError(MESSAGES.USERS.INVALID_PLAYS);
+    
     const transferToUser = await userQueries.fetchUser({ email: data.email }); 
     if (!transferToUser?.id || !transferToUser?.status || transferToUser === null)
         return responseBuilder.badRequestError(MESSAGES.USERS.EMAIL_BLOCKED_INVALID);
