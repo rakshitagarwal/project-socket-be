@@ -127,7 +127,8 @@ export const productMessage = {
         PRODUCT_MEDIA_IDS: "Product Media Ids Don't Exist!",
     },
     UPDATE: {
-        SUCCESS: "Product Updated Successfully",
+        SUCCESS: "Product Update Successfully",
+        IN_AUCTIONS: "Update Failed. Product Already Exists In Some Auction",
         TRANSACTION_FAIL:
             " Prisma Has Failed Due To Some Conflict Between Two Or More Transactions",
     },
