@@ -1000,7 +1000,7 @@ const getAuctionLists = async (data: IAuctionListing) => {
  * @returns {query} result of query execution
  */
 const productAuctionList = async ( product_id: string)=> {
-    const queryResult = await db.auction.findMany({
+    const queryResult = await db.auction.findFirst({
         where: {
             product_id
         }

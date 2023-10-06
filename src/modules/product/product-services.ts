@@ -137,7 +137,7 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
             mediaQuery.findManyMedias(newReqBody.media_id),
             auctionQueries.productAuctionList(productId?.id as string)
         ]);
-    if(isExistAuctions.length){
+    if(isExistAuctions){
         return responseBuilder.badRequestError(productMessage.UPDATE.IN_AUCTIONS);
     }
     if (!isExistProductId) {
