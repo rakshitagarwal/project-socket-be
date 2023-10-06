@@ -995,6 +995,20 @@ const getAuctionLists = async (data: IAuctionListing) => {
 };
 
 /**
+ * @description Get the list of all auctions where product is used
+ * @param {string} product_id id of product to find binding auctions
+ * @returns {query} result of query execution
+ */
+const productAuctionList = async ( product_id: string)=> {
+    const queryResult = await db.auction.findMany({
+        where: {
+            product_id
+        }
+    });
+    return queryResult;
+}
+
+/**
  * @description Get the Player Auction Details By the Id
  * @param {string} id
  * @param {string} auction_id
@@ -1519,6 +1533,7 @@ export const auctionQueries = {
     create,
     getAll,
     getAllAuctions,
+    productAuctionList,
     getActiveAuctioById,
     getAuctionById,
     update,

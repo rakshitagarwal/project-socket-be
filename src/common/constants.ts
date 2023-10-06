@@ -127,6 +127,7 @@ export const productMessage = {
     },
     UPDATE: {
         SUCCESS: "product update success",
+        IN_AUCTIONS: "Update Failed. Product Already Exists In Some Auction",
         TRANSACTION_FAIL:
             " Prisma has failed due to a conflict between two or more transactions",
     },
