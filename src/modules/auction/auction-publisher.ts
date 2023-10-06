@@ -446,7 +446,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         JSON.stringify(payload.finalData)
     );
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_MIN_MAX_PERCENTAGE, {
-        message: "total bids",
+        message: "Total Bids",
         data: {
             total_bids: payload.totalBid,
             num_of_bids: payload.bidHistory.length,
@@ -460,13 +460,13 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         },
     });
     socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
-        message: "player bid logs",
+        message: "Player Bidlogs",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
         data: payload.playerInfo.reverse().slice(0, 30),
     });
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid", {
-        message: "bid add successfully",
+        message: "Bid Added Successfully",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
     });
@@ -688,7 +688,7 @@ export const minMaxAuctionBid = async (
     }
     if (bidData.bid_price <= isAuctionLive.opening_price) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
-            message: `your price must be greater than ${isAuctionLive.opening_price}`,
+            message: `Your Bid Must Be Greater Than ${isAuctionLive.opening_price}`,
             auction_id:bidData.auction_id
         });
         return;
@@ -697,7 +697,7 @@ export const minMaxAuctionBid = async (
     if (bidData.bid_price.toString().includes(".") && decimalPlayes) {
         if (decimalPlayes.toString()?.length > isAuctionLive.decimal_count) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
-                message: `Decimal value must be ${isAuctionLive.decimal_count}`,
+                message: `Decimal Value Must Be Of ${isAuctionLive.decimal_count} Digits`,
                 auction_id:bidData.auction_id
             });
             return;
@@ -816,7 +816,7 @@ export const getMinMaxAuctionResult = async (payload: {
     );
     if (!auctionResult) {
         socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
-            message: "player bid logs",
+            message: "Player Bidlogs",
             data: {
                 player_id: payload.player_id,
                 auction_id: payload.auction_id,
@@ -829,7 +829,7 @@ export const getMinMaxAuctionResult = async (payload: {
         (data: IMinMaxAuction) => data.player_id === payload.player_id
     );
     socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
-        message: "player bid logs",
+        message: "Player Bidlogs",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
         data: playerData.reverse().slice(0, 30),
@@ -864,7 +864,7 @@ export const minMaxBidResult = async (payload: {
         socket.playerSocket
             .to(payload.socketId)
             .emit(SOCKET_EVENT.MIN_MAX_BID_PERCENTAGE, {
-                message: "total bids",
+                message: "Total Bids",
                 data: {
                     total_bids: +isAuctionLive.total_bids,
                     num_of_bids: auctionHistory.length || 0,
@@ -885,7 +885,7 @@ export const minMaxBidResult = async (payload: {
         socket.playerSocket
             .to(payload.socketId)
             .emit(SOCKET_EVENT.MIN_MAX_BID_PERCENTAGE, {
-                message: "total bids",
+                message: "Total Bids",
                 data: {
                     total_bids: +isAuctionLive.total_bids,
                     num_of_bids: 0,
