@@ -314,7 +314,7 @@ export const MESSAGES = {
         PLAYER_TRAX_NOT_FOUND: "Transaction Not Found In Wallet!",
         INSUFFICIENT_PLAY_BALANCE: "Insufficient PLAYS Balance!",
         PLAYS_NOT_DEBITED: "PLAYS Not Debited!",
-        PLAYS_Successfully_DEBITED: "PLAYS Debited Successfully!",
+        PLAYS_SUCCESSFULLY_DEBITED: "PLAYS Debited Successfully!",
         TRANSACTION_FAILED: "Transaction Failed!",
         TRANSFER_SUCCESS: "Transfer Of PLAYS Is Succeessful",
         TRANSFER_FAIL: "Transfer Of PLAYS Failed",

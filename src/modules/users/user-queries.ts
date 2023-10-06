@@ -130,7 +130,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         ${
             query?.search
                 ? Prisma.raw(
-                      `AND (u.first_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`
+                      `AND (u.first_name ILIKE '%${query.search}%' OR u.last_name ILIKE '%${query.search}%' OR u.email ILIKE '%${query.search}%')`
                   )
                 : Prisma.raw("")
         }
