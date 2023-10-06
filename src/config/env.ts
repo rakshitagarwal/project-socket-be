@@ -62,6 +62,9 @@ const envSchema = z.object({
     EMAIL_SERVICE: z.string({
         required_error: "EMAIL_SERVICE must be present in environment variable",
     }),
+    SENDGRID_API_KEY:z.string({
+        required_error: "SENDGRID_API_KEY must be present in environment variable",
+    })
 });
 
 const env = Object.freeze(envSchema.parse(process.env));

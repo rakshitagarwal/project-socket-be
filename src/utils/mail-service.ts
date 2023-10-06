@@ -1,9 +1,11 @@
 import env from "../config/env";
-import nodemailer from "nodemailer";
-import logger from "../config/logger";
+// import logger from "../config/logger";
 import { compile } from "handlebars";
 import { Imail } from "./typing/utils-types";
 import fs from "fs";
+import sgMail from "@sendgrid/mail";
+
+sgMail.setApiKey(env.SENDGRID_API_KEY);
 
 /**
  * Sends an email using the nodemailer library.
@@ -23,34 +25,29 @@ export async function mailService(props: Imail) {
         encoding: "utf8",
     });
     const template = compile(htmlTemplate);
-    const transporter = nodemailer.createTransport({
-        service: env.EMAIL_SERVICE,
-        auth: {
-            user: env.FROM_EMAIL,
-            pass: env.EMAIL_PASSWORD,
-        },
-        port: env.EMAIL_PORT,
-        host: env.EMAIL_HOST,
-    });
+    //ES6
+    sgMail
+        .send(
+            {
+                to: props.email,
+                from: env.FROM_EMAIL,
+                subject: props.subject,
+                text: " ",
+                html: template({
+                    userName: props.user_name,
+                    passcode: props.otp,
+                    message: props.message,
+                }),
+            },            
+        )
+        .then(
+            () => console.log("mail sent"),
+            (error) => {
+                console.error(error);
 
-    const mailOptions = {
-        from: env.FROM_EMAIL,
-        to: props.email,
-        subject: props.subject,
-        text: "",
-        html: template({
-            userName: props.user_name,
-            passcode: props.otp,
-            message: props.message,
-        }),
-    };
-
-    return transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-            logger.error(
-                `${env.NODE_ENV} - ${err.name} - ${err.message} - ${err.stack}`
-            );
-        }
-        logger.info(`accepted : ${info.accepted} messageId :${info.messageId}`);
-    });
+                if (error.response) {
+                    console.error(error.response.body);
+                }
+            }
+        );
 }

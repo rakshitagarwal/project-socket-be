@@ -48,6 +48,7 @@
     },
     "dependencies": {
         "@prisma/client": "^4.16.0",
+        "@sendgrid/mail": "^7.7.0",
         "@types/jsonwebtoken": "^9.0.2",
         "@types/seedrandom": "^3.0.5",
         "bcrypt": "^5.1.0",
