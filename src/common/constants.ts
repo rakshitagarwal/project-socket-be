@@ -62,7 +62,7 @@ export const ALLOWED_IMAGE_MIMETYPES = ["image/png", "image/jpg", "image/jpeg"];
 export const productCategoryMessage = {
     ADD: {
         SUCCESS: "Product Category Created",
-        ALREADY_EXIST: "Product Category Title Already Exist",
+        ALREADY_EXIST: "Product Category Already Exist",
     },
     GET: {
         REQUESTED: "Product Category Found!",
