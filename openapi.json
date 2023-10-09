@@ -694,7 +694,7 @@
                                 "format": "string",
                                 "enum": [ "MIN" , "MAX" , "TLP" ],
                                 "nullable": false,
-                                "description": "code in auction category"
+                                "description": "code in auction category!"
                               }
                           }
                         }
