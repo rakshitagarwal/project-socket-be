@@ -686,9 +686,9 @@ export const minMaxAuctionBid = async (
         });
         return;
     }
-    if (bidData.bid_price <= isAuctionLive.opening_price) {
+    if (bidData.bid_price <= isAuctionLive.opening_price || bidData.bid_price>=isAuctionLive.products.price) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
-            message: `Your Bid Must Be Greater Than ${isAuctionLive.opening_price}`,
+            message: `Your Bid Must Be Greater Than ${isAuctionLive.opening_price} And Less Than ${isAuctionLive.products.price}`,
             auction_id:bidData.auction_id
         });
         return;
