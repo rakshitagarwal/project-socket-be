@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userService from "./user-services";
-import { IuserPagination } from "./typings/user-types";
+import { IplayerTransactionHistory, IuserPagination } from "./typings/user-types";
 /**
  * @description handles admin  or player registration
  * @param req { Request } - admin  or player's request object
@@ -153,11 +153,17 @@ const resetPassword = async (req: Request, res: Response) => {
  * @param res { Response }
  */
 
-const getAllusers = async (req: Request, res: Response) => {
+const getAllusers = async (req: Request, res: Response) => {    
     const response = await userService.fetchAllUsers(
         req.query as unknown as IuserPagination
     );
-    res.status(response.code).json(response);
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
 };
 
 /**
@@ -200,16 +206,78 @@ const deductPlays = async (req: Request, res: Response) => {
 };
 
 /**
+ * @description transferPlays is to transfer plays from one user to other user
+ * @param {Request} req
+ * @param {Response} res
+ */
+const transferPlays = async (req: Request, res: Response) => {
+    const response = await userService.transferPlays(req.body);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description verifyUserDetails is to verify if user exists
+ * @param {Request} req
+ * @param {Response} res
+ */
+const verifyUserDetails = async (req: Request, res: Response) => {
+    const response = await userService.verifyUserDetails(req.body);
+    res.status(response.code).json(response);
+};
+
+/**
  * Resends an OTP (One-Time Password) to a user.
  * @param {import('express').Request} req - The Express request object.
  * @param {import('express').Response} res - The Express response object.
  * @returns {Promise<void>} - A Promise that resolves with the response JSON.
  */
-const resendOtpToUser=async(req: Request, res: Response) => {
+const resendOtpToUser = async (req: Request, res: Response) => {
     const response = await userService.resendOtpToUser(req.body);
     res.status(response.code).json(response);
+};
 
-}
+
+/**
+ * @description handles patch request for  player block 
+ * @param req { Request } admin or player's request object
+ * @param res { Response } admin or player's request's response object
+ */
+
+const userBlockStatus = async (req: Request, res: Response) => {
+    const response = await userService.userBlockStatus(req.params.id as string, req.body);
+    res.status(response.code).json(response);
+};
+
+/**
+ * @description handles get request for  player transaction history 
+ * @param req { Request } admin or player's request object
+ * @param res { Response } admin or player's request's response object
+ */
+
+const playerTransactionHistory = async (req: Request, res: Response) => {
+    const response = await userService.playerTransactionHistory(req.params.id as string ,req.query as unknown as IplayerTransactionHistory );
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? value.toString() : value
+            )
+        )
+    );
+};
+
+/**
+ * Controller function to handle the retrieval of player images.
+ * @param {Object} _req - Express Request object (not used in this function).
+ * @param {Object} res - Express Response object to send the HTTP response.
+ * @returns {void}
+ * @throws {Error} If there is an error during the image retrieval process.
+ *
+ */
+
+const getPlayerImages=async (_req: Request, res: Response) => {
+    const response = await userService.playerImages();
+    res.status(response.code).json(response);
+};
 
 const userHandlers = {
     register,
@@ -228,7 +296,12 @@ const userHandlers = {
     addPlaysInWallet,
     getPlayBalance,
     deductPlays,
-    resendOtpToUser
+    verifyUserDetails,
+    transferPlays,
+    resendOtpToUser,
+    userBlockStatus,
+    playerTransactionHistory,
+    getPlayerImages
 };
 
 export default userHandlers;

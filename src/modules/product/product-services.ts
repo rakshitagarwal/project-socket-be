@@ -19,6 +19,7 @@ import mediaQuery from "../media/media-queries";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import { PrismaClient } from "@prisma/client";
 import eventService from "../../utils/event-service";
+import { auctionQueries } from "../auction/auction-queries";
 
 /**
  * @description  add product
@@ -88,8 +89,10 @@ const get = async ({ id }: Iid, query: IPagination) => {
         }
         return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result);
     }
-    const limit = parseInt(query.limit) || 10;
+    const limit = parseInt(query.limit) || 20;
     const page = parseInt(query.page) || 0;
+    const _sort = query._sort || "category";
+    const _order = query._order || "asc";
     const filter = [];
     if (query.search) {
         filter.push({ title: { contains: query.search, mode: "insensitive" } });
@@ -98,6 +101,8 @@ const get = async ({ id }: Iid, query: IPagination) => {
         limit,
         filter,
         page,
+        _sort,
+        _order,
     });
     return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
         limit,
@@ -105,6 +110,8 @@ const get = async ({ id }: Iid, query: IPagination) => {
         totalRecord: totalCount,
         totalPages: Math.ceil(totalCount / limit),
         search: query.search || "",
+        sort: query._sort,
+        order: query._order,
     });
 };
 
@@ -122,13 +129,17 @@ const get = async ({ id }: Iid, query: IPagination) => {
  * @returns {object}  - the response object using responseBuilder.
  */
 const update = async (productId: Iid, newReqBody: addReqBody) => {
-    const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia] =
+    const [isExistProductId, isExistId, isExistIdLandImg, isExistIdMedia, isExistAuctions] =
         await Promise.all([
             productQueries.getById(productId.id as string),
             productCategoryQueries.getById(newReqBody.product_category_id),
             mediaQuery.getMediaById(newReqBody.landing_image),
             mediaQuery.findManyMedias(newReqBody.media_id),
+            auctionQueries.productAuctionList(productId?.id as string)
         ]);
+    if(isExistAuctions){
+        return responseBuilder.badRequestError(productMessage.UPDATE.IN_AUCTIONS);
+    }
     if (!isExistProductId) {
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     }

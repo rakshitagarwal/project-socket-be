@@ -3,6 +3,8 @@ import { responseBuilder } from "../common/responses";
 import logger from "../config/logger";
 import { Prisma } from "@prisma/client";
 import env from "../config/env";
+import { codes } from "../common/prisma.code";
+import { IerrorHandle } from "./typings/middleware-types";
 
 /**
  * Error handler middleware.
@@ -12,30 +14,41 @@ import env from "../config/env";
  * @param {import('express').Response} res - The response object.
  * @param {import('express').NextFunction} next - The next middleware function.
  */
+type PrismaError =
+    | Prisma.PrismaClientKnownRequestError
+    | Prisma.PrismaClientInitializationError
+    | Prisma.PrismaClientRustPanicError
+    | Prisma.PrismaClientUnknownRequestError
+    | Prisma.PrismaClientValidationError;
+
 export const prismaErrorHandler = (
-    err: Error,
+    err: PrismaError,
     req: Request,
     res: Response,
     _next: NextFunction
 ) => {
+
+    const metaData: IerrorHandle = {
+        name: err.name,
+        message: err.message,
+    };
+
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        const response = responseBuilder
-            .error(500)
-            .message(err.message)
-            .data({})
-            .metaData({ ...err })
-            .build();
-
-        logger.error(
-            `${env.NODE_ENV} - ${err.code} - ${err.clientVersion} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack}`
-        );
-        res.status(response.code).json(response);
+        metaData.code = err.code;
+        metaData.prisma_code = codes[err.code];
     }
-    // TODO: Try, if condition doesnt work, then call next with error:- next(err)
-    const response = responseBuilder.internalserverError("", {}, err);
+    else {
+        metaData.code = err.name;
+        metaData.prisma_code = err.message;
+    }
 
-    logger.error(
-        `${process.env.NODE_ENV} - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
-    );
+    const response = responseBuilder
+        .error(500)
+        .message(err.message)
+        .data()
+        .metaData(metaData)
+        .build();
+
+    logger.error(`${env.NODE_ENV}  - ${err.name} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip} - ${err.stack || 'N/A'}`);
     res.status(response.code).json(response);
 };

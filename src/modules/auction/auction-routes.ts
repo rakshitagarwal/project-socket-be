@@ -89,3 +89,25 @@ auctionRouter.post(
     [validateRequest.body(auctionSchemas.ZSimulation)],
     handleAsync(auctionHandler.startSimulation)
 );
+
+
+auctionRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL_LIST,
+    [validateRequest.query(auctionSchemas.ZAuctionTotalListing)],
+    handleAsync(auctionHandler.auctionListingTotal)
+);
+auctionRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL_LIST + "/:id",
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.getByIdTotalAuction)
+);
+auctionRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL,
+    handleAsync(auctionHandler.auctionTotal)
+);
+
+auctionRouter.get(
+    ENDPOINTS.GRID_LIVE_UPCOMING,
+    [validateRequest.query(auctionSchemas.Zpagination)],
+    handleAsync(auctionHandler.getAllAuctionforGrid)
+);

@@ -1,1212 +1,1307 @@
 [
     {
-        "name": "Afghanistan",
-        "isd_code": "+93",
-        "code": "AF"
-    },
-    {
-        "name": "Aland Islands",
-        "isd_code": "+358",
-        "code": "AX"
-    },
-    {
-        "name": "Albania",
-        "isd_code": "+355",
-        "code": "AL"
-    },
-    {
-        "name": "Algeria",
-        "isd_code": "+213",
-        "code": "DZ"
-    },
-    {
-        "name": "AmericanSamoa",
-        "isd_code": "+1684",
-        "code": "AS"
+        "name": "Ascension Island",
+        "code": "AC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AC.svg"
     },
     {
         "name": "Andorra",
-        "isd_code": "+376",
-        "code": "AD"
-    },
-    {
-        "name": "Angola",
-        "isd_code": "+244",
-        "code": "AO"
-    },
-    {
-        "name": "Anguilla",
-        "isd_code": "+1264",
-        "code": "AI"
-    },
-    {
-        "name": "Antarctica",
-        "isd_code": "+672",
-        "code": "AQ"
-    },
-    {
-        "name": "Antigua and Barbuda",
-        "isd_code": "+1268",
-        "code": "AG"
-    },
-    {
-        "name": "Argentina",
-        "isd_code": "+54",
-        "code": "AR"
-    },
-    {
-        "name": "Armenia",
-        "isd_code": "+374",
-        "code": "AM"
-    },
-    {
-        "name": "Aruba",
-        "isd_code": "+297",
-        "code": "AW"
-    },
-    {
-        "name": "Australia",
-        "isd_code": "+61",
-        "code": "AU"
-    },
-    {
-        "name": "Austria",
-        "isd_code": "+43",
-        "code": "AT"
-    },
-    {
-        "name": "Azerbaijan",
-        "isd_code": "+994",
-        "code": "AZ"
-    },
-    {
-        "name": "Bahamas",
-        "isd_code": "+1242",
-        "code": "BS"
-    },
-    {
-        "name": "Bahrain",
-        "isd_code": "+973",
-        "code": "BH"
-    },
-    {
-        "name": "Bangladesh",
-        "isd_code": "+880",
-        "code": "BD"
-    },
-    {
-        "name": "Barbados",
-        "isd_code": "+1246",
-        "code": "BB"
-    },
-    {
-        "name": "Belarus",
-        "isd_code": "+375",
-        "code": "BY"
-    },
-    {
-        "name": "Belgium",
-        "isd_code": "+32",
-        "code": "BE"
-    },
-    {
-        "name": "Belize",
-        "isd_code": "+501",
-        "code": "BZ"
-    },
-    {
-        "name": "Benin",
-        "isd_code": "+229",
-        "code": "BJ"
-    },
-    {
-        "name": "Bermuda",
-        "isd_code": "+1441",
-        "code": "BM"
-    },
-    {
-        "name": "Bhutan",
-        "isd_code": "+975",
-        "code": "BT"
-    },
-    {
-        "name": "Bolivia, Plurinational State of",
-        "isd_code": "+591",
-        "code": "BO"
-    },
-    {
-        "name": "Bosnia and Herzegovina",
-        "isd_code": "+387",
-        "code": "BA"
-    },
-    {
-        "name": "Botswana",
-        "isd_code": "+267",
-        "code": "BW"
-    },
-    {
-        "name": "Brazil",
-        "isd_code": "+55",
-        "code": "BR"
-    },
-    {
-        "name": "British Indian Ocean Territory",
-        "isd_code": "+246",
-        "code": "IO"
-    },
-    {
-        "name": "Brunei Darussalam",
-        "isd_code": "+673",
-        "code": "BN"
-    },
-    {
-        "name": "Bulgaria",
-        "isd_code": "+359",
-        "code": "BG"
-    },
-    {
-        "name": "Burkina Faso",
-        "isd_code": "+226",
-        "code": "BF"
-    },
-    {
-        "name": "Burundi",
-        "isd_code": "+257",
-        "code": "BI"
-    },
-    {
-        "name": "Cambodia",
-        "isd_code": "+855",
-        "code": "KH"
-    },
-    {
-        "name": "Cameroon",
-        "isd_code": "+237",
-        "code": "CM"
-    },
-    {
-        "name": "Canada",
-        "isd_code": "+1",
-        "code": "CA"
-    },
-    {
-        "name": "Cape Verde",
-        "isd_code": "+238",
-        "code": "CV"
-    },
-    {
-        "name": "Cayman Islands",
-        "isd_code": "+ 345",
-        "code": "KY"
-    },
-    {
-        "name": "Central African Republic",
-        "isd_code": "+236",
-        "code": "CF"
-    },
-    {
-        "name": "Chad",
-        "isd_code": "+235",
-        "code": "TD"
-    },
-    {
-        "name": "Chile",
-        "isd_code": "+56",
-        "code": "CL"
-    },
-    {
-        "name": "China",
-        "isd_code": "+86",
-        "code": "CN"
-    },
-    {
-        "name": "Christmas Island",
-        "isd_code": "+61",
-        "code": "CX"
-    },
-    {
-        "name": "Cocos (Keeling) Islands",
-        "isd_code": "+61",
-        "code": "CC"
-    },
-    {
-        "name": "Colombia",
-        "isd_code": "+57",
-        "code": "CO"
-    },
-    {
-        "name": "Comoros",
-        "isd_code": "+269",
-        "code": "KM"
-    },
-    {
-        "name": "Congo",
-        "isd_code": "+242",
-        "code": "CG"
-    },
-    {
-        "name": "Congo, The Democratic Republic of the Congo",
-        "isd_code": "+243",
-        "code": "CD"
-    },
-    {
-        "name": "Cook Islands",
-        "isd_code": "+682",
-        "code": "CK"
-    },
-    {
-        "name": "Costa Rica",
-        "isd_code": "+506",
-        "code": "CR"
-    },
-    {
-        "name": "Cote d'Ivoire",
-        "isd_code": "+225",
-        "code": "CI"
-    },
-    {
-        "name": "Croatia",
-        "isd_code": "+385",
-        "code": "HR"
-    },
-    {
-        "name": "Cuba",
-        "isd_code": "+53",
-        "code": "CU"
-    },
-    {
-        "name": "Cyprus",
-        "isd_code": "+357",
-        "code": "CY"
-    },
-    {
-        "name": "Czech Republic",
-        "isd_code": "+420",
-        "code": "CZ"
-    },
-    {
-        "name": "Denmark",
-        "isd_code": "+45",
-        "code": "DK"
-    },
-    {
-        "name": "Djibouti",
-        "isd_code": "+253",
-        "code": "DJ"
-    },
-    {
-        "name": "Dominica",
-        "isd_code": "+1767",
-        "code": "DM"
-    },
-    {
-        "name": "Dominican Republic",
-        "isd_code": "+1849",
-        "code": "DO"
-    },
-    {
-        "name": "Ecuador",
-        "isd_code": "+593",
-        "code": "EC"
-    },
-    {
-        "name": "Egypt",
-        "isd_code": "+20",
-        "code": "EG"
-    },
-    {
-        "name": "El Salvador",
-        "isd_code": "+503",
-        "code": "SV"
-    },
-    {
-        "name": "Equatorial Guinea",
-        "isd_code": "+240",
-        "code": "GQ"
-    },
-    {
-        "name": "Eritrea",
-        "isd_code": "+291",
-        "code": "ER"
-    },
-    {
-        "name": "Estonia",
-        "isd_code": "+372",
-        "code": "EE"
-    },
-    {
-        "name": "Ethiopia",
-        "isd_code": "+251",
-        "code": "ET"
-    },
-    {
-        "name": "Falkland Islands (Malvinas)",
-        "isd_code": "+500",
-        "code": "FK"
-    },
-    {
-        "name": "Faroe Islands",
-        "isd_code": "+298",
-        "code": "FO"
-    },
-    {
-        "name": "Fiji",
-        "isd_code": "+679",
-        "code": "FJ"
-    },
-    {
-        "name": "Finland",
-        "isd_code": "+358",
-        "code": "FI"
-    },
-    {
-        "name": "France",
-        "isd_code": "+33",
-        "code": "FR"
-    },
-    {
-        "name": "French Guiana",
-        "isd_code": "+594",
-        "code": "GF"
-    },
-    {
-        "name": "French Polynesia",
-        "isd_code": "+689",
-        "code": "PF"
-    },
-    {
-        "name": "Gabon",
-        "isd_code": "+241",
-        "code": "GA"
-    },
-    {
-        "name": "Gambia",
-        "isd_code": "+220",
-        "code": "GM"
-    },
-    {
-        "name": "Georgia",
-        "isd_code": "+995",
-        "code": "GE"
-    },
-    {
-        "name": "Germany",
-        "isd_code": "+49",
-        "code": "DE"
-    },
-    {
-        "name": "Ghana",
-        "isd_code": "+233",
-        "code": "GH"
-    },
-    {
-        "name": "Gibraltar",
-        "isd_code": "+350",
-        "code": "GI"
-    },
-    {
-        "name": "Greece",
-        "isd_code": "+30",
-        "code": "GR"
-    },
-    {
-        "name": "Greenland",
-        "isd_code": "+299",
-        "code": "GL"
-    },
-    {
-        "name": "Grenada",
-        "isd_code": "+1473",
-        "code": "GD"
-    },
-    {
-        "name": "Guadeloupe",
-        "isd_code": "+590",
-        "code": "GP"
-    },
-    {
-        "name": "Guam",
-        "isd_code": "+1671",
-        "code": "GU"
-    },
-    {
-        "name": "Guatemala",
-        "isd_code": "+502",
-        "code": "GT"
-    },
-    {
-        "name": "Guernsey",
-        "isd_code": "+44",
-        "code": "GG"
-    },
-    {
-        "name": "Guinea",
-        "isd_code": "+224",
-        "code": "GN"
-    },
-    {
-        "name": "Guinea-Bissau",
-        "isd_code": "+245",
-        "code": "GW"
-    },
-    {
-        "name": "Guyana",
-        "isd_code": "+595",
-        "code": "GY"
-    },
-    {
-        "name": "Haiti",
-        "isd_code": "+509",
-        "code": "HT"
-    },
-    {
-        "name": "Holy See (Vatican City State)",
-        "isd_code": "+379",
-        "code": "VA"
-    },
-    {
-        "name": "Honduras",
-        "isd_code": "+504",
-        "code": "HN"
-    },
-    {
-        "name": "Hong Kong",
-        "isd_code": "+852",
-        "code": "HK"
-    },
-    {
-        "name": "Hungary",
-        "isd_code": "+36",
-        "code": "HU"
-    },
-    {
-        "name": "Iceland",
-        "isd_code": "+354",
-        "code": "IS"
-    },
-    {
-        "name": "India",
-        "isd_code": "+91",
-        "code": "IN"
-    },
-    {
-        "name": "Indonesia",
-        "isd_code": "+62",
-        "code": "ID"
-    },
-    {
-        "name": "Iran, Islamic Republic of Persian Gulf",
-        "isd_code": "+98",
-        "code": "IR"
-    },
-    {
-        "name": "Iraq",
-        "isd_code": "+964",
-        "code": "IQ"
-    },
-    {
-        "name": "Ireland",
-        "isd_code": "+353",
-        "code": "IE"
-    },
-    {
-        "name": "Isle of Man",
-        "isd_code": "+44",
-        "code": "IM"
-    },
-    {
-        "name": "Israel",
-        "isd_code": "+972",
-        "code": "IL"
-    },
-    {
-        "name": "Italy",
-        "isd_code": "+39",
-        "code": "IT"
-    },
-    {
-        "name": "Jamaica",
-        "isd_code": "+1876",
-        "code": "JM"
-    },
-    {
-        "name": "Japan",
-        "isd_code": "+81",
-        "code": "JP"
-    },
-    {
-        "name": "Jersey",
-        "isd_code": "+44",
-        "code": "JE"
-    },
-    {
-        "name": "Jordan",
-        "isd_code": "+962",
-        "code": "JO"
-    },
-    {
-        "name": "Kazakhstan",
-        "isd_code": "+77",
-        "code": "KZ"
-    },
-    {
-        "name": "Kenya",
-        "isd_code": "+254",
-        "code": "KE"
-    },
-    {
-        "name": "Kiribati",
-        "isd_code": "+686",
-        "code": "KI"
-    },
-    {
-        "name": "Korea, Democratic People's Republic of Korea",
-        "isd_code": "+850",
-        "code": "KP"
-    },
-    {
-        "name": "Korea, Republic of South Korea",
-        "isd_code": "+82",
-        "code": "KR"
-    },
-    {
-        "name": "Kuwait",
-        "isd_code": "+965",
-        "code": "KW"
-    },
-    {
-        "name": "Kyrgyzstan",
-        "isd_code": "+996",
-        "code": "KG"
-    },
-    {
-        "name": "Laos",
-        "isd_code": "+856",
-        "code": "LA"
-    },
-    {
-        "name": "Latvia",
-        "isd_code": "+371",
-        "code": "LV"
-    },
-    {
-        "name": "Lebanon",
-        "isd_code": "+961",
-        "code": "LB"
-    },
-    {
-        "name": "Lesotho",
-        "isd_code": "+266",
-        "code": "LS"
-    },
-    {
-        "name": "Liberia",
-        "isd_code": "+231",
-        "code": "LR"
-    },
-    {
-        "name": "Libyan Arab Jamahiriya",
-        "isd_code": "+218",
-        "code": "LY"
-    },
-    {
-        "name": "Liechtenstein",
-        "isd_code": "+423",
-        "code": "LI"
-    },
-    {
-        "name": "Lithuania",
-        "isd_code": "+370",
-        "code": "LT"
-    },
-    {
-        "name": "Luxembourg",
-        "isd_code": "+352",
-        "code": "LU"
-    },
-    {
-        "name": "Macao",
-        "isd_code": "+853",
-        "code": "MO"
-    },
-    {
-        "name": "Macedonia",
-        "isd_code": "+389",
-        "code": "MK"
-    },
-    {
-        "name": "Madagascar",
-        "isd_code": "+261",
-        "code": "MG"
-    },
-    {
-        "name": "Malawi",
-        "isd_code": "+265",
-        "code": "MW"
-    },
-    {
-        "name": "Malaysia",
-        "isd_code": "+60",
-        "code": "MY"
-    },
-    {
-        "name": "Maldives",
-        "isd_code": "+960",
-        "code": "MV"
-    },
-    {
-        "name": "Mali",
-        "isd_code": "+223",
-        "code": "ML"
-    },
-    {
-        "name": "Malta",
-        "isd_code": "+356",
-        "code": "MT"
-    },
-    {
-        "name": "Marshall Islands",
-        "isd_code": "+692",
-        "code": "MH"
-    },
-    {
-        "name": "Martinique",
-        "isd_code": "+596",
-        "code": "MQ"
-    },
-    {
-        "name": "Mauritania",
-        "isd_code": "+222",
-        "code": "MR"
-    },
-    {
-        "name": "Mauritius",
-        "isd_code": "+230",
-        "code": "MU"
-    },
-    {
-        "name": "Mayotte",
-        "isd_code": "+262",
-        "code": "YT"
-    },
-    {
-        "name": "Mexico",
-        "isd_code": "+52",
-        "code": "MX"
-    },
-    {
-        "name": "Micronesia, Federated States of Micronesia",
-        "isd_code": "+691",
-        "code": "FM"
-    },
-    {
-        "name": "Moldova",
-        "isd_code": "+373",
-        "code": "MD"
-    },
-    {
-        "name": "Monaco",
-        "isd_code": "+377",
-        "code": "MC"
-    },
-    {
-        "name": "Mongolia",
-        "isd_code": "+976",
-        "code": "MN"
-    },
-    {
-        "name": "Montenegro",
-        "isd_code": "+382",
-        "code": "ME"
-    },
-    {
-        "name": "Montserrat",
-        "isd_code": "+1664",
-        "code": "MS"
-    },
-    {
-        "name": "Morocco",
-        "isd_code": "+212",
-        "code": "MA"
-    },
-    {
-        "name": "Mozambique",
-        "isd_code": "+258",
-        "code": "MZ"
-    },
-    {
-        "name": "Myanmar",
-        "isd_code": "+95",
-        "code": "MM"
-    },
-    {
-        "name": "Namibia",
-        "isd_code": "+264",
-        "code": "NA"
-    },
-    {
-        "name": "Nauru",
-        "isd_code": "+674",
-        "code": "NR"
-    },
-    {
-        "name": "Nepal",
-        "isd_code": "+977",
-        "code": "NP"
-    },
-    {
-        "name": "Netherlands",
-        "isd_code": "+31",
-        "code": "NL"
-    },
-    {
-        "name": "Netherlands Antilles",
-        "isd_code": "+599",
-        "code": "AN"
-    },
-    {
-        "name": "New Caledonia",
-        "isd_code": "+687",
-        "code": "NC"
-    },
-    {
-        "name": "New Zealand",
-        "isd_code": "+64",
-        "code": "NZ"
-    },
-    {
-        "name": "Nicaragua",
-        "isd_code": "+505",
-        "code": "NI"
-    },
-    {
-        "name": "Niger",
-        "isd_code": "+227",
-        "code": "NE"
-    },
-    {
-        "name": "Nigeria",
-        "isd_code": "+234",
-        "code": "NG"
-    },
-    {
-        "name": "Niue",
-        "isd_code": "+683",
-        "code": "NU"
-    },
-    {
-        "name": "Norfolk Island",
-        "isd_code": "+672",
-        "code": "NF"
-    },
-    {
-        "name": "Northern Mariana Islands",
-        "isd_code": "+1670",
-        "code": "MP"
-    },
-    {
-        "name": "Norway",
-        "isd_code": "+47",
-        "code": "NO"
-    },
-    {
-        "name": "Oman",
-        "isd_code": "+968",
-        "code": "OM"
-    },
-    {
-        "name": "Pakistan",
-        "isd_code": "+92",
-        "code": "PK"
-    },
-    {
-        "name": "Palau",
-        "isd_code": "+680",
-        "code": "PW"
-    },
-    {
-        "name": "Palestinian Territory, Occupied",
-        "isd_code": "+970",
-        "code": "PS"
-    },
-    {
-        "name": "Panama",
-        "isd_code": "+507",
-        "code": "PA"
-    },
-    {
-        "name": "Papua New Guinea",
-        "isd_code": "+675",
-        "code": "PG"
-    },
-    {
-        "name": "Paraguay",
-        "isd_code": "+595",
-        "code": "PY"
-    },
-    {
-        "name": "Peru",
-        "isd_code": "+51",
-        "code": "PE"
-    },
-    {
-        "name": "Philippines",
-        "isd_code": "+63",
-        "code": "PH"
-    },
-    {
-        "name": "Pitcairn",
-        "isd_code": "+872",
-        "code": "PN"
-    },
-    {
-        "name": "Poland",
-        "isd_code": "+48",
-        "code": "PL"
-    },
-    {
-        "name": "Portugal",
-        "isd_code": "+351",
-        "code": "PT"
-    },
-    {
-        "name": "Puerto Rico",
-        "isd_code": "+1939",
-        "code": "PR"
-    },
-    {
-        "name": "Qatar",
-        "isd_code": "+974",
-        "code": "QA"
-    },
-    {
-        "name": "Romania",
-        "isd_code": "+40",
-        "code": "RO"
-    },
-    {
-        "name": "Russia",
-        "isd_code": "+7",
-        "code": "RU"
-    },
-    {
-        "name": "Rwanda",
-        "isd_code": "+250",
-        "code": "RW"
-    },
-    {
-        "name": "Reunion",
-        "isd_code": "+262",
-        "code": "RE"
-    },
-    {
-        "name": "Saint Barthelemy",
-        "isd_code": "+590",
-        "code": "BL"
-    },
-    {
-        "name": "Saint Helena, Ascension and Tristan Da Cunha",
-        "isd_code": "+290",
-        "code": "SH"
-    },
-    {
-        "name": "Saint Kitts and Nevis",
-        "isd_code": "+1869",
-        "code": "KN"
-    },
-    {
-        "name": "Saint Lucia",
-        "isd_code": "+1758",
-        "code": "LC"
-    },
-    {
-        "name": "Saint Martin",
-        "isd_code": "+590",
-        "code": "MF"
-    },
-    {
-        "name": "Saint Pierre and Miquelon",
-        "isd_code": "+508",
-        "code": "PM"
-    },
-    {
-        "name": "Saint Vincent and the Grenadines",
-        "isd_code": "+1784",
-        "code": "VC"
-    },
-    {
-        "name": "Samoa",
-        "isd_code": "+685",
-        "code": "WS"
-    },
-    {
-        "name": "San Marino",
-        "isd_code": "+378",
-        "code": "SM"
-    },
-    {
-        "name": "Sao Tome and Principe",
-        "isd_code": "+239",
-        "code": "ST"
-    },
-    {
-        "name": "Saudi Arabia",
-        "isd_code": "+966",
-        "code": "SA"
-    },
-    {
-        "name": "Senegal",
-        "isd_code": "+221",
-        "code": "SN"
-    },
-    {
-        "name": "Serbia",
-        "isd_code": "+381",
-        "code": "RS"
-    },
-    {
-        "name": "Seychelles",
-        "isd_code": "+248",
-        "code": "SC"
-    },
-    {
-        "name": "Sierra Leone",
-        "isd_code": "+232",
-        "code": "SL"
-    },
-    {
-        "name": "Singapore",
-        "isd_code": "+65",
-        "code": "SG"
-    },
-    {
-        "name": "Slovakia",
-        "isd_code": "+421",
-        "code": "SK"
-    },
-    {
-        "name": "Slovenia",
-        "isd_code": "+386",
-        "code": "SI"
-    },
-    {
-        "name": "Solomon Islands",
-        "isd_code": "+677",
-        "code": "SB"
-    },
-    {
-        "name": "Somalia",
-        "isd_code": "+252",
-        "code": "SO"
-    },
-    {
-        "name": "South Africa",
-        "isd_code": "+27",
-        "code": "ZA"
-    },
-    {
-        "name": "South Sudan",
-        "isd_code": "+211",
-        "code": "SS"
-    },
-    {
-        "name": "South Georgia and the South Sandwich Islands",
-        "isd_code": "+500",
-        "code": "GS"
-    },
-    {
-        "name": "Spain",
-        "isd_code": "+34",
-        "code": "ES"
-    },
-    {
-        "name": "Sri Lanka",
-        "isd_code": "+94",
-        "code": "LK"
-    },
-    {
-        "name": "Sudan",
-        "isd_code": "+249",
-        "code": "SD"
-    },
-    {
-        "name": "Suriname",
-        "isd_code": "+597",
-        "code": "SR"
-    },
-    {
-        "name": "Svalbard and Jan Mayen",
-        "isd_code": "+47",
-        "code": "SJ"
-    },
-    {
-        "name": "Swaziland",
-        "isd_code": "+268",
-        "code": "SZ"
-    },
-    {
-        "name": "Sweden",
-        "isd_code": "+46",
-        "code": "SE"
-    },
-    {
-        "name": "Switzerland",
-        "isd_code": "+41",
-        "code": "CH"
-    },
-    {
-        "name": "Syrian Arab Republic",
-        "isd_code": "+963",
-        "code": "SY"
-    },
-    {
-        "name": "Taiwan",
-        "isd_code": "+886",
-        "code": "TW"
-    },
-    {
-        "name": "Tajikistan",
-        "isd_code": "+992",
-        "code": "TJ"
-    },
-    {
-        "name": "Tanzania, United Republic of Tanzania",
-        "isd_code": "+255",
-        "code": "TZ"
-    },
-    {
-        "name": "Thailand",
-        "isd_code": "+66",
-        "code": "TH"
-    },
-    {
-        "name": "Timor-Leste",
-        "isd_code": "+670",
-        "code": "TL"
-    },
-    {
-        "name": "Togo",
-        "isd_code": "+228",
-        "code": "TG"
-    },
-    {
-        "name": "Tokelau",
-        "isd_code": "+690",
-        "code": "TK"
-    },
-    {
-        "name": "Tonga",
-        "isd_code": "+676",
-        "code": "TO"
-    },
-    {
-        "name": "Trinidad and Tobago",
-        "isd_code": "+1868",
-        "code": "TT"
-    },
-    {
-        "name": "Tunisia",
-        "isd_code": "+216",
-        "code": "TN"
-    },
-    {
-        "name": "Turkey",
-        "isd_code": "+90",
-        "code": "TR"
-    },
-    {
-        "name": "Turkmenistan",
-        "isd_code": "+993",
-        "code": "TM"
-    },
-    {
-        "name": "Turks and Caicos Islands",
-        "isd_code": "+1649",
-        "code": "TC"
-    },
-    {
-        "name": "Tuvalu",
-        "isd_code": "+688",
-        "code": "TV"
-    },
-    {
-        "name": "Uganda",
-        "isd_code": "+256",
-        "code": "UG"
-    },
-    {
-        "name": "Ukraine",
-        "isd_code": "+380",
-        "code": "UA"
+        "code": "AD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AD.svg"
     },
     {
         "name": "United Arab Emirates",
-        "isd_code": "+971",
-        "code": "AE"
+        "code": "AE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AE.svg"
+    },
+    {
+        "name": "Afghanistan",
+        "code": "AF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AF.svg"
+    },
+    {
+        "name": "Antigua & Barbuda",
+        "code": "AG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AG.svg"
+    },
+    {
+        "name": "Anguilla",
+        "code": "AI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AI.svg"
+    },
+    {
+        "name": "Albania",
+        "code": "AL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AL.svg"
+    },
+    {
+        "name": "Armenia",
+        "code": "AM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AM.svg"
+    },
+    {
+        "name": "Angola",
+        "code": "AO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AO.svg"
+    },
+    {
+        "name": "Antarctica",
+        "code": "AQ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AQ.svg"
+    },
+    {
+        "name": "Argentina",
+        "code": "AR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AR.svg"
+    },
+    {
+        "name": "American Samoa",
+        "code": "AS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AS.svg"
+    },
+    {
+        "name": "Austria",
+        "code": "AT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AT.svg"
+    },
+    {
+        "name": "Australia",
+        "code": "AU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AU.svg"
+    },
+    {
+        "name": "Aruba",
+        "code": "AW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AW.svg"
+    },
+    {
+        "name": "Åland Islands",
+        "code": "AX",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AX.svg"
+    },
+    {
+        "name": "Azerbaijan",
+        "code": "AZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/AZ.svg"
+    },
+    {
+        "name": "Bosnia & Herzegovina",
+        "code": "BA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BA.svg"
+    },
+    {
+        "name": "Barbados",
+        "code": "BB",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BB.svg"
+    },
+    {
+        "name": "Bangladesh",
+        "code": "BD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BD.svg"
+    },
+    {
+        "name": "Belgium",
+        "code": "BE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BE.svg"
+    },
+    {
+        "name": "Burkina Faso",
+        "code": "BF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BF.svg"
+    },
+    {
+        "name": "Bulgaria",
+        "code": "BG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BG.svg"
+    },
+    {
+        "name": "Bahrain",
+        "code": "BH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BH.svg"
+    },
+    {
+        "name": "Burundi",
+        "code": "BI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BI.svg"
+    },
+    {
+        "name": "Benin",
+        "code": "BJ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BJ.svg"
+    },
+    {
+        "name": "St. Barthélemy",
+        "code": "BL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BL.svg"
+    },
+    {
+        "name": "Bermuda",
+        "code": "BM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BM.svg"
+    },
+    {
+        "name": "Brunei",
+        "code": "BN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BN.svg"
+    },
+    {
+        "name": "Bolivia",
+        "code": "BO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BO.svg"
+    },
+    {
+        "name": "Caribbean Netherlands",
+        "code": "BQ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BQ.svg"
+    },
+    {
+        "name": "Brazil",
+        "code": "BR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BR.svg"
+    },
+    {
+        "name": "Bahamas",
+        "code": "BS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BS.svg"
+    },
+    {
+        "name": "Bhutan",
+        "code": "BT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BT.svg"
+    },
+    {
+        "name": "Bouvet Island",
+        "code": "BV",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BV.svg"
+    },
+    {
+        "name": "Botswana",
+        "code": "BW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BW.svg"
+    },
+    {
+        "name": "Belarus",
+        "code": "BY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BY.svg"
+    },
+    {
+        "name": "Belize",
+        "code": "BZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/BZ.svg"
+    },
+    {
+        "name": "Canada",
+        "code": "CA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CA.svg"
+    },
+    {
+        "name": "Cocos (Keeling) Islands",
+        "code": "CC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CC.svg"
+    },
+    {
+        "name": "Congo - Kinshasa",
+        "code": "CD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CD.svg"
+    },
+    {
+        "name": "Central African Republic",
+        "code": "CF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CF.svg"
+    },
+    {
+        "name": "Congo - Brazzaville",
+        "code": "CG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CG.svg"
+    },
+    {
+        "name": "Switzerland",
+        "code": "CH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CH.svg"
+    },
+    {
+        "name": "Côte d’Ivoire",
+        "code": "CI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CI.svg"
+    },
+    {
+        "name": "Cook Islands",
+        "code": "CK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CK.svg"
+    },
+    {
+        "name": "Chile",
+        "code": "CL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CL.svg"
+    },
+    {
+        "name": "Cameroon",
+        "code": "CM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CM.svg"
+    },
+    {
+        "name": "China",
+        "code": "CN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CN.svg"
+    },
+    {
+        "name": "Colombia",
+        "code": "CO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CO.svg"
+    },
+    {
+        "name": "Clipperton Island",
+        "code": "CP",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CP.svg"
+    },
+    {
+        "name": "Costa Rica",
+        "code": "CR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CR.svg"
+    },
+    {
+        "name": "Cuba",
+        "code": "CU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CU.svg"
+    },
+    {
+        "name": "Cape Verde",
+        "code": "CV",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CV.svg"
+    },
+    {
+        "name": "Curaçao",
+        "code": "CW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CW.svg"
+    },
+    {
+        "name": "Christmas Island",
+        "code": "CX",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CX.svg"
+    },
+    {
+        "name": "Cyprus",
+        "code": "CY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CY.svg"
+    },
+    {
+        "name": "Czechia",
+        "code": "CZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/CZ.svg"
+    },
+    {
+        "name": "Germany",
+        "code": "DE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DE.svg"
+    },
+    {
+        "name": "Diego Garcia",
+        "code": "DG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DG.svg"
+    },
+    {
+        "name": "Djibouti",
+        "code": "DJ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DJ.svg"
+    },
+    {
+        "name": "Denmark",
+        "code": "DK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DK.svg"
+    },
+    {
+        "name": "Dominica",
+        "code": "DM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DM.svg"
+    },
+    {
+        "name": "Dominican Republic",
+        "code": "DO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DO.svg"
+    },
+    {
+        "name": "Algeria",
+        "code": "DZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/DZ.svg"
+    },
+    {
+        "name": "Ceuta & Melilla",
+        "code": "EA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EA.svg"
+    },
+    {
+        "name": "Ecuador",
+        "code": "EC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EC.svg"
+    },
+    {
+        "name": "Estonia",
+        "code": "EE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EE.svg"
+    },
+    {
+        "name": "Egypt",
+        "code": "EG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EG.svg"
+    },
+    {
+        "name": "Western Sahara",
+        "code": "EH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EH.svg"
+    },
+    {
+        "name": "Eritrea",
+        "code": "ER",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ER.svg"
+    },
+    {
+        "name": "Spain",
+        "code": "ES",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ES.svg"
+    },
+    {
+        "name": "Ethiopia",
+        "code": "ET",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ET.svg"
+    },
+    {
+        "name": "European Union",
+        "code": "EU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/EU.svg"
+    },
+    {
+        "name": "Finland",
+        "code": "FI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FI.svg"
+    },
+    {
+        "name": "Fiji",
+        "code": "FJ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FJ.svg"
+    },
+    {
+        "name": "Falkland Islands",
+        "code": "FK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FK.svg"
+    },
+    {
+        "name": "Micronesia",
+        "code": "FM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FM.svg"
+    },
+    {
+        "name": "Faroe Islands",
+        "code": "FO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FO.svg"
+    },
+    {
+        "name": "France",
+        "code": "FR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/FR.svg"
+    },
+    {
+        "name": "Gabon",
+        "code": "GA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GA.svg"
     },
     {
         "name": "United Kingdom",
-        "isd_code": "+44",
-        "code": "GB"
+        "code": "GB",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg"
+    },
+    {
+        "name": "Grenada",
+        "code": "GD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GD.svg"
+    },
+    {
+        "name": "Georgia",
+        "code": "GE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GE.svg"
+    },
+    {
+        "name": "French Guiana",
+        "code": "GF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GF.svg"
+    },
+    {
+        "name": "Guernsey",
+        "code": "GG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GG.svg"
+    },
+    {
+        "name": "Ghana",
+        "code": "GH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GH.svg"
+    },
+    {
+        "name": "Gibraltar",
+        "code": "GI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GI.svg"
+    },
+    {
+        "name": "Greenland",
+        "code": "GL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GL.svg"
+    },
+    {
+        "name": "Gambia",
+        "code": "GM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GM.svg"
+    },
+    {
+        "name": "Guinea",
+        "code": "GN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GN.svg"
+    },
+    {
+        "name": "Guadeloupe",
+        "code": "GP",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GP.svg"
+    },
+    {
+        "name": "Equatorial Guinea",
+        "code": "GQ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GQ.svg"
+    },
+    {
+        "name": "Greece",
+        "code": "GR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GR.svg"
+    },
+    {
+        "name": "South Georgia & South Sandwich Islands",
+        "code": "GS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GS.svg"
+    },
+    {
+        "name": "Guatemala",
+        "code": "GT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GT.svg"
+    },
+    {
+        "name": "Guam",
+        "code": "GU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GU.svg"
+    },
+    {
+        "name": "Guinea-Bissau",
+        "code": "GW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GW.svg"
+    },
+    {
+        "name": "Guyana",
+        "code": "GY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GY.svg"
+    },
+    {
+        "name": "Hong Kong SAR China",
+        "code": "HK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/HK.svg"
+    },
+    {
+        "name": "Heard & McDonald Islands",
+        "code": "HM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/HM.svg"
+    },
+    {
+        "name": "Honduras",
+        "code": "HN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/HN.svg"
+    },
+    {
+        "name": "Croatia",
+        "code": "HR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/HR.svg"
+    },
+    {
+        "name": "Haiti",
+        "code": "HT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/HT.svg"
+    },
+    {
+        "name": "Hungary",
+        "code": "HU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/HU.svg"
+    },
+    {
+        "name": "Canary Islands",
+        "code": "IC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IC.svg"
+    },
+    {
+        "name": "Indonesia",
+        "code": "ID",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ID.svg"
+    },
+    {
+        "name": "Ireland",
+        "code": "IE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IE.svg"
+    },
+    {
+        "name": "Israel",
+        "code": "IL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IL.svg"
+    },
+    {
+        "name": "Isle of Man",
+        "code": "IM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IM.svg"
+    },
+    {
+        "name": "India",
+        "code": "IN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IN.svg"
+    },
+    {
+        "name": "British Indian Ocean Territory",
+        "code": "IO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IO.svg"
+    },
+    {
+        "name": "Iraq",
+        "code": "IQ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IQ.svg"
+    },
+    {
+        "name": "Iran",
+        "code": "IR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IR.svg"
+    },
+    {
+        "name": "Iceland",
+        "code": "IS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IS.svg"
+    },
+    {
+        "name": "Italy",
+        "code": "IT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IT.svg"
+    },
+    {
+        "name": "Jersey",
+        "code": "JE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/JE.svg"
+    },
+    {
+        "name": "Jamaica",
+        "code": "JM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/JM.svg"
+    },
+    {
+        "name": "Jordan",
+        "code": "JO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/JO.svg"
+    },
+    {
+        "name": "Japan",
+        "code": "JP",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/JP.svg"
+    },
+    {
+        "name": "Kenya",
+        "code": "KE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KE.svg"
+    },
+    {
+        "name": "Kyrgyzstan",
+        "code": "KG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KG.svg"
+    },
+    {
+        "name": "Cambodia",
+        "code": "KH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KH.svg"
+    },
+    {
+        "name": "Kiribati",
+        "code": "KI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KI.svg"
+    },
+    {
+        "name": "Comoros",
+        "code": "KM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KM.svg"
+    },
+    {
+        "name": "St. Kitts & Nevis",
+        "code": "KN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KN.svg"
+    },
+    {
+        "name": "North Korea",
+        "code": "KP",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KP.svg"
+    },
+    {
+        "name": "South Korea",
+        "code": "KR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KR.svg"
+    },
+    {
+        "name": "Kuwait",
+        "code": "KW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KW.svg"
+    },
+    {
+        "name": "Cayman Islands",
+        "code": "KY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KY.svg"
+    },
+    {
+        "name": "Kazakhstan",
+        "code": "KZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/KZ.svg"
+    },
+    {
+        "name": "Laos",
+        "code": "LA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LA.svg"
+    },
+    {
+        "name": "Lebanon",
+        "code": "LB",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LB.svg"
+    },
+    {
+        "name": "St. Lucia",
+        "code": "LC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LC.svg"
+    },
+    {
+        "name": "Liechtenstein",
+        "code": "LI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LI.svg"
+    },
+    {
+        "name": "Sri Lanka",
+        "code": "LK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LK.svg"
+    },
+    {
+        "name": "Liberia",
+        "code": "LR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LR.svg"
+    },
+    {
+        "name": "Lesotho",
+        "code": "LS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LS.svg"
+    },
+    {
+        "name": "Lithuania",
+        "code": "LT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LT.svg"
+    },
+    {
+        "name": "Luxembourg",
+        "code": "LU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LU.svg"
+    },
+    {
+        "name": "Latvia",
+        "code": "LV",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LV.svg"
+    },
+    {
+        "name": "Libya",
+        "code": "LY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/LY.svg"
+    },
+    {
+        "name": "Morocco",
+        "code": "MA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MA.svg"
+    },
+    {
+        "name": "Monaco",
+        "code": "MC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MC.svg"
+    },
+    {
+        "name": "Moldova",
+        "code": "MD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MD.svg"
+    },
+    {
+        "name": "Montenegro",
+        "code": "ME",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ME.svg"
+    },
+    {
+        "name": "St. Martin",
+        "code": "MF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MF.svg"
+    },
+    {
+        "name": "Madagascar",
+        "code": "MG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MG.svg"
+    },
+    {
+        "name": "Marshall Islands",
+        "code": "MH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MH.svg"
+    },
+    {
+        "name": "North Macedonia",
+        "code": "MK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MK.svg"
+    },
+    {
+        "name": "Mali",
+        "code": "ML",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ML.svg"
+    },
+    {
+        "name": "Myanmar (Burma)",
+        "code": "MM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MM.svg"
+    },
+    {
+        "name": "Mongolia",
+        "code": "MN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MN.svg"
+    },
+    {
+        "name": "Macao SAR China",
+        "code": "MO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MO.svg"
+    },
+    {
+        "name": "Northern Mariana Islands",
+        "code": "MP",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MP.svg"
+    },
+    {
+        "name": "Martinique",
+        "code": "MQ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MQ.svg"
+    },
+    {
+        "name": "Mauritania",
+        "code": "MR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MR.svg"
+    },
+    {
+        "name": "Montserrat",
+        "code": "MS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MS.svg"
+    },
+    {
+        "name": "Malta",
+        "code": "MT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MT.svg"
+    },
+    {
+        "name": "Mauritius",
+        "code": "MU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MU.svg"
+    },
+    {
+        "name": "Maldives",
+        "code": "MV",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MV.svg"
+    },
+    {
+        "name": "Malawi",
+        "code": "MW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MW.svg"
+    },
+    {
+        "name": "Mexico",
+        "code": "MX",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MX.svg"
+    },
+    {
+        "name": "Malaysia",
+        "code": "MY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MY.svg"
+    },
+    {
+        "name": "Mozambique",
+        "code": "MZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/MZ.svg"
+    },
+    {
+        "name": "Namibia",
+        "code": "NA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NA.svg"
+    },
+    {
+        "name": "New Caledonia",
+        "code": "NC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NC.svg"
+    },
+    {
+        "name": "Niger",
+        "code": "NE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NE.svg"
+    },
+    {
+        "name": "Norfolk Island",
+        "code": "NF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NF.svg"
+    },
+    {
+        "name": "Nigeria",
+        "code": "NG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NG.svg"
+    },
+    {
+        "name": "Nicaragua",
+        "code": "NI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NI.svg"
+    },
+    {
+        "name": "Netherlands",
+        "code": "NL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NL.svg"
+    },
+    {
+        "name": "Norway",
+        "code": "NO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NO.svg"
+    },
+    {
+        "name": "Nepal",
+        "code": "NP",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NP.svg"
+    },
+    {
+        "name": "Nauru",
+        "code": "NR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NR.svg"
+    },
+    {
+        "name": "Niue",
+        "code": "NU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NU.svg"
+    },
+    {
+        "name": "New Zealand",
+        "code": "NZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/NZ.svg"
+    },
+    {
+        "name": "Oman",
+        "code": "OM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/OM.svg"
+    },
+    {
+        "name": "Panama",
+        "code": "PA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PA.svg"
+    },
+    {
+        "name": "Peru",
+        "code": "PE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PE.svg"
+    },
+    {
+        "name": "French Polynesia",
+        "code": "PF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PF.svg"
+    },
+    {
+        "name": "Papua New Guinea",
+        "code": "PG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PG.svg"
+    },
+    {
+        "name": "Philippines",
+        "code": "PH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PH.svg"
+    },
+    {
+        "name": "Pakistan",
+        "code": "PK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PK.svg"
+    },
+    {
+        "name": "Poland",
+        "code": "PL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PL.svg"
+    },
+    {
+        "name": "St. Pierre & Miquelon",
+        "code": "PM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PM.svg"
+    },
+    {
+        "name": "Pitcairn Islands",
+        "code": "PN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PN.svg"
+    },
+    {
+        "name": "Puerto Rico",
+        "code": "PR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PR.svg"
+    },
+    {
+        "name": "Palestinian Territories",
+        "code": "PS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PS.svg"
+    },
+    {
+        "name": "Portugal",
+        "code": "PT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PT.svg"
+    },
+    {
+        "name": "Palau",
+        "code": "PW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PW.svg"
+    },
+    {
+        "name": "Paraguay",
+        "code": "PY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PY.svg"
+    },
+    {
+        "name": "Qatar",
+        "code": "QA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/QA.svg"
+    },
+    {
+        "name": "Réunion",
+        "code": "RE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RE.svg"
+    },
+    {
+        "name": "Romania",
+        "code": "RO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RO.svg"
+    },
+    {
+        "name": "Serbia",
+        "code": "RS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RS.svg"
+    },
+    {
+        "name": "Russia",
+        "code": "RU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RU.svg"
+    },
+    {
+        "name": "Rwanda",
+        "code": "RW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/RW.svg"
+    },
+    {
+        "name": "Saudi Arabia",
+        "code": "SA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SA.svg"
+    },
+    {
+        "name": "Solomon Islands",
+        "code": "SB",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SB.svg"
+    },
+    {
+        "name": "Seychelles",
+        "code": "SC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SC.svg"
+    },
+    {
+        "name": "Sudan",
+        "code": "SD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SD.svg"
+    },
+    {
+        "name": "Sweden",
+        "code": "SE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SE.svg"
+    },
+    {
+        "name": "Singapore",
+        "code": "SG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SG.svg"
+    },
+    {
+        "name": "St. Helena",
+        "code": "SH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SH.svg"
+    },
+    {
+        "name": "Slovenia",
+        "code": "SI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SI.svg"
+    },
+    {
+        "name": "Svalbard & Jan Mayen",
+        "code": "SJ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SJ.svg"
+    },
+    {
+        "name": "Slovakia",
+        "code": "SK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SK.svg"
+    },
+    {
+        "name": "Sierra Leone",
+        "code": "SL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SL.svg"
+    },
+    {
+        "name": "San Marino",
+        "code": "SM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SM.svg"
+    },
+    {
+        "name": "Senegal",
+        "code": "SN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SN.svg"
+    },
+    {
+        "name": "Somalia",
+        "code": "SO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SO.svg"
+    },
+    {
+        "name": "Suriname",
+        "code": "SR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SR.svg"
+    },
+    {
+        "name": "South Sudan",
+        "code": "SS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SS.svg"
+    },
+    {
+        "name": "São Tomé & Príncipe",
+        "code": "ST",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ST.svg"
+    },
+    {
+        "name": "El Salvador",
+        "code": "SV",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SV.svg"
+    },
+    {
+        "name": "Sint Maarten",
+        "code": "SX",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SX.svg"
+    },
+    {
+        "name": "Syria",
+        "code": "SY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SY.svg"
+    },
+    {
+        "name": "Eswatini",
+        "code": "SZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SZ.svg"
+    },
+    {
+        "name": "Tristan da Cunha",
+        "code": "TA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TA.svg"
+    },
+    {
+        "name": "Turks & Caicos Islands",
+        "code": "TC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TC.svg"
+    },
+    {
+        "name": "Chad",
+        "code": "TD",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TD.svg"
+    },
+    {
+        "name": "French Southern Territories",
+        "code": "TF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TF.svg"
+    },
+    {
+        "name": "Togo",
+        "code": "TG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TG.svg"
+    },
+    {
+        "name": "Thailand",
+        "code": "TH",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TH.svg"
+    },
+    {
+        "name": "Tajikistan",
+        "code": "TJ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TJ.svg"
+    },
+    {
+        "name": "Tokelau",
+        "code": "TK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TK.svg"
+    },
+    {
+        "name": "Timor-Leste",
+        "code": "TL",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TL.svg"
+    },
+    {
+        "name": "Turkmenistan",
+        "code": "TM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TM.svg"
+    },
+    {
+        "name": "Tunisia",
+        "code": "TN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TN.svg"
+    },
+    {
+        "name": "Tonga",
+        "code": "TO",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TO.svg"
+    },
+    {
+        "name": "Turkey",
+        "code": "TR",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TR.svg"
+    },
+    {
+        "name": "Trinidad & Tobago",
+        "code": "TT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TT.svg"
+    },
+    {
+        "name": "Tuvalu",
+        "code": "TV",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TV.svg"
+    },
+    {
+        "name": "Taiwan",
+        "code": "TW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TW.svg"
+    },
+    {
+        "name": "Tanzania",
+        "code": "TZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/TZ.svg"
+    },
+    {
+        "name": "Ukraine",
+        "code": "UA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/UA.svg"
+    },
+    {
+        "name": "Uganda",
+        "code": "UG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/UG.svg"
+    },
+    {
+        "name": "U.S. Outlying Islands",
+        "code": "UM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/UM.svg"
+    },
+    {
+        "name": "United Nations",
+        "code": "UN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/UN.svg"
     },
     {
         "name": "United States",
-        "isd_code": "+1",
-        "code": "US"
+        "code": "US",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/US.svg"
     },
     {
         "name": "Uruguay",
-        "isd_code": "+598",
-        "code": "UY"
+        "code": "UY",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/UY.svg"
     },
     {
         "name": "Uzbekistan",
-        "isd_code": "+998",
-        "code": "UZ"
+        "code": "UZ",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/UZ.svg"
     },
     {
-        "name": "Vanuatu",
-        "isd_code": "+678",
-        "code": "VU"
+        "name": "Vatican City",
+        "code": "VA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VA.svg"
     },
     {
-        "name": "Venezuela, Bolivarian Republic of Venezuela",
-        "isd_code": "+58",
-        "code": "VE"
+        "name": "St. Vincent & Grenadines",
+        "code": "VC",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VC.svg"
+    },
+    {
+        "name": "Venezuela",
+        "code": "VE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VE.svg"
+    },
+    {
+        "name": "British Virgin Islands",
+        "code": "VG",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VG.svg"
+    },
+    {
+        "name": "U.S. Virgin Islands",
+        "code": "VI",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VI.svg"
     },
     {
         "name": "Vietnam",
-        "isd_code": "+84",
-        "code": "VN"
+        "code": "VN",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VN.svg"
     },
     {
-        "name": "Virgin Islands, British",
-        "isd_code": "+1284",
-        "code": "VG"
+        "name": "Vanuatu",
+        "code": "VU",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/VU.svg"
     },
     {
-        "name": "Virgin Islands, U.S.",
-        "isd_code": "+1340",
-        "code": "VI"
+        "name": "Wallis & Futuna",
+        "code": "WF",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/WF.svg"
     },
     {
-        "name": "Wallis and Futuna",
-        "isd_code": "+681",
-        "code": "WF"
+        "name": "Samoa",
+        "code": "WS",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/WS.svg"
+    },
+    {
+        "name": "Kosovo",
+        "code": "XK",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/XK.svg"
     },
     {
         "name": "Yemen",
-        "isd_code": "+967",
-        "code": "YE"
+        "code": "YE",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/YE.svg"
+    },
+    {
+        "name": "Mayotte",
+        "code": "YT",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/YT.svg"
+    },
+    {
+        "name": "South Africa",
+        "code": "ZA",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ZA.svg"
     },
     {
         "name": "Zambia",
-        "isd_code": "+260",
-        "code": "ZM"
+        "code": "ZM",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ZM.svg"
     },
     {
         "name": "Zimbabwe",
-        "isd_code": "+263",
-        "code": "ZW"
+        "code": "ZW",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ZW.svg"
+    },
+    {
+        "name": "England",
+        "code": "ENGLAND",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/ENGLAND.svg"
+    },
+    {
+        "name": "Scotland",
+        "code": "SCOTLAND",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/SCOTLAND.svg"
+    },
+    {
+        "name": "Wales",
+        "code": "WALES",
+        "image": "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/WALES.svg"
     }
 ]

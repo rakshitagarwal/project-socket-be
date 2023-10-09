@@ -1,5 +1,6 @@
 import { z } from "zod";
 import userSchemas from "../user-schemas";
+import { locationSchemas } from "../../location/location-schema";
 
 export interface Iuser {
     first_name: string;
@@ -72,20 +73,33 @@ export interface IuserPagination {
     limit: string;
     page: string;
     search?: string;
+    _sort?: string;
+    _order?: string;
 }
 export interface IuserPaginationQuery {
     limit: number;
     page: number;
-    filter?: Array<object>;
+    _sort?: string;
+    _order?: string;
+    search?: string;
+    filter: Array<object>;
 }
 
 export type IWalletTx = z.infer<typeof userSchemas.ZPlayerBalance>;
 export type IDeductPlx = z.infer<typeof userSchemas.ZDeductPlays>;
+export type ITransferPlx = z.infer<typeof userSchemas.ZTransferPlays>;
+
 export interface ILastPlayTrx {
     auction_id: string;
     player_id: string;
     plays: number;
     spends_on: Ispend_on;
+}
+
+export interface ITransfer {
+    id: string;
+    plays: number;
+    transfer: string;
 }
 
 export interface IPlayerBidLog {
@@ -95,11 +109,22 @@ export interface IPlayerBidLog {
     bid_price: number;
     remaining_seconds: number;
     player_bot_id?: string;
-    created_by: Date;
+    created_at: Date;
     player_name: string;
     profile_image: string;
 }
 
+export interface IminAuctionBidLog {
+    is_unique: boolean;
+    is_lowest?: boolean;
+    is_highest?: boolean;
+    created_at: Date;
+    player_name: string;
+    profile_image: string;
+    player_id: string;
+    auction_id: string;
+    bid_price: number;
+}
 export interface IPlayerActionWinner {
     player_id: string;
     auction_id: string;
@@ -121,7 +146,12 @@ export enum Ispend_on {
     BUY_PLAYS = "BUY_PLAYS",
     REFUND_PLAYS = "REFUND_PLAYS",
     BID_PLAYS = "BID_PLAYS",
-    LAST_PLAYS = "LAST_PLAYS",
+    REFERRAL_PLAYS = "REFERRAL_PLAYS",
+    AUCTION_REGISTER_PLAYS = "AUCTION_REGISTER_PLAYS",
+    EXTRA_BIGPLAYS = "EXTRA_BIGPLAYS",
+    JOINING_BONUS = "JOINING_BONUS",
+    TRANSFER_PLAYS = "TRANSFER_PLAYS",
+    RECEIVED_PLAYS = "RECEIVED_PLAYS",
 }
 
 export type IMultipleUsers = IupdateUser & {
@@ -131,3 +161,18 @@ export type IMultipleUsers = IupdateUser & {
     role_id: string;
     referral_code: string;
 };
+
+export interface IGetAllUsers {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    country: string;
+    avatar: string;
+    mobile_no: string;
+    Plays_In_Wallet: number;
+    Auction_Won: number;
+    Player_Participated: number;
+}
+export type ICountry = z.infer<typeof locationSchemas.countries>;
+export type IplayerTransactionHistory = z.infer<typeof userSchemas.transactionHistoryPagination>;
