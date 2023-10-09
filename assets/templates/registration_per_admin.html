@@ -14,13 +14,16 @@
                 text-decoration: none;
                 outline: none;
             }
+
             @media (max-width: 649px) {
                 .o_col-full {
                     max-width: 100% !important;
                 }
+
                 .o_col-half {
                     max-width: 50% !important;
                 }
+
                 .o_hide-lg {
                     display: inline-block !important;
                     font-size: inherit !important;
@@ -30,6 +33,7 @@
                     width: auto !important;
                     visibility: visible !important;
                 }
+
                 .o_hide-xs,
                 .o_hide-xs.o_col_i {
                     display: none !important;
@@ -41,56 +45,70 @@
                     visibility: hidden !important;
                     height: 0 !important;
                 }
+
                 .o_xs-center {
                     text-align: center !important;
                 }
+
                 .o_xs-left {
                     text-align: left !important;
                 }
+
                 .o_xs-right {
                     text-align: left !important;
                 }
+
                 table.o_xs-left {
                     margin-left: 0 !important;
                     margin-right: auto !important;
                     float: none !important;
                 }
+
                 table.o_xs-right {
                     margin-left: auto !important;
                     margin-right: 0 !important;
                     float: none !important;
                 }
+
                 table.o_xs-center {
                     margin-left: auto !important;
                     margin-right: auto !important;
                     float: none !important;
                 }
+
                 h1.o_heading {
                     font-size: 32px !important;
                     line-height: 41px !important;
                 }
+
                 h2.o_heading {
                     font-size: 26px !important;
                     line-height: 37px !important;
                 }
+
                 h3.o_heading {
                     font-size: 20px !important;
                     line-height: 30px !important;
                 }
+
                 .o_xs-py-md {
                     padding-top: 24px !important;
                     padding-bottom: 24px !important;
                 }
+
                 .o_xs-pt-xs {
                     padding-top: 8px !important;
                 }
+
                 .o_xs-pb-xs {
                     padding-bottom: 8px !important;
                 }
+
                 .sm-play-big {
                     font-size: 5px;
                 }
             }
+
             @media screen {
                 @font-face {
                     font-family: "Roboto";
@@ -103,6 +121,7 @@
                         U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F,
                         U+A720-A7FF;
                 }
+
                 @font-face {
                     font-family: "Roboto";
                     font-style: normal;
@@ -114,6 +133,7 @@
                         U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
                         U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
                 }
+
                 @font-face {
                     font-family: "Roboto";
                     font-style: normal;
@@ -125,6 +145,7 @@
                         U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F,
                         U+A720-A7FF;
                 }
+
                 @font-face {
                     font-family: "Roboto";
                     font-style: normal;
@@ -136,15 +157,18 @@
                         U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
                         U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
                 }
+
                 .o_sans,
                 .o_heading {
                     font-family: "Roboto", sans-serif !important;
                 }
+
                 .o_heading,
                 strong,
                 b {
                     font-weight: 700 !important;
                 }
+
                 a[x-apple-data-detectors] {
                     color: inherit !important;
                     text-decoration: none !important;
@@ -152,6 +176,7 @@
             }
         </style>
     </head>
+
     <body
         class="o_body o_bg-light"
         style="
@@ -393,9 +418,10 @@
                                                     color: #242b3d;
                                                     padding-inline: 80px;
                                                 "
-                                                >Hi,</span
+                                                >Dear {{userName}},</span
                                             >
                                         </p>
+                                        <br />
                                         <p
                                             style="
                                                 margin-top: 0px;
@@ -407,14 +433,29 @@
                                                 style="
                                                     font-family: Helvetica,
                                                         Arial, sans-serif;
-                                                    font-weight: bold;
+                                                    font-weight: 400 !important;
                                                     margin-top: 0px;
                                                     margin-bottom: 4px;
                                                     color: #242b3d;
                                                     padding-inline: 80px;
                                                 "
-                                                >{{message}}</span
                                             >
+                                                We're delighted to share that
+                                                registrations for the upcoming
+                                                <span
+                                                    style="
+                                                        font-weight: 600 !important;
+                                                    "
+                                                    >{{message}}</span
+                                                >. This remarkable increase
+                                                signifies significant interest
+                                                and sets the stage for an
+                                                exceptionally competitive
+                                                auction. We're dedicated to
+                                                ensuring the event's success and
+                                                will keep you updated on
+                                                developments
+                                            </span>
                                         </p>
                                     </td>
                                 </tr>
@@ -564,25 +605,25 @@
                                                 </td>
                                             </tr>
                                         </table>
-                                        <a
-                                            class="o_text-light o_underline"
-                                            href="https://www.globalvoxinc.com/"
+                                        <p
+                                            class="o_mb"
                                             style="
-                                                text-decoration: none;
-                                                outline: none;
-                                                color: #82899a;
+                                                margin-top: 15px;
+                                                margin-bottom: 0px;
                                             "
-                                            ><p
-                                                class="o_mb"
-                                                style="
-                                                    margin-top: 15px;
-                                                    margin-bottom: 0px;
-                                                "
-                                            >
-                                                Bigdeal is a venture of
-                                                GlobalVox
-                                            </p></a
                                         >
+                                            BigDeal is a venture of
+                                            <a
+                                                class="o_text-light o_underline"
+                                                href="https://www.globalvoxinc.com/"
+                                                style="
+                                                    text-decoration: none;
+                                                    outline: none;
+                                                    color: #0000ff;
+                                                "
+                                                ><u>GlobalVox</u>
+                                            </a>
+                                        </p>
                                     </td>
                                 </tr>
                             </tbody>

@@ -8,6 +8,9 @@ import isAuthenticated from "../../middlewares/authentication";
 
 export const userRouter: Router = Router();
 
+
+userRouter.get(ENDPOINTS.PLAYER_IMAGE, [isAuthenticated], userHandlers.getPlayerImages)
+
 userRouter.post(
     ENDPOINTS.REGISTER,
     [validateRequest.body(userSchemas.register)],
@@ -100,3 +103,42 @@ userRouter.post(
     [isAuthenticated, validateRequest.body(userSchemas.ZDeductPlays)],
     asyncHandler(userHandlers.deductPlays)
 );
+
+userRouter.get(
+    ENDPOINTS.BASE + ENDPOINTS.TRANSFER_PLAYS,
+    [isAuthenticated, validateRequest.body(userSchemas.ZPlayerEmail)],
+    asyncHandler(userHandlers.verifyUserDetails)
+);
+
+userRouter.post(
+    ENDPOINTS.BASE + ENDPOINTS.TRANSFER_PLAYS,
+    [isAuthenticated, validateRequest.body(userSchemas.ZTransferPlays)],
+    asyncHandler(userHandlers.transferPlays)
+);
+
+userRouter.post(
+    ENDPOINTS.RESEND_OTP,
+    validateRequest.body(userSchemas.resendOtp),
+    asyncHandler(userHandlers.resendOtpToUser)
+);
+
+userRouter.patch(
+    ENDPOINTS.BASE + ENDPOINTS.USER_BLOCK,
+    [
+        isAuthenticated,
+        validateRequest.params(userSchemas.ZPlayerId),
+        validateRequest.body(userSchemas.updateUserBlock),
+    ],
+    asyncHandler(userHandlers.userBlockStatus)
+);
+
+userRouter.get(
+    ENDPOINTS.PLAYER_TRANSACTION,
+    [
+        isAuthenticated,
+        validateRequest.params(userSchemas.ZPlayerId),
+        validateRequest.query(userSchemas.transactionHistoryPagination),
+    ],
+    asyncHandler(userHandlers.playerTransactionHistory)
+);
+

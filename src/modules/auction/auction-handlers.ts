@@ -157,6 +157,73 @@ const auctionListing = async (req: Request, res: Response) => {
     res.status(response.code).json(response);
 };
 
+/**
+ * Auction retrieve By Id (Total)
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ */
+const getByIdTotalAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.getByIdTotalAuction(req.params.id as string);
+
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
+};
+
+/**
+ * Listing of the auction with registered Total
+ * @param {Request} req - Request
+ * @param {Response} res - Response
+ */
+const auctionListingTotal = async (req: Request, res: Response) => {
+    const response = await auctionService.auctionListsTotal(
+        req.query as unknown as IAuctionListing
+    );
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
+};
+
+
+
+/**
+ * Total auction
+ * @param {Request} _req - Request
+ * @param {Response} res - Response
+ */
+const auctionTotal = async (_req: Request, res: Response) => {
+    const response = await auctionService.auctionTotal();
+    res.status(response.code).json(
+        JSON.parse(
+            JSON.stringify(response, (_key, value) =>
+                typeof value === "bigint" ? +value.toString() : value
+            )
+        )
+    );
+};
+
+/**
+ * Get all auctions for a grid with pagination.
+ * @param {import("express").Request} req - The Express.js request object.
+ * @param {import("express").Response} res - The Express.js response object.
+ * @returns {Promise<void>} A Promise that resolves when the response is sent.
+ */
+const getAllAuctionforGrid= async(req: Request, res: Response)=>{
+    const response = await auctionService.getAllAuctionforGrid(
+        req.query as unknown as IPagination
+    );
+    res.status(response.code).json(response);
+}
+
+
 export const auctionHandler = {
     create,
     getById,
@@ -171,4 +238,8 @@ export const auctionHandler = {
     purchase,
     startSimulation,
     auctionListing,
+    getByIdTotalAuction,
+    auctionListingTotal,
+    auctionTotal,
+    getAllAuctionforGrid
 };

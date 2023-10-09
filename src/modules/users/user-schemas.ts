@@ -1,4 +1,10 @@
 import { z } from "zod";
+import { userImages } from "../../common/constants";
+const OTP_TYPE = [
+    "email_verification",
+    "login_type",
+    "forget_password",
+] as const;
 const register = z
     .object({
         first_name: z
@@ -27,8 +33,8 @@ const register = z
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
-        applied_referral: z.string({ invalid_type_error: "applied referral must be string" })
-            .min(7)
+        applied_referral: z
+            .string()
             .optional(),
     })
     .strict();
@@ -36,7 +42,7 @@ const register = z
 const emailVerifcation = z
     .object({
         otp: z.string({
-            invalid_type_error: "otp must be string",
+            invalid_type_error: "otp must be number",
             required_error: "otp is required",
         }),
         email: z
@@ -47,9 +53,10 @@ const emailVerifcation = z
             .email({ message: "Invalid email address" })
             .trim()
             .toLowerCase(),
-        otp_type: z
-            .string({ invalid_type_error: "otp_type must be string" })
-            .optional(),
+        otp_type: z.enum(OTP_TYPE, {
+            required_error: "otp_type is required",
+            invalid_type_error: "otp_type must be string",
+        }),
     })
     .strict();
 
@@ -102,6 +109,7 @@ const updateUser = z
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
+        avatar: z.enum([...userImages]).optional(),
     })
     .strict();
 
@@ -167,8 +175,19 @@ const pagination = z
             .optional(),
         search: z
             .string()
-            .regex(/^[a-zA-Z0-9._-]+$/)
+            .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
             .optional(),
+        _sort: z
+            .enum([
+                "first_name",
+                "email",
+                "country",
+                "plays_in_wallet",
+                "auction_won",
+                "player_participated",
+            ])
+            .optional(),
+        _order: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
 
@@ -234,9 +253,20 @@ const ZPlayerId = z.object({
         }),
 });
 
+const ZPlayerEmail = z.object({
+    email: z
+        .string({
+            required_error: "email is required",
+            invalid_type_error: "email must be string",
+        })
+        .email({ message: "Invalid email address" })
+        .trim()
+        .toLowerCase()
+});
+
 const ZDeductPlays = z.object({
     plays: z.number({
-        required_error: "plays is required!",
+        required_error: "plays ispend_ons required!",
         invalid_type_error: "plays type should be number!",
     }),
     player_id: z
@@ -249,6 +279,75 @@ const ZDeductPlays = z.object({
         }),
 });
 
+const ZTransferPlays = z.object({
+    id: z
+        .string({
+            invalid_type_error: "id must be string!",
+            required_error: "id is required!",
+        })
+        .uuid({
+            message: "id not in a proper format!",
+        }),
+    email: z
+        .string({
+            required_error: "email is required",
+            invalid_type_error: "email must be string",
+        })
+        .email({ message: "Invalid email address" })
+        .trim()
+        .toLowerCase(),
+    plays: z
+        .number({
+            required_error: "plays is required!",
+            invalid_type_error: "plays type should be number!",
+        })
+        .min(1),
+});
+
+const resendOtp = z.object({
+    email: z
+        .string({
+            required_error: "email is required",
+            invalid_type_error: "email must be string",
+        })
+        .email({ message: "Invalid email address" })
+        .trim()
+        .toLowerCase(),
+    otp_type: z.enum(OTP_TYPE, {
+        required_error: "otp_type is required",
+        invalid_type_error: "otp_type must be string",
+    }),
+});
+
+const updateUserBlock = z
+    .object({
+        status: z
+            .boolean({ invalid_type_error: "status must be string" })
+            .optional(),
+    })
+    .strict();
+
+const transactionHistoryPagination = z
+    .object({
+        page: z
+            .string({ invalid_type_error: "page must be string" })
+            .optional().default("0"),
+        limit: z
+            .string({ invalid_type_error: "limit must be string" })
+            .optional().default("10"),
+        spend_on: z
+            .enum(["BUY_PLAYS",
+                "REFUND_PLAYS",
+                "BID_PLAYS",
+                "REFERRAL_PLAYS",
+                "AUCTION_REGISTER_PLAYS",
+                "EXTRA_BIGPLAYS",
+                "JOINING_BONUS",
+                "TRANSFER_PLAYS",
+                "RECEIVED_PLAYS"])
+            .optional(),
+    })
+    .strict();
 const userSchemas = {
     register,
     emailVerifcation,
@@ -262,7 +361,12 @@ const userSchemas = {
     pagination,
     ZPlayerBalance,
     ZPlayerId,
+    ZPlayerEmail,
     ZDeductPlays,
+    ZTransferPlays,
+    resendOtp,
+    updateUserBlock,
+    transactionHistoryPagination
 };
 
 export default userSchemas;

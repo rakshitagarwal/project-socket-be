@@ -2,7 +2,11 @@ import { AppGlobal } from "../../utils/socket-service";
 import redisClient from "../../config/redis";
 import { bidRequestValidator } from "../../middlewares/validateRequest";
 import { auctionSchemas } from "./auction-schemas";
-import { IBidAuction } from "../../middlewares/typings/middleware-types";
+import {
+    IBidAuction,
+    IMinMaxAuction,
+    IminMaxResult,
+} from "../../middlewares/typings/middleware-types";
 import eventService, { auctionClosed } from "../../utils/event-service";
 import {
     NODE_EVENT_SERVICE,
@@ -12,6 +16,9 @@ import {
 import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import userQueries from "../users/user-queries";
 import logger from "../../config/logger";
+import { auctionQueries } from "./auction-queries";
+import { auctionService } from "./auction-services";
+import { Bid } from "./typings/auction-types";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
@@ -85,6 +92,35 @@ export const auctionStart = (auctionId: string) => {
 };
 
 /**
+ * @description find avatars of active or recent bidders from auction bid history.
+ * @param {Bid[]} bidHistory - the bidhistory is passed to find unique bidders and their avatars
+ * @param {string} auctionId - The ID of the auction which is concerned when state is live
+ */
+const activeAvatars = async (bidHistory: Bid[], auctionId: string) => {
+    let avatarUnique: Bid[];
+    if(!bidHistory?.length  || bidHistory===null) {
+        avatarUnique = [];
+    } else {
+        avatarUnique = bidHistory.reduce((uniqueBids: Bid[], bid: Bid) => {
+            const foundIndex = uniqueBids.findIndex((item) => item.player_id === bid.player_id);
+            if (foundIndex === -1) {
+                uniqueBids.push({
+                    player_name: bid.player_name,
+                    player_id: bid.player_id,
+                    profile_image: bid.profile_image
+                });
+            }
+            return uniqueBids;
+        }, []);
+    }
+    socket.playerSocket.emit(SOCKET_EVENT.AUCTION_AVATARS, {
+        message: MESSAGES.SOCKET.ACTIVE_PLAYERS,
+        data: avatarUnique,
+        auction_id: auctionId,
+    });
+}
+
+/**
  * fetch  and emits recent bid history for a given auction ID.
  * @param {string} auctionId - The ID of the auction to get recent bid history for.
  * @returns {Promise<void>} - A promise that resolves after emitting bid history to the socket.
@@ -92,7 +128,8 @@ export const auctionStart = (auctionId: string) => {
 const recentBid = async (auctionId: string) => {
     const bidHistory = JSON.parse(
         (await redisClient.get(`${auctionId}:bidHistory`)) as unknown as string
-    );
+    );   
+
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_RECENT_BID, {
         message: MESSAGES.SOCKET.AUCTION_RECENT_BID,
         data: bidHistory[bidHistory.length - 1],
@@ -103,6 +140,8 @@ const recentBid = async (auctionId: string) => {
         data: bidHistory.slice(-30).reverse(),
         auctionId,
     });
+
+    await activeAvatars(bidHistory, auctionId);
 };
 
 /**
@@ -130,7 +169,7 @@ const bidTransaction = async (payload: {
         auctionInfo,
         "------------------------"
     );
-    if (!balanceInfo && !auctionInfo) {
+    if (!balanceInfo && !auctionInfo || auctionInfo===null) {
         return { status: false };
     }
     const isBalance = JSON.parse(balanceInfo || ("" as string));
@@ -152,6 +191,7 @@ const bidTransaction = async (payload: {
         countdowns[`${payload.auctionId}`] = 0;
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.AUCTION_ENDED,
+            auction_id:payload.auctionId
         });
         return { status: false };
     }
@@ -216,11 +256,10 @@ const auctionBidderHistory = async (
         recentBid(newBidData.auction_id);
         return;
     }
-    socket.playerSocket
-        .to(socketId)
-        .emit(SOCKET_EVENT.AUCTION_ERROR, {
-            message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
-        });
+    socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+        message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
+        auction_id:bidderPayload.auction_id
+    });
     return;
 };
 
@@ -248,20 +287,40 @@ export const newBiDRecieved = async (
     const { bidData } = isValid;
     const isAuction = countdowns[bidData.auction_id];
     if (!isAuction) {
-        socket.playerSocket
-            .to(socketId)
-            .emit(SOCKET_EVENT.AUCTION_ERROR, {
-                message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
-            });
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+            message: MESSAGES.SOCKET.AUCTION_NOT_FOUND,
+            auction_id:bidData.auction_id
+        });
         return;
     }
+
+    const auctionExist = JSON.parse(
+        (await redisClient.get(
+            `auction:live:${bidPayload.auction_id}`
+        )) as string
+    );
+    if (!auctionExist?.is_preRegistered) {
+        const playerExist = await auctionQueries.checkPlayerExistAuction(
+            bidPayload.auction_id,
+            bidPayload.player_id
+        );
+        if (!playerExist) {
+            await auctionService.playerOpenAuctionRegister({
+                auction_id: bidPayload.auction_id,
+                player_id: bidPayload.player_id,
+            });
+        }
+    }
+
     const isPre_register = await redisClient.get(
         `auction:pre-register:${bidData.auction_id}`
     );
     if (!isPre_register) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
-            data: bidPayload.player_id,
+            player_id: bidPayload.player_id,
+            auction_id: bidPayload.auction_id,
+            status: false,
         });
         return;
     }
@@ -269,6 +328,9 @@ export const newBiDRecieved = async (
     if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+            player_id: bidPayload.player_id,
+            auction_id:bidData.auction_id,
+            status: false,
         });
         return;
     }
@@ -289,6 +351,8 @@ export const newBiDRecieved = async (
                     : MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                 auction_id: player_bot.auction_id,
                 player_id: player_bot.player_id,
+                plays_limit: player_bot.plays_limit,
+                price_limit: player_bot?.price_limit,
                 status: player_bot.is_active,
             });
         } else {
@@ -312,6 +376,7 @@ export const newBiDRecieved = async (
     if (iscontinue[iscontinue.length - 1].player_id === bidData.player_id) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
             message: MESSAGES.SOCKET.CONTINUE_BID_NOT_ALLOWED,
+            auction_id:bidData.auction_id
         });
         return;
     }
@@ -363,5 +428,470 @@ export const randomBid = async (auction_id: string, count: number) => {
             await newBiDRecieved(botData, bot.id);
         }
         BidBotCountDown[auction_id] = Math.floor(Math.random() * (10 - 6)) + 3;
+    }
+};
+////////////////////////////////////////////  min max auction step //////////////////////////////////////////
+/**
+ * Stores auction result information in Redis, emits socket events, and updates auction state if necessary.
+ * @param {IminMaxResult} payload - The payload containing auction result data.
+ * @returns {Promise<void>} A Promise that resolves when the operation is complete.
+ */
+
+/**
+ * slice is used for latest 30 data
+ */
+const minMaxResultInfo = async (payload: IminMaxResult) => {
+    await redisClient.set(
+        `auction:result:${payload.auction_id}`,
+        JSON.stringify(payload.finalData)
+    );
+    socket.playerSocket.emit(SOCKET_EVENT.AUCTION_MIN_MAX_PERCENTAGE, {
+        message: "Total Bids",
+        data: {
+            total_bids: payload.totalBid,
+            num_of_bids: payload.bidHistory.length,
+            player_id: payload.player_id,
+            auction_id: payload.auction_id,
+            bid_percentage: Math.floor(
+                (payload.bidHistory.length * 100) / payload.totalBid
+            )>100?100:Math.floor(
+                (payload.bidHistory.length * 100) / payload.totalBid
+            ),
+        },
+    });
+    socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
+        message: "Player Bidlogs",
+        player_id: payload.player_id,
+        auction_id: payload.auction_id,
+        data: payload.playerInfo.reverse().slice(0, 30),
+    });
+    socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid", {
+        message: "Bid Added Successfully",
+        player_id: payload.player_id,
+        auction_id: payload.auction_id,
+    });
+    if (payload.winnerInfo && payload.bidHistory.length >= payload.totalBid) {
+        socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
+            message: MESSAGES.SOCKET.AUCTION_WINNER,
+            auction_id: payload.auction_id,
+            winnerInfo: payload.winnerInfo,
+        });
+        eventService.emit(NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END, {
+            auction_id: payload.auction_id,
+            winnerInfo: payload.winnerInfo,
+        });
+        eventService.emit(NODE_EVENT_SERVICE.AUCTION_STATE_UPDATE, {
+            auctionId: payload.auction_id,
+            state: AUCTION_STATE.completed,
+        });
+    }
+};
+
+/**
+ * Calculate the maximum bid in an auction, identify winners, and call the minMaxResultInfo function to store and broadcast the results.
+ * @param {IMinMaxAuction[]} bidHistory - The array of bid history objects.
+ * @param {string} socketId - The socket ID of the auction.
+ * @param {number} totalBid - The total number of bids.
+ * @param {string} auction_id - The ID of the auction.
+ * @param {string} player_id - The ID of the player.
+ * @returns {void}
+ */
+const maxAuction = async (
+    bidHistory: IMinMaxAuction[],
+    socketId: string,
+    totalBid: number,
+    auction_id: string,
+    player_id: string
+) => {
+    const highestValue = [...bidHistory].sort(
+        (a, b) => b.bid_price - a.bid_price
+    )[0];
+    const group: { [bid_prices: string]: number } = {};
+    const lowest: { [bid_prices: string]: number } = {};
+    for (const i of bidHistory) {
+        if (group[`${i.bid_price}`]) {
+            group[`${i.bid_price}`] = (group[`${i.bid_price}`] as number) + 1;
+            delete lowest[`${i.bid_price}`];
+        } else {
+            group[`${i.bid_price}`] = 1;
+            lowest[`${i.bid_price}`] = 1;
+        }
+    }
+    const sortHighestValue = Object.keys(lowest).sort((a, b) => +b - +a);
+    let winnerInfo: undefined | IMinMaxAuction;
+    const playerInfo: IMinMaxAuction[] = [];
+    const finalData = bidHistory.map((val) => {
+        val.is_unique = group[val.bid_price] === 1 ? true : false;
+        val.is_highest =
+            `${val.bid_price}` === `${sortHighestValue[0]}` ||
+            `${val.bid_price}` === highestValue?.bid_price + ""
+                ? true
+                : false;
+        if (val.is_highest && val.is_unique) {
+            winnerInfo = val;
+        }
+        if (val.player_id === player_id) {
+            playerInfo?.push(val);
+        }
+        return val;
+    });
+    minMaxResultInfo({
+        auction_id,
+        player_id,
+        winnerInfo,
+        playerInfo,
+        bidHistory,
+        totalBid,
+        finalData,
+        socketId,
+    });
+};
+
+/**
+ * Calculate the minimum bid in an auction, identify winners, and call the minMaxResultInfo function to store and broadcast the results.
+ * @param {IMinMaxAuction[]} bidHistory - The array of bid history objects.
+ * @param {string} socketId - The socket ID of the auction.
+ * @param {number} totalBid - The total number of bids.
+ * @param {string} auction_id - The ID of the auction.
+ * @param {string} player_id - The ID of the player.
+ * @returns {void}
+ */
+const minAuction = async (
+    bidHistory: IMinMaxAuction[],
+    socketId: string,
+    totalBid: number,
+    auction_id: string,
+    player_id: string
+) => {
+    const lowestValue = [...bidHistory].sort(
+        (a, b) => a.bid_price - b.bid_price
+    )[0];
+    const group: { [bid_prices: string]: number } = {};
+    const lowest: { [bid_prices: string]: number } = {};
+    for (const i of bidHistory) {
+        if (group[`${i.bid_price}`]) {
+            group[`${i.bid_price}`] = (group[`${i.bid_price}`] as number) + 1;
+            delete lowest[`${i.bid_price}`];
+        } else {
+            group[`${i.bid_price}`] = 1;
+            lowest[`${i.bid_price}`] = 1;
+        }
+    }
+    const sortlowestValue = Object.keys(lowest).sort((a, b) => +a - +b);
+    let winnerInfo: undefined | IMinMaxAuction;
+    const playerInfo: IMinMaxAuction[] = [];
+    const finalData = bidHistory.map((val) => {
+        val.is_unique = group[val.bid_price] === 1 ? true : false;
+        val.is_lowest =
+            `${val.bid_price}` === `${sortlowestValue[0]}` ||
+            `${val.bid_price}` === lowestValue?.bid_price + ""
+                ? true
+                : false;
+        if (val.is_lowest && val.is_unique) {
+            winnerInfo = val;
+        }
+        if (val.player_id === player_id) {
+            playerInfo?.push(val);
+        }
+        return val;
+    });
+    minMaxResultInfo({
+        auction_id,
+        player_id,
+        winnerInfo,
+        playerInfo,
+        bidHistory,
+        totalBid,
+        finalData,
+        socketId,
+    });
+};
+
+/**
+ * Perform a minimum-maximum bid transaction in an auction, update player balances, and store bid history.
+ * @param {IMinMaxAuction} payload - The payload containing bid transaction data.
+ * @param {string} socketId - The socket ID for communication.
+ * @returns {Promise<{ status: boolean }>} A Promise that resolves to an object with a `status` property indicating the success of the transaction.
+ */
+const minMaxTransaction = async (payload: IMinMaxAuction, socketId: string) => {
+    const [balanceInfo, auctionInfo] = await Promise.all([
+        redisClient.get("player:plays:balance"),
+        redisClient.get(`auction:live:${payload.auction_id}`),
+    ]);
+    if (!balanceInfo && !auctionInfo) {
+        return { status: false };
+    }
+    const isBalance = JSON.parse(balanceInfo || ("" as string));
+    const auctionData = JSON.parse(auctionInfo || ("" as string));
+    if (isBalance[`${payload.player_id}`] < auctionData.plays_consumed_on_bid) {
+        return { status: false };
+    }
+    socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_CURRENT_PLAYS, {
+        message: MESSAGES.SOCKET.CURRENT_PLAYS,
+        play_balance:
+            isBalance[payload.player_id] - auctionData.plays_consumed_on_bid,
+    });
+    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_DEBIT, {
+        player_id: payload.player_id,
+        plays_balance: auctionData.plays_consumed_on_bid,
+        auction_id: payload.auction_id,
+    });
+    const auctionHistory = await redisClient.get(
+        `${payload.auction_id}:bidHistory`
+    );
+    payload.created_at = new Date();
+    if (!auctionHistory || !auctionHistory.length) {
+        await redisClient.set(
+            `${payload.auction_id}:bidHistory`,
+            JSON.stringify([payload])
+        );
+    } else {
+        const historyData = JSON.parse(auctionHistory as string);
+        historyData.push(payload);
+        await redisClient.set(
+            `${payload.auction_id}:bidHistory`,
+            JSON.stringify(historyData)
+        );
+    }
+    return { status: true };
+};
+
+/**
+ * Process a bid in a minimum-maximum auction, validate the bid, update player balances, and handle auction logic based on the category type.
+ * @param {string} socketId - The socket ID for communication.
+ * @param {IMinMaxAuction} bidData - The bid data to process.
+ * @returns {void}
+ */
+export const minMaxAuctionBid = async (
+    socketId: string,
+    bidData: IMinMaxAuction
+) => {
+    const isValid = await bidRequestValidator<IMinMaxAuction>(
+        bidData,
+        auctionSchemas.ZMinMaxAuction
+    );
+    if (!isValid.status) {
+        socket.playerSocket
+            .to(socketId)
+            .emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
+        return;
+    }
+    const isAuctionLive = JSON.parse(
+        (await redisClient.get(`auction:live:${bidData.auction_id}`)) as string
+    );
+    if (!isAuctionLive) {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+            message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+            auction_id:bidData.auction_id
+        });
+        return;
+    }
+    if (bidData.bid_price <= isAuctionLive.opening_price) {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+            message: `Your Bid Must Be Greater Than ${isAuctionLive.opening_price}`,
+            auction_id:bidData.auction_id
+        });
+        return;
+    }
+    const decimalPlayes = bidData.bid_price.toString().split(".")?.[1];
+    if (bidData.bid_price.toString().includes(".") && decimalPlayes) {
+        if (decimalPlayes.toString()?.length > isAuctionLive.decimal_count) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: `Decimal Value Must Be Of ${isAuctionLive.decimal_count} Digits`,
+                auction_id:bidData.auction_id
+            });
+            return;
+        }
+    }
+    let isPlayerRegister = false;
+    if (isAuctionLive.is_preRegistered) {
+        const isPre_register = await redisClient.get(
+            `auction:pre-register:${bidData.auction_id}`
+        );
+        if (!isPre_register) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                player_id: bidData.player_id,
+                auction_id: bidData.auction_id,
+            });
+            return;
+        }
+        const preRegisterData = JSON.parse(isPre_register);
+        if (!preRegisterData[`${bidData.auction_id + bidData.player_id}`]) {
+            socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.USER_NOT_REGISTERED,
+                auction_id:bidData.auction_id
+            });
+            return;
+        }
+    } else {
+        const playerExist = await auctionQueries.checkPlayerExistAuction(
+            bidData.auction_id,
+            bidData.player_id
+        );
+        if (!playerExist) {
+            const isUser = await userQueries.fetchPlayerId(bidData.player_id);
+            if (!isUser) {
+                socket.playerSocket
+                    .to(socketId)
+                    .emit(SOCKET_EVENT.AUCTION_ERROR, {
+                        message: MESSAGES.USERS.USER_NOT_FOUND,
+                        auction_id:bidData.auction_id
+                    });
+                return;
+            }
+            isPlayerRegister = true;
+        }
+    }
+
+    const isBalance = await minMaxTransaction(bidData, socketId);
+    if (!isBalance?.status) {
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
+            message: MESSAGES.SOCKET.INSUFFICIENT_PLAYS_BALANCED,
+            auction_id:bidData.auction_id
+        });
+        return;
+    }
+    if (isPlayerRegister) {
+        eventService.emit(NODE_EVENT_SERVICE.REGISTER_NEW_PLAYER, bidData);
+    }
+    const auctionHistory = JSON.parse(
+        (await redisClient.get(`${bidData.auction_id}:bidHistory`)) as string
+    );
+
+    await activeAvatars(auctionHistory, bidData.auction_id);
+
+    const cotegory_type = isAuctionLive.auctionCategory.code;
+    if (cotegory_type === "MIN") {
+        minAuction(
+            auctionHistory,
+            socketId,
+            +isAuctionLive.total_bids,
+            bidData.auction_id,
+            bidData.player_id
+        );
+        return;
+    }
+    if (cotegory_type === "MAX") {
+        maxAuction(
+            auctionHistory,
+            socketId,
+            +isAuctionLive.total_bids,
+            bidData.auction_id,
+            bidData.player_id
+        );
+        return;
+    }
+};
+
+/**
+ * Retrieve and emit the minimum-maximum auction results for a specific player and auction to a socket.
+ * @param {Object} payload - The payload containing auction and player information.
+ * @param {string} payload.auction_id - The ID of the auction.
+ * @param {string} payload.player_id - The ID of the player.
+ * @param {string} payload.socketId - The socket ID for communication.
+ * @returns {void}
+ */
+export const getMinMaxAuctionResult = async (payload: {
+    auction_id: string;
+    player_id: string;
+    socketId: string;
+}) => {
+    const isAuctionLive = JSON.parse(
+        (await redisClient.get(`auction:live:${payload.auction_id}`)) as string
+    );
+    if (!isAuctionLive) {
+        socket.playerSocket
+            .to(payload.socketId)
+            .emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+                auction_id:payload.auction_id
+            });
+        return;
+    }
+    const auctionResult = JSON.parse(
+        (await redisClient.get(
+            `auction:result:${payload.auction_id}`
+        )) as string
+    );
+    if (!auctionResult) {
+        socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
+            message: "Player Bidlogs",
+            data: {
+                player_id: payload.player_id,
+                auction_id: payload.auction_id,
+                data: [],
+            },
+        });
+        return;
+    }
+    const playerData = auctionResult.filter(
+        (data: IMinMaxAuction) => data.player_id === payload.player_id
+    );
+    socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
+        message: "Player Bidlogs",
+        player_id: payload.player_id,
+        auction_id: payload.auction_id,
+        data: playerData.reverse().slice(0, 30),
+    });
+    return;
+};
+
+export const minMaxBidResult = async (payload: {
+    auction_id: string;
+    player_id: string;
+    socketId: string;
+}) => {
+    const isAuctionLive = JSON.parse(
+        (await redisClient.get(`auction:live:${payload.auction_id}`)) as string
+    );
+    if (!isAuctionLive) {
+        socket.playerSocket
+            .to(payload.socketId)
+            .emit(SOCKET_EVENT.AUCTION_ERROR, {
+                message: MESSAGES.SOCKET.AUCTION_NOT_LIVE,
+                auction_id:payload.auction_id
+            });
+        return;
+    }
+    const auctionHistory = JSON.parse(
+        (await redisClient.get(`${payload.auction_id}:bidHistory`)) as string
+    );
+
+    await activeAvatars(auctionHistory, payload.auction_id);
+
+    if (auctionHistory) {
+        socket.playerSocket
+            .to(payload.socketId)
+            .emit(SOCKET_EVENT.MIN_MAX_BID_PERCENTAGE, {
+                message: "Total Bids",
+                data: {
+                    total_bids: +isAuctionLive.total_bids,
+                    num_of_bids: auctionHistory.length || 0,
+                    auction_id: payload.auction_id,
+                    bid_percentage:
+                        Math.floor(
+                            (auctionHistory.length * 100) /
+                                +isAuctionLive.total_bids
+                        ) > 100
+                            ? 100
+                            : Math.floor(
+                                  (auctionHistory.length * 100) /
+                                      +isAuctionLive.total_bids
+                              ),
+                },
+            });
+    } else {
+        socket.playerSocket
+            .to(payload.socketId)
+            .emit(SOCKET_EVENT.MIN_MAX_BID_PERCENTAGE, {
+                message: "Total Bids",
+                data: {
+                    total_bids: +isAuctionLive.total_bids,
+                    num_of_bids: 0,
+                    auction_id: payload.auction_id,
+                    bid_percentage: 0,
+                },
+            });
     }
 };

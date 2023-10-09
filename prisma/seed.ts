@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
+import { AUCTION_CATEGORY } from "../src/common/constants";
+
 async function startSeed() {
     const prismaClient = new PrismaClient();
     const roles = await prismaClient.masterRole.findMany({});
@@ -43,17 +45,16 @@ async function startSeed() {
                 title: "Mobile & Accessories",
             },
         });
-        await prismaClient.masterAuctionCategory.create({
-            data: {
-                title: "English action",
-            },
+        await prismaClient.masterAuctionCategory.createMany({
+            data: AUCTION_CATEGORY,
         });
         const adminData = await prismaClient.user.create({
             data: {
                 first_name: "admin",
                 last_name: "admin",
                 email: "admin929@yopmail.com",
-                password: "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
+                password:
+                    "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
                 referral_code: "admin23",
                 country: "India",
                 is_verified: true,
@@ -64,13 +65,33 @@ async function startSeed() {
         await prismaClient.referral.create({
             data: {
                 reward_plays: 5,
-                credit_plays: 20,
+                credit_plays: 1020,
                 status: true,
                 is_deleted: false,
                 created_at: new Date(),
                 updated_at: new Date(),
                 updated_by: adminData.id,
             },
+        });
+        await prismaClient.masterCurrency.createMany({
+            data: [{
+                currency_type: "USD",
+                bid_increment: 0.01,
+                big_token: 0.02,
+                usdt: 0.25,
+                usdc: 0.25,
+                created_at: new Date(),
+                updated_at: new Date(),
+            }, {
+                currency_type: "INR",
+                bid_increment: 0.20,
+                big_token: 2.00,
+                usdt: 8.00,
+                usdc: 8.00,
+                status: true,
+                created_at: new Date(),
+                updated_at: new Date(),
+            }],
         });
         return "Db Seeding Compeleted.";
     }
