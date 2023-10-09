@@ -614,6 +614,109 @@
                 }
             }
         },
+        "/auction-category/all": {
+            "get": {
+                "tags": ["auction-category"],
+                "description": "Get the auction category for auction",
+                "summary": "Get the auction category",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction-category": {
+            "post":{
+                "tags": ["auction-category"],
+                "description": "Add the auction category for auction",
+                "summary": "add the auction category",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "type": "string",
+                              "format": "string",
+                              "enum": [
+                                "The Last Play",
+                                "Lowest Unique Bid",
+                                "Highest Unique Bid"
+                            ],
+                              "nullable": false,
+                              "description": "title in auction category"
+                            },
+                            "code": {
+                                "type": "string",
+                                "format": "string",
+                                "enum": [ "MIN" , "MAX" , "TLP" ],
+                                "nullable": false,
+                                "description": "code in auction category"
+                              }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
         "/product-category/{id}": {
             "get": {
                 "tags": ["product-category"],
