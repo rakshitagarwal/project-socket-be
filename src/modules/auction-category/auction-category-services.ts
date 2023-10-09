@@ -1,5 +1,5 @@
 import { AUCTION_CATEGORY_MESSAGES, AUCTION_MESSAGES } from "../../common/constants";
-import { responseBuilder, sanitize } from "../../common/responses";
+import { responseBuilder } from "../../common/responses";
 import { auctionCategoryQueries } from "./auction-category-queries";
 import {
     IAuctionCategory,
@@ -13,7 +13,6 @@ import {
  * @return response builder which contian {code, success ,message, data , metadata}
  */
 const add = async (auctionCategory: IAuctionCategory) => {
-    auctionCategory.title = sanitize(auctionCategory.title);
     const isExist = await auctionCategoryQueries.getTitle(auctionCategory.title);
     if (isExist) {
         return responseBuilder.conflictError(
@@ -39,7 +38,6 @@ const update = async (id: string, auctionCategory: IPutAuctionCategory) => {
             AUCTION_CATEGORY_MESSAGES.NOT_EXISTS
         );
     }
-    auctionCategory.title = sanitize(auctionCategory.title);
     const isExist = await auctionCategoryQueries.getTitle(auctionCategory.title);
     if (isExist) {
         return responseBuilder.conflictError(
