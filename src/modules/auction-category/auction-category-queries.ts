@@ -117,18 +117,37 @@ const isIdExists = async (data: IDeleteIds) => {
                 is_deleted: false,
             },
         },
-        orderBy:{
-            updated_at:"desc"
+        orderBy: {
+            updated_at: "desc"
         }
     });
     return query;
 };
 
-export const auctionCatgoryQueries = {
+/**
+ * @param {string} title  - it is exist or not for title in product category data
+ * @description - get for title in the product category
+ */
+const getTitle = async (title: string) => {
+    const queryResult = await db.masterAuctionCategory.findFirst({
+        where: {
+            title: title, is_deleted: false
+        },
+        select: {
+            id: true,
+            status: false,
+            updated_at: false,
+        },
+    });
+    return queryResult;
+};
+
+export const auctionCategoryQueries = {
     create,
     IsExistsActive,
     update,
     getAll,
     removeAll,
     isIdExists,
+    getTitle
 };

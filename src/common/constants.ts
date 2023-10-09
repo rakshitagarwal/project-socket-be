@@ -44,7 +44,7 @@ export const ENDPOINTS = {
     USER_BLOCK: "block/:id",
     GRID_LIVE_UPCOMING: "/grid/list",
     PLAYER_TRANSACTION: "/player-transaction/:id",
-    PLAYER_IMAGE:"/avatar",
+    PLAYER_IMAGE: "/avatar",
 };
 
 export const ALLOWED_MIMETYPES = [
@@ -62,7 +62,7 @@ export const ALLOWED_IMAGE_MIMETYPES = ["image/png", "image/jpg", "image/jpeg"];
 export const productCategoryMessage = {
     ADD: {
         SUCCESS: "Product Category Created",
-        ALREADY_EXIST: "Product Category Title Already Exist",
+        ALREADY_EXIST: "Product Category Already Exist",
     },
     GET: {
         REQUESTED: "Product Category Found!",
@@ -109,6 +109,7 @@ export const AUCTION_MESSAGES = {
     SIMULATION_STOPPED: "Simulation Stopped",
     GET_BID_LOGS: "All BigLogs",
     BID_LOGS_NOT_FOUND: "BidLogs Not Found",
+    ALREADY_EXIST: "Auction category already exist",
 };
 
 export const productMessage = {
@@ -213,7 +214,7 @@ export const MESSAGES = {
         PLEASE_VERIFY_YOUR_EMAIL: "Please Verify Your Account!",
         USER_TEMPORARY_BLOCK:
             "Your Account Is Temporarily Blocked. Please Contact Customer Service.",
-        AVATAR:"User Avatar's",
+        AVATAR: "User Avatar's",
     },
     ROLE: {
         ROLE_EXIST: "Admin Already Exists",

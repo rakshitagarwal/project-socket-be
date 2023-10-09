@@ -8,7 +8,7 @@ import {
     SOCKET_EVENT,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
-import { auctionCatgoryQueries } from "../auction-category/auction-category-queries";
+import { auctionCategoryQueries } from "../auction-category/auction-category-queries";
 import { auctionQueries } from "./auction-queries";
 import {
     IAuction,
@@ -41,7 +41,7 @@ const socket = global as unknown as AppGlobal;
  */
 const create = async (auction: IAuction, userId: string) => {
     const [isAuctionCategoryFound, isProductFound] = await Promise.all([
-        auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
+        auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
         productQueries.getById(auction.product_id),
     ]);
     if (!isAuctionCategoryFound?.id)
@@ -122,7 +122,7 @@ const update = async (
 ) => {
     const [isAuctionCategoryFound, isProductExists, isAuctionExists] =
         await Promise.all([
-            auctionCatgoryQueries.IsExistsActive(auction.auction_category_id),
+            auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
             productQueries.getById(auction.product_id),
             auctionQueries.getActiveAuctioById(auctionId),
         ]);
