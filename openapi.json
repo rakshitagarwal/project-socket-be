@@ -414,7 +414,7 @@
         "/user/register": {
             "post":{
                 "tags": ["users"],
-                "description": "Add the User Player",
+                "description": "Add the user Player",
                 "summary": "add the Player",
                 "requestBody": {
                     "required": true,
