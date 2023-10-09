@@ -2,7 +2,7 @@ import z from "zod";
 
 const auctionCode = ["MIN", "MAX", "TLP"] as const;
 const titles = [
-    "THE LAST PLAY",
+    "The Last Play",
     "Lowest Unique Bid",
     "Highest Unique Bid",
 ] as const;
