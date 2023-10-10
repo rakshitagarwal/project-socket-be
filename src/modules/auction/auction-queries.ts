@@ -380,7 +380,7 @@ const upcomingPlayerAuction = async () => {
  */
 const updateAuctionState = async (auctionId: string, payload: auctionState) => {
     const queryResult = await db.auction.update({
-        data: { state: payload },
+        data: { state: payload,updated_at:new Date() },
         where: { id: auctionId },
     });
     return queryResult;
@@ -792,10 +792,17 @@ const getplayerRegistrationAuctionDetails = async (
                     },
                     products: {
                         select: {
+                            title: true,
                             medias: true,
                             price: true,
                             description: true,
                             landing_image: true,
+                            productCategories:{
+                                select:{
+                                    id: true,
+                                    title:true,
+                                }
+                            }
                         },
                     },
                 },
