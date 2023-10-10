@@ -4,7 +4,6 @@ import {
     PrismaClient,
     Currency,
     currencyType,
-    PlaySpend,
 } from "@prisma/client";
 import { auctionResultType } from "@prisma/client";
 
@@ -428,75 +427,34 @@ const playerAuctionRegistered = async (data: IPlayerRegister) => {
     return query;
 };
 
-/**
- * @description cancel one auction by its id 
- * @param {string} auction_id - id to uniquely identify the auction
- * @param {PrismaClient} prisma - prisma client for transaction functioning
- * @returns {queryResult} - return the result of the query
- */
-const cancelAuction = async (auction_id: string, prisma: PrismaClient) => {
-    const queryResult = await prisma.auctions.update({
-        where: { id: auction_id },
-        data: { state: "cancelled" },
-    })
-    return queryResult;
-};
 
 /**
  * @description findPlayersRegistered is used to find players registered to the auction
  * @param {string} auction_id - id to uniquely identify the auction 
  * @param {PrismaClient} prisma - prisma client for transaction functioning
- * @returns {queryResult} - return the result of the query
+ * @returns queryResult - return the result of the query
  */
 const findPlayersRegistered = async (auction_id: string, prisma: PrismaClient) => {
-    const auctionPlayers = await prisma.playerAuctionRegister.findMany({ where: { auction_id } });
-    const playerIds = auctionPlayers.map(player => player.player_id);
-
-    const users = await prisma.user.findMany({ where: {
-        id:{
-            in:playerIds
-        },
-    }});
-    const emails = users.map((user) => user.email);
+    const queryResult = await prisma.playerAuctionRegister.findMany({
+        where: { auction_id },
+        select: {
+            player_id: true,
+            User: { select: { email: true } }
+        }
+    });
 
     await prisma.playerAuctionRegister.updateMany({
         where: {
             player_id: {
-                in: playerIds
-            }
+                in: queryResult.map((player) => player.player_id)
+            },
+            auction_id
         },
         data: {
             status: 'cancelled'
         }
     });
-    return { auctionPlayers, playerIds, emails };
-};
-
-/**
- * @description refundPlays is used to refund plays to players who spent plays for registering one auction
- * @param {string[]} player_ids - array of player ids to refund plays to each player registered
- * @param {string} auction_id - id to uniquely identify the auction 
- * @param {PrismaClient} prisma - prisma client for transaction functioning
- * @returns {queryResult} - return the result of the query
- */
-const refundPlays = async (player_ids: string[], auction_id: string, prisma: PrismaClient) => {
-    const query = await prisma.playerWalletTransaction.findFirst({
-        where: {
-            created_by: player_ids[0],
-            spend_on: "AUCTION_REGISTER_PLAYS",
-            auction_id,
-        }
-    });
-
-    const data = player_ids.map((player_id) => ({
-        created_by: player_id,
-        spend_on: PlaySpend.REFUND_PLAYS,
-        auction_id,
-        play_credit: query?.play_debit
-    }));
-    const queryResult = await prisma.playerWalletTransaction.createMany({ data });
-
-    return { plays: query?.play_debit ,queryResult};
+    return queryResult ;
 };
 
 /**
@@ -1647,7 +1605,5 @@ export const auctionQueries = {
     getInformationAuctionById,
     getListTotalAuctionCount,
     getTotalAuction,
-    cancelAuction,
     findPlayersRegistered,
-    refundPlays,
 };

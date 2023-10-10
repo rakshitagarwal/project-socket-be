@@ -112,7 +112,7 @@ auctionRouter.get(
     handleAsync(auctionHandler.getAllAuctionforGrid)
 );
 
-auctionRouter.get(
+auctionRouter.patch(
     ENDPOINTS.CANCEL + ENDPOINTS.ID,
     validateRequest.params(auctionSchemas.ZAuctionId),
     handleAsync(auctionHandler.cancelAuction)

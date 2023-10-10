@@ -32,7 +32,7 @@ import eventService from "../../utils/event-service";
 import { AppGlobal } from "../../utils/socket-service";
 import { Ispend_on } from "../users/typings/user-types";
 import { prismaTransaction } from "../../utils/prisma-transactions";
-import { PrismaClient } from "@prisma/client";
+import { PlaySpend, PrismaClient } from "@prisma/client";
 import { mailService } from "../../utils/mail-service";
 const socket = global as unknown as AppGlobal;
 
@@ -199,37 +199,34 @@ const cancelAuction = async (id: string) => {
     const isExists = await auctionQueries.getAuctionById(id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    if (
-        isExists.state === "live" ||
-        isExists.state === "completed" ||
-        isExists.state === "cancelled"
-    )
+    if (isExists.state === "live" || isExists.state === "completed" || isExists.state === "cancelled")
         return responseBuilder.badRequestError(AUCTION_MESSAGES.CANT_CANCEL);
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
-        const checkPlayers = await auctionQueries.findPlayersRegistered(
-            id,
-            prisma
-        );
-        const refund = await auctionQueries.refundPlays(
-            checkPlayers.playerIds,
-            id,
-            prisma
-        );
-        const cancelAuction = await auctionQueries.cancelAuction(id, prisma);
+        const cancelAuction = await prisma.auctions.update({where:{id}, data:{state:"cancelled"}});
+        const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
+        const emails = checkPlayers.map((player) => player.User.email);
+        const playerIds = checkPlayers.map((player) => player.player_id);
+        const refundData = playerIds.map((player_id) => ({
+            created_by: player_id,
+            spend_on: PlaySpend.REFUND_PLAYS,
+            auction_id: id,
+            play_credit: cancelAuction?.registeration_fees as number
+        }));
+        await prisma.playerWalletTransaction.createMany({ data: refundData });
         await redisClient.del(`auction:pre-register:${id}`);
-        return { checkPlayers, refund, cancelAuction };
+        return { cancelAuction, emails };
     });
 
     if (createTrax) {
         const mailData = {
-            email: createTrax.checkPlayers.emails,
+            email: createTrax.emails,
             template: TEMPLATE.PLAYER_REGISTERATION,
             subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
-            message: `${createTrax.cancelAuction.title} has been cancelled and your ${createTrax.refund.plays} plays have refunded `,
+            message: `${createTrax.cancelAuction.title} is canceled and your ${createTrax.cancelAuction.registeration_fees} plays are refunded `,
         };
         await mailService(mailData);
-        return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELED);
     }
     return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
 };
