@@ -572,8 +572,8 @@
                     }
                 ],
                   "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -611,8 +611,8 @@
                     }
                   },
                   "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -697,8 +697,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -778,8 +778,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -888,8 +888,8 @@
                     }
                   },
                   "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -932,8 +932,8 @@
                     }
                   },
                   "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -1088,8 +1088,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -1785,8 +1785,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -2021,8 +2021,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -2166,8 +2166,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -2398,8 +2398,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -3080,8 +3080,8 @@
                     }
                   },
                   "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -3168,8 +3168,8 @@
                     }
                   },
                   "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/201"
+                    "200": {
+                        "$ref": "#/components/responses/200"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
