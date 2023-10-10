@@ -199,17 +199,28 @@ const cancelAuction = async (id: string) => {
     const isExists = await auctionQueries.getAuctionById(id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    if (isExists.state === "live" || isExists.state === "completed" || isExists.state === "cancelled")
+    if (
+        isExists.state === "live" ||
+        isExists.state === "completed" ||
+        isExists.state === "cancelled"
+    )
         return responseBuilder.badRequestError(AUCTION_MESSAGES.CANT_CANCEL);
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
-        const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
-        const refund = await auctionQueries.refundPlays(checkPlayers.playerIds, id, prisma);
+        const checkPlayers = await auctionQueries.findPlayersRegistered(
+            id,
+            prisma
+        );
+        const refund = await auctionQueries.refundPlays(
+            checkPlayers.playerIds,
+            id,
+            prisma
+        );
         const cancelAuction = await auctionQueries.cancelAuction(id, prisma);
         await redisClient.del(`auction:pre-register:${id}`);
         return { checkPlayers, refund, cancelAuction };
     });
-    
+
     if (createTrax) {
         const mailData = {
             email: createTrax.checkPlayers.emails,
@@ -217,9 +228,9 @@ const cancelAuction = async (id: string) => {
             subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
             message: `${createTrax.cancelAuction.title} has been cancelled and your ${createTrax.refund.plays} plays have refunded `,
         };
-        await mailService(mailData);        
+        await mailService(mailData);
         return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
-    } 
+    }
     return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
 };
 
