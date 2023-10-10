@@ -12,8 +12,13 @@
         { "name": "auction-category","description": "auction-category Operation" }, 
         { "name": "product-category", "description": "Product Category Operations" },
         { "name": "product", "description": "Product Operations" },
-        { "name": "media", "description": "Media Operations" }
-            ],
+        { "name": "media", "description": "Media Operations" },
+        { "name": "term", "description": "Term-condition Operations" },
+        { "name": "referral", "description": "Referral Operations" },
+        { "name": "currency", "description": "Currency Operations" }
+
+
+    ],
     "servers": [
         {
             "url": "{basePath}",
@@ -425,22 +430,12 @@
                           "additionalProperties": false,
                           "properties": {
                             "first_name": {
-                              "type": "string",
-                              "format": "string",
-                              "nullable": false,
-                              "description": " add first name"
+                              "type": "string" 
                             },
                             "last_name": {
-                                "type": "string",
-                                "format": "string",
-                                "nullable": false,
-                                "description": "add last name"
-                              },
+                                "type": "string"},
                               "email": {
-                                "type": "string",
-                                "format": "string",
-                                "nullable": false,
-                                "description": "player email"
+                                "type": "string"
                               },
                               "role": {
                                 "type": "string",
@@ -479,11 +474,846 @@
                         "$ref": "#/components/responses/409"
                     }
                 }
+            }
+        },
+        "/user/login": {
+            "post":{
+                "tags": ["users"],
+                "description": "login player.This API is contains email Id for share mail on existing email",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": {
+                                "type": "string",
+                                "format": "string",
+                                "nullable": false,
+                                "description": "player email"
+                              }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/admin/login": {
+            "post":{
+                "tags": ["users"],
+                "description": "login Admin.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": {
+                                "type": "string",
+                                "format": "admin929@yopmail.com"
+                              },
+                              "password": {
+                                "type": "string",
+                                "format": "admin@12345"
+                              }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/logout": {
+            "put":{
+                "tags": ["users"],
+                "description": "logout User.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/verify": {
+            "patch":{
+                "tags": ["users"],
+                "description": "User verify.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": { "type": "string"},
+                              "otp": { "type": "string"},
+                              "otp_type": { "type": "string","enum": ["email_verification"]}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "get":{
+                "tags": ["users"],
+                "summary": "get the users Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
             },
+            "put": {
+                "tags": ["users"],
+                "summary": "update the users",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {"type": "string"},
+                                    "last_name": {"type": "string"},
+                                    "mobile_no": {"type": "string"} 
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            },
+            "delete":{
+                "tags": ["users"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["users"],
+                "summary": "update the users",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {"type": "string"},
+                                    "last_name": {"type": "string"},
+                                    "avatar": {"type": "string"} 
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            }
+        },
+        "/user/refresh-token": {
             "get": {
                 "tags": ["users"],
-                "description": "Get the product category for product",
-                "summary": "Get the product category",
+                "summary": "refresh-token the users",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "refreshToken": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            }
+        },
+        "/user/forget-password": {
+            "post":{
+                "tags": ["users"],
+                "description": "forget-password for Admin -> share otp on mail.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": {
+                                "type": "string"
+                              }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/update-password": {
+            "patch":{
+                "tags": ["users"],
+                "description": "update password for admin with otp email.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": { "type": "string"},
+                              "newPassword": { "type": "string"},
+                              "otp": { "type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/reset-password": {
+            "put":{
+                "tags": ["users"],
+                "description": "update reset password.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": { "type": "string"},
+                              "oldPassword": { "type": "string"},
+                              "newPassword": { "type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/": {
+            "get":{
+                "tags": ["users"],
+                "summary": "Get All the user",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "_sort",
+                        "schema": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "_order",
+                        "schema": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+                
+            }
+        },
+        "/user/resend-otp": {
+            "post":{
+                "tags": ["users"],
+                "description": "resend otp user",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "email": { "type": "string" },
+                              "otp_type":{"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/block/{id}": {
+            "patch": {
+                "tags": ["users"],
+                "summary": "block users",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "boolean"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            }
+        },
+        "/user/transfer/plays": {
+            "post":{
+                "tags": ["users"],
+                "description": "transfer plays",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "plays": {
+                                "type": "string"
+                              }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/avatar": {
+            "get":{
+                "tags": ["users"],
+                "summary": "Get All the avatar",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+                
+            }
+        }, 
+        "/user/add/plays": {
+            "post":{
+                "tags": ["users"],
+                "description": "Add buy plays",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "plays": {"type": "number"},
+                            "currency": {"type": "string" },
+                            "amount": {"type": "number"},
+                            "transaction_hash": {"type": "string" },
+                            "wallet_address": {"type": "string"},
+                            "player_id": {"type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/wallet/balance/{id}": {
+            "get":{
+                "tags": ["users"],
+                "summary": "fetch player wallet balance",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/user/deduct/plays": {
+            "post":{
+                "tags": ["users"],
+                "description": "Add deduct plays",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "plays": {"type": "number"},
+                            "player_id": {"type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/user/player-transaction": {
+            "get":{
+                "tags": ["users"],
+                "summary": "player_trans_history",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "parameters": [
                     {
                         "in": "query",
@@ -504,14 +1334,9 @@
                         }
                       }
                 ],
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "responses": {
-                    "200": {
-                        "$ref": "#/components/responses/200"
+                    "201": {
+                        "$ref": "#/components/responses/201"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -588,10 +1413,7 @@
                           "additionalProperties": false,
                           "properties": {
                             "title": {
-                              "type": "string",
-                              "format": "string",
-                              "nullable": false,
-                              "description": "name in product category"
+                             "type": "string" 
                             }
                           }
                         }
@@ -823,18 +1645,13 @@
                           "additionalProperties": false,
                           "properties": {
                             "title": {
-                              "type": "string",
-                              "format": "string",
-                              "nullable": false,
-                              "description": "title in product"
+                              "type": "string"
                             },
                             "description": {
-                                "type": "string",
-                                "description": "description product"
+                                "type": "string"
                             },
                             "price": {
-                                "type": "number",
-                                "description": "price product"
+                                "type": "number"
                             },
                             "product_category_id": {
                                 "type": "string"
@@ -942,18 +1759,12 @@
                                 "type": "object",
                                 "properties": {
                                     "title": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "nullable": false,
-                                        "description": "title in product"
-                                      },
+                                        "type": "string"},
                                       "description": {
-                                          "type": "string",
-                                          "description": "description product"
-                                      },
+                                          "type": "string" },
                                       "price": {
-                                          "type": "number",
-                                          "description": "price product"
+                                          "type": "number"
+                                          
                                       },
                                       "product_category_id": {
                                           "type": "string"
@@ -1024,19 +1835,9 @@
             }
         },
         "/media": {
-            "patch": {
-                "tags": ["product"],
-                "summary": "update the product",
-                 "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    }
-                ],
+            "post":{
+                "tags": ["media"],
+                "description": "Add media single",
                 "security": [
                     {
                         "BearerAuth": []
@@ -1045,45 +1846,25 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "nullable": false,
-                                        "description": "title in product"
-                                      },
-                                      "description": {
-                                          "type": "string",
-                                          "description": "description product"
-                                      },
-                                      "price": {
-                                          "type": "number",
-                                          "description": "price product"
-                                      },
-                                      "product_category_id": {
-                                          "type": "string"
-                                      },
-                                      "landing_image": {
-                                          "type": "string"
-                                      },
-                                      "media_id": {
+                                    "media": {
                                         "type": "array",
-                                        "items":{
-                                               "type": "string"
-                                        },
-                                        "maxItems": 2
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                },
-                "responses": {
-                    "200": {
-                        "$ref": "#/components/responses/200"
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -1095,24 +1876,13 @@
                         "$ref": "#/components/responses/401"
                     }
                 }
-            
             },
             "get":{
-                "tags": ["product"],
-                "summary": "get the product Id",
+                "tags": ["media"],
+                "summary": "get the media all",
                 "security": [
                     {
                         "BearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                      "in": "path",
-                      "name": "id",
-                      "required": true,
-                      "schema": {
-                        "type": "string"
-                      }
                     }
                 ],
                 "responses": {
@@ -1130,10 +1900,9 @@
                     }
                 }
             },
-            "post":{
+            "delete":{
                 "tags": ["media"],
-                "description": "Add the product for product",
-                "summary": "add the product",
+                "description": "delete the media",
                 "security": [
                     {
                         "BearerAuth": []
@@ -1147,37 +1916,62 @@
                           "type": "object",
                           "additionalProperties": false,
                           "properties": {
-                            "title": {
-                              "type": "string",
-                              "format": "string",
-                              "nullable": false,
-                              "description": "title in product"
-                            },
-                            "description": {
-                                "type": "string",
-                                "description": "description product"
-                            },
-                            "price": {
-                                "type": "number",
-                                "description": "price product"
-                            },
-                            "product_category_id": {
-                                "type": "string"
-                            },
-                            "landing_image": {
-                                "type": "string"
-                            },
-                            "media_id": {
+                            "ids": {
                                 "type": "array",
-                                "items":{
-                                       "type": "string"
-                                },
-                                "maxItems": 2
+                                "items": {
+                                    "type": "string"
+                                }
                             }
-
                           }
                         }
                       }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/media/multiple": {
+            "post":{
+                "tags": ["media"],
+                "description": "Add media multiple",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "media": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                   },
                   "responses": {
@@ -1199,7 +1993,150 @@
         "/media/{id}": {
             "patch": {
                 "tags": ["media"],
-                "summary": "update the product",
+                "summary": "update the media",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {}
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            
+            },
+            "get":{
+                "tags": ["media"],
+                "summary": "get the media Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            } 
+        }, 
+        "/term-condition": {
+            "post":{
+                "tags": ["term"],
+                "description": "term and condition",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "content": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            },
+            "get":{
+                "tags": ["term"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+             "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/term-condition/{id}": {
+            "put": {
+                "tags": ["term"],
                  "parameters": [
                     {
                         "in": "path",
@@ -1222,33 +2159,239 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "format": "string",
-                                        "nullable": false,
-                                        "description": "title in product"
-                                      },
-                                      "description": {
-                                          "type": "string",
-                                          "description": "description product"
-                                      },
-                                      "price": {
-                                          "type": "number",
-                                          "description": "price product"
-                                      },
-                                      "product_category_id": {
-                                          "type": "string"
-                                      },
-                                      "landing_image": {
-                                          "type": "string"
-                                      },
-                                      "media_id": {
-                                        "type": "array",
-                                        "items":{
-                                               "type": "string"
-                                        },
-                                        "maxItems": 2
-                                    }
+                                    "content": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+
+            }
+        },
+        "/auction": {
+            "post":{
+                "tags": ["auctions"],
+                "description": "Add the auction",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {"type": "string"},
+                            "description": {"type": "string" },
+                              "play_consumed": {"type": "number"},
+                              "is_pregistered": {"type": "string"},
+                              "pre_register_count": {"type": "number"},
+                              "pre_register_fees": {"type": "number"},
+                              "terms_condition": {"type": "string"},
+                              "product_id": {"type": "string"},
+                              "auction_category_id": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            },
+            "get":{
+                "tags": ["auctions"],
+                "description": "get all the auction",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            },
+            "delete":{
+                "tags": ["auctions"],
+                "description": "delete the auction",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "ids":{
+                                "type": "array",
+                                "items":{
+                                    "type": "string"
+                                }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/auction/{id}": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get the auction Id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["auctions"],
+                "summary": "update the auction",
+                 "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                            "properties": {
+                              "title": {"type": "string"},
+                              "description": {"type": "string" },
+                              "play_consumed": {"type": "number"},
+                              "opening_price": {"type": "number"},
+                              "price_increment": {"type": "number"},
+                              "is_pregistered": {"type": "string"},
+                              "pre_register_count": {"type": "number"},
+                              "pre_registeration_endDate": {"type": "string"},
+                              "pre_register_fees": {"type": "number"},
+                              "terms_condition": {"type": "string"},
+                              "product_id": {"type": "string"},
+                              "auction_state": {"type": "string"},
+                              "auction_category_id": {"type": "string"}
                                 }
                             }
                         }
@@ -1269,10 +2412,157 @@
                     }
                 }
             
-            },
+            }
+        },
+        "/auction/player/register": {
+            "post":{
+                "tags": ["auctions"],
+                "description": "Add the player register",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "player_id": {"type": "string"},
+                            "auction_id": {"type": "string" },
+                            "player_wallet_transaction_id": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/player/start": {
+            "post":{
+                "tags": ["auctions"],
+                "description": "Add the start time for the auction",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "auction_id": {"type": "string"},
+                            "start_date": {"type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/auction/list": {
             "get":{
-                "tags": ["product"],
-                "summary": "get the product Id",
+                "tags": ["auctions"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "player_id",
+                        "schema": {
+                          "type": "string"
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "auction_id",
+                        "schema": {
+                          "type": "string"
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction/stats/list/{id}": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get the auction Id",
                 "security": [
                     {
                         "BearerAuth": []
@@ -1303,6 +2593,634 @@
                     }
                 }
             }
-        } 
+        },
+        "/auction/stats/list": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get all the auction",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction/total-auction/list": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get all the auction",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction/player-auction/{id}": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get-my-auction-with-player_id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        }, 
+        "/auction/log/{id}": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "bid_logs_with_auction_id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction/player/auction/result": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get-player_auction_details",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "player_id",
+                        "schema": {
+                          "type": "string",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "auction_id",
+                        "schema": {
+                          "type": "string",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction/product/purchase": {
+            "post":{
+                "tags": ["auctions"],
+                "description": "Add auction purchase",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "player_register_id": {"type": "string"},
+                              "auction_id": {"type": "string" },
+                              "player_id": {"type": "string"},
+                              "currency": {"type": "string"},
+                              "currencyType": {"type": "string"},
+                              "amount": {"type": "number"},
+                              "transaction_hash": {"type": "string"},
+                              "wallet_address": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/auction/start/simulation": {
+            "post":{
+                "tags": ["auctions"],
+                "description": "Add bot-simulation",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "user_count": {"type": "number"},
+                              "credit_plays": {"type": "number"},
+                              "auction_id": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/auction/grid/list": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get-upcoming-live-auction-for-grid",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 10
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                          "type": "number",
+                          "format": "Int32",
+                          "default": 0
+                        }
+                      },
+                      {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                          "type": "string"
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/auction/product/{id}": {
+            "get":{
+                "tags": ["auctions"],
+                "summary": "get by product",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/referral/{id}": {
+            "get":{
+                "tags": ["referral"],
+                "summary": "get by referral",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/referral/config": {
+            "get":{
+                "tags": ["referral"],
+                "summary": "get referral config",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            },
+            "put":{
+                "tags": ["referral"],
+                "description": "update referral config.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "reward_plays": { "type": "number"},
+                              "credit_plays": { "type": "number"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },  
+        "/currency/{id}": {
+            "get":{
+                "tags": ["currency"],
+                "summary": "get by currency",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                      "in": "path",
+                      "name": "id",
+                      "required": true,
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            },
+            "put":{
+                "tags": ["currency"],
+                "description": "update currency.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                              "bid_increment": { "type": "number"},
+                              "big_token": { "type": "number"},
+                              "usdt": { "type": "number"},
+                              "usdc": { "type": "number"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    }
+                }
+            }
+        },
+        "/currency": {
+            "get":{
+                "tags": ["currency"],
+                "summary": "find one currency",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "currency_code",
+                        "schema": {
+                          "type": "string",
+                          "enum": ["INR"]
+                        
+                        }
+                      }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        }
     }
 }
