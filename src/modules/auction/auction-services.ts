@@ -204,30 +204,35 @@ const cancelAuction = async (id: string) => {
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
         const cancelAuction = await prisma.auctions.update({where:{id}, data:{state:"cancelled"}});
-        const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
-        const emails: string[] = [];
-        const refundData = checkPlayers.map((player) => {
-            emails.push(player.User.email);
-            return {
-            created_by: player.player_id,
-            spend_on: PlaySpend.REFUND_PLAYS,
-            auction_id: id,
-            play_credit: cancelAuction?.registeration_fees as number
+        if (cancelAuction.is_preRegistered){
+            const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
+            const emails: string[] = [];
+            const refundData = checkPlayers.map((player) => {
+                emails.push(player.User.email);
+                return {
+                created_by: player.player_id,
+                spend_on: PlaySpend.REFUND_PLAYS,
+                auction_id: id,
+                play_credit: cancelAuction?.registeration_fees as number
+                }
+            });
+            await prisma.playerWalletTransaction.createMany({ data: refundData });
+            return { cancelAuction, emails };
         }
-    });
-        await prisma.playerWalletTransaction.createMany({ data: refundData });
-        return { cancelAuction, emails };
+        return { cancelAuction };
     });
 
-    if (createTrax) {        
-        const mailData = {
-            email: createTrax.emails,
-            template: TEMPLATE.PLAYER_REGISTERATION,
-            subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
-            message: `${createTrax.cancelAuction.title} is canceled and your ${createTrax.cancelAuction.registeration_fees} plays are refunded `,
-        };
-        await mailService(mailData);
-        await redisClient.del(`auction:pre-register:${id}`);
+    if (createTrax) { 
+        if(createTrax.cancelAuction.is_preRegistered){  
+                const mailData = {
+                email: createTrax.emails,
+                template: TEMPLATE.PLAYER_REGISTERATION,
+                subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
+                message: `${createTrax.cancelAuction.title} is canceled and your ${createTrax.cancelAuction.registeration_fees} plays are refunded `,
+            };
+            await mailService(mailData);
+            await redisClient.del(`auction:pre-register:${id}`);
+        }
         return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELED);
     }
     return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
