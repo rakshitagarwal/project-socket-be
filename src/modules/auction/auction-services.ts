@@ -6,6 +6,7 @@ import {
     NODE_EVENT_SERVICE,
     // ONE_PLAY_VALUE_IN_DOLLAR,
     SOCKET_EVENT,
+    TEMPLATE,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCategoryQueries } from "../auction-category/auction-category-queries";
@@ -30,6 +31,9 @@ import eventService from "../../utils/event-service";
 // import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import { AppGlobal } from "../../utils/socket-service";
 import { Ispend_on } from "../users/typings/user-types";
+import { prismaTransaction } from "../../utils/prisma-transactions";
+import { PrismaClient } from "@prisma/client";
+import { mailService } from "../../utils/mail-service";
 const socket = global as unknown as AppGlobal;
 
 /**
@@ -184,6 +188,39 @@ const remove = async (id: string[]) => {
     return responseBuilder.expectationFaild(
         AUCTION_MESSAGES.CANNOT_DELETE_AUCTION
     );
+};
+
+/**
+ * @description cancel an auction by its id
+ * @param {string} id - auction ID passed by params in request
+ * @returns - return {code, message, data, metadata} from responseBuilder
+ */
+const cancelAuction = async (id: string) => {
+    const isExists = await auctionQueries.getAuctionById(id);
+    if (!isExists?.id)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    if (isExists.state === "live" || isExists.state === "completed" || isExists.state === "cancelled")
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.CANT_CANCEL);
+
+    const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
+        const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
+        const refund = await auctionQueries.refundPlays(checkPlayers.playerIds, id, prisma);
+        const cancelAuction = await auctionQueries.cancelAuction(id, prisma);
+        await redisClient.del(`auction:pre-register:${id}`);
+        return { checkPlayers, refund, cancelAuction };
+    });
+    
+    if (createTrax) {
+        const mailData = {
+            email: createTrax.checkPlayers.emails,
+            template: TEMPLATE.PLAYER_REGISTERATION,
+            subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
+            message: `${createTrax.cancelAuction.title} has been cancelled and your ${createTrax.refund.plays} plays have refunded `,
+        };
+        await mailService(mailData);        
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
+    } 
+    return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
 };
 
 const getBidLogs = async (id: string) => {
@@ -691,6 +728,7 @@ export const auctionService = {
     getAll,
     update,
     remove,
+    cancelAuction,
     getBidLogs,
     playerRegister,
     playerOpenAuctionRegister,
