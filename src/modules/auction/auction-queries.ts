@@ -445,16 +445,13 @@ const findPlayersRegistered = async (auction_id: string, prisma: PrismaClient) =
 
     await prisma.playerAuctionRegister.updateMany({
         where: {
-            player_id: {
-                in: queryResult.map((player) => player.player_id)
-            },
             auction_id
         },
         data: {
             status: 'cancelled'
         }
     });
-    return queryResult ;
+    return queryResult;
 };
 
 /**
