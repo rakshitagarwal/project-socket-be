@@ -45,6 +45,7 @@ export const ENDPOINTS = {
     GRID_LIVE_UPCOMING: "/grid/list",
     PLAYER_TRANSACTION: "/player-transaction/:id",
     PLAYER_IMAGE: "/avatar",
+    CANCEL: "/cancel",
 };
 
 export const ALLOWED_MIMETYPES = [
@@ -93,6 +94,8 @@ export const AUCTION_MESSAGES = {
     UPDATE: "Auction Updated!",
     REMOVE: "Auction Deleted!",
     NOT_ACTIVE: "Auction Not Active",
+    CANCELLED: "Auction Cancelled Successfully!",
+    CANT_CANCEL: "Auction Can't Be Cancelled",
     PRE_REGISTER_ERROR: "This Is An Open Auction, Registeration Not Applicable!",
     PLAYER_COUNT_NOT_REACHED: "Player Registeration Count Not Reached",
     AUCTION_ALREADY_STARTED: "Auction Is Live, You Can't Update This Auction Detials!",
@@ -362,6 +365,7 @@ export const NODE_EVENT_SERVICE = {
     DELETE_PRODUCT_MEDIA_IMAGES: "product:media:delete",
     PLAYER_PLAYS_BALANCE_TRANSFER: "player:balance:transfer",
     PLAYER_PLAYS_BALANCE_CREDITED: "auction:player:balance:credit",
+    PLAYERS_PLAYS_BALANCE_REFUND: "auction:players:balance:refund",
     PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",
     START_SIMULATION_LIVE_AUCTION: "start:simulation:auction",
     MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED: "multiple:player:playbalance:credited",

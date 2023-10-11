@@ -275,6 +275,24 @@ eventService.on(
 );
 
 /**
+ * Registers a callback function for the 'PLAYERS_PLAYS_BALANCE_REFUND' event.
+ * @param {Object} data - The data object containing information about the players' plays refunded.
+ * @param {string[]} data.player_ids - The array of Ids of the players associated with the event.
+ * @param {number} data.plays_balance - The amount of plays balance credited to the players.
+ * @returns {void}
+ */
+eventService.on(NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND,
+    async (data: { player_ids: string[]; plays_balance: number }) => {
+        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+        await data.player_ids.map(async(player_id)=>{
+            playersBalance[player_id] =  +playersBalance[player_id] + data.plays_balance;
+        });        
+        await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
+        return;
+    }
+);
+
+/**
  * Registers a callback function for the 'PLAYER_PLAYS_BALANCE_DEBIT' event.
  * @param {Object} data - The data object containing information about the player's plays balance debit.
  * @param {string} data.player_id - The ID of the player associated with the event.

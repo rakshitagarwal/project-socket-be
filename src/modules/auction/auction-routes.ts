@@ -20,7 +20,7 @@ auctionRouter.post(
 );
 
 auctionRouter.get(
-    ENDPOINTS.BASE + ":id",
+    ENDPOINTS.ID,
     validateRequest.params(auctionSchemas.ZAuctionId),
     handleAsync(auctionHandler.getById)
 );
@@ -32,7 +32,7 @@ auctionRouter.get(
 );
 
 auctionRouter.put(
-    ENDPOINTS.BASE + ":id",
+    ENDPOINTS.ID,
     [
         validateRequest.params(auctionSchemas.ZAuctionId),
         validateRequest.body(auctionSchemas.ZAuctionAdd),
@@ -40,11 +40,11 @@ auctionRouter.put(
     handleAsync(auctionHandler.update)
 );
 
-auctionRouter.delete(
-    ENDPOINTS.BASE,
-    validateRequest.body(auctionSchemas.ZDeleteId),
-    handleAsync(auctionHandler.remove)
-);
+// auctionRouter.delete(
+//     ENDPOINTS.BASE,
+//     validateRequest.body(auctionSchemas.ZDeleteId),
+//     handleAsync(auctionHandler.remove)
+// );
 
 auctionRouter.get(
     ENDPOINTS.BASE + "logs/:id",
@@ -97,7 +97,7 @@ auctionRouter.get(
     handleAsync(auctionHandler.auctionListingTotal)
 );
 auctionRouter.get(
-    ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL_LIST + "/:id",
+    ENDPOINTS.BASE + ENDPOINTS.AUCTION_TOTAL_LIST +  ENDPOINTS.ID,
     validateRequest.params(auctionSchemas.ZAuctionId),
     handleAsync(auctionHandler.getByIdTotalAuction)
 );
@@ -110,4 +110,10 @@ auctionRouter.get(
     ENDPOINTS.GRID_LIVE_UPCOMING,
     [validateRequest.query(auctionSchemas.Zpagination)],
     handleAsync(auctionHandler.getAllAuctionforGrid)
+);
+
+auctionRouter.patch(
+    ENDPOINTS.CANCEL + ENDPOINTS.ID,
+    validateRequest.params(auctionSchemas.ZAuctionId),
+    handleAsync(auctionHandler.cancelAuction)
 );
