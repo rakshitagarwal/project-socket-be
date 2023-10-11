@@ -207,7 +207,9 @@ const cancelAuction = async (id: string) => {
         if (cancelAuction.is_preRegistered){
             const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
             const emails: string[] = [];
+            const userIds: string[] = [];
             const refundData = checkPlayers.map((player) => {
+                userIds.push(player.player_id);
                 emails.push(player.User.email);
                 return {
                 created_by: player.player_id,
@@ -217,14 +219,21 @@ const cancelAuction = async (id: string) => {
                 }
             });
             await prisma.playerWalletTransaction.createMany({ data: refundData });
-            return { cancelAuction, emails };
+            return { cancelAuction, emails, userIds };
         }
         return { cancelAuction };
     });
 
-    if (createTrax) { 
-        if(createTrax.cancelAuction.is_preRegistered){  
-                const mailData = {
+    if (createTrax) {         
+        if (createTrax.cancelAuction.is_preRegistered) {
+            await eventService.emit(
+                NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND,
+                {
+                    player_ids: createTrax.userIds,
+                    plays_balance: createTrax.cancelAuction.registeration_fees,
+                }
+            );
+            const mailData = {
                 email: createTrax.emails,
                 template: TEMPLATE.PLAYER_REGISTERATION,
                 subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,

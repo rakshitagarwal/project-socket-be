@@ -365,6 +365,7 @@ export const NODE_EVENT_SERVICE = {
     DELETE_PRODUCT_MEDIA_IMAGES: "product:media:delete",
     PLAYER_PLAYS_BALANCE_TRANSFER: "player:balance:transfer",
     PLAYER_PLAYS_BALANCE_CREDITED: "auction:player:balance:credit",
+    PLAYERS_PLAYS_BALANCE_REFUND: "auction:players:balance:refund",
     PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",
     START_SIMULATION_LIVE_AUCTION: "start:simulation:auction",
     MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED: "multiple:player:playbalance:credited",
