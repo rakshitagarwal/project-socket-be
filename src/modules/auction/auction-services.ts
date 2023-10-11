@@ -199,26 +199,38 @@ const cancelAuction = async (id: string) => {
     const isExists = await auctionQueries.getAuctionById(id);
     if (!isExists?.id)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-    if (isExists.state === "live" || isExists.state === "completed" || isExists.state === "cancelled")
+    if (
+        isExists.state === "live" ||
+        isExists.state === "completed" ||
+        isExists.state === "cancelled"
+    )
         return responseBuilder.badRequestError(AUCTION_MESSAGES.CANT_CANCEL);
 
     const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
-        const cancelAuction = await prisma.auctions.update({where:{id}, data:{state:"cancelled"}});
-        if (cancelAuction.is_preRegistered){
-            const checkPlayers = await auctionQueries.findPlayersRegistered(id, prisma);
+        const cancelAuction = await prisma.auctions.update({
+            where: { id },
+            data: { state: "cancelled" },
+        });
+        if (cancelAuction.is_preRegistered) {
+            const checkPlayers = await auctionQueries.findPlayersRegistered(
+                id,
+                prisma
+            );
             const emails: string[] = [];
             const userIds: string[] = [];
             const refundData = checkPlayers.map((player) => {
                 userIds.push(player.player_id);
                 emails.push(player.User.email);
                 return {
-                created_by: player.player_id,
-                spend_on: PlaySpend.REFUND_PLAYS,
-                auction_id: id,
-                play_credit: cancelAuction?.registeration_fees as number
-                }
+                    created_by: player.player_id,
+                    spend_on: PlaySpend.REFUND_PLAYS,
+                    auction_id: id,
+                    play_credit: cancelAuction?.registeration_fees as number,
+                };
             });
-            await prisma.playerWalletTransaction.createMany({ data: refundData });
+            await prisma.playerWalletTransaction.createMany({
+                data: refundData,
+            });
             return { cancelAuction, emails, userIds };
         }
         return { cancelAuction };
