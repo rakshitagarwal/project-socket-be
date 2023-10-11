@@ -80,6 +80,8 @@ const getById = async (auctionId: string) => {
 const getAll = async (query: IPagination) => {
     query._sort = query._sort || "category";
     query._order = query._order || "asc";
+    query.limit = +query.limit || 10;
+    query.page = +query.page || 0;
     const filter = [];
     if (query.search) {
         filter?.push({
@@ -228,8 +230,10 @@ const cancelAuction = async (id: string) => {
                     play_credit: cancelAuction?.registeration_fees as number,
                 };
             });
-            await prisma.playerWalletTransaction.createMany({
-                data: refundData,
+            await prisma.playerWalletTransaction.createMany({ data: refundData });
+            await eventService.emit(NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND, {
+                     player_ids: userIds,
+                    plays_balance: cancelAuction.registeration_fees,
             });
             return { cancelAuction, emails, userIds };
         }
@@ -238,13 +242,6 @@ const cancelAuction = async (id: string) => {
 
     if (createTrax) {         
         if (createTrax.cancelAuction.is_preRegistered) {
-            await eventService.emit(
-                NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND,
-                {
-                    player_ids: createTrax.userIds,
-                    plays_balance: createTrax.cancelAuction.registeration_fees,
-                }
-            );
             const mailData = {
                 email: createTrax.emails,
                 template: TEMPLATE.PLAYER_REGISTERATION,
@@ -254,7 +251,7 @@ const cancelAuction = async (id: string) => {
             await mailService(mailData);
             await redisClient.del(`auction:pre-register:${id}`);
         }
-        return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELED);
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
     }
     return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
 };
