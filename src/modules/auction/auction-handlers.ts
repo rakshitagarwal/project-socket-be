@@ -65,6 +65,17 @@ const remove = async (req: Request, res: Response) => {
 };
 
 /**
+ * @description  Cancel Auction By Id
+ * @param {Request} req - HTTP Request
+ * @param {Response} res - HTTP Response
+ * @return {Promise<Response>}
+ */
+const cancelAuction = async (req: Request, res: Response) => {
+    const response = await auctionService.cancelAuction(req.params.id as string);
+    res.status(response.code).json(response);
+};
+
+/**
  * fetching the bid-logs from auction_id
  * @param {Request} req
  * @param {Response }res
@@ -241,5 +252,6 @@ export const auctionHandler = {
     getByIdTotalAuction,
     auctionListingTotal,
     auctionTotal,
-    getAllAuctionforGrid
+    getAllAuctionforGrid,
+    cancelAuction,
 };

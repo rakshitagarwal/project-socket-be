@@ -427,6 +427,33 @@ const playerAuctionRegistered = async (data: IPlayerRegister) => {
     return query;
 };
 
+
+/**
+ * @description findPlayersRegistered is used to find players registered to the auction
+ * @param {string} auction_id - id to uniquely identify the auction 
+ * @param {PrismaClient} prisma - prisma client for transaction functioning
+ * @returns queryResult - return the result of the query
+ */
+const findPlayersRegistered = async (auction_id: string, prisma: PrismaClient) => {
+    const queryResult = await prisma.playerAuctionRegister.findMany({
+        where: { auction_id },
+        select: {
+            player_id: true,
+            User: { select: { email: true } }
+        }
+    });
+
+    await prisma.playerAuctionRegister.updateMany({
+        where: {
+            auction_id
+        },
+        data: {
+            status: 'cancelled'
+        }
+    });
+    return queryResult;
+};
+
 /**
  * @description registered the player in open auction.
  * @param {{auction_id: string, player_id: string}} data
@@ -1575,4 +1602,5 @@ export const auctionQueries = {
     getInformationAuctionById,
     getListTotalAuctionCount,
     getTotalAuction,
+    findPlayersRegistered,
 };
