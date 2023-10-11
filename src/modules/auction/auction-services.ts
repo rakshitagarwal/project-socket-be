@@ -242,13 +242,15 @@ const cancelAuction = async (id: string) => {
 
     if (createTrax) {         
         if (createTrax.cancelAuction.is_preRegistered) {
-            const mailData = {
-                email: createTrax.emails,
-                template: TEMPLATE.PLAYER_REGISTERATION,
-                subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
-                message: `${createTrax.cancelAuction.title} is canceled and your ${createTrax.cancelAuction.registeration_fees} plays are refunded `,
-            };
-            await mailService(mailData);
+            if(createTrax.emails.length){
+                const mailData = {
+                    email: createTrax.emails,
+                    template: TEMPLATE.PLAYER_REGISTERATION,
+                    subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
+                    message: `${createTrax.cancelAuction.title} is canceled and your ${createTrax.cancelAuction.registeration_fees} plays are refunded `,
+                };
+                await mailService(mailData);
+            }
             await redisClient.del(`auction:pre-register:${id}`);
         }
         return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
