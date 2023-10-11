@@ -519,15 +519,15 @@ const startAuction = async (data: IStartAuction) => {
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
-    if (auction.registeration_count) {
-        if (
-            auction._count.PlayerAuctionRegister < auction.registeration_count
-        ) {
-            return responseBuilder.badRequestError(
-                AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
-            );
-        }
-    }
+    // if (auction.registeration_count) {
+    //     if (
+    //         auction._count.PlayerAuctionRegister < auction.registeration_count
+    //     ) {
+    //         return responseBuilder.badRequestError(
+    //             AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
+    //         );
+    //     }
+    // }
     const auction_updated = await auctionQueries.startAuction(data);
     eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
         status: "auction_start",
