@@ -979,7 +979,7 @@ export const liveAuctionData = async (
                                           ),
                             },
                             auctionBidHistory: playerData.length
-                                ? playerData.reverse()[0]
+                                ? playerData.reverse().slice(0,1)
                                 : null,
                         };
                     } else {
