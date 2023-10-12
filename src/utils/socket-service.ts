@@ -5,6 +5,7 @@ import logger from "../config/logger";
 import socketAuthentication from "../middlewares/socket-authentication";
 import {
     getMinMaxAuctionResult,
+    liveAuctionData,
     minMaxAuctionBid,
     minMaxBidResult,
     newBiDRecieved,
@@ -80,6 +81,9 @@ const socketService = async (server: Server) => {
                     player_id: data.player_id,
                     socketId: socket.id
                 })
+            })
+            socket.on("grid:auction:data",(data)=>{
+                liveAuctionData(data,socket.id)
             })
         }
     });

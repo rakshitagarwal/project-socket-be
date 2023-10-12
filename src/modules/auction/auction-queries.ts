@@ -380,7 +380,7 @@ const upcomingPlayerAuction = async () => {
  */
 const updateAuctionState = async (auctionId: string, payload: auctionState) => {
     const queryResult = await db.auction.update({
-        data: { state: payload,updated_at:new Date() },
+        data: { state: payload, updated_at: new Date() },
         where: { id: auctionId },
     });
     return queryResult;
@@ -427,29 +427,31 @@ const playerAuctionRegistered = async (data: IPlayerRegister) => {
     return query;
 };
 
-
 /**
  * @description findPlayersRegistered is used to find players registered to the auction
- * @param {string} auction_id - id to uniquely identify the auction 
+ * @param {string} auction_id - id to uniquely identify the auction
  * @param {PrismaClient} prisma - prisma client for transaction functioning
  * @returns queryResult - return the result of the query
  */
-const findPlayersRegistered = async (auction_id: string, prisma: PrismaClient) => {
+const findPlayersRegistered = async (
+    auction_id: string,
+    prisma: PrismaClient
+) => {
     const queryResult = await prisma.playerAuctionRegister.findMany({
         where: { auction_id },
         select: {
             player_id: true,
-            User: { select: { email: true } }
-        }
+            User: { select: { email: true } },
+        },
     });
 
     await prisma.playerAuctionRegister.updateMany({
         where: {
-            auction_id
+            auction_id,
         },
         data: {
-            status: 'cancelled'
-        }
+            status: "cancelled",
+        },
     });
     return queryResult;
 };
@@ -814,8 +816,8 @@ const getplayerRegistrationAuctionDetails = async (
                             id: true,
                             title: true,
                             code: true,
-                            status: true
-                        }
+                            status: true,
+                        },
                     },
                     products: {
                         select: {
@@ -824,12 +826,12 @@ const getplayerRegistrationAuctionDetails = async (
                             price: true,
                             description: true,
                             landing_image: true,
-                            productCategories:{
-                                select:{
+                            productCategories: {
+                                select: {
                                     id: true,
-                                    title:true,
-                                }
-                            }
+                                    title: true,
+                                },
+                            },
                         },
                     },
                 },
@@ -971,11 +973,10 @@ const getAuctionLists = async (data: IAuctionListing) => {
                     state: data.state && data.state,
                 },
             ],
-          
         },
-        select:{
-            id: true
-        }
+        select: {
+            id: true,
+        },
     });
     const queryResult = await db.auction.findMany({
         where: {
@@ -986,7 +987,7 @@ const getAuctionLists = async (data: IAuctionListing) => {
                 {
                     state: data.state && data.state,
                 },
-                filter
+                filter,
             ],
         },
         include: {
@@ -1033,14 +1034,14 @@ const getAuctionLists = async (data: IAuctionListing) => {
  * @param {string} product_id id of product to find binding auctions
  * @returns {query} result of query execution
  */
-const productAuctionList = async ( product_id: string)=> {
+const productAuctionList = async (product_id: string) => {
     const queryResult = await db.auction.findFirst({
         where: {
-            product_id
-        }
+            product_id,
+        },
     });
     return queryResult;
-}
+};
 
 /**
  * @description Get the Player Auction Details By the Id
@@ -1096,14 +1097,12 @@ const getPlayerAuctionDetailsById = async (
     return query;
 };
 
-
 /**
  *
  * @param auction_id
  * @param player_id
  * @returns
  */
-
 
 export const transferLastPlay = async (
     auction_id: string,
@@ -1181,7 +1180,7 @@ const minMaxPlayerRegisters = async (data: {
     return queryResult;
 };
 
-//  Define the currency value 
+//  Define the currency value
 const currencyValue = 2;
 
 /**
@@ -1478,7 +1477,6 @@ from (
  * registration fees,and profit calculations.
  */
 const getTotalAuction = async () => {
-
     const query: Sql = Prisma.sql`WITH AuctionCTE AS (
         SELECT
             COALESCE(subQuery.plays_consumed_on_bid,0) AS plays_consumed_on_bid,
@@ -1563,6 +1561,44 @@ limit 1;`;
     return queryResult;
 };
 
+/**
+ * Retrieves all live auctions for a specific player.
+ * @param {string} player_id - The ID of the player for whom live auctions are requested.
+ * @returns {Promise<Array>} A promise that resolves to an array of live auction objects.
+ * @throws {Error} Throws an error if there is an issue with fetching the live auction data.
+ */
+
+const getAllLiveAuction = async (player_id: string) => {
+    const queryResult = await db.auction.findMany({
+        where: {
+            is_deleted: false,
+            state: "live",
+        },
+        include: {
+            _count: {
+                select: {
+                    PlayerAuctionRegister: true,
+                },
+            },
+            PlayerAuctionRegister: {
+                where: {
+                    player_id: player_id,
+                },
+                select: {
+                    status: true,
+                },
+            },
+            auctionCategory: {
+                select: {
+                    code: true,
+                    title: true,
+                },
+            },
+        },
+    });
+    return queryResult;
+};
+
 export const auctionQueries = {
     create,
     getAll,
@@ -1603,4 +1639,5 @@ export const auctionQueries = {
     getListTotalAuctionCount,
     getTotalAuction,
     findPlayersRegistered,
+    getAllLiveAuction,
 };
