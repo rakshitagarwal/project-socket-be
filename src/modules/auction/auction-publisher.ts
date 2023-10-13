@@ -939,7 +939,10 @@ export const liveAuctionData = async (
                         bid_percentage: number;
                         auction_id: string;
                     } | null;
-                    auctionBidHistory?: IminAuctionBidLog | null;
+                    auctionBidHistory?: {
+                        auction_id: string;
+                        data: IminAuctionBidLog | null;
+                    };
                 };
             } = {};
             const liveValues = liveAuction.map(async (val) => {
@@ -978,9 +981,12 @@ export const liveAuctionData = async (
                                                   +val.total_bids
                                           ),
                             },
-                            auctionBidHistory: playerData.length
-                                ? playerData.reverse().slice(0,1)
-                                : null,
+                            auctionBidHistory: {
+                                auction_id: val.id,
+                                data: playerData.length
+                                    ? playerData.reverse()[0]
+                                    : null,
+                            },
                         };
                     } else {
                         newPayload[`${val.id}`] = {
@@ -993,7 +999,10 @@ export const liveAuctionData = async (
                                 auction_id: val.id,
                                 bid_percentage: 0,
                             },
-                            auctionBidHistory: null,
+                            auctionBidHistory: {
+                                auction_id: val.id,
+                                data: null,
+                            },
                         };
                     }
                 } else {
@@ -1002,7 +1011,10 @@ export const liveAuctionData = async (
                         auctionCategory: val.auctionCategory,
                         title: val.title,
                         auctionPercentage: null,
-                        auctionBidHistory: null,
+                        auctionBidHistory: {
+                            auction_id: val.id,
+                            data: null,
+                        },
                     };
                 }
                 return newPayload[`${val.id}`];
