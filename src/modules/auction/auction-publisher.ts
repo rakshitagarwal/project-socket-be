@@ -984,7 +984,7 @@ export const liveAuctionData = async (
                             auctionBidHistory: {
                                 auction_id: val.id,
                                 data: playerData.length
-                                    ? playerData.reverse()[0]
+                                    ? playerData.reverse().slice(0,1)
                                     : null,
                             },
                         };
