@@ -1193,6 +1193,7 @@ const getListTotalAuctionCount = async () => {
             A.id AS auction_id,
             A.title as auction_name,
             prod.title AS product_title,
+            A.updated_at as updated_at,
             mas_auc.title AS auction_category_name,
             A.start_date as auction_start_date,
             COALESCE(A.registeration_count, 0) as registeration_count,
@@ -1260,7 +1261,8 @@ SELECT
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as currency_code
+    END as currency_code,
+    updated_at
 FROM AuctionData`;
     const queryResult = await prisma.$queryRaw<ITotalAuctionInfo[]>(query);
     return queryResult;
@@ -1277,6 +1279,7 @@ const getListTotalAuction = async (offset: number, limit: number) => {
             A.id AS auction_id,
             A.title as auction_name,
             prod.title AS product_title,
+            A.updated_at as updated_at,
             mas_auc.title AS auction_category_name,
             A.start_date as auction_start_date,
             COALESCE(A.registeration_count, 0) as registeration_count,
@@ -1343,7 +1346,8 @@ SELECT
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as currency_code
+    END as currency_code,
+    updated_at
 FROM AuctionData
 LIMIT ${+limit}
 OFFSET ${+limit * offset}`;
@@ -1360,6 +1364,7 @@ export const getInformationAuctionById = async (auction_id: string) => {
         SELECT
             A.id AS auction_id,
             A.title as auction_name,
+            A.updated_at as updated_at,
             prod.title AS product_title,
             mas_auc.title AS auction_category_name,
             A.start_date as auction_start_date,
@@ -1427,7 +1432,8 @@ SELECT
     CASE
         WHEN ${currencyValue} = 2 THEN 'INR'
         ELSE 'USD'
-    END as currency_code
+    END as currency_code,
+    updated_at
 FROM AuctionData
 WHERE
     auction_id = ${auction_id}`;
