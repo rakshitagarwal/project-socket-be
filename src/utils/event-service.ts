@@ -380,7 +380,7 @@ eventService.on(
                 existingBotData[data.player_id].plays = updatedLimit;
                 existingBotData[data.player_id].total_bot_bid =
                     Number(existingBotData[data.player_id].total_bot_bid) + 1;
-                if (!updatedLimit || updatedLimit < 0) {
+                if (!updatedLimit || updatedLimit < 0 || updatedLimit < data.plays_balance) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
