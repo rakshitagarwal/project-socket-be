@@ -1345,8 +1345,8 @@ SELECT
         ELSE 'USD'
     END as currency_code
 FROM AuctionData
-LIMIT ${+(limit * offset)}
-OFFSET ${+offset}`;
+LIMIT ${+limit}
+OFFSET ${+limit * offset}`;
     const queryResult = await prisma.$queryRaw<ITotalAuctionInfo[]>(query);
     return queryResult;
 };
