@@ -6,6 +6,7 @@ import {
     NODE_EVENT_SERVICE,
     // ONE_PLAY_VALUE_IN_DOLLAR,
     SOCKET_EVENT,
+    TEMPLATE,
 } from "../../common/constants";
 import { responseBuilder } from "../../common/responses";
 import { auctionCategoryQueries } from "../auction-category/auction-category-queries";
@@ -30,6 +31,9 @@ import eventService from "../../utils/event-service";
 // import { AUCTION_STATE } from "../../utils/typing/utils-types";
 import { AppGlobal } from "../../utils/socket-service";
 import { Ispend_on } from "../users/typings/user-types";
+import { prismaTransaction } from "../../utils/prisma-transactions";
+import { PlaySpend, PrismaClient } from "@prisma/client";
+import { mailService } from "../../utils/mail-service";
 const socket = global as unknown as AppGlobal;
 
 /**
@@ -76,6 +80,8 @@ const getById = async (auctionId: string) => {
 const getAll = async (query: IPagination) => {
     query._sort = query._sort || "category";
     query._order = query._order || "asc";
+    query.limit = +query.limit || 10;
+    query.page = +query.page || 0;
     const filter = [];
     if (query.search) {
         filter?.push({
@@ -184,6 +190,72 @@ const remove = async (id: string[]) => {
     return responseBuilder.expectationFaild(
         AUCTION_MESSAGES.CANNOT_DELETE_AUCTION
     );
+};
+
+/**
+ * @description cancel an auction by its id
+ * @param {string} id - auction ID passed by params in request
+ * @returns - return {code, message, data, metadata} from responseBuilder
+ */
+const cancelAuction = async (id: string) => {
+    const isExists = await auctionQueries.getAuctionById(id);
+    if (!isExists?.id)
+        return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
+    if (
+        isExists.state === "live" ||
+        isExists.state === "completed" ||
+        isExists.state === "cancelled"
+    )
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.CANT_CANCEL);
+
+    const createTrax = await prismaTransaction(async (prisma: PrismaClient) => {
+        const cancelAuction = await prisma.auctions.update({
+            where: { id },
+            data: { state: "cancelled" },
+        });
+        if (cancelAuction.is_preRegistered) {
+            const checkPlayers = await auctionQueries.findPlayersRegistered(
+                id,
+                prisma
+            );
+            const emails: string[] = [];
+            const userIds: string[] = [];
+            const refundData = checkPlayers.map((player) => {
+                userIds.push(player.player_id);
+                emails.push(player.User.email);
+                return {
+                    created_by: player.player_id,
+                    spend_on: PlaySpend.REFUND_PLAYS,
+                    auction_id: id,
+                    play_credit: cancelAuction?.registeration_fees as number,
+                };
+            });
+            await prisma.playerWalletTransaction.createMany({ data: refundData });
+            await eventService.emit(NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND, {
+                     player_ids: userIds,
+                    plays_balance: cancelAuction.registeration_fees,
+            });
+            return { cancelAuction, emails, userIds };
+        }
+        return { cancelAuction };
+    });
+
+    if (createTrax) {         
+        if (createTrax.cancelAuction.is_preRegistered) {
+            if(createTrax.emails.length){
+                const mailData = {
+                    email: createTrax.emails,
+                    template: TEMPLATE.PLAYER_REGISTERATION,
+                    subject: `Auction Cancelled: ${createTrax.cancelAuction.title}`,
+                    message: `${createTrax.cancelAuction.title} is canceled and your ${createTrax.cancelAuction.registeration_fees} plays are refunded `,
+                };
+                await mailService(mailData);
+            }
+            await redisClient.del(`auction:pre-register:${id}`);
+        }
+        return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
+    }
+    return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
 };
 
 const getBidLogs = async (id: string) => {
@@ -449,15 +521,15 @@ const startAuction = async (data: IStartAuction) => {
             AUCTION_MESSAGES.DATE_NOT_PROPER
         );
     }
-    if (auction.registeration_count) {
-        if (
-            auction._count.PlayerAuctionRegister < auction.registeration_count
-        ) {
-            return responseBuilder.badRequestError(
-                AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
-            );
-        }
-    }
+    // if (auction.registeration_count) {
+    //     if (
+    //         auction._count.PlayerAuctionRegister < auction.registeration_count
+    //     ) {
+    //         return responseBuilder.badRequestError(
+    //             AUCTION_MESSAGES.PLAYER_COUNT_NOT_REACHED
+    //         );
+    //     }
+    // }
     const auction_updated = await auctionQueries.startAuction(data);
     eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
         status: "auction_start",
@@ -526,7 +598,7 @@ const purchaseAuctionProduct = async (data: IPurchase) => {
             auction_id: data.auction_id,
             player_id: data.player_id,
             plays: totalPlays,
-            spends_on: Ispend_on.AUCTION_REGISTER_PLAYS,
+            spends_on: Ispend_on.REFUND_PLAYS
         };
         await userQueries.addLastPlaysTrx(lastPlaysAdd);
     }
@@ -659,6 +731,8 @@ const auctionTotal = async () => {
  */
 const getAllAuctionforGrid = async (query: IPagination) => {
     const filter = [];
+    query._sort="state",
+    query._order="desc"
     if (query.search) {
         filter?.push({
             title: { contains: query.search },
@@ -691,6 +765,7 @@ export const auctionService = {
     getAll,
     update,
     remove,
+    cancelAuction,
     getBidLogs,
     playerRegister,
     playerOpenAuctionRegister,
