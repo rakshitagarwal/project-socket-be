@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userImages } from "../../common/constants";
+import { userImages, userImages1 } from "../../common/constants";
 const OTP_TYPE = [
     "email_verification",
     "login_type",
@@ -109,7 +109,7 @@ const updateUser = z
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
             .optional(),
-        avatar: z.enum([...userImages]).optional(),
+        avatar: z.enum([...userImages, ...userImages1]).optional(),
     })
     .strict();
 
