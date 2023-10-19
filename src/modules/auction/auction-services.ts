@@ -734,8 +734,8 @@ const getAllAuctionforGrid = async (query: IPagination) => {
     const filter1 = [];
     query.limit = 20;
     query.page = 0;
-    query._sort = "state",
-        query._order = "desc"
+    query._sort = "created_at",
+        query._order = "asc"
     if (query.search) {
         filter?.push({
             title: { contains: query.search },
