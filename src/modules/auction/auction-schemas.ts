@@ -150,7 +150,7 @@ const Zpagination = z
             .string()
             .regex(/^[a-zA-Z0-9._-]+(?:\s[a-zA-Z0-9._-]+)*$/)
             .optional(),
-        _sort: z.enum(["title", "category", "start_date","state"]).optional(),
+        _sort: z.enum(["title", "category", "start_date", "created_at"]).optional(),
         _order: z.enum(["asc", "desc"]).default("asc").optional(),
     })
     .strict();
