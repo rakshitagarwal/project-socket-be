@@ -232,17 +232,17 @@ const cancelAuction = async (id: string) => {
             });
             await prisma.playerWalletTransaction.createMany({ data: refundData });
             await eventService.emit(NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND, {
-                     player_ids: userIds,
-                    plays_balance: cancelAuction.registeration_fees,
+                player_ids: userIds,
+                plays_balance: cancelAuction.registeration_fees,
             });
             return { cancelAuction, emails, userIds };
         }
         return { cancelAuction };
     });
 
-    if (createTrax) {         
+    if (createTrax) {
         if (createTrax.cancelAuction.is_preRegistered) {
-            if(createTrax.emails.length){
+            if (createTrax.emails.length) {
                 const mailData = {
                     email: createTrax.emails,
                     template: TEMPLATE.PLAYER_REGISTERATION,
@@ -457,10 +457,10 @@ const playerAuctionDetails = async (data: {
         playerAuctionDetail.status === "won"
             ? playerAuctionDetail.Auctions?.auctionCategory.code !== "TLP"
                 ? playerAuctionDetail.PlayerBidLogs.find(
-                      (val) =>
-                          (val.is_highest && val.is_unique) ||
-                          (val.is_lowest && val.is_unique)
-                  )?.bid_price
+                    (val) =>
+                        (val.is_highest && val.is_unique) ||
+                        (val.is_lowest && val.is_unique)
+                )?.bid_price
                 : playerAuctionDetail.PlayerBidLogs[0]?.bid_price
             : playerAuctionDetail.Auctions.products.price;
     /*-
@@ -731,30 +731,38 @@ const auctionTotal = async () => {
  */
 const getAllAuctionforGrid = async (query: IPagination) => {
     const filter = [];
-    query._sort="state",
-    query._order="desc"
+    const filter1 = [];
+    query.limit = 20;
+    query.page = 0;
+    query._sort = "created_at",
+        query._order = "asc"
     if (query.search) {
         filter?.push({
             title: { contains: query.search },
         });
     }
+
     filter?.push({
         state: {
-            in: ["live", "upcoming"],
+            in: ["live"],
         },
     });
-    query = { ...query, filter: filter };
-    const auctions = await auctionQueries.getAll(query);
+    filter1?.push({
+        state: {
+            in: ["upcoming"],
+        },
+    });
+
+    const liveAuction = await auctionQueries.getAll({ ...query, filter: filter });
+    const upcomingAuction = await auctionQueries.getAll({ ...query, filter: filter1 });
+
+    const data = [...liveAuction.queryResult, ...upcomingAuction.queryResult]
+
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
-        auctions.queryResult,
+        data,
         {
-            limit: +query.limit,
-            page: +query.page,
-            totalRecord: auctions.queryCount,
-            totalPage: Math.ceil(auctions.queryCount / +query.limit),
             search: query.search,
-            state: query.state,
         }
     );
 };

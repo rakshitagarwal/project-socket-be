@@ -431,4 +431,19 @@ export const userImages = [
     "assets/avatar/16.png"
 ] as const;
 
+export const userImages1 = [
+    "assets/avatar/17.png",
+    "assets/avatar/18.png",
+    "assets/avatar/19.png",
+    "assets/avatar/20.png",
+    "assets/avatar/21.png",
+    "assets/avatar/22.png",
+    "assets/avatar/23.png",
+    "assets/avatar/24.png",
+    "assets/avatar/25.png",
+    "assets/avatar/26.png",
+    "assets/avatar/27.png",
+    "assets/avatar/28.png"
+] as const;
+
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;
