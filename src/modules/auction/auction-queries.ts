@@ -281,7 +281,7 @@ const remove = async (id: string[]) => {
  * @param {string} id - auction id
  * @returns
  */
-const fetchAuctionLogs = async (id: string) => {
+const fetchAuctionLogs = async (id: string,option:{limit:number,page:number}) => {
     const query = await db.playerBidLogs.findMany({
         where: {
             auction_id: id,
@@ -289,8 +289,11 @@ const fetchAuctionLogs = async (id: string) => {
         orderBy: {
             created_at: "desc",
         },
+        take:option.limit,
+        skip: option.page*option.limit,
     });
-    return query;
+    const count = await db.playerBidLogs.count({where:{auction_id:id}})
+    return {query,count};
 };
 
 /**
@@ -645,7 +648,8 @@ const fetchPlayerAuction = async (
     offset ${offset * limit}
     limit ${limit}
     `;
-
+     const count= await db.playerAuctionRegsiter.count({where:{player_id:player_id}}) 
+       
     //     const query: Sql = Prisma.sql`
     //     SELECT
     //     T5.auction_id,
@@ -719,7 +723,7 @@ const fetchPlayerAuction = async (
     //     `;
 
     const queryResult = await prisma.$queryRaw<IPlayerAuctionInfo[]>(query);
-    return queryResult;
+    return {queryResult,count};
 };
 
 /**

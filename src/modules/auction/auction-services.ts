@@ -258,12 +258,20 @@ const cancelAuction = async (id: string) => {
     return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);
 };
 
-const getBidLogs = async (id: string) => {
-    const isExists = await auctionQueries.fetchAuctionLogs(id);
-    if (isExists.length)
+const getBidLogs = async (id: string,query: IPagination) => {
+    const limit= +query.limit||20
+    const page= +query.page||0
+    const isExists = await auctionQueries.fetchAuctionLogs(id,{limit,page});
+    if (isExists.query && isExists.count)
         return responseBuilder.okSuccess(
             AUCTION_MESSAGES.GET_BID_LOGS,
-            isExists
+            isExists,
+            {
+                limit,
+                totalRecord: isExists.count,
+                totalPage: Math.ceil(isExists.count / limit),
+                page,
+            }
         );
     return responseBuilder.notFoundError(AUCTION_MESSAGES.BID_LOGS_NOT_FOUND);
 };
@@ -411,8 +419,10 @@ const getAllMyAuction = async (player_id: string, query: IPagination) => {
         offset,
         limit
     );
-    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, playerAuction, {
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.FOUND, playerAuction.queryResult, {
         limit,
+        totalRecord: playerAuction.count,
+        totalPage: Math.ceil(playerAuction.count / limit),
         page: offset,
     });
 };
