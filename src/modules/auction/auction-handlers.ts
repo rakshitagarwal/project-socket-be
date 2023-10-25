@@ -81,7 +81,7 @@ const cancelAuction = async (req: Request, res: Response) => {
  * @param {Response }res
  */
 const getBidLogs = async (req: Request, res: Response) => {
-    const response = await auctionService.getBidLogs(req.params.id as string);
+    const response = await auctionService.getBidLogs(req.params.id as string,req.query as unknown as IPagination);
     res.status(response.code).json(response);
 };
 
