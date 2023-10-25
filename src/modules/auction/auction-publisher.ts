@@ -350,7 +350,7 @@ export const newBiDRecieved = async (
             const player_bot = existingBotData[`${bidPayload.player_id}`];
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.BIDBOT_STATUS, {
                 message: player_bot.is_active
-                    ? MESSAGES.BIDBOT.BIDBOT_ACTIVE
+                    ? MESSAGES.BIDBOT.YOUR_BIDBOT_MADE_BID
                     : MESSAGES.BIDBOT.BIDBOT_NOT_ACTIVE,
                 auction_id: player_bot.auction_id,
                 player_id: player_bot.player_id,
