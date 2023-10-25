@@ -959,9 +959,12 @@ const getAuctionWinnerInfo = async (auction_id: string) => {
  * @param {number} limit
  */
 const getAuctionLists = async (data: IAuctionListing) => {
-    const filter: { id?: string } = {};
+    const filter: { id?: string,title?:{contains:string} } = {};
     if (data.auction_id) {
         filter.id = data.auction_id;
+    }
+    if(data.search){
+        filter.title={ contains: data.search }
     }
     const queryCount = await db.auction.findMany({
         where: {

@@ -729,35 +729,15 @@ const auctionTotal = async () => {
  * @returns {Promise<Object>} A Promise that resolves to an object containing the results and pagination info.
  * @throws {Error} Throws an error if the query is invalid or the database operation fails.
  */
-const getAllAuctionforGrid = async (query: IPagination) => {
-    const filter = [];
-    const filter1 = [];
+const getAllAuctionforGrid = async (query: IPagination,player_id:"") => {
     query.limit = 20;
     query.page = 0;
     query._sort = "created_at",
-        query._order = "asc"
-    if (query.search) {
-        filter?.push({
-            title: { contains: query.search },
-        });
-    }
-
-    filter?.push({
-        state: {
-            in: ["live"],
-        },
-    });
-    filter1?.push({
-        state: {
-            in: ["upcoming"],
-        },
-    });
-
-    const liveAuction = await auctionQueries.getAll({ ...query, filter: filter });
-    const upcomingAuction = await auctionQueries.getAll({ ...query, filter: filter1 });
+    query._order = "asc"
+    const liveAuction = await auctionQueries.getAuctionLists({ ...query,state:"live",player_id});
+    const upcomingAuction = await auctionQueries.getAuctionLists({ ...query ,state:"upcoming",player_id});
 
     const data = [...liveAuction.queryResult, ...upcomingAuction.queryResult]
-
     return responseBuilder.okSuccess(
         AUCTION_MESSAGES.FOUND,
         data,
