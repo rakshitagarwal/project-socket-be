@@ -281,6 +281,7 @@ export const MESSAGES = {
         BIDBOT_PRICE_REACHED: "Auction Price Already Crossed Price Limit",
         BIDBOT_PRICE_GREATER: "Bidbot Price Limit Should Be Less Than Product Price",
         BIDBOT_WALLET_INSUFFICIENT: "PLAYS Balance Insufficient",
+        YOUR_BIDBOT_MADE_BID:"Your Bidbot Just Made A Bid!",
     },
     ALL: {
         MULTER_ERROR: "Multer Error",

@@ -49,6 +49,7 @@ auctionRouter.put(
 auctionRouter.get(
     ENDPOINTS.BASE + "logs/:id",
     validateRequest.params(auctionSchemas.ZAuctionId),
+    validateRequest.query(auctionSchemas.ZPlayerAuction),
     handleAsync(auctionHandler.getBidLogs)
 );
 
