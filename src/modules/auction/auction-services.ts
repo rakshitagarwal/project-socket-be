@@ -265,7 +265,7 @@ const getBidLogs = async (id: string,query: IPagination) => {
     if (isExists.query && isExists.count)
         return responseBuilder.okSuccess(
             AUCTION_MESSAGES.GET_BID_LOGS,
-            isExists,
+            isExists.query,
             {
                 limit,
                 totalRecord: isExists.count,
