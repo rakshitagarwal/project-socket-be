@@ -777,12 +777,13 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
                     await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
                 }
         });
+        await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
+        if(!socketId.length) return; 
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.PLAYER_BLOCK, {
             player_id: id,
             message: MESSAGES.USERS.USER_TEMPORARY_BLOCK,
             status: false,
         });
-        await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
 };
