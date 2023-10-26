@@ -165,11 +165,22 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
 };
 
 /**
+ * @description Get all auctions registration data for a player
+ * @param {string} id player id
+ * @returns {user[]}
+ */
+const fetchUserAuctions = async (id: string) => {
+    const query = await db.playerAuctionRegsiter.findMany({
+        where: { player_id: id },
+    });
+    return query;
+};
+
+/**
  * @description Get one player
  * @param {string} id
  * @returns {user}
  */
-
 const fetchPlayerId = async (id: string) => {
     const query = await db.user.findFirst({
         where: {
@@ -726,6 +737,7 @@ const userQueries = {
     fetchUser,
     updateUser,
     fetchAllUsers,
+    fetchUserAuctions,
     fetchPlayerId,
     addPlayBalanceTx,
     getPlayerTrxById,
