@@ -768,17 +768,14 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     const user = await userQueries.updateUser({ id: id }, payload);
     if (!user.status) {
         const details = await db.playerAuctionRegsiter.findMany({ where: { player_id: id }});
-        let socketId = "";        
         details.map( async(data) => {
                 const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${data?.auction_id}`)) as string);
                 if (existingBotData && existingBotData[data?.player_id as string]) {
                     existingBotData[data?.player_id as string].is_active = false;
-                    socketId = existingBotData[data?.player_id as string].socket_id;
                     await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
                 }
         });
         await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
-        if(!socketId.length) return; 
         socket.playerSocket.emit(SOCKET_EVENT.PLAYER_BLOCK, {
             player_id: id,
             message: MESSAGES.USERS.USER_TEMPORARY_BLOCK,
