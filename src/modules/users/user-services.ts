@@ -27,6 +27,7 @@ import {
     OTP_TYPE,
     NODE_EVENT_SERVICE,
     userImages,
+    SOCKET_EVENT,
 } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
@@ -38,6 +39,8 @@ import referralService from "../referral/referral-services";
 import referralQueries from "../referral/referral-queries";
 import { db } from "../../config/db";
 import redisClient from "../../config/redis";
+import { AppGlobal } from "../../utils/socket-service";
+const socket = global as unknown as AppGlobal;
 
 /**
  * @description register user into databse
@@ -764,17 +767,20 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     }
     const user = await userQueries.updateUser({ id: id }, payload);
     if (!user.status) {
-        const details = await db.playerAuctionRegsiter.findMany({ where: { player_id: id , status: "live"}});
+        const details = await db.playerAuctionRegsiter.findMany({ where: { player_id: id }});
+        let socketId = "";        
         details.map( async(data) => {
                 const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${data?.auction_id}`)) as string);
                 if (existingBotData && existingBotData[data?.player_id as string]) {
                     existingBotData[data?.player_id as string].is_active = false;
+                    socketId = existingBotData[data?.player_id as string].socket_id;
                     await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
                 }
         });
-        eventService.emit(NODE_EVENT_SERVICE.USER_BLOCK, {
-            user_id: id,
-            message: MESSAGES.USERS.USER_TEMPORARY_BLOCK
+        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.PLAYER_BLOCK, {
+            player_id: id,
+            message: MESSAGES.USERS.USER_TEMPORARY_BLOCK,
+            status: false,
         });
         await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
     }
