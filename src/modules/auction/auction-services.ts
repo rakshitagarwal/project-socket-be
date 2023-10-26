@@ -54,7 +54,8 @@ const create = async (auction: IAuction, userId: string) => {
         );
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-    await auctionQueries.create(auction, userId);
+   const newAuction= await auctionQueries.create(auction, userId);
+   socket.playerSocket.emit(SOCKET_EVENT.NEW_AUCTION_ADDED,{message:MESSAGES.SOCKET.NEW_AUCTION_ADDED, data:newAuction})
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
@@ -265,7 +266,7 @@ const getBidLogs = async (id: string,query: IPagination) => {
     if (isExists.query && isExists.count)
         return responseBuilder.okSuccess(
             AUCTION_MESSAGES.GET_BID_LOGS,
-            isExists,
+            isExists.query,
             {
                 limit,
                 totalRecord: isExists.count,

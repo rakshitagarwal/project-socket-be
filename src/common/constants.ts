@@ -96,9 +96,11 @@ export const AUCTION_MESSAGES = {
     NOT_ACTIVE: "Auction Not Active",
     CANCELLED: "Auction Cancelled Successfully!",
     CANT_CANCEL: "Auction Can't Be Cancelled",
-    PRE_REGISTER_ERROR: "This Is An Open Auction, Registeration Not Applicable!",
+    PRE_REGISTER_ERROR:
+        "This Is An Open Auction, Registeration Not Applicable!",
     PLAYER_COUNT_NOT_REACHED: "Player Registeration Count Not Reached",
-    AUCTION_ALREADY_STARTED: "Auction Is Live, You Can't Update This Auction Detials!",
+    AUCTION_ALREADY_STARTED:
+        "Auction Is Live, You Can't Update This Auction Detials!",
     AUCTION_LIVE_DELETE: "Auction Is Live, You Can't Delete!",
     AUCTION_LIVE_UPDATE: "Auction Is Live, You Can't Update!",
     AUCTION_COMPLETED_DELETE: "Auction Is Completed, You Can't Delete!",
@@ -186,6 +188,7 @@ export const MESSAGES = {
         INSUFFICIENT_PLAYS_BALANCED: "Insufficient PLAYS Balance",
         BUY_NOW: "Buy Now",
         AUCTION_NOT_LIVE: "Auction Not Live",
+        NEW_AUCTION_ADDED: "New Auction Added",
     },
     OTP: {
         INVALID_OTP: "Invalid OTP",
@@ -202,8 +205,10 @@ export const MESSAGES = {
         VERIFICATION_ERROR: "Please Verify Your Email",
         USER_FOUND: "User Found Successfully",
         INVALID_PLAYS: "PLAYS Cannot Be In Decimal",
-        EMAIL_BLOCKED_INVALID: "Cannot Transfer PLAYS As Player Doesn't Exist Or Is Blocked",
-        INVALID_TRANSFER: "You Are Not Allowed To Transfer PLAYS to Your Own Account",
+        EMAIL_BLOCKED_INVALID:
+            "Cannot Transfer PLAYS As Player Doesn't Exist Or Is Blocked",
+        INVALID_TRANSFER:
+            "You Are Not Allowed To Transfer PLAYS to Your Own Account",
         INSUFFICIENT_BALANCE: "Your PLAYS Balance Is Insufficient For Transfer",
         ID_NOT_FOUND: "User Id Not Found",
         PASSWORD_UPDATED: "Password Updated",
@@ -260,7 +265,7 @@ export const MESSAGES = {
         CURRENCY_NOT_UPDATED: "Currency Config Not Updated",
         CURRENCY_UPDATE_FAILED:
             "You Cannot Update Currency When An Auction Is LIVE Or UPCOMING",
-        CURRENCY_DEFAULT_VALUE: 0.20,
+        CURRENCY_DEFAULT_VALUE: 0.2,
     },
     BIDBOT: {
         BIDBOT_CREATE_SUCCESS: "Bidbot Created Successfully",
@@ -279,9 +284,10 @@ export const MESSAGES = {
         BIDBOT_PLAYS_NEGATIVE: "PLAYS Limit Should Be Valid i.e. More Than 0",
         BIDBOT_PRICE_NEGATIVE: "Price Limit Can't Be Negative Or Less Than 1",
         BIDBOT_PRICE_REACHED: "Auction Price Already Crossed Price Limit",
-        BIDBOT_PRICE_GREATER: "Bidbot Price Limit Should Be Less Than Product Price",
+        BIDBOT_PRICE_GREATER:
+            "Bidbot Price Limit Should Be Less Than Product Price",
         BIDBOT_WALLET_INSUFFICIENT: "PLAYS Balance Insufficient",
-        YOUR_BIDBOT_MADE_BID:"Your Bidbot Just Made A Bid!",
+        YOUR_BIDBOT_MADE_BID: "Your Bidbot Just Made A Bid!",
     },
     ALL: {
         MULTER_ERROR: "Multer Error",
@@ -312,7 +318,8 @@ export const MESSAGES = {
         PLAYER_BALANCE: "Player PLAYS Balances",
         PLAYER_NOT_FOUND: "Player Not Found!",
         PLAY_BALANCE_CREDITED: "Player Balance Credited!",
-        PLAY_BALANCE_NOT_CREDITED: "Player Balance Not Added, Something Went Wrong!",
+        PLAY_BALANCE_NOT_CREDITED:
+            "Player Balance Not Added, Something Went Wrong!",
         USER_IS_NOT_PLAYER: "User Is Not A Player!",
         USER_WALLET_BALANCE_NOT_FOUND: "PLAYS Balance Not Found!",
     },
@@ -352,6 +359,8 @@ export const SOCKET_EVENT = {
     MIN_MAX_BID_PERCENTAGE: "min:max:bid:percentage",
     AUCTION_MIN_MAX_PERCENTAGE: "auction:min:max:percentage",
     AUCTION_AVATARS: "auction:avatars",
+    NEW_AUCTION_ADDED: "new:auction:added",
+    PLAYER_BLOCK: "player:block",
 };
 
 export const NODE_EVENT_SERVICE = {
@@ -369,11 +378,12 @@ export const NODE_EVENT_SERVICE = {
     PLAYERS_PLAYS_BALANCE_REFUND: "auction:players:balance:refund",
     PLAYER_PLAYS_BALANCE_DEBIT: "auction:player:balance:debit",
     START_SIMULATION_LIVE_AUCTION: "start:simulation:auction",
-    MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED: "multiple:player:playbalance:credited",
+    MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED:
+        "multiple:player:playbalance:credited",
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
-    REGISTER_NEW_PLAYER: "register:new:player",
+    REGISTER_NEW_PLAYER: "register:new:player"
 };
 
 export const AUCTION_STATE = [
@@ -429,7 +439,7 @@ export const userImages = [
     "assets/avatar/13.png",
     "assets/avatar/14.png",
     "assets/avatar/15.png",
-    "assets/avatar/16.png"
+    "assets/avatar/16.png",
 ] as const;
 
 export const userImages1 = [
@@ -444,7 +454,7 @@ export const userImages1 = [
     "assets/avatar/25.png",
     "assets/avatar/26.png",
     "assets/avatar/27.png",
-    "assets/avatar/28.png"
+    "assets/avatar/28.png",
 ] as const;
 
 export const ONE_PLAY_VALUE_IN_DOLLAR = 0.1;

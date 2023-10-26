@@ -27,6 +27,7 @@ import {
     OTP_TYPE,
     NODE_EVENT_SERVICE,
     userImages,
+    SOCKET_EVENT,
 } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
@@ -36,6 +37,9 @@ import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
 import referralService from "../referral/referral-services";
 import referralQueries from "../referral/referral-queries";
+import redisClient from "../../config/redis";
+import { AppGlobal } from "../../utils/socket-service";
+const socket = global as unknown as AppGlobal;
 
 /**
  * @description register user into databse
@@ -752,7 +756,7 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
 };
 
 /**
- * @description  player blocked
+ * @description block player and bitbots of the player
  * @param body user's request object
  */
 const userBlockStatus = async (id: string, payload: IupdateUser) => {
@@ -762,7 +766,22 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     }
     const user = await userQueries.updateUser({ id: id }, payload);
     if (!user.status) {
+        const details = await userQueries.fetchUserAuctions(id);
+        details.map( async(data) => {
+            const existBidBot = await redisClient.get(`BidBotCount:${data?.auction_id}`);
+            if(!existBidBot) return;
+            const existingBotData = JSON.parse(existBidBot as string);
+            if (existingBotData && existingBotData[data?.player_id as string]) {
+                existingBotData[data?.player_id as string].is_active = false;
+                await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
+            }
+        });
         await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
+        socket.playerSocket.emit(SOCKET_EVENT.PLAYER_BLOCK, {
+            player_id: id,
+            message: MESSAGES.USERS.USER_TEMPORARY_BLOCK,
+            status: false,
+        });
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);
 };
