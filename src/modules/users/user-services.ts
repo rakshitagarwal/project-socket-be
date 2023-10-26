@@ -37,7 +37,6 @@ import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
 import referralService from "../referral/referral-services";
 import referralQueries from "../referral/referral-queries";
-import { db } from "../../config/db";
 import redisClient from "../../config/redis";
 import { AppGlobal } from "../../utils/socket-service";
 const socket = global as unknown as AppGlobal;
@@ -757,7 +756,7 @@ const resendOtpToUser = async (body: { email: string; otp_type: string }) => {
 };
 
 /**
- * @description  player blocked
+ * @description block player and bitbots of the player
  * @param body user's request object
  */
 const userBlockStatus = async (id: string, payload: IupdateUser) => {
@@ -767,7 +766,7 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     }
     const user = await userQueries.updateUser({ id: id }, payload);
     if (!user.status) {
-        const details = await db.playerAuctionRegsiter.findMany({ where: { player_id: id }});
+        const details = await userQueries.fetchUserAuctions(id);
         details.map( async(data) => {
                 const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${data?.auction_id}`)) as string);
                 if (existingBotData && existingBotData[data?.player_id as string]) {
