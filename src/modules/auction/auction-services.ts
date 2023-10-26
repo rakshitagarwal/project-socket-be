@@ -54,7 +54,8 @@ const create = async (auction: IAuction, userId: string) => {
         );
     if (!isProductFound?.id)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-    await auctionQueries.create(auction, userId);
+   const newAuction= await auctionQueries.create(auction, userId);
+   socket.playerSocket.emit(SOCKET_EVENT.NEW_AUCTION_ADDED,{message:MESSAGES.SOCKET.NEW_AUCTION_ADDED, data:newAuction})
     return responseBuilder.createdSuccess(AUCTION_MESSAGES.CREATE);
 };
 
