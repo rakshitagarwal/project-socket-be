@@ -36,6 +36,8 @@ import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
 import referralService from "../referral/referral-services";
 import referralQueries from "../referral/referral-queries";
+import { db } from "../../config/db";
+import redisClient from "../../config/redis";
 
 /**
  * @description register user into databse
@@ -762,6 +764,18 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     }
     const user = await userQueries.updateUser({ id: id }, payload);
     if (!user.status) {
+        const details = await db.playerAuctionRegsiter.findMany({ where: { player_id: id , status: "live"}});
+        details.map( async(data) => {
+                const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${data?.auction_id}`)) as string);
+                if (existingBotData && existingBotData[data?.player_id as string]) {
+                    existingBotData[data?.player_id as string].is_active = false;
+                    await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
+                }
+        });
+        eventService.emit(NODE_EVENT_SERVICE.USER_BLOCK, {
+            user_id: id,
+            message: MESSAGES.USERS.USER_TEMPORARY_BLOCK
+        });
         await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
     }
     return responseBuilder.okSuccess(MESSAGES.USERS.UPDATE_USER);

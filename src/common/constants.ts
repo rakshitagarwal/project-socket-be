@@ -374,6 +374,7 @@ export const NODE_EVENT_SERVICE = {
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
     REGISTER_NEW_PLAYER: "register:new:player",
+    USER_BLOCK: "player:block"
 };
 
 export const AUCTION_STATE = [
