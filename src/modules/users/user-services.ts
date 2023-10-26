@@ -768,11 +768,13 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
     if (!user.status) {
         const details = await userQueries.fetchUserAuctions(id);
         details.map( async(data) => {
-                const existingBotData = JSON.parse((await redisClient.get(`BidBotCount:${data?.auction_id}`)) as string);
-                if (existingBotData && existingBotData[data?.player_id as string]) {
-                    existingBotData[data?.player_id as string].is_active = false;
-                    await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
-                }
+            const existBidBot = await redisClient.get(`BidBotCount:${data?.auction_id}`);
+            if(!existBidBot) return;
+            const existingBotData = JSON.parse(existBidBot as string);
+            if (existingBotData && existingBotData[data?.player_id as string]) {
+                existingBotData[data?.player_id as string].is_active = false;
+                await redisClient.set(`BidBotCount:${data?.auction_id}`,JSON.stringify(existingBotData));
+            }
         });
         await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
         socket.playerSocket.emit(SOCKET_EVENT.PLAYER_BLOCK, {
