@@ -171,7 +171,11 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
  */
 const fetchUserAuctions = async (id: string) => {
     const query = await db.playerAuctionRegsiter.findMany({
-        where: { player_id: id },
+        where: { player_id: id ,status:"live"},
+        select:{
+            player_id:true,
+            auction_id:true,
+        }
     });
     return query;
 };
