@@ -779,7 +779,7 @@ const userBlockStatus = async (id: string, payload: IupdateUser) => {
         });
         await tokenPersistanceQuery.deletePersistentToken({ user_id: id });
         if(!socketId.length) return; 
-        socket.playerSocket.to(socketId).emit(SOCKET_EVENT.PLAYER_BLOCK, {
+        socket.playerSocket.emit(SOCKET_EVENT.PLAYER_BLOCK, {
             player_id: id,
             message: MESSAGES.USERS.USER_TEMPORARY_BLOCK,
             status: false,
