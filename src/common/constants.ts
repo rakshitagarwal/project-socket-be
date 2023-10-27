@@ -223,6 +223,7 @@ export const MESSAGES = {
         USER_TEMPORARY_BLOCK:
             "Your Account Is Temporarily Blocked. Please Contact Customer Service.",
         AVATAR: "User Avatar's",
+        
     },
     ROLE: {
         ROLE_EXIST: "Admin Already Exists",
@@ -361,6 +362,7 @@ export const SOCKET_EVENT = {
     AUCTION_AVATARS: "auction:avatars",
     NEW_AUCTION_ADDED: "new:auction:added",
     PLAYER_BLOCK: "player:block",
+    PLAYER_PLAYS_BALANCE:"player:plays:balance",
 };
 
 export const NODE_EVENT_SERVICE = {
@@ -383,7 +385,9 @@ export const NODE_EVENT_SERVICE = {
     SIMULATION_BOTS: "simulation:bots",
     STOP_BOT_SIMULATIONS: "stop:bot:simulations",
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
-    REGISTER_NEW_PLAYER: "register:new:player"
+    REGISTER_NEW_PLAYER: "register:new:player",
+    PLAYER_PLAYS_BALANCE:"player:plays:balance",
+
 };
 
 export const AUCTION_STATE = [

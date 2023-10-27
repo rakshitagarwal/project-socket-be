@@ -196,6 +196,9 @@ const adminLogin = async (body: Ilogin) => {
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
     }
+    if(isUser.roles.title!=='Admin'){
+        return responseBuilder.notFoundError(MESSAGES.USERS.INVALID_CREDENTIAL);
+    }
     const isPassword = bcrypt.compareSync(
         body.password,
         isUser?.password as string
@@ -694,6 +697,7 @@ const debitPlaysForPlayer = async (data: IDeductPlx) => {
         player_id: data.player_id,
         plays_balance: data.plays,
     });
+    eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE,[data.player_id])
     return responseBuilder.okSuccess(
         MESSAGES.PLAYER_WALLET_TRAX.PLAYS_SUCCESSFULLY_DEBITED,
         {

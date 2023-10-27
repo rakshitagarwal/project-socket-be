@@ -257,8 +257,8 @@ eventService.on(
             );
         } else {
             if (playersBalance[data.player_id]) {
-                playersBalance[data.player_id] = 
-                        +playersBalance[data.player_id] + data.plays_balance;
+                playersBalance[data.player_id] =
+                    +playersBalance[data.player_id] + data.plays_balance;
                 await redisClient.set(
                     "player:plays:balance",
                     JSON.stringify(playersBalance)
@@ -281,13 +281,20 @@ eventService.on(
  * @param {number} data.plays_balance - The amount of plays balance credited to the players.
  * @returns {void}
  */
-eventService.on(NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND,
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYERS_PLAYS_BALANCE_REFUND,
     async (data: { player_ids: string[]; plays_balance: number }) => {
-        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
-        await data.player_ids.map(async(player_id)=>{
-            playersBalance[player_id] =  +playersBalance[player_id] + data.plays_balance;
-        });        
-        await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        await data.player_ids.map(async (player_id) => {
+            playersBalance[player_id] =
+                +playersBalance[player_id] + data.plays_balance;
+        });
+        await redisClient.set(
+            "player:plays:balance",
+            JSON.stringify(playersBalance)
+        );
         return;
     }
 );
@@ -380,7 +387,11 @@ eventService.on(
                 existingBotData[data.player_id].plays = updatedLimit;
                 existingBotData[data.player_id].total_bot_bid =
                     Number(existingBotData[data.player_id].total_bot_bid) + 1;
-                if (!updatedLimit || updatedLimit < 0 || updatedLimit < data.plays_balance) {
+                if (
+                    !updatedLimit ||
+                    updatedLimit < 0 ||
+                    updatedLimit < data.plays_balance
+                ) {
                     existingBotData[data.player_id].is_active = false;
                     socket.playerSocket
                         .to(existingBotData[data.player_id].socket_id)
@@ -423,13 +434,24 @@ eventService.on(
 eventService.on(
     NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE_TRANSFER,
     async (data: { from: string; to: string; plays_balance: number }) => {
-        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
-            if (playersBalance[data.from] && playersBalance[data.to]) {
-                playersBalance[data.from] = +playersBalance[data.from] - data.plays_balance;
-                playersBalance[data.to] = +playersBalance[data.to] + data.plays_balance;
-                await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
-                return;
-            }
+        eventService.emit(NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE, [
+            data.to,
+            data.from,
+        ]);
+        const playersBalance = JSON.parse(
+            (await redisClient.get("player:plays:balance")) as unknown as string
+        );
+        if (playersBalance[data.from] && playersBalance[data.to]) {
+            playersBalance[data.from] =
+                +playersBalance[data.from] - data.plays_balance;
+            playersBalance[data.to] =
+                +playersBalance[data.to] + data.plays_balance;
+            await redisClient.set(
+                "player:plays:balance",
+                JSON.stringify(playersBalance)
+            );
+            return;
+        }
     }
 );
 
@@ -694,6 +716,23 @@ eventService.on(
                 ]);
             }
         }
+    }
+);
+
+eventService.on(
+    NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE,
+    (player_id: string[]) => {
+        player_id.forEach(async (id) => {
+            const playerBalance = await userQueries.playerPlaysBalance(id);
+            socket.playerSocket.emit(SOCKET_EVENT.PLAYER_PLAYS_BALANCE, {
+                message: MESSAGES.SOCKET.CURRENT_PLAYS,
+                data:  JSON.parse(
+                    JSON.stringify(playerBalance, (_key, value) =>
+                        typeof value === "bigint" ? +value.toString() : value
+                    )
+                )[0],
+            });
+        });
     }
 );
 
