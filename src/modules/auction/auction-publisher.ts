@@ -31,7 +31,7 @@ const BidBotCountDown: { [auctionId: string]: number } = {};
  */
 
 export const auctionStart = (auctionId: string) => {
-    countdowns[auctionId] = 11;
+    countdowns[auctionId] = 10;
     /**
      * Timer function that runs every second during the auction.
      * @async
@@ -71,22 +71,20 @@ export const auctionStart = (auctionId: string) => {
                 message: `auction ended ${auctionId}`,
             });
         } else {
-            countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
-            socket.playerSocket.emit(SOCKET_EVENT.AUCTION_COUNT_DOWN, {
-                message: MESSAGES.SOCKET.AUCTION_COUNT_DOWN,
-                count: countdowns[auctionId],
-                auctionId,
-            });
-            eventService.emit(NODE_EVENT_SERVICE.SIMULATION_BOTS, {
-                auction_id: auctionId,
-                count: countdowns[auctionId],
-            });
-            eventService.emit(
-                NODE_EVENT_SERVICE.COUNTDOWN,
-                countdowns[auctionId],
-                auctionId
-            ); //emit live countdown
-            setTimeout(timerRunEverySecond, 1000);
+            if (Object.keys(countdowns).length) {
+                socket.playerSocket.emit(SOCKET_EVENT.AUCTION_COUNT_DOWN, {
+                    message: MESSAGES.SOCKET.AUCTION_COUNT_DOWN,
+                    count: countdowns[auctionId],
+                    auctionId,
+                });
+                countdowns[auctionId] = (countdowns[auctionId] as number) - 1;
+                eventService.emit(
+                    NODE_EVENT_SERVICE.COUNTDOWN,
+                    countdowns[auctionId],
+                    auctionId
+                );
+                setTimeout(timerRunEverySecond, 1000);
+            }
         }
     }
     timerRunEverySecond();
@@ -984,7 +982,7 @@ export const liveAuctionData = async (
                             auctionBidHistory: {
                                 auction_id: val.id,
                                 data: playerData.length
-                                    ? playerData.reverse().slice(0,1)
+                                    ? playerData.reverse().slice(0, 1)
                                     : null,
                             },
                         };
