@@ -28,59 +28,58 @@ sgMail.setApiKey(env.SENDGRID_API_KEY);
 export async function mailService(props: Imail) {
     const htmlTemplate = fs.readFileSync(`assets/templates/${props.template}`, {encoding: "utf8",});
     const template = compile(htmlTemplate);
-    // TODO: remove this nodemailer
-    const transporter = nodemailer.createTransport({
-        service: env.EMAIL_SERVICE,
-        auth: {
-            user: "globalvox.mteam@gmail.com",
-            pass: env.EMAIL_PASSWORD,
-        },
-        port: env.EMAIL_PORT,
-        host: env.EMAIL_HOST,
-    });
-
-    const mailOptions = {
-        from: "globalvox.mteam@gmail.com",
-        to: props.email,
-        subject: props.subject,
-        text: "",
-        html: template({
-            userName: props.user_name,
-            passcode: props.otp,
-            message: props.message,
-        }),
-    };
-
-    return transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-            logger.error(
-                `${env.NODE_ENV} - ${err.name} - ${err.message} - ${err.stack}`
-            );
-        }
-        logger.info(`accepted : ${info.accepted} messageId :${info.messageId}`);
-    });
-    //TODO: Open the send grid when it's goes production
-    // sgMail.send(
-    //         {
-    //             to: props.email,
-    //             from: env.FROM_EMAIL,
-    //             subject: props.subject,
-    //             text: " ",
-    //             html: template({
-    //                 userName: props.user_name,
-    //                 passcode: props.otp,
-    //                 message: props.message,
-    //             }),
-    //         },            
-    //     )
-    //     .then(
-    //         () => 
-    //         console.log('mail sent successfully', ),
-    //         (error) => {
-    //             console.error(error);
-    //             if (error.response) {
-    //                 console.error(error.response.body);
-    //             }
-    //         }
-    //     );
+    if(env.NODE_ENV !== 'production'){
+        const transporter = nodemailer.createTransport({
+            service: env.EMAIL_SERVICE,
+            auth: {
+                user: "globalvox.mteam@gmail.com",
+                pass: env.EMAIL_PASSWORD,
+            },
+            port: env.EMAIL_PORT,
+            host: env.EMAIL_HOST,
+        });
+    
+        const mailOptions = {
+            from: "globalvox.mteam@gmail.com",
+            to: props.email,
+            subject: props.subject,
+            text: "",
+            html: template({
+                userName: props.user_name,
+                passcode: props.otp,
+                message: props.message,
+            }),
+        };
+        return transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                logger.error(
+                    `${env.NODE_ENV} - ${err.name} - ${err.message} - ${err.stack}`
+                );
+            }
+            logger.info(`accepted : ${info.accepted} messageId :${info.messageId}`);
+        });
+    }
+    sgMail.send(
+            {
+                to: props.email,
+                from: env.FROM_EMAIL,
+                subject: props.subject,
+                text: " ",
+                html: template({
+                    userName: props.user_name,
+                    passcode: props.otp,
+                    message: props.message,
+                }),
+            },            
+        )
+        .then(
+            () => 
+            console.log('mail sent successfully', ),
+            (error) => {
+                console.error(error);
+                if (error.response) {
+                    console.error(error.response.body);
+                }
+            }
+        );
 }
