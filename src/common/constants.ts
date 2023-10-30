@@ -148,9 +148,10 @@ export const TEMPLATE = {
     EMAIL_VERIFICATION: "email_verification.html",
     LOGIN_OTP: "login_otp.html",
     FORGET_PASSWORD: "forget_password.html",
-    PLAYER_REGISTERATION: "auction_player_registeration.html",
-    PLAYER_AUCTION_REGISTER: "player_auction_register.html",
+    PLAYER_REGISTERATION: "auction_reminder.html",
+    PLAYER_AUCTION_REGISTER: "auction_register.html",
     REGISTER_PRE_ADMIN: "registration_per_admin.html",
+    WINNER:"winner.html"
 };
 
 export const OTP_TYPE = {
@@ -387,7 +388,7 @@ export const NODE_EVENT_SERVICE = {
     PLAYER_AUCTION_REGISTER_MAIL: "player:register:mail",
     REGISTER_NEW_PLAYER: "register:new:player",
     PLAYER_PLAYS_BALANCE:"player:plays:balance",
-
+    AUCTION_WINNER:"auction:winners"
 };
 
 export const AUCTION_STATE = [

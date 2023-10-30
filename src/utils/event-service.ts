@@ -17,16 +17,9 @@ import { PrismaClient } from "@prisma/client";
 
 import { prismaTransaction } from "./prisma-transactions";
 import productQueries from "../modules/product/product-queries";
-import {
-    IRegisterPlayer,
-    IStartSimulation,
-} from "../modules/auction/typings/auction-types";
-import { faker } from "@faker-js/faker";
+import { IRegisterPlayer } from "../modules/auction/typings/auction-types";
 import logger from "../config/logger";
 import { Imail } from "./typing/utils-types";
-import { randomBid } from "../modules/auction/auction-publisher";
-import { db } from "../config/db";
-import { setBotReferralCode } from "../common/helper";
 import { IMinMaxAuction } from "../middlewares/typings/middleware-types";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
@@ -183,6 +176,10 @@ export const auctionClosed = async (auctionId: string) => {
                 newWinnerPayload.player_id
             ),
         ]);
+        eventService.emit(NODE_EVENT_SERVICE.AUCTION_WINNER, {
+            player_id: newWinnerPayload.player_id,
+            auction_id: auctionId,
+        });
         logger.log({
             level: "warn",
             message: "bidlogs for the auctions are:- " + auctionId,
@@ -438,18 +435,13 @@ eventService.on(
             data.to,
             data.from,
         ]);
-        const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
-        if (playersBalance[data.from] && playersBalance[data.to]) {
-            playersBalance[data.from] =
-                +playersBalance[data.from] - data.plays_balance;
-            playersBalance[data.to] =
-                +playersBalance[data.to] + data.plays_balance;
-            await redisClient.set(
-                "player:plays:balance",
-                JSON.stringify(playersBalance)
-            );
+        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+        if(playersBalance === null) return;
+        const playersData = Object.keys(playersBalance);
+        if(playersData.includes(`${data.from}`) && playersData.includes(`${data.to}`)){
+            playersBalance[data.from] = +playersBalance[data.from] - data.plays_balance;
+            playersBalance[data.to] = +playersBalance[data.to] + data.plays_balance;
+            await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
             return;
         }
     }
@@ -549,92 +541,17 @@ eventService.on(
     }
 );
 
-eventService.on(
-    NODE_EVENT_SERVICE.START_SIMULATION_LIVE_AUCTION,
-    async (data: IStartSimulation) => {
-        const roles = await userQueries.getPlayerRoleId();
-        const users = faker.helpers.multiple(
-            () => {
-                return {
-                    first_name: faker.internet.displayName(),
-                    last_name: faker.internet.userName(),
-                    email: faker.internet.email(),
-                    password:
-                        "$2b$10$IR35ignf5e9DJuRQkrYhP.okwg0nOC1sUgzL3reshqQ4QUeemcPB6",
-                    country: "Australia",
-                    is_bot: true,
-                    is_verified: true,
-                    referral_code: setBotReferralCode(),
-                    avatar: `assets/avatar/${
-                        faker.internet.userName().length
-                    }.png`,
-                };
-            },
-            {
-                count: data.user_count,
-            }
-        );
-        const updateUsers = users.map((user) => {
-            return {
-                ...user,
-                role_id: roles?.id as unknown as string,
-            };
-        });
-        const createdBots = await userQueries.createMultipleUsers(updateUsers);
-        if (createdBots.count > 0) {
-            const emails = updateUsers.map((user) => {
-                return user.email;
-            });
-            const addPlaysInPlayBlx = await userQueries.addMultiplePlayBlx(
-                emails,
-                data.credit_plays
-            );
-            if (addPlaysInPlayBlx.queries.count > 0) {
-                eventService.emit(
-                    NODE_EVENT_SERVICE.MULTIPLE_PLAYER_PLAY_BALANCE_CREDIED,
-                    addPlaysInPlayBlx.details,
-                    data.auction_id
-                );
-                logger.info({
-                    level: "warn",
-                    message: "Random User Created in database",
-                });
-            }
-        } else {
-            logger.error({
-                message: "something went wrong for creating the random bots",
-            });
-        }
-    }
-);
-
-eventService.on(
-    NODE_EVENT_SERVICE.SIMULATION_BOTS,
-    async (data: { auction_id: string; count: number }) => {
-        await randomBid(data.auction_id, data.count);
-    }
-);
-
-eventService.on(
-    NODE_EVENT_SERVICE.STOP_BOT_SIMULATIONS,
-    async (ids: string[]) => {
-        await Promise.all([
-            db.user.updateMany({
-                where: {
-                    id: {
-                        in: ids,
-                    },
-                    is_bot: true,
-                },
-                data: {
-                    is_deleted: true,
-                    status: false,
-                },
-            }),
-        ]);
-    }
-);
-
+/**
+* Event listener for the PLAYER_AUCTION_REGISTER_MAIL event.
+ * Sends registration confirmation emails to players and notifies admin about registration surges.
+ * @param {Object} payload - The event payload containing registration details.
+ * @param {string} payload.user_name - The name of the registered user.
+ * @param {string} payload.auctionName - The name of the auction the user is registered for.
+ * @param {string} payload.email - The email address of the registered user.
+ * @param {number} payload.registeration_count - Total number of registrations for the auction.
+ * @param {number} payload._count - Current count of registrations.
+ 
+ */
 eventService.on(
     NODE_EVENT_SERVICE.PLAYER_AUCTION_REGISTER_MAIL,
     async (payload: {
@@ -682,6 +599,14 @@ eventService.on(
     }
 );
 
+/**
+ * Event listener for the REGISTER_NEW_PLAYER event.
+ * Handles the registration of a new player in the min-max auction.
+ * @param {IMinMaxAuction} playerData - Information about the new player and the associated auction.
+ * @param {string} playerData.player_id - The ID of the new player.
+ * @param {string} playerData.auction_id - The ID of the auction the player is registering for.
+
+ */
 eventService.on(
     NODE_EVENT_SERVICE.REGISTER_NEW_PLAYER,
     async (playerData: IMinMaxAuction) => {
@@ -692,6 +617,16 @@ eventService.on(
     }
 );
 
+/**
+ * Event listener for the MIN_MAX_AUCTION_END event.
+ * Handles the logic when a min-max auction ends, including processing bid logs,
+ * updating player registration auction result status, emitting the auction winner event,
+ * and clearing relevant Redis data.
+ * @param {Object} data - The event data containing auction_id and winnerInfo.
+ * @param {string} data.auction_id - The ID of the ended auction.
+ * @param {IMinMaxAuction} data.winnerInfo - Information about the auction winner.
+ * @param {string} data.winnerInfo.player_id - The ID of the winning player.
+ */
 eventService.on(
     NODE_EVENT_SERVICE.MIN_MAX_AUCTION_END,
     async (data: { auction_id: string; winnerInfo: IMinMaxAuction }) => {
@@ -709,6 +644,10 @@ eventService.on(
                     data.winnerInfo.player_id
                 ),
             ]);
+            eventService.emit(NODE_EVENT_SERVICE.AUCTION_WINNER, {
+                player_id: data.winnerInfo.player_id,
+                auction_id: data.auction_id,
+            });
             if (bidLogs && userInfo) {
                 await Promise.all([
                     redisClient.del(`${data.auction_id}:bidHistory`),
@@ -719,6 +658,11 @@ eventService.on(
     }
 );
 
+/**
+ * Event listener for the PLAYER_PLAYS_BALANCE event.
+ * Emits the current plays balance for the specified players to the player sockets.
+ * @param {string[]} playerIds - An array of player IDs for whom the plays balance needs to be emitted.
+ */
 eventService.on(
     NODE_EVENT_SERVICE.PLAYER_PLAYS_BALANCE,
     (player_id: string[]) => {
@@ -726,13 +670,39 @@ eventService.on(
             const playerBalance = await userQueries.playerPlaysBalance(id);
             socket.playerSocket.emit(SOCKET_EVENT.PLAYER_PLAYS_BALANCE, {
                 message: MESSAGES.SOCKET.CURRENT_PLAYS,
-                data:  JSON.parse(
+                data: JSON.parse(
                     JSON.stringify(playerBalance, (_key, value) =>
                         typeof value === "bigint" ? +value.toString() : value
                     )
                 )[0],
             });
         });
+    }
+);
+
+/**
+ * Event listener for the AUCTION_WINNER event.
+ * Sends a congratulatory email to the winning player of the auction.
+ * @param {Object} data - The event data containing player_id and auction_id.
+ * @param {string} data.player_id - The ID of the winning player.
+ * @param {string} data.auction_id - The ID of the auction won by the player.
+ * @returns {Promise} A Promise representing the email sending process.
+ * @throws {Error} If there are errors during the email sending process.
+ */
+eventService.on(
+    NODE_EVENT_SERVICE.AUCTION_WINNER,
+    async (data: { player_id: string; auction_id: string }) => {
+        const user = await userQueries.fetchPlayerId(data.player_id);
+        const auction = await auctionQueries.getAuctionById(data.auction_id);
+        if (user && auction) {
+            return await mailService({
+                user_name: `${user?.first_name}`,
+                email: [user?.email || ""],
+                subject: `Congratulations! You've Won the ${auction.title} in Our Auction!`,
+                template: TEMPLATE.WINNER,
+                message: auction.title,
+            });
+        }
     }
 );
 

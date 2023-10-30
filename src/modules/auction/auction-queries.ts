@@ -281,7 +281,10 @@ const remove = async (id: string[]) => {
  * @param {string} id - auction id
  * @returns
  */
-const fetchAuctionLogs = async (id: string,option:{limit:number,page:number}) => {
+const fetchAuctionLogs = async (
+    id: string,
+    option: { limit: number; page: number }
+) => {
     const query = await db.playerBidLogs.findMany({
         where: {
             auction_id: id,
@@ -289,11 +292,11 @@ const fetchAuctionLogs = async (id: string,option:{limit:number,page:number}) =>
         orderBy: {
             created_at: "desc",
         },
-        take:option.limit,
-        skip: option.page*option.limit,
+        take: option.limit,
+        skip: option.page * option.limit,
     });
-    const count = await db.playerBidLogs.count({where:{auction_id:id}})
-    return {query,count};
+    const count = await db.playerBidLogs.count({ where: { auction_id: id } });
+    return { query, count };
 };
 
 /**
@@ -588,68 +591,49 @@ const fetchPlayerAuction = async (
     offset: number,
     limit: number
 ) => {
-    const query: Sql = Prisma.sql`SELECT
-    T5.auction_id,
-    T5.player_id,
-    T5.status,
-    T5.total_bids,
-    T5.title,
-    T5.created_at,
-    T5.id,
-    T5.bid_increment_price,
-    T5.plays_consumed_on_bid,
-    T5.total_bid_consumed,
-    MAX(T5.last_bidding_price) as last_bidding_price
-  FROM (
-    SELECT
-      T2.player_id,
-      T2.auction_id,
-      T1.total_bids,
-      T2.created_at,
-      T2.status,
-      T2.title,
-      T2.bid_increment_price,
-      T2.plays_consumed_on_bid,
-      T2.id,
-      T1.bid_price as last_bidding_price,
-      (T1.total_bids * T2.plays_consumed_on_bid) as total_bid_consumed
-    FROM (
-        select T11.auction_id,T11.player_id,T11.total_bids, Max(T22.bid_price) as bid_price from (SELECT
-            player_id,
-            auction_id,
-              COUNT(*) AS total_bids
-            FROM
-              player_bid_log
-            where player_bid_log.player_id  = ${player_id}                                                                
-            GROUP BY
-              player_id,auction_id) as T11 Join  player_bid_log as T22 on T11.auction_id=T22.auction_id group by T11.auction_id ,T11.player_id ,T11.total_bids
-    ) as T1 
-    RIGHT JOIN (
-      SELECT
-        T3.title,
-        T3.bid_increment_price,
-        T3.plays_consumed_on_bid,
-        T4.created_at,
-        T4.auction_id,
-        T4.player_id,
-        T4.status,
-        T4.id
-      FROM
-        player_auction_register as T4
-      INNER JOIN auctions as T3
-      ON T3.id = T4.auction_id
-    ) as T2
-    ON T1.auction_id = T2.auction_id
-    AND T1.player_id = T2.player_id
-    ) as T5
-    where T5.player_id = ${player_id}
-    GROUP BY T5.auction_id, T5.player_id, T5.status,T5.total_bids,T5.created_at,T5.title,T5.id ,T5.bid_increment_price,T5.plays_consumed_on_bid,T5.total_bid_consumed
-    order by T5.created_at desc
+    const query: Sql = Prisma.sql`SELECT 
+    T1.auction_id,
+    T1.player_id,
+    T1.status,
+    T2.title,
+    T2.plays_consumed_on_bid,
+    T2.bid_increment_price,
+    T1.created_at,
+    COUNT(T3.player_id) as total_bids,
+    COUNT(T3.player_id) * T2.plays_consumed_on_bid as total_bid_consumed,
+	(case when 
+        (select T4.bid_price from player_bid_log as T4 where T4.player_id=T1.player_id 
+			and T4.auction_id=T1.auction_id and (T4.is_unique and (T4.is_highest or T4.is_lowest)))>0 
+	then (select T4.bid_price from player_bid_log as T4 where T4.player_id=T1.player_id 
+				and T4.auction_id=T1.auction_id and (T4.is_unique and 
+         (T4.is_highest or T4.is_lowest))) 
+	 else 
+	 (select Max(T4.bid_price) from player_bid_log as T4 where T4.player_id=T1.player_id 
+				and T4.auction_id=T1.auction_id) 
+		end) as last_bidding_price
+FROM 
+    player_auction_register as T1 
+INNER JOIN 
+    auctions as T2 ON T1.auction_id = T2.id
+Left JOIN 
+    player_bid_log as T3 ON T1.auction_id = T3.auction_id and T1.player_id = T3.player_id
+WHERE 
+    T1.player_id = ${player_id}
+GROUP BY 
+    T1.auction_id,
+	T1.player_id,
+	T1.status,
+	T2.title,
+	T2.plays_consumed_on_bid,
+	T2.bid_increment_price,
+	T1.created_at
+order by T1.created_at desc
     offset ${offset * limit}
-    limit ${limit}
-    `;
-     const count= await db.playerAuctionRegsiter.count({where:{player_id:player_id}}) 
-       
+ limit ${limit}`;
+    const count = await db.playerAuctionRegsiter.count({
+        where: { player_id: player_id },
+    });
+
     //     const query: Sql = Prisma.sql`
     //     SELECT
     //     T5.auction_id,
@@ -723,7 +707,7 @@ const fetchPlayerAuction = async (
     //     `;
 
     const queryResult = await prisma.$queryRaw<IPlayerAuctionInfo[]>(query);
-    return {queryResult,count};
+    return { queryResult, count };
 };
 
 /**
@@ -776,12 +760,6 @@ const updatePlayerRegistrationAuctionResultStatus = async (
                         buy_now_expiration: winexpirationTime,
                     },
                 });
-            logger.log({
-                level: "warn",
-                message: `${JSON.stringify(
-                    wonQueryResult
-                )}, player_id: ${player_id} auction_id: ${auction_id}`,
-            });
             return { lostQueryResult, wonQueryResult };
         }
     );
@@ -834,8 +812,8 @@ const getplayerRegistrationAuctionDetails = async (
                                 select: {
                                     id: true,
                                     title: true,
-                                }
-                            }
+                                },
+                            },
                         },
                     },
                 },
@@ -963,12 +941,12 @@ const getAuctionWinnerInfo = async (auction_id: string) => {
  * @param {number} limit
  */
 const getAuctionLists = async (data: IAuctionListing) => {
-    const filter: { id?: string,title?:{contains:string} } = {};
+    const filter: { id?: string; title?: { contains: string } } = {};
     if (data.auction_id) {
         filter.id = data.auction_id;
     }
-    if(data.search){
-        filter.title={ contains: data.search }
+    if (data.search) {
+        filter.title = { contains: data.search };
     }
     const queryCount = await db.auction.findMany({
         where: {
@@ -980,11 +958,10 @@ const getAuctionLists = async (data: IAuctionListing) => {
                     state: data.state && data.state,
                 },
             ],
-
         },
         select: {
-            id: true
-        }
+            id: true,
+        },
     });
     const queryResult = await db.auction.findMany({
         where: {
@@ -1454,7 +1431,6 @@ WHERE
  * registration fees,and profit calculations.
  */
 const getTotalAuction = async () => {
-
     const query: Sql = Prisma.sql`WITH AuctionData AS (
         SELECT
             A.id AS auction_id,
