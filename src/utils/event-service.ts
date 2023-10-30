@@ -438,18 +438,13 @@ eventService.on(
             data.to,
             data.from,
         ]);
-        const playersBalance = JSON.parse(
-            (await redisClient.get("player:plays:balance")) as unknown as string
-        );
-        if (playersBalance[data.from] && playersBalance[data.to]) {
-            playersBalance[data.from] =
-                +playersBalance[data.from] - data.plays_balance;
-            playersBalance[data.to] =
-                +playersBalance[data.to] + data.plays_balance;
-            await redisClient.set(
-                "player:plays:balance",
-                JSON.stringify(playersBalance)
-            );
+        const playersBalance = JSON.parse((await redisClient.get("player:plays:balance")) as unknown as string);
+        if(playersBalance === null) return;
+        const playersData = Object.keys(playersBalance);
+        if(playersData.includes(`${data.from}`) && playersData.includes(`${data.to}`)){
+            playersBalance[data.from] = +playersBalance[data.from] - data.plays_balance;
+            playersBalance[data.to] = +playersBalance[data.to] + data.plays_balance;
+            await redisClient.set("player:plays:balance", JSON.stringify(playersBalance));
             return;
         }
     }
