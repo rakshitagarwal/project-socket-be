@@ -601,33 +601,43 @@ const fetchPlayerAuction = async (
     T1.created_at,
     COUNT(T3.player_id) as total_bids,
     COUNT(T3.player_id) * T2.plays_consumed_on_bid as total_bid_consumed,
-	(case when 
-        (select T4.bid_price from player_bid_log as T4 where T4.player_id=T1.player_id 
-			and T4.auction_id=T1.auction_id and (T4.is_unique and (T4.is_highest or T4.is_lowest)))>0 
-	then (select T4.bid_price from player_bid_log as T4 where T4.player_id=T1.player_id 
-				and T4.auction_id=T1.auction_id and (T4.is_unique and 
-         (T4.is_highest or T4.is_lowest))) 
-	 else 
-	 (select Max(T4.bid_price) from player_bid_log as T4 where T4.player_id=T1.player_id 
-				and T4.auction_id=T1.auction_id) 
-		end) as last_bidding_price
+    CASE 
+        WHEN T5.code = 'TLP'
+         THEN (
+			 SELECT MAX(T4.bid_price) 
+            FROM player_bid_log as T4 
+            WHERE 
+            T4.auction_id=T1.auction_id
+        )
+        ELSE (
+			SELECT T4.bid_price 
+              FROM player_bid_log as T4 
+            WHERE 
+             T4.auction_id=T1.auction_id 
+            AND T4.is_unique 
+            AND (T4.is_highest OR T4.is_lowest)
+        )
+    END AS last_bidding_price
 FROM 
     player_auction_register as T1 
 INNER JOIN 
     auctions as T2 ON T1.auction_id = T2.id
-Left JOIN 
-    player_bid_log as T3 ON T1.auction_id = T3.auction_id and T1.player_id = T3.player_id
+LEFT JOIN 
+	master_auction_categories as T5 on T2.auction_category_id=T5.id
+LEFT JOIN 
+    player_bid_log as T3 ON T1.auction_id = T3.auction_id AND T1.player_id = T3.player_id
 WHERE 
     T1.player_id = ${player_id}
 GROUP BY 
     T1.auction_id,
-	T1.player_id,
-	T1.status,
-	T2.title,
-	T2.plays_consumed_on_bid,
-	T2.bid_increment_price,
-	T1.created_at
-order by T1.created_at desc
+    T1.player_id,
+    T1.status,
+    T2.title,
+    T2.plays_consumed_on_bid,
+    T2.bid_increment_price,
+    T1.created_at,
+	T5.code
+ORDER BY T1.created_at DESC
     offset ${offset * limit}
  limit ${limit}`;
     const count = await db.playerAuctionRegsiter.count({
