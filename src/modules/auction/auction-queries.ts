@@ -601,7 +601,7 @@ const fetchPlayerAuction = async (
     T1.created_at,
     COUNT(T3.player_id) as total_bids,
     COUNT(T3.player_id) * T2.plays_consumed_on_bid as total_bid_consumed,
-    CASE 
+    COALESCE( CASE 
         WHEN T5.code = 'TLP'
          THEN (
 			 SELECT MAX(T4.bid_price) 
@@ -617,7 +617,8 @@ const fetchPlayerAuction = async (
             AND T4.is_unique 
             AND (T4.is_highest OR T4.is_lowest)
         )
-    END AS last_bidding_price
+    END,0)
+    AS last_bidding_price
 FROM 
     player_auction_register as T1 
 INNER JOIN 
