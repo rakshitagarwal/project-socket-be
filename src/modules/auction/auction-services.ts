@@ -254,6 +254,7 @@ const cancelAuction = async (id: string) => {
             }
             await redisClient.del(`auction:pre-register:${id}`);
         }
+        socket.playerSocket.emit(SOCKET_EVENT.NEW_AUCTION_ADDED,{message:MESSAGES.SOCKET.NEW_AUCTION_ADDED, data:createTrax.cancelAuction})
         return responseBuilder.okSuccess(AUCTION_MESSAGES.CANCELLED);
     }
     return responseBuilder.expectationFaild(AUCTION_MESSAGES.CANT_CANCEL);

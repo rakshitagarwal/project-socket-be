@@ -282,7 +282,9 @@ export const newBiDRecieved = async (
     if (!isValid.status) {
         socket.playerSocket
             .to(socketId)
-            .emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
+            .emit(SOCKET_EVENT.AUCTION_ERROR, { 
+                auction_id:bidPayload.auction_id,
+                ...isValid });
         return;
     }
     const { bidData } = isValid;
@@ -677,7 +679,10 @@ export const minMaxAuctionBid = async (
     if (!isValid.status) {
         socket.playerSocket
             .to(socketId)
-            .emit(SOCKET_EVENT.AUCTION_ERROR, { ...isValid });
+            .emit(SOCKET_EVENT.AUCTION_ERROR, { 
+                auction_id:bidData.auction_id,
+                ...isValid
+             });
         return;
     }
     const isAuctionLive = JSON.parse(
@@ -844,6 +849,14 @@ export const getMinMaxAuctionResult = async (payload: {
     return;
 };
 
+/**
+ * Calculates and emits the minimum and maximum bid percentages for an auction.
+ * @param {Object} payload - The payload containing auction_id, player_id, and socketId.
+ * @param {string} payload.auction_id - The ID of the auction.
+ * @param {string} payload.player_id - The ID of the player participating in the auction.
+ * @param {string} payload.socketId - The socket ID of the player's connection.
+ * @throws {Error} If the auction is not live, emits an error message to the specified socket.
+ */
 export const minMaxBidResult = async (payload: {
     auction_id: string;
     player_id: string;
