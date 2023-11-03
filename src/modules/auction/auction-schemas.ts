@@ -147,13 +147,6 @@ const ZAuctionUpdate = z
             })
             .min(1)
             .optional(),
-        auction_state: z
-            .enum(AUCTION_STATE, {
-                invalid_type_error: "auction_state should be string!",
-                required_error: "auction_state is required!",
-            })
-            .optional(),
-        status: z.boolean().optional(),
         auction_category_id: z
             .string({
                 required_error: "auction_category_id is required!",
