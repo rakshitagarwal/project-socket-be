@@ -242,6 +242,8 @@ const update = async (
             is_preRegistered: auction.is_pregistered as boolean,
             registeration_count: auction.pre_register_count,
             registeration_fees: auction.pre_register_fees,
+            decimal_count: auction.decimal_count,
+            total_bids: auction.total_bids,
             terms_and_conditions: auction.terms_condition,
             state: auction.auction_state,
             created_by: userId,

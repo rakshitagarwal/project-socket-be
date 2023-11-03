@@ -94,6 +94,87 @@ const ZAuctionAdd = z
     })
     .strict();
 
+const ZAuctionUpdate = z
+    .object({
+        title: z
+            .string({
+                required_error: "title is required!",
+                invalid_type_error: "title should be string!",
+            })
+            .min(1, {
+                message: "title should be of minimum 1 character!",
+            }),
+        description: z.string({
+            required_error: "description is required!",
+            invalid_type_error: "description should be string!",
+        }),
+        play_consumed: z.number({
+            required_error: "price_increment is required!",
+            invalid_type_error: "price_increment should be number!",
+        }),
+        new_participant_threshold: z
+            .number({
+                required_error: "new_participant_threshold is required!",
+                invalid_type_error:
+                    "new_participant_threshold should be number!",
+            })
+            .min(1, { message: "minmum should be 1%" })
+            .max(100, { message: "maximum should be 100%" })
+            .optional(),
+        start_date: z.coerce
+            .date()
+            .refine((data) => data > new Date(), {
+                message: "Start date must be in the future",
+            })
+            .optional(),
+        is_pregistered: z
+            .boolean({
+                required_error: "is_pregistered is required!",
+                invalid_type_error: "is_pregistered should be boolean!",
+            })
+            .default(false)
+            .optional(),
+        pre_register_count: z
+            .number({
+                required_error: "pre_register_count is required!",
+                invalid_type_error: "pre_register_count should be number!",
+            })
+            .optional(),
+        terms_condition: z
+            .string({
+                required_error: "terms_condition is required!",
+                invalid_type_error: "terms_condition should be boolean!",
+            })
+            .min(1)
+            .optional(),
+        auction_state: z
+            .enum(AUCTION_STATE, {
+                invalid_type_error: "auction_state should be string!",
+                required_error: "auction_state is required!",
+            })
+            .optional(),
+        status: z.boolean().optional(),
+        auction_category_id: z
+            .string({
+                required_error: "auction_category_id is required!",
+                invalid_type_error: "auction_category_id should be string!",
+            })
+            .uuid(),
+        total_bids: z
+            .number({
+                required_error: "total_bids is required!",
+                invalid_type_error: "total_bids should be number!",
+            })
+            .optional(),
+        decimal_count: z
+            .number({
+                required_error: "decimal_count is required!",
+                invalid_type_error: "decimal_count should be number!",
+            })
+            .optional(),
+    })
+    .strict();
+
 const ZAuctionId = z
     .object({
         id: z
@@ -458,6 +539,7 @@ const ZAuctionTotalListing = z
 
 export const auctionSchemas = {
     ZAuctionAdd,
+    ZAuctionUpdate,
     ZAuctionId,
     ZDeleteId,
     Zpagination,
