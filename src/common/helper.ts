@@ -70,3 +70,32 @@ export const setBotReferralCode = () => {
     codeArray.push("b", "o", "t");
     return codeArray.join('');
 }
+
+export const dateFormateForMail = (start_date: string) => {
+    const startDateISOString = new Date(start_date).toISOString();
+    const currentDateISOString: string = new Date().toISOString();
+    const startDate: Date = new Date(startDateISOString);
+    const currentDate: Date = new Date(currentDateISOString);
+    const timeDifferenceMs: number =
+        currentDate.getTime() - startDate.getTime();
+    const hours: number = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes: number = Math.floor(
+        (timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds: number = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
+    return { hours, minutes, seconds };
+};
+
+/**
+ * convert string to Latter format
+ * @param value - string
+ * @returns 
+ */
+export const latterFormat=(value:string)=>{
+    const data= value.toLowerCase()
+    const strArr=[]
+    for(const i of data.split(" ")){
+        strArr.push(i[0]?.toUpperCase()+i.slice(1))
+    }
+    return strArr.join(" ")
+}
