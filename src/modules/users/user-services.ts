@@ -17,7 +17,7 @@ import {
 } from "./typings/user-types";
 import userQueries from "./user-queries";
 import bcrypt from "bcrypt";
-import { responseBuilder } from "../../common/responses";
+import { responseBuilder, sanitize } from "../../common/responses";
 import { PrismaClient } from "@prisma/client";
 import { prismaTransaction } from "../../utils/prisma-transactions";
 import eventService from "../../utils/event-service";
@@ -31,7 +31,7 @@ import {
 } from "../../common/constants";
 import roleQueries from "../roles/role-queries";
 import otpQuery from "../user-otp/user-otp-queries";
-import { generateAccessToken, setReferralCode } from "../../common/helper";
+import { generateAccessToken, latterFormat, setReferralCode } from "../../common/helper";
 import tokenPersistanceQuery from "../token-persistent/token-persistent-queries";
 import { hashPassword } from "../../common/helper";
 import { randomInt } from "crypto";
@@ -46,6 +46,8 @@ const socket = global as unknown as AppGlobal;
  * @param body - admin or player registration's request body
  */
 const register = async (body: Iuser) => {
+    body.first_name=latterFormat(body.first_name)
+    body.email=sanitize(body.email)
     const { role, applied_referral, ...payload } = body;
     const isRole = await roleQueries.fetchRole({ title: role });
     if (isRole?.title?.toLocaleLowerCase() === "admin") {
@@ -301,6 +303,9 @@ const getUser = async (param: IuserQuery) => {
  */
 
 const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
+    if(body.first_name){
+        body.first_name=latterFormat(body.first_name)
+    }
     const isUser = await userQueries.fetchUser({ id: parmas.id });
     if (!isUser) {
         return responseBuilder.notFoundError(MESSAGES.USERS.USER_NOT_FOUND);
