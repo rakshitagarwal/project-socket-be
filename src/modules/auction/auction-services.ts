@@ -132,26 +132,20 @@ const update = async (
             auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
             productQueries.getById(auction.product_id),
             auctionQueries.getActiveAuctioById(auctionId),
-        ]);
+        ]);    
     if (!isAuctionCategoryFound)
-        return responseBuilder.notFoundError(
-            AUCTION_CATEGORY_MESSAGES.NOT_FOUND
-        );
+        return responseBuilder.notFoundError(AUCTION_CATEGORY_MESSAGES.NOT_FOUND);
+    if(isAuctionCategoryFound.code !== "TLP" && (!auction.total_bids || !auction.decimal_count))
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_UPDATE_FIELDS);
     if (!isProductExists)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-
     if (isAuctionExists.state === "live")
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
-        );
-    if (isAuctionExists.state === "completed") {
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
-        );
-    }
-
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_LIVE_UPDATE);
+    if (isAuctionExists.state === "completed") 
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE);
+    
     if (auction.start_date && auction.start_date > new Date()) {
         return responseBuilder.badRequestError(
             AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
@@ -164,7 +158,7 @@ const update = async (
             auctionId,
         });
     }
-    return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
 /**

@@ -115,6 +115,7 @@ export const AUCTION_MESSAGES = {
     GET_BID_LOGS: "All BigLogs",
     BID_LOGS_NOT_FOUND: "BidLogs Not Found",
     ALREADY_EXIST: "Auction category already exist",
+    AUCTION_UPDATE_FIELDS: "decimal count and total bids required"
 };
 
 export const productMessage = {
