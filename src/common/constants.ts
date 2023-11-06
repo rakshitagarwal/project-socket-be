@@ -413,21 +413,6 @@ export const AUCTION_CATEGORY = [
     },
 ];
 
-export const dateFormateForMail = (start_date: string) => {
-    const startDateISOString = new Date(start_date).toISOString();
-    const currentDateISOString: string = new Date().toISOString();
-    const startDate: Date = new Date(startDateISOString);
-    const currentDate: Date = new Date(currentDateISOString);
-    const timeDifferenceMs: number =
-        currentDate.getTime() - startDate.getTime();
-    const hours: number = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
-    const minutes: number = Math.floor(
-        (timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60)
-    );
-    const seconds: number = Math.floor((timeDifferenceMs % (1000 * 60)) / 1000);
-    return { hours, minutes, seconds };
-};
-
 export const userImages = [
     "assets/avatar/1.png",
     "assets/avatar/2.png",
