@@ -35,7 +35,7 @@ auctionRouter.put(
     ENDPOINTS.ID,
     [
         validateRequest.params(auctionSchemas.ZAuctionId),
-        validateRequest.body(auctionSchemas.ZAuctionAdd),
+        validateRequest.body(auctionSchemas.ZAuctionUpdate),
     ],
     handleAsync(auctionHandler.update)
 );

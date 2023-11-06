@@ -241,11 +241,11 @@ const update = async (
             new_participants_limit: auction.new_participant_threshold,
             is_preRegistered: auction.is_pregistered as boolean,
             registeration_count: auction.pre_register_count,
-            registeration_fees: auction.pre_register_fees,
+            total_bids: auction.total_bids || 0,
+            decimal_count: auction.decimal_count || 0,
             terms_and_conditions: auction.terms_condition,
             state: auction.auction_state,
             created_by: userId,
-            status: auction.status,
         },
         select: {
             id: true,

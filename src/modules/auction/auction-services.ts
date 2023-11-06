@@ -134,29 +134,18 @@ const update = async (
             auctionQueries.getActiveAuctioById(auctionId),
         ]);
     if (!isAuctionCategoryFound)
-        return responseBuilder.notFoundError(
-            AUCTION_CATEGORY_MESSAGES.NOT_FOUND
-        );
+        return responseBuilder.notFoundError(AUCTION_CATEGORY_MESSAGES.NOT_FOUND);
     if (!isProductExists)
         return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
-
     if (isAuctionExists.state === "live")
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_LIVE_UPDATE
-        );
-    if (isAuctionExists.state === "completed") {
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE
-        );
-    }
-
-    if (auction.start_date && auction.start_date > new Date()) {
-        return responseBuilder.badRequestError(
-            AUCTION_MESSAGES.AUCTION_ALREADY_STARTED
-        );
-    }
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_LIVE_UPDATE);
+    if (isAuctionExists.state === "completed") 
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE);
+    if (auction.start_date && auction.start_date > new Date()) 
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_ALREADY_STARTED);
+    
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
@@ -164,7 +153,7 @@ const update = async (
             auctionId,
         });
     }
-    return responseBuilder.createdSuccess(AUCTION_MESSAGES.UPDATE);
+    return responseBuilder.okSuccess(AUCTION_MESSAGES.UPDATE);
 };
 
 /**
