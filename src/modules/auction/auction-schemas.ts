@@ -108,10 +108,6 @@ const ZAuctionUpdate = z
             required_error: "description is required!",
             invalid_type_error: "description should be string!",
         }),
-        play_consumed: z.number({
-            required_error: "price_increment is required!",
-            invalid_type_error: "price_increment should be number!",
-        }),
         new_participant_threshold: z
             .number({
                 required_error: "new_participant_threshold is required!",
@@ -126,13 +122,6 @@ const ZAuctionUpdate = z
             .refine((data) => data > new Date(), {
                 message: "Start date must be in the future",
             })
-            .optional(),
-        is_pregistered: z
-            .boolean({
-                required_error: "is_pregistered is required!",
-                invalid_type_error: "is_pregistered should be boolean!",
-            })
-            .default(false)
             .optional(),
         pre_register_count: z
             .number({
