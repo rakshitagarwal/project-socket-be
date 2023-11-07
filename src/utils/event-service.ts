@@ -7,7 +7,6 @@ import {
     NODE_EVENT_SERVICE,
     SOCKET_EVENT,
     MESSAGES,
-    dateFormateForMail,
 } from "../common/constants";
 import { Ispend_on } from "../modules/users/typings/user-types";
 import redisClient from "../config/redis";
@@ -21,6 +20,7 @@ import { IRegisterPlayer } from "../modules/auction/typings/auction-types";
 import logger from "../config/logger";
 import { Imail } from "./typing/utils-types";
 import { IMinMaxAuction } from "../middlewares/typings/middleware-types";
+import { dateFormateForMail } from "../common/helper";
 const eventService: EventEmitter = new EventEmitter();
 const socket = global as unknown as AppGlobal;
 

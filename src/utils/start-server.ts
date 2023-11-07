@@ -3,6 +3,14 @@ import logger from "../config/logger";
 import app from "..";
 import env from "../config/env";
 import socketService from "./socket-service";
+
+
+/**
+ * Starts the server and listens on the specified port. Sets up event listeners for uncaught exceptions
+ * and SIGTERM signal to gracefully handle server shutdown.
+ * @param {number} PORT - The port number on which the server will listen.
+ * @returns {http.Server} The server instance that is listening on the specified port.
+ */
 async function startServer() {
     const checking = await checkHealth();
     if (!checking) {
