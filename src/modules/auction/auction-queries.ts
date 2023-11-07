@@ -243,6 +243,7 @@ const update = async (
             terms_and_conditions: auction.terms_condition,
             state: auction.auction_state,
             created_by: userId,
+            updated_at:new Date()
         },
         select: {
             id: true,

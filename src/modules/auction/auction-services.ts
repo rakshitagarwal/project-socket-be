@@ -133,6 +133,9 @@ const update = async (
     ]);
     if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(AUCTION_CATEGORY_MESSAGES.NOT_FOUND);
+    if(isAuctionCategoryFound.code !=="TLP" && !auction.decimal_count && !auction.total_bids){
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.TOTAL_BID_DECIMAL_VALUE)
+    }
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     if (isAuctionExists.state === "live")
