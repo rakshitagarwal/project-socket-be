@@ -128,19 +128,20 @@ const update = async (
     userId: string
 ) => {
     const [isAuctionCategoryFound, isAuctionExists] = await Promise.all([
-            auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
-            auctionQueries.getActiveAuctioById(auctionId) ]);
+        auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
+        auctionQueries.getActiveAuctioById(auctionId),
+    ]);
     if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(AUCTION_CATEGORY_MESSAGES.NOT_FOUND);
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     if (isAuctionExists.state === "live")
         return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_LIVE_UPDATE);
-    if (isAuctionExists.state === "completed") 
+    if (isAuctionExists.state === "completed")
         return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE);
-    if (auction.start_date && auction.start_date > new Date()) 
+    if (auction.start_date && auction.start_date > new Date())
         return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_ALREADY_STARTED);
-    
+
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {
