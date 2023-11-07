@@ -90,11 +90,11 @@ const getById = async (id: string) => {
                     title: true,
                 },
             },
-            auctions: {
-                include: {
-                    _count: true,
-                },
-            },
+            // auctions: {
+            //     include: {
+            //         _count: true,
+            //     },
+            // },
             productMedias: {
                 select: {
                     medias: {
@@ -167,11 +167,11 @@ const getAllProduct = async (query: IPaginationQuery) => {
                     updated_at: false,
                 },
             },
-            auctions: {
-                include: {
-                    _count: true,
-                },
-            },
+            // auctions: {
+            //     include: {
+            //         _count: true,
+            //     },
+            // },
             updated_at: false,
             productCategories: {
                 select: {

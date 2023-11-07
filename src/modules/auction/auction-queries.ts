@@ -235,17 +235,15 @@ const update = async (
         data: {
             title: auction.title,
             description: auction.description,
-            plays_consumed_on_bid: auction.play_consumed,
-            product_id: auction.product_id,
             auction_category_id: auction.auction_category_id,
             new_participants_limit: auction.new_participant_threshold,
-            is_preRegistered: auction.is_pregistered as boolean,
             registeration_count: auction.pre_register_count,
             total_bids: auction.total_bids || 0,
             decimal_count: auction.decimal_count || 0,
             terms_and_conditions: auction.terms_condition,
             state: auction.auction_state,
             created_by: userId,
+            updated_at:new Date()
         },
         select: {
             id: true,

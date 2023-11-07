@@ -127,25 +127,24 @@ const update = async (
     auctionId: string,
     userId: string
 ) => {
-    const [isAuctionCategoryFound, isProductExists, isAuctionExists] =
-        await Promise.all([
-            auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
-            productQueries.getById(auction.product_id),
-            auctionQueries.getActiveAuctioById(auctionId),
-        ]);
+    const [isAuctionCategoryFound, isAuctionExists] = await Promise.all([
+        auctionCategoryQueries.IsExistsActive(auction.auction_category_id),
+        auctionQueries.getActiveAuctioById(auctionId),
+    ]);
     if (!isAuctionCategoryFound)
         return responseBuilder.notFoundError(AUCTION_CATEGORY_MESSAGES.NOT_FOUND);
-    if (!isProductExists)
-        return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    if(isAuctionCategoryFound.code !=="TLP" && !auction.decimal_count && !auction.total_bids){
+        return responseBuilder.badRequestError(AUCTION_MESSAGES.TOTAL_BID_DECIMAL_VALUE)
+    }
     if (!isAuctionExists)
         return responseBuilder.notFoundError(AUCTION_MESSAGES.NOT_FOUND);
     if (isAuctionExists.state === "live")
         return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_LIVE_UPDATE);
-    if (isAuctionExists.state === "completed") 
+    if (isAuctionExists.state === "completed")
         return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_COMPLETED_UPDATE);
-    if (auction.start_date && auction.start_date > new Date()) 
+    if (auction.start_date && auction.start_date > new Date())
         return responseBuilder.badRequestError(AUCTION_MESSAGES.AUCTION_ALREADY_STARTED);
-    
+
     await auctionQueries.update(auction, auctionId, userId);
     if (auction.auction_state && auction.auction_state === "cancelled") {
         eventService.emit(NODE_EVENT_SERVICE.AUCTION_REMINDER_MAIL, {

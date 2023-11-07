@@ -48,6 +48,9 @@ const socket = global as unknown as AppGlobal;
 const register = async (body: Iuser) => {
     body.first_name=latterFormat(body.first_name)
     body.email=sanitize(body.email)
+    if(body.last_name){
+        body.last_name=latterFormat(body.last_name)
+    }
     const { role, applied_referral, ...payload } = body;
     const isRole = await roleQueries.fetchRole({ title: role });
     if (isRole?.title?.toLocaleLowerCase() === "admin") {
@@ -301,10 +304,12 @@ const getUser = async (param: IuserQuery) => {
  * @param body - user's request body
  * @description update user into databse
  */
-
 const updateUser = async (parmas: IuserQuery, body: IupdateUser) => {
     if(body.first_name){
         body.first_name=latterFormat(body.first_name)
+    }
+    if(body.last_name){
+        body.last_name=latterFormat(body.last_name)
     }
     const isUser = await userQueries.fetchUser({ id: parmas.id });
     if (!isUser) {
