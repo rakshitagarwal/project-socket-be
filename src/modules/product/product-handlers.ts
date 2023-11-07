@@ -30,6 +30,18 @@ const get = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /**
+ * @description get all active products for auction
+ * @param { Request } req request object
+ * @param { Response } res response object
+ */
+const getAuctionProducts = asyncHandler(async (req: Request, res: Response) => {
+    const response = await productServices.getAuctionProducts(
+        req.query as unknown as IPagination
+    );
+    res.status(response.code).json(response);
+});
+
+/**
  * @description handler to update one Product
  * @param { Request } req - request object
  * @param { Response } res - response object
@@ -61,9 +73,10 @@ const removeMultipleId = asyncHandler(async (req: Request, res: Response) => {
 
 const productHandler = {
     add,
+    get,
+    getAuctionProducts,
     update,
     updateStatus,
-    get,
     removeMultipleId,
 };
 

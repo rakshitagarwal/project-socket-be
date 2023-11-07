@@ -25,8 +25,8 @@ export interface IPagination {
 export interface IPaginationQuery {
     page: number;
     limit: number;
-    _sort: string;
-    _order: string;
+    _sort?: string;
+    _order?: string;
     filter: Array<object>;
 }
 export interface Ids {

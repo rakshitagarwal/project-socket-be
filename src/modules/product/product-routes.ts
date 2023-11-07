@@ -12,6 +12,15 @@ productRoutes.post(
     validateRequest.body(schema.ZNewAdd),
     handleAsync(productHandler.add)
 );
+
+productRoutes.get(
+    ENDPOINTS.AUCTIONS,
+    [
+        validateRequest.query(schema.Zpagination),
+    ],
+    handleAsync(productHandler.getAuctionProducts)
+);
+
 productRoutes.get(
     ENDPOINTS.BASE + ":id?",
     [
@@ -20,6 +29,7 @@ productRoutes.get(
     ],
     handleAsync(productHandler.get)
 );
+
 productRoutes.patch(
     ENDPOINTS.ID,
     [

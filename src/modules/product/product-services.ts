@@ -89,12 +89,6 @@ const get = async ({ id }: Iid, query: IPagination) => {
         
         return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result);
     }
-    const auctionProducts = Object.keys(query);
-    if(!id && !auctionProducts.length) {
-        const queryResult = await productQueries.getAllActiveProducts();
-        return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult);
-    }
-    
     const limit = parseInt(query.limit) || 20;
     const page = parseInt(query.page) || 0;
     const _sort = query._sort || "category";
@@ -118,6 +112,30 @@ const get = async ({ id }: Iid, query: IPagination) => {
         search: query.search || "",
         sort: query._sort,
         order: query._order,
+    });
+};
+
+/**
+ * @description   it is used in geting all active products with search title field.
+ * @param {IPagination} query pagination for pass payload
+ * @returns {object}  - the response object using responseBuilder.
+ */
+const getAuctionProducts = async (query: IPagination) => {
+    const limit = parseInt(query.limit) || 20;
+    const page = parseInt(query.page) || 0;
+    const filter = [];
+    if (query.search)
+        filter.push({ title: { contains: query.search, mode: "insensitive" } });
+
+    const queryResult = await productQueries.getAllActiveProducts({
+        limit,
+        filter,
+        page,
+    });
+    return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
+        limit,
+        page,
+        search: query.search || "",
     });
 };
 
@@ -200,7 +218,7 @@ const updateStatus = async (productId: Iid, status: boolean) => {
     if (!isExistProductId) return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
     
     const result = await productQueries.updateStatus(productId.id as string, status);
-    if (!result) return responseBuilder.badRequestError(productMessage.UPDATE.STATUS_NOT_CHANGED);
+    if (!result) return responseBuilder.expectationFaild(productMessage.UPDATE.STATUS_NOT_CHANGED);
     
     return responseBuilder.okSuccess(productMessage.UPDATE.STATUS_CHANGED);
 }
@@ -263,6 +281,7 @@ const removeMultipleId = async (collectionId: Ids) => {
 const productServices = {
     add,
     get,
+    getAuctionProducts,
     update,
     updateStatus,
     removeMultipleId,

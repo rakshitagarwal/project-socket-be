@@ -206,11 +206,27 @@ const getAllProduct = async (query: IPaginationQuery) => {
     };
 };
 
-const getAllActiveProducts = async () => {
-    const query = await db.product.findMany({
-        where: { status: true },
+const getAllActiveProducts = async (query: IPaginationQuery) => {
+    const queryResult = await db.product.findMany({
+        where: {
+            AND: [
+                { is_deleted: false },
+                {
+                    OR: query.filter,
+                },
+                { status: true },
+            ],
+        },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            price: true,
+        },
+        skip: query.limit * query.page,
+        take: query.limit,
     });
-    return query;
+    return queryResult;
 };
 
 /**
