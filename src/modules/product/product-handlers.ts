@@ -28,8 +28,9 @@ const get = asyncHandler(async (req: Request, res: Response) => {
     );
     res.status(response.code).json(response);
 });
+
 /**
- * @description handler to update new Product
+ * @description handler to update one Product
  * @param { Request } req - request object
  * @param { Response } res - response object
  */
@@ -37,8 +38,19 @@ const update = asyncHandler(async (req: Request, res: Response) => {
     const response = await productServices.update(req.params, req.body);
     res.status(response.code).json(response);
 });
+
 /**
- * @description handler to multiple Delete new Product
+ * @description handler to update status of one Product
+ * @param { Request } req - request object
+ * @param { Response } res - response object
+ */
+const updateStatus = asyncHandler(async (req: Request, res: Response) => {
+    const response = await productServices.updateStatus(req.params, req.body.status);
+    res.status(response.code).json(response);
+});
+
+/**
+ * @description handler to multiple Delete Products
  * @param { Request } req - request object
  * @param { Response } res - response object
  */
@@ -46,10 +58,13 @@ const removeMultipleId = asyncHandler(async (req: Request, res: Response) => {
     const response = await productServices.removeMultipleId(req.body);
     res.status(response.code).json(response);
 });
+
 const productHandler = {
     add,
     update,
+    updateStatus,
     get,
     removeMultipleId,
 };
+
 export default productHandler;

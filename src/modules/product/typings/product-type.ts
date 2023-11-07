@@ -9,7 +9,9 @@ export type addReqBody = {
     media_id: Array<string>
 
 };
-export type updateReqBody = addReqBody
+export type updateReqBody = addReqBody & {
+    status: boolean;
+}
 
 export interface IPagination {
     page: string;

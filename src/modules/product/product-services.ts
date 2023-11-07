@@ -83,12 +83,18 @@ const add = async (newReqBody: addReqBody, userId: string) => {
  */
 const get = async ({ id }: Iid, query: IPagination) => {
     if (id) {
-        const result = await productQueries.getById(id);
-        if (!result) {
+        const result = await productQueries.getById(id);        
+        if (!result) 
             return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-        }
+        
         return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result);
     }
+    const auctionProducts = Object.keys(query);
+    if(!id && !auctionProducts.length) {
+        const queryResult = await productQueries.getAllActiveProducts();
+        return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult);
+    }
+    
     const limit = parseInt(query.limit) || 20;
     const page = parseInt(query.page) || 0;
     const _sort = query._sort || "category";
@@ -189,6 +195,16 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
     return responseBuilder.okSuccess(productMessage.UPDATE.SUCCESS);
 };
 
+const updateStatus = async (productId: Iid, status: boolean) => {
+    const isExistProductId = await productQueries.getById(productId.id as string);    
+    if (!isExistProductId) return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    
+    const result = await productQueries.updateStatus(productId.id as string, status);
+    if (!result) return responseBuilder.badRequestError(productMessage.UPDATE.STATUS_NOT_CHANGED);
+    
+    return responseBuilder.okSuccess(productMessage.UPDATE.STATUS_CHANGED);
+}
+
 /**
  * @description delete product by ids
  * @see getFindAllId  product Ids.
@@ -248,6 +264,7 @@ const productServices = {
     add,
     get,
     update,
+    updateStatus,
     removeMultipleId,
 };
 export default productServices;

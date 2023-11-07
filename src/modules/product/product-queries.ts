@@ -61,7 +61,7 @@ const getById = async (id: string) => {
         where: {
             AND: {
                 id: id,
-                status: true,
+                // status: true,
                 is_deleted: false,
             },
         },
@@ -206,6 +206,13 @@ const getAllProduct = async (query: IPaginationQuery) => {
     };
 };
 
+const getAllActiveProducts = async () => {
+    const query = await db.product.findMany({
+        where: { status: true },
+    });
+    return query;
+};
+
 /**
  * @param {string} id in  product
  * @param {updateReqBody} updateInfo pass in payload in product
@@ -248,6 +255,14 @@ const update = async (
     });
     return queryResult;
 };
+
+const updateStatus = async (id: string, status: boolean) => {
+    const query = await db.product.update({
+        where: { id },
+        data: { status }
+    });
+    return query;
+}
 
 /**
  * @param {string} ids in  product
@@ -389,7 +404,9 @@ const productQueries = {
     getTitle,
     getById,
     getAllProduct,
+    getAllActiveProducts,
     update,
+    updateStatus,
     deleteMultipleIds,
     getFindAllId,
     findProductMediaAll,

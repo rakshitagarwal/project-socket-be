@@ -21,12 +21,21 @@ productRoutes.get(
     handleAsync(productHandler.get)
 );
 productRoutes.patch(
-    ENDPOINTS.BASE + ":id",
+    ENDPOINTS.ID,
     [
-        validateRequest.body(schema.ZUpdate),
         validateRequest.params(schema.ZGetId),
+        validateRequest.body(schema.ZUpdate),
     ],
     handleAsync(productHandler.update)
+);
+
+productRoutes.put(
+    ENDPOINTS.ID,
+    [
+        validateRequest.params(schema.ZGetId),
+        validateRequest.body(schema.ZBlock),
+    ],
+    handleAsync(productHandler.updateStatus)
 );
 
 productRoutes.delete(

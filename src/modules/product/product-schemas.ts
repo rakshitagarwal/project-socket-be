@@ -30,6 +30,14 @@ const schema = (() => {
         })
         .strict();
 
+    const ZBlock = z
+        .object({
+            status: z
+                .boolean({ invalid_type_error: "status must be boolean" })
+                .optional(),
+        })
+        .strict();
+
     const ZGetId = z
         .object({
             id: z.string().uuid().optional(),
@@ -69,6 +77,7 @@ const schema = (() => {
     return {
         ZNewAdd,
         ZUpdate,
+        ZBlock,
         ZGetId,
         ZDelete,
         Zpagination,
