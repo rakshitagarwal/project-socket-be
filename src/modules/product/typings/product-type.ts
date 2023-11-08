@@ -9,7 +9,9 @@ export type addReqBody = {
     media_id: Array<string>
 
 };
-export type updateReqBody = addReqBody
+export type updateReqBody = addReqBody & {
+    status: boolean;
+}
 
 export interface IPagination {
     page: string;
@@ -23,8 +25,8 @@ export interface IPagination {
 export interface IPaginationQuery {
     page: number;
     limit: number;
-    _sort: string;
-    _order: string;
+    _sort?: string;
+    _order?: string;
     filter: Array<object>;
 }
 export interface Ids {

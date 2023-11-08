@@ -83,10 +83,10 @@ const add = async (newReqBody: addReqBody, userId: string) => {
  */
 const get = async ({ id }: Iid, query: IPagination) => {
     if (id) {
-        const result = await productQueries.getById(id);
-        if (!result) {
+        const result = await productQueries.getById(id);        
+        if (!result) 
             return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
-        }
+        
         return responseBuilder.okSuccess(productMessage.GET.REQUESTED, result);
     }
     const limit = parseInt(query.limit) || 20;
@@ -112,6 +112,28 @@ const get = async ({ id }: Iid, query: IPagination) => {
         search: query.search || "",
         sort: query._sort,
         order: query._order,
+    });
+};
+
+/**
+ * @description   it is used in geting all active products with search title field.
+ * @param {IPagination} query pagination for pass payload
+ * @returns {object}  - the response object using responseBuilder.
+ */
+const getAuctionProducts = async (query: IPagination) => {
+    const limit = parseInt(query.limit) || 20;
+    const page = parseInt(query.page) || 0;
+    const filter = [];
+    if (query.search)
+        filter.push({ title: { contains: query.search, mode: "insensitive" } });
+
+    const  { queryResult, totalCount }  = await productQueries.getAllActiveProducts({ limit, filter, page });
+    return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
+        limit,
+        page,
+        totalRecord: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        search: query.search || "",
     });
 };
 
@@ -190,6 +212,22 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
 };
 
 /**
+ * @description update status of one product
+ * @param {Ids} productId id is passed in productId
+ * @param {boolean} status boolean value to change status of a product
+ * @returns {object}  - the response object using responseBuilder.
+ */
+const updateStatus = async (productId: Iid, status: boolean) => {
+    const isExistProductId = await productQueries.getById(productId.id as string);    
+    if (!isExistProductId) return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);
+    
+    const result = await productQueries.updateStatus(productId.id as string, status);
+    if (!result) return responseBuilder.expectationFaild(productMessage.UPDATE.STATUS_NOT_CHANGED);
+    
+    return responseBuilder.okSuccess(productMessage.UPDATE.STATUS_CHANGED);
+}
+
+/**
  * @description delete product by ids
  * @see getFindAllId  product Ids.
  * @see findProductMediaAll product media ids.
@@ -247,7 +285,9 @@ const removeMultipleId = async (collectionId: Ids) => {
 const productServices = {
     add,
     get,
+    getAuctionProducts,
     update,
+    updateStatus,
     removeMultipleId,
 };
 export default productServices;
