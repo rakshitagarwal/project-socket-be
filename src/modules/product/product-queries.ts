@@ -61,7 +61,7 @@ const getById = async (id: string) => {
         where: {
             AND: {
                 id: id,
-                status: true,
+                // status: true,
                 is_deleted: false,
             },
         },
@@ -206,6 +206,52 @@ const getAllProduct = async (query: IPaginationQuery) => {
     };
 };
 
+
+/**
+ * @param {IPaginationQuery} query   Pagination in  products
+ * @description -  get all active products to be listed in auction
+ */
+const getAllActiveProducts = async (query: IPaginationQuery) => {
+    const totalCount = await db.product.count({
+        where: {
+            AND: [
+                { is_deleted: false },
+                { status: true },
+                {
+                    OR: query.filter,
+                },
+            ],
+        },
+    });
+
+    const queryResult = await db.product.findMany({
+        where: {
+            AND: [
+                { is_deleted: false },
+                {
+                    OR: query.filter,
+                },
+                { status: true },
+            ],
+        },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            price: true,
+        },
+        orderBy: {
+            updated_at: "desc",
+        },
+        skip: query.limit * query.page,
+        take: query.limit,
+    });
+    return {
+        queryResult,
+        totalCount,
+    };
+};
+
 /**
  * @param {string} id in  product
  * @param {updateReqBody} updateInfo pass in payload in product
@@ -248,6 +294,19 @@ const update = async (
     });
     return queryResult;
 };
+
+/**
+ * @param {string} id of one product
+ * @param {boolean} status boolean value to change status of a product
+ * @description - update query
+ */
+const updateStatus = async (id: string, status: boolean) => {
+    const query = await db.product.update({
+        where: { id },
+        data: { status }
+    });
+    return query;
+}
 
 /**
  * @param {string} ids in  product
@@ -389,7 +448,9 @@ const productQueries = {
     getTitle,
     getById,
     getAllProduct,
+    getAllActiveProducts,
     update,
+    updateStatus,
     deleteMultipleIds,
     getFindAllId,
     findProductMediaAll,
