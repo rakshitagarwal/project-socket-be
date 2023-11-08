@@ -449,7 +449,7 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         JSON.stringify(payload.finalData)
     );
     socket.playerSocket.emit(SOCKET_EVENT.AUCTION_MIN_MAX_PERCENTAGE, {
-        message: "Total Bids",
+        message: "Total bids",
         data: {
             total_bids: payload.totalBid,
             num_of_bids: payload.bidHistory.length,
@@ -466,13 +466,13 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         },
     });
     socket.playerSocket.to(payload.socketId).emit("player:info:min:max", {
-        message: "Player Bidlogs",
+        message: "Player bidlogs",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
         data: payload.playerInfo.reverse().slice(0, 30),
     });
     socket.playerSocket.to(payload.socketId).emit("min:max:recent:bid", {
-        message: "Bid Added Successfully",
+        message: "Bid added successfully",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
     });
@@ -700,7 +700,7 @@ export const minMaxAuctionBid = async (
         bidData.bid_price >= isAuctionLive.products.price
     ) {
         socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
-            message: `Your Bid Must Be Greater Than ${isAuctionLive.opening_price} And Less Than ${isAuctionLive.products.price}`,
+            message: `Your bid must be greater than ${isAuctionLive.opening_price} and less than ${isAuctionLive.products.price}`,
             auction_id: bidData.auction_id,
         });
         return;
@@ -709,7 +709,7 @@ export const minMaxAuctionBid = async (
     if (bidData.bid_price.toString().includes(".") && decimalPlayes) {
         if (decimalPlayes.toString()?.length > isAuctionLive.decimal_count) {
             socket.playerSocket.to(socketId).emit(SOCKET_EVENT.AUCTION_ERROR, {
-                message: `Decimal Value Must Be Of ${isAuctionLive.decimal_count} Digits`,
+                message: `Decimal value must be of ${isAuctionLive.decimal_count} digits`,
                 auction_id: bidData.auction_id,
             });
             return;
@@ -1040,7 +1040,7 @@ export const liveAuctionData = async (
                     }, {} as typeof newPayload);
 
                     socket.playerSocket.to(socketId).emit("auction:grid:data", {
-                        message: "Live Auction Data",
+                        message: "Live auction data",
                         data,
                     });
                 })
@@ -1051,7 +1051,7 @@ export const liveAuctionData = async (
         });
     } else {
         socket.playerSocket.to(socketId).emit("auction:grid:data", {
-            message: "Live Auction Data",
+            message: "Live auction data",
             data: {},
         });
     }
