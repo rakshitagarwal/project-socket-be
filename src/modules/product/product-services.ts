@@ -127,14 +127,12 @@ const getAuctionProducts = async (query: IPagination) => {
     if (query.search)
         filter.push({ title: { contains: query.search, mode: "insensitive" } });
 
-    const queryResult = await productQueries.getAllActiveProducts({
-        limit,
-        filter,
-        page,
-    });
+    const  { queryResult, totalCount }  = await productQueries.getAllActiveProducts({ limit, filter, page });
     return responseBuilder.okSuccess(productMessage.GET.ALL, queryResult, {
         limit,
         page,
+        totalRecord: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
         search: query.search || "",
     });
 };
@@ -213,6 +211,12 @@ const update = async (productId: Iid, newReqBody: addReqBody) => {
     return responseBuilder.okSuccess(productMessage.UPDATE.SUCCESS);
 };
 
+/**
+ * @description update status of one product
+ * @param {Ids} productId id is passed in productId
+ * @param {boolean} status boolean value to change status of a product
+ * @returns {object}  - the response object using responseBuilder.
+ */
 const updateStatus = async (productId: Iid, status: boolean) => {
     const isExistProductId = await productQueries.getById(productId.id as string);    
     if (!isExistProductId) return responseBuilder.notFoundError(productMessage.GET.NOT_FOUND);

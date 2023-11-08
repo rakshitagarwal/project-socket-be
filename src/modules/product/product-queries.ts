@@ -206,7 +206,24 @@ const getAllProduct = async (query: IPaginationQuery) => {
     };
 };
 
+
+/**
+ * @param {IPaginationQuery} query   Pagination in  products
+ * @description -  get all active products to be listed in auction
+ */
 const getAllActiveProducts = async (query: IPaginationQuery) => {
+    const totalCount = await db.product.count({
+        where: {
+            AND: [
+                { is_deleted: false },
+                { status: true },
+                {
+                    OR: query.filter,
+                },
+            ],
+        },
+    });
+
     const queryResult = await db.product.findMany({
         where: {
             AND: [
@@ -223,10 +240,16 @@ const getAllActiveProducts = async (query: IPaginationQuery) => {
             description: true,
             price: true,
         },
+        orderBy: {
+            updated_at: "desc",
+        },
         skip: query.limit * query.page,
         take: query.limit,
     });
-    return queryResult;
+    return {
+        queryResult,
+        totalCount,
+    };
 };
 
 /**
@@ -272,6 +295,11 @@ const update = async (
     return queryResult;
 };
 
+/**
+ * @param {string} id of one product
+ * @param {boolean} status boolean value to change status of a product
+ * @description - update query
+ */
 const updateStatus = async (id: string, status: boolean) => {
     const query = await db.product.update({
         where: { id },
