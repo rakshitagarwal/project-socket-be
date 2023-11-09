@@ -23,7 +23,6 @@ import { IminAuctionBidLog } from "../users/typings/user-types";
 
 const socket = global as unknown as AppGlobal;
 const countdowns: { [auctionId: string]: number } = {}; // Countdown collection
-const BidBotCountDown: { [auctionId: string]: number } = {};
 /**
  * Starts the auction with the given auctionId.
  * @param {string} auctionId - The ID of the auction to start.
@@ -391,48 +390,6 @@ export const newBiDRecieved = async (
     );
 };
 
-/**
- * @description create the random bid for the simulations
- * @param {string} auction_id
- * @param {number} count
- */
-export const randomBid = async (auction_id: string, count: number) => {
-    if (!BidBotCountDown[auction_id]) {
-        BidBotCountDown[auction_id] = Math.floor(Math.random() * (10 - 6)) + 3;
-    }
-    if (BidBotCountDown[auction_id] === count && count > 1) {
-        const usersbots = await userQueries.getRandomBot();
-        if (!usersbots) return;
-        const randomIndex = Math.floor(Math.random() * (usersbots.length - 1));
-        let bot = usersbots[randomIndex];
-        const isContinueBids = JSON.parse(
-            (await redisClient.get(`${auction_id}:bidHistory`)) as string
-        );
-        if (isContinueBids?.length) {
-            const lastBids = isContinueBids[isContinueBids.length - 1];
-            if (lastBids.player_id === bot?.id) {
-                const isFilteredBots = usersbots.filter(
-                    (bot) => bot.id !== lastBids.player_id
-                );
-                const randomIndex = Math.floor(
-                    Math.random() * (usersbots.length - 1)
-                );
-                bot = isFilteredBots[randomIndex];
-            }
-        }
-        if (bot && count > 0) {
-            const botData: IBidAuction = {
-                auction_id: auction_id,
-                player_id: bot.id,
-                player_name: bot.first_name as unknown as string,
-                profile_image: bot.avatar as unknown as string,
-                remaining_seconds: count,
-            };
-            await newBiDRecieved(botData, bot.id);
-        }
-        BidBotCountDown[auction_id] = Math.floor(Math.random() * (10 - 6)) + 3;
-    }
-};
 ////////////////////////////////////////////  min max auction step //////////////////////////////////////////
 /**
  * Stores auction result information in Redis, emits socket events, and updates auction state if necessary.
@@ -443,7 +400,7 @@ export const randomBid = async (auction_id: string, count: number) => {
 /**
  * slice is used for latest 30 data
  */
-const minMaxResultInfo = async (payload: IminMaxResult) => {
+const minMaxResultInfo = async (payload: IminMaxResult,type:string) => {
     await redisClient.set(
         `auction:result:${payload.auction_id}`,
         JSON.stringify(payload.finalData)
@@ -475,6 +432,10 @@ const minMaxResultInfo = async (payload: IminMaxResult) => {
         message: "Bid added successfully",
         player_id: payload.player_id,
         auction_id: payload.auction_id,
+        data:{
+            auction_category:type,
+            ...payload.playerInfo.slice(-1)[0]
+        }
     });
     if (payload.winnerInfo && payload.bidHistory.length >= payload.totalBid) {
         socket.playerSocket.emit(SOCKET_EVENT.AUCTION_WINNER, {
@@ -550,7 +511,9 @@ const maxAuction = async (
         totalBid,
         finalData,
         socketId,
-    });
+    },
+    "MAX"
+    );
 };
 
 /**
@@ -610,7 +573,9 @@ const minAuction = async (
         totalBid,
         finalData,
         socketId,
-    });
+    },
+    "MIN"
+    );
 };
 
 /**
