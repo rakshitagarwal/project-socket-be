@@ -434,7 +434,7 @@ const minMaxResultInfo = async (payload: IminMaxResult,type:string) => {
         auction_id: payload.auction_id,
         data:{
             auction_category:type,
-            ...payload.playerInfo.reverse().slice(0,1)[0]
+            ...payload.playerInfo[0]
         }
     });
     if (payload.winnerInfo && payload.bidHistory.length >= payload.totalBid) {
