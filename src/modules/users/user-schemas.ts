@@ -10,6 +10,7 @@ const register = z
         first_name: z
             .string({ invalid_type_error: "first_name must be string" })
             .regex(/^[A-Za-z]{3}[A-Za-z0-9]*$/)
+            .trim()
             .optional(),
         email: z
             .string({
@@ -21,7 +22,8 @@ const register = z
             .toLowerCase(),
         last_name: z
             .string({ invalid_type_error: "last_name must be string" })
-            .regex(/^[A-Za-z]{3}[A-Za-z0-9]*$/)
+            .regex(/^[A-Za-z0-9 ]*$/)
+            .trim()
             .optional(),
         role: z.string({
             invalid_type_error: "role must be string",
