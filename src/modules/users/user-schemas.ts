@@ -10,7 +10,7 @@ const register = z
         first_name: z
             .string({ invalid_type_error: "first_name must be string" })
             .trim()
-            .regex(/^[a-zA-Z0-9`._-]+(?:\s[a-zA-Z0-9`._-]+)*$/)
+            .regex(/^[a-zA-Z0-9`]+(?:\s[a-zA-Z0-9`]+)*$/)
             .min(3)
             .optional(),
         email: z
@@ -24,7 +24,7 @@ const register = z
         last_name: z
             .string({ invalid_type_error: "last_name must be string" })
             .trim()
-            .regex(/^[a-zA-Z0-9`._-]+(?:\s[a-zA-Z0-9`._-]+)*$/)
+            .regex(/^[a-zA-Z0-9`]+(?:\s[a-zA-Z0-9`]+)*$/)
             .optional(),
         role: z.string({
             invalid_type_error: "role must be string",
@@ -108,13 +108,13 @@ const updateUser = z
         first_name: z
             .string({ invalid_type_error: "first_name must be string" })
             .trim()
-            .regex(/^[a-zA-Z0-9`._-]+(?:\s[a-zA-Z0-9`._-]+)*$/)
+            .regex(/^[a-zA-Z0-9`]+(?:\s[a-zA-Z0-9`]+)*$/)
             .min(3)
             .optional(),
         last_name: z
             .string({ invalid_type_error: "last_name must be string" })
             .trim()
-            .regex(/^[a-zA-Z0-9`._-]+(?:\s[a-zA-Z0-9`._-]+)*$/)
+            .regex(/^[a-zA-Z0-9`]+(?:\s[a-zA-Z0-9`]+)*$/)
             .optional(),
         mobile_no: z
             .string({ invalid_type_error: "mobile_no must be string" })
