@@ -206,7 +206,7 @@ export const MESSAGES = {
         INVALID_CREDENTIAL: "Invalid credentials",
         ADMIN_EXIST: "Admin already exists",
         USER_VERIFIED: "User Verified",
-        VERIFICATION_ERROR: "Please Verify Your Email",
+        VERIFICATION_ERROR: "Please goto signup and verify your account",
         USER_FOUND: "User Found Successfully",
         INVALID_PLAYS: "PLAYS cannot be in decimal",
         EMAIL_BLOCKED_INVALID:

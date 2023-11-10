@@ -126,7 +126,8 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
         u.role_id=mr.id
     WHERE
         mr.title='Player' 
-        AND u.is_deleted=FALSE 
+        AND u.is_deleted=FALSE
+        AND u.is_verified=TRUE 
         ${
             query?.search
                 ? Prisma.raw(
@@ -148,6 +149,7 @@ const fetchAllUsers = async (query: IuserPaginationQuery) => {
             AND: [
                 {
                     is_deleted: false,
+                    is_verified: true,
                     // status: true,
                 },
                 {
