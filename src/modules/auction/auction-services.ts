@@ -698,7 +698,7 @@ const auctionListsTotal = async (data: IAuctionListing) => {
     const offset = data.page || 0;
     const listAuction: ITotalAuctionInfo[] =
         await auctionQueries.getListTotalAuction(offset, limit);
-    const listAuctionCount: ITotalAuctionInfo[] =
+    const listAuctionCount=
         await auctionQueries.getListTotalAuctionCount();
     return responseBuilder.okSuccess(
         listAuction.length
@@ -706,8 +706,8 @@ const auctionListsTotal = async (data: IAuctionListing) => {
             : AUCTION_MESSAGES.NOT_FOUND,
         listAuction,
         {
-            totalRecord: listAuctionCount.length,
-            totalPage: Math.ceil(listAuctionCount.length / limit) || 0,
+            totalRecord: listAuctionCount,
+            totalPage: Math.ceil(listAuctionCount / limit) || 0,
             page: offset,
             limit: limit,
         }
