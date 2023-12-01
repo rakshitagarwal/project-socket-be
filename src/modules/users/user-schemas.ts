@@ -24,7 +24,7 @@ const register = z
         last_name: z
             .string({ invalid_type_error: "last_name must be string" })
             .trim()
-            .regex(/^[a-zA-Z0-9`]+(?:\s[a-zA-Z0-9`]+)*$/)
+            .regex(/^[a-zA-Z0-9`]*(?:\s[a-zA-Z0-9`]+)*$/)
             .optional(),
         role: z.string({
             invalid_type_error: "role must be string",
