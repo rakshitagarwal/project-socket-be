@@ -215,12 +215,6 @@ const Zpagination = z
             .optional(),
         _sort: z.enum(["title", "category", "start_date", "created_at"]).optional(),
         _order: z.enum(["asc", "desc"]).default("asc").optional(),
-        player_id: z
-        .string({
-            required_error: "player Id is required!",
-            invalid_type_error: "player Id should be string!",
-        })
-        .uuid({ message: "player Id should be UUID!" }).optional(),
     })
     .strict();
 
@@ -455,7 +449,7 @@ const ZAuctionListing = z
             })
             .uuid({
                 message: "player_id should be string",
-            }).optional(),
+            }),
         auction_id: z
             .string({
                 required_error: "auction_id is required",

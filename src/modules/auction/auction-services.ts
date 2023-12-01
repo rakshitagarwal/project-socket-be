@@ -639,7 +639,7 @@ const auctionLists = async (data: IAuctionListing) => {
     let filter: IAuctionListing = {
         page: +data.page || 0,
         limit: +data.limit || 1,
-        player_id: data.player_id||"",
+        player_id: data.player_id,
     };
     if (data.auction_id) {
         filter = { ...filter, auction_id: data.auction_id };
@@ -729,8 +729,7 @@ const auctionTotal = async () => {
  * @returns {Promise<Object>} A Promise that resolves to an object containing the results and pagination info.
  * @throws {Error} Throws an error if the query is invalid or the database operation fails.
  */
-const getAllAuctionforGrid = async (query: IPagination,) => {
-    const player_id=query.player_id||""
+const getAllAuctionforGrid = async (query: IPagination,player_id:"") => {
     query.limit = 20;
     query.page = 0;
     query._sort = "created_at",
